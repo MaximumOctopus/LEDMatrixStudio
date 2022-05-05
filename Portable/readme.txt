@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.10.6                                                  =
+ =  LED Matrix Studio v0.10.7                                                  =
  =                                                                             =
- =  April 29th 2021                                                            =
+ =  May 6th 2021                                                               =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             =
@@ -132,6 +132,15 @@
 
  Please consider sending it to me so that I may include it with
  future updates!
+
+========================================================================
+== Updates for 0.10.7 beta =============================================
+========================================================================
+
+- Added: Language support across the entire application.
+         Comes with English (and lolcat) only for now.
+		 Langauge files are in \language\. If you can translate them
+		 then please let me know.
  
 ========================================================================
 == Updates for 0.10.6 beta =============================================
