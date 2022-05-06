@@ -78,7 +78,8 @@ uses
   formCheckVersion in 'code\forms\formCheckVersion.pas' {frmCheckVersion},
   presethandler in 'code\classes\presethandler.pas',
   profilehandler in 'code\classes\profilehandler.pas',
-  fonthandler in 'code\classes\fonthandler.pas';
+  fonthandler in 'code\classes\fonthandler.pas',
+  languagehandler in 'code\classes\languagehandler.pas';
 
 {$R *.res}
 
@@ -88,11 +89,23 @@ begin
 
   Application.MainFormOnTaskbar := True;
 
+  // ==================================================
+
+  LMSSettings := TSystemSettingsObject.Create;
+
+  GLanguageHandler := TLanguageHandler.Create(LMSSettings.App.Language);
+
+  if (not GLanguageHandler.LanguageLoaded) then
+    Exit;
+
+  // ==================================================
+
   TStyleManager.TrySetStyle('Carbon');
   Application.Title := 'LEDMatrixStudio';
 
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmPreviewPopout, frmPreviewPopout);
   Application.CreateForm(TfrmAbout, frmAbout);
+  Application.CreateForm(TfrmImportBitmap, frmImportBitmap);
   Application.Run;
 end.
