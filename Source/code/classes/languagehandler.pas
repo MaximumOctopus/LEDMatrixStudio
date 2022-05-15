@@ -465,9 +465,9 @@ const
   kAnimationFrame = 439;
   kBytes = 440;
   kLSBatTop = 441;
-  kMSBatTop = 442;
+  kLSBatBottom = 442;
   kLSBatLeft = 443;
-  kMSBatLeft   = 444;
+  kLSBatRight   = 444;
   k8Bits = 445;
   k16Bits = 446;
   k8BitsNybblesSwapped = 447;
@@ -501,7 +501,7 @@ const
   kReveal = 475;
   kProcess = 476;
   kScroll = 477;
-  kJiggle = 4781;
+  kJiggle = 478;
   kBounce = 479;
   kAlternate = 480;
   kBrushNo1 = 481;
@@ -567,6 +567,8 @@ const
   kBottomLayer = 541;
   kErrorWhileLoadingThisGIF = 542;
   kGIFDimensionsAreTooLarge = 543;
+  kQuickDataToolbar = 544;
+  kSimpleExport = 545;
   
   
 {$ENDREGION}
