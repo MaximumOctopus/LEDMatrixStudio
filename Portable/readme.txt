@@ -1,13 +1,13 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.10.7                                                  =
+ =  LED Matrix Studio v0.10.7.1                                                =
  =                                                                             =
- =  May 6th 2021                                                               =
+ =  May 15th 2021                                                              =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             =
- =  Application and Source Code (always latest version):                       =
- =  https://sourceforge.net/projects/led-matrix-studio/                        =
+ =  Application and Source Code:                                               =
+ =      https://github.com/MaximumOctopus/LEDMatrixStudio                      =
  =                                                                             =
  ===============================================================================
 
@@ -134,13 +134,22 @@
  future updates!
 
 ========================================================================
+== Updates for 0.10.7.1 beta ===========================================
+========================================================================
+
+Fixed a bug when opening the automate dialog.
+
+========================================================================
 == Updates for 0.10.7 beta =============================================
 ========================================================================
 
 - Added: Language support across the entire application.
          Comes with English (and lolcat) only for now.
-		 Langauge files are in \language\. If you can translate them
-		 then please let me know.
+   	     Langauge files are in \language\. If you can translate them
+	     then please let me know.
+
+I've moved the source code to github for those that want an easier way
+to access it (much better than hosting it all in a zip file).
  
 ========================================================================
 == Updates for 0.10.6 beta =============================================
