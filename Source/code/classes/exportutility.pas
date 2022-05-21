@@ -260,11 +260,11 @@ begin
   case teo.Source of
     rsColumns : case teo.LSB of
                   llTopLeft     : Result := cc + GLanguageHandler.Text[kLSBatTop];
-                  llBottomRight : Result := cc + GLanguageHandler.Text[kMSBatTop];
+                  llBottomRight : Result := cc + GLanguageHandler.Text[kLSBatBottom];
                 end;
     rsRows    : case teo.LSB of
                   llTopLeft     : Result := cc + GLanguageHandler.Text[kLSBatLeft];
-                  llBottomRight : Result := cc + GLanguageHandler.Text[kMSBatLeft];
+                  llBottomRight : Result := cc + GLanguageHandler.Text[kLSBatRight];
                 end;
   else
     Result := '';

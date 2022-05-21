@@ -37,6 +37,11 @@ type
 
     class function ExportColumnData(teo : TExportOptions; aFrame, aColId : integer; spacingchar : string): TDataOut;
     class function ExportRowData(teo : TExportOptions; aFrame, aRowId : integer; spacingchar : string): TDataOut;
+
+    // used only for quick GUI-based output
+    class function SimpleExportMono(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aCombineNibbles, aSourceDisplayVisible : boolean): TDataOutDisplay;
+    class function SimpleExportBiSequential(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aSourceDisplayVisible : boolean): TDataOutDisplay;
+    class function SimpleExportBiBitplanes(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aSourceDisplayVisible : boolean): TDataOutDisplay;
   end;
 
 
@@ -689,6 +694,484 @@ begin
   // ===========================================================================
 
   MatrixMain.FreeMatrixMerge;
+end;
+
+
+class function TExportMonoBi.SimpleExportMono(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aCombineNibbles, aSourceDisplayVisible : boolean): TDataOutDisplay;
+var
+  x, y, mydata : integer;
+  s : string;
+
+begin
+  for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+    mydata := 0;
+
+    for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+      if MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] = 1 then begin
+        if (aSourceLSB = 0) then
+          mydata := mydata + (powers[x])
+        else
+          mydata := mydata + (powers[MatrixMain.Matrix.Width - x - 1])
+       end;
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(mydata, LMSSettings.App.PadModeHexRow)
+    else
+      s := IntToStr(mydata);
+
+    Result.RowData[y] := s;
+  end;
+
+  for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+    mydata := 0;
+
+    for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+      if MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] = 1 then begin
+        if (aSourceLSB = 0) then
+          mydata := mydata + (powers[y])
+        else
+          mydata := mydata + (powers[MatrixMain.Matrix.Height - y - 1]);
+      end;
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(mydata, LMSSettings.App.PadModeHexCol)
+    else
+      s := IntToStr(mydata);
+
+    Result.ColumnData[x] := s;
+  end;
+
+  // ===========================================================================
+  // Need to display anything?
+  // ===========================================================================
+
+  if not(aSourceDisplayVisible) then exit;
+
+  s := '';
+
+  if (aSource = 0) then begin
+
+    // =================================================================
+    // Row data
+    // =================================================================
+
+    if (aSourceDirection = 0) then begin
+      s := LMSSettings.App.OpenBracket;
+
+      for y := 0 to MatrixMain.Matrix.Height - 2 do begin
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+      end;
+
+      s := s + LMSSettings.App.HexPrefix + Result.RowData[MatrixMain.Matrix.Height - 1] + LMSSettings.App.CloseBracket;
+    end
+    else begin
+      s := LMSSettings.App.OpenBracket;
+
+      for y := MatrixMain.Matrix.Height - 1 downto 1 do begin
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+      end;
+
+      s := s + LMSSettings.App.HexPrefix + Result.RowData[0] + LMSSettings.App.CloseBracket;
+    end;
+
+    Result.Text := s;
+  end
+  else begin
+
+    // =================================================================
+    // Column data
+    // =================================================================
+
+    case aSourceDirection of
+      0 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            if (aCombineNibbles) then begin
+              x := 0;
+
+              while x <= MatrixMain.Matrix.Width - 2 do begin
+                s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + Result.ColumnData[x + 1] + ', ';
+
+                inc(x, 2);
+              end;
+
+              s := Copy(s, 1, length(s) - 2) + LMSSettings.App.CloseBracket;
+            end
+            else begin
+              for x := 0 to MatrixMain.Matrix.Width - 2 do begin
+                s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+              end;
+
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[MatrixMain.Matrix.Width - 1] + LMSSettings.App.CloseBracket;
+            end;
+          end;
+      1 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            if (aCombineNibbles) then begin
+              x := MatrixMain.Matrix.Width - 1;
+
+              while x >= 0 do begin
+                s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + Result.ColumnData[x - 1] + ', ';
+
+                dec(x, 2);
+              end;
+
+              s := Copy(s, 1, length(s ) - 2) + LMSSettings.App.CloseBracket;
+            end
+            else begin
+              for x := MatrixMain.Matrix.Width - 1 downto 1 do begin
+                s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+              end;
+
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[0] + LMSSettings.App.CloseBracket;
+            end;
+          end;
+      2 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            for x := 7 downto 0 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            for x := 15 downto 8 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            for x := 23 downto 17 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            s := s + LMSSettings.App.HexPrefix + Result.ColumnData[16] + LMSSettings.App.CloseBracket;
+          end;
+    end;
+
+    Result.Text := s;
+  end;
+end;
+
+
+class function TExportMonoBi.SimpleExportBiSequential(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aSourceDisplayVisible : boolean): TDataOutDisplay;
+var
+  x, y : integer;
+  s, temp : string;
+
+  function BinToInt(s : string): int64;
+  var
+    i, t : integer;
+
+  begin
+    result := 0;
+
+    i := 0;
+
+    for t := length(s) downto 1 do begin
+      if s[t] = '1' then
+        result := result + powers[i];
+
+      inc(i);
+    end;
+  end;
+
+begin
+  for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+    temp := '';
+
+    for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+      if (aSourceLSB = 0) then
+        temp := temp + BiColoursLSBLeft[MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y]]
+      else
+        temp := temp + BiColoursLSBRight[MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[MatrixMain.Matrix.Width - x - 1, y]];
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(BinToInt(temp), LMSSettings.App.PadModeHexRow)
+    else
+      s := IntToStr(BinToInt(temp));
+
+    Result.RowData[y] := s;
+  end;
+
+  for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+    temp := '';
+
+    for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+      if (aSourceLSB = 0) then
+        temp := temp + BiColoursLSBLeft[MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y]]
+      else
+        temp := temp + BiColoursLSBRight[MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, MatrixMain.Matrix.Height - y - 1]];
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(BinToInt(temp), LMSSettings.App.PadModeHexCol)
+    else
+      s := IntToStr(BinToInt(temp));
+
+    Result.ColumnData[x] := s;
+  end;
+
+  // ===========================================================================
+  // Need to display anything?
+  // ===========================================================================
+
+  if not(aSourceDisplayVisible) then exit;
+
+    s := '';
+
+    if (aSource = 0) then begin
+
+      // ===========================================================================
+      // Row data
+      // ===========================================================================
+
+      if (aSourceDirection = 0) then begin
+        s := LMSSettings.App.OpenBracket;
+
+        for y := 0 to MatrixMain.Matrix.Height - 2 do begin
+          s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+        end;
+
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[MatrixMain.Matrix.Height - 1] + LMSSettings.App.CloseBracket;
+      end
+      else begin
+        s := LMSSettings.App.OpenBracket;
+
+        for y := MatrixMain.Matrix.Height - 1 downto 1 do begin
+          s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+        end;
+
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[0] + LMSSettings.App.CloseBracket;
+      end;
+
+      Result.Text := s;
+    end
+    else begin
+
+    // ===========================================================================
+    // Column data
+    // ===========================================================================
+
+     case (aSourceDirection) of
+       0 : begin
+             s := LMSSettings.App.OpenBracket;
+
+             for x := 0 to MatrixMain.Matrix.Width - 2 do begin
+               s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+             end;
+
+             s := s + LMSSettings.App.HexPrefix + Result.ColumnData[MatrixMain.Matrix.Width - 1] + LMSSettings.App.CloseBracket;
+           end;
+       1 : begin
+             s := LMSSettings.App.OpenBracket;
+
+             for x := MatrixMain.Matrix.Width - 1 downto 1 do begin
+               s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+             end;
+
+             s :=s + LMSSettings.App.HexPrefix + Result.ColumnData[0] + LMSSettings.App.CloseBracket;
+           end;
+       2 : begin
+             s := LMSSettings.App.OpenBracket;
+
+             for x := 7 downto 0 do begin
+               s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+             end;
+
+             for x := 15 downto 8 do begin
+               s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+             end;
+
+             for x := 23 downto 17 do begin
+               s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+             end;
+
+             s := s + LMSSettings.App.HexPrefix + Result.ColumnData[16] + LMSSettings.App.CloseBracket;
+           end;
+     end;
+
+     Result.Text := s;
+   end;
+end;
+
+
+class function TExportMonoBi.SimpleExportBiBitplanes(aFrame, aSourceLSB, aSource, aSourceDirection : integer; aHexFormat, aSourceDisplayVisible : boolean): TDataOutDisplay;
+var
+  x, y, bitplane : integer;
+  s  : string;
+
+  function BinToInt(s : string): int64;
+  var
+    i, t : integer;
+
+  begin
+    result := 0;
+
+    i := 0;
+
+    for t := length(s) downto 1 do begin
+      if s[t] = '1' then
+        result := result + powers[i];
+
+      inc(i);
+    end;
+  end;
+
+begin
+  for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+    bitplane := 0;
+
+    for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+      if (aSourceLSB = 0) then begin
+        case MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] of
+          0 : {};
+          1 : bitplane := bitplane + (powers[x]);
+          2 : bitplane := bitplane + (powers[x + (MatrixMain.Matrix.Width - 1)]);
+          3 : begin
+                bitplane := bitplane + (powers[x]);
+                bitplane := bitplane + (powers[x + (MatrixMain.Matrix.Width - 1)]);
+              end;
+        end;
+      end
+      else begin
+        case MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] of
+          0 : {};
+          1 : bitplane := bitplane + (powers[MatrixMain.Matrix.Width - x - 1]);
+          2 : bitplane := bitplane + (powers[MatrixMain.Matrix.Width - x - 1 + (MatrixMain.Matrix.Width - 1)]);
+          3 : begin
+                bitplane := bitplane + (powers[MatrixMain.Matrix.Width - x - 1]);
+                bitplane := bitplane + (powers[MatrixMain.Matrix.Width - x - 1 + (MatrixMain.Matrix.Width - 1)]);
+              end;
+        end;
+      end;
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(bitplane, LMSSettings.App.PadModeHexRow)
+    else
+      s := IntToStr(bitplane);
+
+    Result.RowData[y] := s;
+  end;
+
+  for x := 0 to MatrixMain.Matrix.Width - 1 do begin
+    bitplane := 0;
+
+    for y := 0 to MatrixMain.Matrix.Height - 1 do begin
+      if (aSourceLSB = 0) then begin
+        case MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] of
+          0 : {};
+          1 : bitplane := bitplane + (powers[y]);
+          2 : bitplane := bitplane + (powers[y + (MatrixMain.Matrix.Height - 1)]);
+          3 : begin
+                bitplane := bitplane + (powers[y]);
+                bitplane := bitplane + (powers[y + (MatrixMain.Matrix.Height - 1)]);
+              end;
+        end;
+      end
+      else begin
+        case MatrixMain.MatrixLayers[0].Frames[aFrame].Grid[x, y] of
+          0 : {};
+          1 : bitplane := bitplane + (powers[MatrixMain.Matrix.Height - y - 1]);
+          2 : bitplane := bitplane + (powers[MatrixMain.Matrix.Height - y - 1 + (MatrixMain.Matrix.Height - 1)]);
+          3 : begin
+                bitplane := bitplane + (powers[MatrixMain.Matrix.Height - y - 1]);
+                bitplane := bitplane + (powers[MatrixMain.Matrix.Height - y - 1 + (MatrixMain.Matrix.Height - 1)]);
+              end;
+        end;
+      end;
+    end;
+
+    if (aHexFormat) then
+      s := IntToHex(bitplane, LMSSettings.App.PadModeHexCol)
+    else
+      s := IntToStr(bitplane);
+
+    Result.ColumnData[x] := s;
+  end;
+
+  // ===========================================================================
+  // Need to display anything?
+  // ===========================================================================
+
+  if not(aSourceDisplayVisible) then Exit;
+
+  s := '';
+
+  if (aSource = 0) then begin
+
+    // ===========================================================================
+    // Row data
+    // ===========================================================================
+
+    if (aSourceDirection = 0) then begin
+      s := LMSSettings.App.OpenBracket;
+
+      for y := 0 to MatrixMain.Matrix.Height - 2 do begin
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+      end;
+
+      s := s + LMSSettings.App.HexPrefix + Result.RowData[MatrixMain.Matrix.Height - 1] + LMSSettings.App.CloseBracket;
+    end
+    else begin
+      s := LMSSettings.App.OpenBracket;
+
+      for y := MatrixMain.Matrix.Height - 1 downto 1 do begin
+        s := s + LMSSettings.App.HexPrefix + Result.RowData[y] + ', ';
+      end;
+
+      s := s + LMSSettings.App.HexPrefix + Result.RowData[0] + LMSSettings.App.CloseBracket;
+    end;
+
+    Result.Text := s;
+  end
+  else begin
+
+    // ===========================================================================
+    // Column data
+    // ===========================================================================
+
+    case (aSourceDirection) of
+      0 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            for x := 0 to MatrixMain.Matrix.Width - 2 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            s := s + LMSSettings.App.HexPrefix + Result.ColumnData[MatrixMain.Matrix.Width - 1] + LMSSettings.App.CloseBracket;
+          end;
+      1 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            for x := MatrixMain.Matrix.Width - 1 downto 1 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            s := s + LMSSettings.App.HexPrefix + Result.ColumnData[0] + LMSSettings.App.CloseBracket;
+          end;
+      2 : begin
+            s := LMSSettings.App.OpenBracket;
+
+            for x := 7 downto 0 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            for x := 15 downto 8 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            for x := 23 downto 17 do begin
+              s := s + LMSSettings.App.HexPrefix + Result.ColumnData[x] + ', ';
+            end;
+
+            s := s + LMSSettings.App.HexPrefix + Result.ColumnData[16] + LMSSettings.App.CloseBracket;
+          end;
+    end;
+
+    Result.Text := s;
+  end;
 end;
 
 

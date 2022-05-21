@@ -208,6 +208,10 @@ begin
 
   // ===========================================================================
 
+  App.HexPrefix             := ReadRegistryString('hexprefix2', '0x');
+
+  // ===========================================================================
+
   PixelSize         := ReadRegistryInteger('pixelsize', CPixelSize20);
 
   PixelShape        := TPixelShape(ReadRegistryInteger('pixelshape', Ord(psSquare)));
@@ -384,6 +388,10 @@ begin
 
   // ===========================================================================
 
+  FReg.WriteString('hexprefix2',              App.HexPrefix);
+
+  // ===========================================================================
+
   if FileHistory.Count <> 0 then begin
     for t := 0 to FileHistory.Count - 1 do begin
       if FileHistory[t] <> '' then
@@ -409,8 +417,13 @@ end;
 
 function TSystemSettingsObject.ReadRegistryInteger(keyname : string; defaultval : Integer): Integer;
 begin
-  if FReg.ValueExists(keyname) then
-    Result := FReg.ReadInteger(keyname)
+  if FReg.ValueExists(keyname) then begin
+    try
+      Result := FReg.ReadInteger(keyname)
+    except
+      Result := defaultval;
+    end;
+  end
   else
     Result := defaultval;
 end;
@@ -418,8 +431,13 @@ end;
 
 function TSystemSettingsObject.ReadRegistryBool(keyname : string; defaultval : boolean): boolean;
 begin
-  if FReg.ValueExists(keyname) then
-    Result := FReg.ReadBool(keyname)
+  if FReg.ValueExists(keyname) then begin
+    try
+      Result := FReg.ReadBool(keyname)
+    except
+      Result := defaultval;
+    end;
+  end
   else
     Result := defaultval;
 end;
@@ -430,8 +448,13 @@ begin
   if FReg.ValueExists(keyname) then begin
     if FReg.ReadString(keyname) = '' then
       Result := defaultval
-    else
-      Result := FReg.ReadString(keyname);
+    else begin
+      try
+        Result := FReg.ReadString(keyname);
+      except
+        Result := defaultval;
+      end;
+    end;
   end
   else
     Result := defaultval;

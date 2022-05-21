@@ -569,6 +569,7 @@ const
   kGIFDimensionsAreTooLarge = 543;
   kQuickDataToolbar = 544;
   kSimpleExport = 545;
+  kHexFormat = 546;
   
   
 {$ENDREGION}
