@@ -81,7 +81,7 @@ end;
 procedure TfrmAbout.Label5Click(Sender: TObject);
 begin
   case TLabel(Sender).Tag of
-    0 : TUtility.ExecuteFile(0, 'http://https://sourceforge.net/projects/led-matrix-studio/', '', '');
+    0 : TUtility.ExecuteFile(0, 'https://github.com/MaximumOctopus/LEDMatrixStudio', '', '');
     1 : TUtility.ExecuteFile(0, 'http://twitter.com/maximumoctopus', '', '');
     2 : TUtility.ExecuteFIle(0, 'mailto:freeware@freshney.org', '', '');
   end;

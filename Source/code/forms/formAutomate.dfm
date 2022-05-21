@@ -118,17 +118,13 @@ object frmAutomate: TfrmAutomate
     Top = 8
     Width = 895
     Height = 625
-    ActivePage = tsOptions
+    ActivePage = tsActions
     DoubleBuffered = True
     ParentDoubleBuffered = False
     TabOrder = 2
     object tsActions: TTabSheet
       Caption = '.'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lSuggestion: TLabel
         Left = 24
         Top = 576
@@ -1573,10 +1569,6 @@ object frmAutomate: TfrmAutomate
     object tsOptions: TTabSheet
       Caption = '.'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 28
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbBrush: TGroupBox
         Left = 15
         Top = 16
@@ -1841,16 +1833,16 @@ object frmAutomate: TfrmAutomate
         object Label13: TLabel
           Left = 16
           Top = 24
-          Width = 80
+          Width = 4
           Height = 13
-          Caption = 'Source Colour(s)'
+          Caption = '.'
         end
         object Label14: TLabel
           Left = 264
           Top = 24
-          Width = 71
+          Width = 4
           Height = 13
-          Caption = 'Target Colours'
+          Caption = '.'
         end
         object lSpoon: TLabel
           Left = 24

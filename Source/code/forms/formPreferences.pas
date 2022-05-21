@@ -64,6 +64,8 @@ type
     Label17: TLabel;
     eExportPreview: TEdit;
     Label18: TLabel;
+    lHexFormat: TLabel;
+    cbHexFormat: TComboBox;
     procedure sMono1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure sbClearRecentFileListClick(Sender: TObject);
@@ -109,6 +111,10 @@ begin
       eMaxPixels.Text            := IntToStr(LMSSettings.App.ExportUpdateMaxPixels);
       eExportPreview.Text        := IntToStr(LMSSettings.App.ExportPreviewSize);
 
+      if (LMSSettings.App.HexPrefix = '') then
+        cbHexFormat.ItemIndex := 0
+      else
+        cbHexFormat.Text := LMSSettings.App.HexPrefix;
 
       // =======================================================================
 
@@ -134,6 +140,11 @@ begin
 
         LMSSettings.App.ExportUpdateMaxPixels := StrToIntDef(eMaxPixels.Text, 100000);
         LMSSettings.App.ExportPreviewSize     := StrToIntDef(eExportPreview.Text, 512);
+
+        if (cbHexFormat.ItemIndex = 0) then
+          LMSSettings.App.HexPrefix := ''
+        else
+          LMSSettings.App.HexPrefix := cbHexFormat.Text;
       end;
 
       Result := ModalResult;
@@ -168,9 +179,10 @@ begin
   Label17.Caption := GLanguageHandler.Text[kPreviewShowFirst];
   Label18.Caption := GLanguageHandler.Text[kLines];
 
-
   gbMisc.Caption := GLanguageHandler.Text[kMisc];
   sbClearRecentFileList.Caption := GLanguageHandler.Text[kClearRecentFilesList];
+
+  lHexFormat.Caption := GLanguageHandler.Text[kHexFormat];
 
   sbClearRecentFileList.Caption := GLanguageHandler.Text[kClearRecentFilesList];
 

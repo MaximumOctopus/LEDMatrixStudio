@@ -71,7 +71,7 @@ end;
 
 procedure TfrmCustomPlayback.FormCreate(Sender: TObject);
 begin
-  {}
+  SetGUILanguageText;
 end;
 
 

@@ -34,7 +34,7 @@ uses
 
   utility, matrixconstants, projectsettings, datadisplay,
 
-  frameGradientPanel, framePalettePanel, frameFontPanel, frameLayerPanel, frameUndoPanel,
+  frameGradientPanel, framePalettePanel, frameFontPanel, frameLayerPanel, frameUndoPanel, frameQuickData,
 
   thematrix, matrix, matrixdead, Vcl.Grids;
 
@@ -622,6 +622,8 @@ type
     miPreviewView: TMenuItem;
     miLanguage: TMenuItem;
     N24: TMenuItem;
+    pQuickData: TPanel;
+    miQuickData: TMenuItem;
     procedure sbBuildClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure sbClearClick(Sender: TObject);
@@ -815,6 +817,7 @@ type
     procedure Showshortcutkeys1Click(Sender: TObject);
     procedure pCanvasMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure miQuickDataClick(Sender: TObject);
   public
     procedure PreviewWindowChangeFrame(aNewFrame : integer);
     procedure PreviewWindowCommand(aCommandID : integer);
@@ -822,6 +825,7 @@ type
     procedure OnLayerPanelClose(Sender : TObject);
     procedure OnLayerMenuItem(aItem : integer);
     procedure OnUndoSelected(aUndo : integer);
+    procedure QuickDataChange(Sender : TObject);
 
     procedure AcceptFiles( var msg : TMessage ); message WM_DROPFILES;
   private
@@ -845,6 +849,7 @@ type
     FFrameFontPanel     : TframeFont;
     FFrameLayerPanel    : TframeLayers;
     FFrameUndoPanel     : TframeUndos;
+    FFrameQuickData     : TframeSimpleExport;
 
     MenuCopyMemory    : array[0..9] of TMenuItem;
     MenuRestoryMemory : array[0..9] of TMenuItem;
@@ -899,6 +904,8 @@ type
 
     procedure ConfigureOpenDialog(aMode : integer);
     procedure ConfigureSaveDialog(aMode : integer);
+
+    procedure UpdateData;
   end;
 
 
@@ -1101,6 +1108,8 @@ begin
   FFrameGradientPanel.Free;
 
   FFrameLayerPanel.Free;
+
+  FFrameQuickData.Free;
 
   FActionObject.Free;
 
@@ -1499,6 +1508,7 @@ begin
   View1.Caption := GLanguageHandler.Text[kView];
   miShowAnimationToolbar.Caption := GLanguageHandler.Text[kShowAnimationToolbar];
   miPaletteGradientToolbar.Caption := GLanguageHandler.Text[kPaletteGradientToolbar];
+  miQuickData.Caption := GLanguageHandler.Text[kQuickDataToolbar];
   miUndoToolbar.Caption := GLanguageHandler.Text[kUndoToolbar];
   Backgroundcolour1.Caption := GLanguageHandler.Text[kWorkingAreaBackgroundColour];
   miCustomBackground.Caption := GLanguageHandler.Text[kCustom];
@@ -1520,7 +1530,6 @@ begin
   PreviewSize1.Caption := GLanguageHandler.Text[kPreviewSize];
   miIncrementRadially.Caption := GLanguageHandler.Text[kIncrementRadially];
   miPreviewView.Caption := GLanguageHandler.Text[kPreviewView];
-  Preview1.Caption := GLanguageHandler.Text[kPreviewView];
   miPreviewViewSquare.Caption := GLanguageHandler.Text[kSquare];
   miPreviewViewRadial.Caption := GLanguageHandler.Text[kRadial];
   miPreviewViewRadialTQ.Caption := GLanguageHandler.Text[kRadialThreeQuarters];
@@ -1662,6 +1671,12 @@ begin
   FFrameUndoPanel.Parent         := pUndoToolbar;
   FFrameUndoPanel.Align          := alClient;
   FFrameUndoPanel.OnUndoSelected := OnUndoSelected;
+
+  FFrameQuickData := TframeSimpleExport.Create(Self);
+  FFrameQuickData.Parent         := pQuickData;
+  FFrameQuickData.Align          := alClient;
+  FFrameQuickData.OnChange       := QuickDataChange;
+  FFrameQuickData.SetGUILanguageText;
 end;
 
 
@@ -1810,6 +1825,15 @@ end;
 procedure TfrmMain.miPreviousFrameClick(Sender: TObject);
 begin
   PlaybackCommand(CAnimPreviousFrame);
+end;
+
+
+procedure TfrmMain.miQuickDataClick(Sender: TObject);
+begin
+  pQuickData.Visible := miQuickData.Checked;
+
+  if (miQuickData.Checked) then
+    UpdateData;
 end;
 
 
@@ -5031,6 +5055,9 @@ begin
 
   miUndo.Enabled := MatrixMain.CanUndo;
   miRedo.Enabled := MatrixMain.CanRedo;
+
+//  if (pQuickData.Visible) then
+ //   UpdateData;
 end;
 
 
@@ -5048,7 +5075,8 @@ end;
 
 procedure TfrmMain.MatrixOnDisplayBufferCopied(Sender : TObject);
 begin
-//  UpdateData;
+  if (pQuickData.Visible) then
+    UpdateData;
 end;
 
 
@@ -5956,6 +5984,12 @@ begin
 end;
 
 
+procedure TfrmMain.QuickDataChange(Sender : TObject);
+begin
+  UpdateData;
+end;
+
+
 procedure TfrmMain.ConfigureOpenDialog(aMode : integer);
 begin
   case aMode of
@@ -5993,6 +6027,52 @@ begin
                           sdMain.InitialDir := LMSSettings.App.LastLoadLocation;
                           sdMain.Filename   := 'ignore_' + IntToStr(MatrixMain.Matrix.Width) + 'x' + IntToStr(MatrixMain.Matrix.Height);
                         end;
+  end;
+end;
+
+
+procedure TfrmMain.UpdateData;
+var
+ tdod     : TDataOutDisplay;
+
+ function BinToInt(s : string): int64;
+ var
+   i, t : integer;
+
+  begin
+   result := 0;
+
+   i := 0;
+
+   for t := length(s) downto 1 do begin
+     if s[t] = '1' then
+       result := result + powers[i];
+
+     inc(i);
+   end;
+ end;
+
+
+begin
+  if (not sbClear.Enabled) or (not pQuickData.Visible) then
+    Exit;
+
+  if (MatrixMain.Matrix.Mode <> mtRGB) and
+     (MatrixMain.Matrix.Mode <> mtRGB3BPP) then begin
+
+    case MatrixMain.Matrix.Mode of
+      mtMono         : begin
+                         tdod := TExportMonoBi.SimpleExportMono(tbFrames.Position, FFrameQuickData.LSB, FFrameQuickData.Source, FFrameQuickData.Direction, FFrameQuickData.Hex, FFrameQuickData.CombineNybbles, pQuickData.Visible);
+                       end;
+      mtBiSequential : begin // bicolour, sequential bits
+                         tdod := TExportMonoBi.SimpleExportBiSequential(tbFrames.Position, FFrameQuickData.LSB, FFrameQuickData.Source, FFrameQuickData.Direction, FFrameQuickData.Hex, pQuickData.Visible);
+                       end;
+      mtBiBitPlanes  : begin // bicolour, bitplanes
+                         tdod := TExportMonoBi.SimpleExportBiBitplanes(tbFrames.Position, FFrameQuickData.LSB, FFrameQuickData.Source, FFrameQuickData.Direction, FFrameQuickData.Hex, pQuickData.Visible);
+                       end;
+    end;
+
+    FFrameQuickData.SetText(tdod.Text);
   end;
 end;
 

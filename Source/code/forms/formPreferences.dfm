@@ -4,7 +4,7 @@ object frmPreferences: TfrmPreferences
   Hint = 'e'
   BorderStyle = bsDialog
   Caption = 'Preferences'
-  ClientHeight = 556
+  ClientHeight = 550
   ClientWidth = 563
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -1290,6 +1290,27 @@ object frmPreferences: TfrmPreferences
       Width = 140
       Height = 22
       OnClick = sbClearRecentFileListClick
+    end
+    object lHexFormat: TLabel
+      Left = 208
+      Top = 32
+      Width = 4
+      Height = 13
+      Caption = '.'
+    end
+    object cbHexFormat: TComboBox
+      Left = 276
+      Top = 27
+      Width = 59
+      Height = 21
+      Style = csDropDownList
+      ItemIndex = 0
+      TabOrder = 0
+      Text = 'None'
+      Items.Strings = (
+        'None'
+        '0x'
+        '$')
     end
   end
   object gbLimiter: TGroupBox

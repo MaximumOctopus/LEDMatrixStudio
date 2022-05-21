@@ -340,14 +340,10 @@ object frmNewProject: TfrmNewProject
     Top = 8
     Width = 498
     Height = 140
-    ActivePage = tsFromPreset
+    ActivePage = tsCustom
     TabOrder = 3
     object tsCustom: TTabSheet
       Caption = '.'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbMatrixOptions: TGroupBox
         Left = 10
         Top = 14
@@ -516,6 +512,10 @@ object frmNewProject: TfrmNewProject
     object tsFromPreset: TTabSheet
       Caption = '.'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label6: TLabel
         Left = 16
         Top = 56

@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   AlphaBlend = True
   Caption = 'LED Matrix Studio'
-  ClientHeight = 814
+  ClientHeight = 820
   ClientWidth = 1421
   Color = 15790320
   DockSite = True
@@ -43,7 +43,7 @@ object frmMain: TfrmMain
   end
   object pAnimationToolbar: TPanel
     Left = 0
-    Top = 765
+    Top = 771
     Width = 1421
     Height = 30
     Align = alBottom
@@ -814,7 +814,7 @@ object frmMain: TfrmMain
   end
   object statusMain: TStatusBar
     Left = 0
-    Top = 795
+    Top = 801
     Width = 1421
     Height = 19
     Panels = <>
@@ -824,7 +824,7 @@ object frmMain: TfrmMain
     Left = 1117
     Top = 146
     Width = 100
-    Height = 619
+    Height = 625
     Align = alRight
     Color = clWhite
     ParentBackground = False
@@ -832,7 +832,7 @@ object frmMain: TfrmMain
     Visible = False
     object pASCIICode: TPanel
       Left = 1
-      Top = 593
+      Top = 599
       Width = 98
       Height = 25
       Align = alBottom
@@ -844,7 +844,7 @@ object frmMain: TfrmMain
     Left = 1217
     Top = 146
     Width = 204
-    Height = 619
+    Height = 625
     Align = alRight
     Color = clWhite
     ParentBackground = False
@@ -854,7 +854,7 @@ object frmMain: TfrmMain
       Left = 1
       Top = 1
       Width = 202
-      Height = 617
+      Height = 623
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
@@ -3164,8 +3164,8 @@ object frmMain: TfrmMain
   object pCanvas: TPanel
     Left = 0
     Top = 146
-    Width = 718
-    Height = 619
+    Width = 668
+    Height = 625
     Align = alClient
     BevelOuter = bvNone
     Color = 3355443
@@ -3179,10 +3179,10 @@ object frmMain: TfrmMain
     OnMouseMove = pCanvasMouseMove
   end
   object pLayers: TPanel
-    Left = 879
+    Left = 668
     Top = 146
-    Width = 238
-    Height = 619
+    Width = 232
+    Height = 625
     Align = alRight
     TabOrder = 8
     Visible = False
@@ -4100,7 +4100,7 @@ object frmMain: TfrmMain
       ParentFont = False
     end
     object Label16: TLabel
-      Left = 502
+      Left = 503
       Top = 1
       Width = 6
       Height = 13
@@ -4238,12 +4238,20 @@ object frmMain: TfrmMain
     end
   end
   object pUndoToolbar: TPanel
-    Left = 718
-    Top = 146
+    Left = 1085
+    Top = 464
     Width = 161
     Height = 619
-    Align = alRight
     TabOrder = 11
+    Visible = False
+  end
+  object pQuickData: TPanel
+    Left = 900
+    Top = 146
+    Width = 217
+    Height = 625
+    Align = alRight
+    TabOrder = 12
     Visible = False
   end
   object miMain: TMainMenu
@@ -4568,6 +4576,11 @@ object frmMain: TfrmMain
       object miPaletteGradientToolbar: TMenuItem
         Caption = '.'
         OnClick = miPaletteGradientToolbarClick
+      end
+      object miQuickData: TMenuItem
+        AutoCheck = True
+        Caption = '.'
+        OnClick = miQuickDataClick
       end
       object miUndoToolbar: TMenuItem
         AutoCheck = True

@@ -33,7 +33,7 @@ type
 
 
   TDataOutDisplay = record
-                      //Text : string;
+                      Text : string;
                       ColumnData : array[0.._MaxHeight] of string;
                       RowData    : array[0.._MaxHeight] of string;
                     end;
@@ -81,12 +81,12 @@ type
 
 
 const
-  LEDStudioDate      = 'May 6th 2022';
+  LEDStudioDate      = 'May 21st 2022';
 
   {$ifdef CPUX64}
-     LEDStudioVersion   = '0.10.7 (x64)';
+     LEDStudioVersion   = '0.10.8 (x64)';
   {$else}
-     LEDStudioVersion   = '0.10.7 (x32)';
+     LEDStudioVersion   = '0.10.8 (x32)';
   {$endif}
 
   BiColoursLSBLeft   : array[0..3] of string = ('00', '01', '10', '11');

@@ -56,11 +56,11 @@ type
     FOnClose : TNotifyEvent;
     FOnMenu  : TLayerMenu;
 
-    procedure SetGUILanguageText;
-
     procedure SetSyncAll(aSync : boolean);
     function  GetSyncAll: boolean;
   public
+    procedure SetGUILanguageText;
+
     procedure UpdateLayerTable;
 
     property OnClose : TNotifyEvent read FOnClose   write FOnClose;
