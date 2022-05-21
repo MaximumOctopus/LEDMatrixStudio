@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.10.7                                                  =
+ =  LED Matrix Studio v0.10.8                                                  =
  =                                                                             =
- =  May 6th 2021                                                               =
+ =  May 21st 2021                                                              =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             =
@@ -93,7 +93,7 @@
    three-quarter circle arc. 
  - Preview inline with the edited image or within a separate window
    (ideal for ultrawide monitors or dual screen use)
- - Open source, download from the address at the top of this doc
+ - Open source, download from the address at the top of this document
 
  If you find a bug or have a feature request then *please* email me.
 
@@ -132,6 +132,22 @@
 
  Please consider sending it to me so that I may include it with
  future updates!
+ 
+
+========================================================================
+== Updates for 0.10.8 beta =============================================
+======================================================================== 
+ 
+- Added: Simple export toolbar. Retains the functionality from the
+         recently removed simple export GUI components. While limited in
+		 options, it's much quicker than using the Export dialog, but
+		 can still supply data in a format useful in many applications.
+
+========================================================================
+== Updates for 0.10.7.1 beta ===========================================
+========================================================================
+
+Fixed a bug when opening the automate dialog.
 
 ========================================================================
 == Updates for 0.10.7 beta =============================================
@@ -139,8 +155,8 @@
 
 - Added: Language support across the entire application.
          Comes with English (and lolcat) only for now.
-	 Langauge files are in \language\. If you can translate them
-	 then please let me know.
+   	     Langauge files are in \language\. If you can translate them
+	     then please let me know.
 
 I've moved the source code to github for those that want an easier way
 to access it (much better than hosting it all in a zip file).
