@@ -206,7 +206,7 @@ Show shortcut keys
 Example code
 Check for updates
 Website
-About :)
+About
 Minutes
 Generate Code
 Clear
@@ -440,9 +440,9 @@ COLUMN
 ANIMASHUN FRAME
 BYTEZ
 LSB AT TOP
-MSB AT TOP
+LSB AT BOTTOM
 LSB AT LEFT
-MSB AT RITE
+LSB AT RITE
 8 BITS
 16 BITS
 8 BITS (NIBBLEZ SWAPPD)
@@ -542,3 +542,6 @@ RITE TRIANGLE
 BOTTOM LAYR
 ERROR WHILE LOADIN DIS GIF.
 GIF DIMENSHUNS R 2 LARGE (LIMIT IZ 256X256)! DIS GIF
+Simpl xport toolbar
+Simpl xport
+Hex Prefix

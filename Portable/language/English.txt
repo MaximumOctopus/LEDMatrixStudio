@@ -206,7 +206,7 @@ Show shortcut keys
 Example code
 Check for updates
 Website
-About :)
+About
 Minutes
 Generate Code
 Clear
@@ -440,9 +440,9 @@ Column
 Animation Frame
 bytes
 LSB at top
-MSB at top
+LSB at bottom
 LSB at left
-MSB at right
+LSB at right
 8 bits
 16 bits
 8 bits (nibbles swapped)
@@ -542,3 +542,6 @@ Right triangle
 Bottom layer
 Error while loading this GIF.
 GIF dimensions are too large (limit is 256x256)! This gif
+Simple export toolbar
+Simple Export
+Hex Prefix
