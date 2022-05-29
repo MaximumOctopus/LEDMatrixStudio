@@ -1,14 +1,16 @@
 // ====================================================================================================================
 // ====================================================================================================================
 
- November 13th 2018
+   Paul A Freshney :: paul@freshney.org
+
+   January 8th 2022
 
 // ====================================================================================================================
 // ====================================================================================================================
 
 This folder contains various code templates for exporting and creating microcontroller projects directly from within the LED Matrix Studio application.
 
-Press F4, or Project->Code templates, or top toolbar "Generate Code."
+Press F4, or Project->Code templates, or top toolbar "Generate Code".
 
 Instead of just exporting the data, it's now possible to export the data in to a preconfigured template - instant code! Instant demo!
 
@@ -19,39 +21,67 @@ Template: <filename>.<extension>.template
 
 The code file contains the source code (specific to the platform folder), complete with special "tokens" that identify areas that should be filled-in by the software.
 
-The template file contains instructions on how the data should be configured so that it's in a format that source code expects.
+The template file contains instructions on how the data should be configured so that it's in a format that the source code and target platform expect.
 
 If you've created some templates (or would like new tokens), or wish to create them, then please get in touch!!
 
-// ====================================================================================================================
-// ====================================================================================================================
-
-Usage:
-
-To populate the template with code and data, use the following tokens:
-
-{$LMS_MATRIX_DATA$}
-
-Inserts the matrix data, based on the .template rules.
-
-{$LMS_FRAMES$}
-
-The number of frames of animation.
-
-{$LMS_BYTES$}
-
-The number of bytes of data (in total).
-
-{$LMS_COUNT$}
-
-The number of entries in the data array.
-
 
 // ====================================================================================================================
+   Custom LED Matrix Studio tokens
+// ====================================================================================================================
+
+
+These tokens will be replaced in your code with the values below.
+
+  Usage:
+
+  To populate the template with code and data, use the following tokens:
+
+    {$LMS_MATRIX_DATA$}
+
+    Inserts the matrix data, based on the .template rules.
+
+    {$LMS_FRAMES$}
+
+    The number of frames of animation.
+
+    {$LMS_FRAMES_MINUS_ONE$}
+
+    The number of frames of animation minus one.
+
+    {$LMS_BYTES$}
+
+    The number of bytes of data (in total).
+
+    {$LMS_COUNT$}
+
+    The number of entries in the data array.
+
+    {$LMS_MATRIX_WIDTH$}
+
+    Width of the matrix, in pixels.
+
+    {$LMS_MATRIX_HEIGHT$}
+
+    Width of the matrix, in pixels.
+
+    {$LMS_DATE$}
+
+    Outputs the current date in DD/MM/YYYY format.
+
+    {$LMS_TIME$}
+
+    Outputs the current time in HH:MM:SS format.
+
+
+// ====================================================================================================================
+   Template
 // ====================================================================================================================
 
 
 Each source code file needs a template to go with it, just append .template to the source code file name. This tells the software how to export the data so it's in the correct format.
+
+There are some example template files in the "_examples" folder.
 
 .template construction:
 
@@ -72,6 +102,12 @@ w:
 y:
 z:
 }
+
+
+// ====================================================================================================================
+   Template format
+// ====================================================================================================================
+
 
   {       defines a non-RGB output
   {RGB    will enable RGB output
@@ -98,11 +134,13 @@ z:
 
   d:0 = Comma separated
   d:1 = PICAXE EEPROM
-  d:2 = C-style (1 dimensional)
-  d:3 = C-style (2 dimensional)
-  d:4 = Python (1 dimensional)
-  d:5 = Python (2 dimensional)
-  d:6 = Microchip
+  d:2 = C/C++ (1 dimensional)
+  d:3 = C/C++ (2 dimensional)
+  d:4 = C/C++ (FastLED) format
+  d:5 = Python (1 dimensional)
+  d:6 = Python (2 dimensional)
+  d:7 = Microchip
+  d:8 = Pascal
 
   e: Number format
 
@@ -143,6 +181,7 @@ z:
   r:0 = RGB
   r:1 = BGR
   r:2 = GRB
+  r:3 = BRG
   
   // == dimension constraints ===============================================
 

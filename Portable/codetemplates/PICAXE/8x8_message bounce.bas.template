@@ -1,0 +1,17 @@
+{
+!:8x8 scrolly message (any picaxe, might need minor changes for non-08M). Use 2 or more frames to see effect
+a:0
+b:0
+c:1
+d:1
+e:2
+f:0
+g:1
+h:1
+i:0
+r:0
+v:8
+w:0
+y:8
+z:8
+}

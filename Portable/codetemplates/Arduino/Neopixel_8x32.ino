@@ -9,8 +9,7 @@
 //
 // Use the Export Code option
 //
-// maximumoctopus.com
-// maximumoctopus.com/electronics/builder.htm
+// https://sourceforge.net/projects/led-matrix-studio/
 //
 // based on the Adafruit Neopixel demo code
 // ===============================================

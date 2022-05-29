@@ -1,0 +1,20 @@
+// Example arduino file for an 8x8 device
+// Export columns, top-to-bottom, LSB at right
+//        C/C++ format, hex data, 8 bit data output 
+{
+!:Example arduino template file
+a:0
+b:0
+c:1
+d:2
+e:2
+f:0
+g:1
+h:1
+i:0
+r:0
+v:8
+w:0
+y:8
+z:8
+}

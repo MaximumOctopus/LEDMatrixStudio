@@ -11,8 +11,7 @@
 //
 // See LED_Matrix.leds in the \codetemplates\ folder.
 //
-// maximumoctopus.com
-// maximumoctopus.com/electronics/builder.htm
+// https://sourceforge.net/projects/led-matrix-studio/
 // 
 // ===============================================
 
