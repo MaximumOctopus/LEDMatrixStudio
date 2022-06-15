@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -114,6 +113,8 @@ const
 
   CTopOffset               = 4;
   CLeftOffset              = 4;
+
+  FontCharacterCount       = 96;
 
 
 var

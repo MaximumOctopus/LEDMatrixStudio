@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -81,12 +80,12 @@ type
 
 
 const
-  LEDStudioDate      = 'May 21st 2022';
+  LEDStudioDate      = 'June 15th 2022';
 
   {$ifdef CPUX64}
-     LEDStudioVersion   = '0.10.8 (x64)';
+     LEDStudioVersion   = '0.10.9 (x64)';
   {$else}
-     LEDStudioVersion   = '0.10.8 (x32)';
+     LEDStudioVersion   = '0.10.9 (x32)';
   {$endif}
 
   BiColoursLSBLeft   : array[0..3] of string = ('00', '01', '10', '11');
@@ -97,9 +96,9 @@ const
 
 
 var
- MatrixMain  : TTheMatrix;
+  MatrixMain  : TTheMatrix;
 
- LMSSettings : TSystemSettingsObject;
+  LMSSettings : TSystemSettingsObject;
 
 
 implementation
