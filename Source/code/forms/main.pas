@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -24,6 +23,8 @@ uses
   formCopyMultiple, formDeleteMultipl, formExportGIF, formAutomate, formPlaybackSpeed, formSaveRange, formPreviewPopout,
   formToggleLockStatus, formMerge, formNewBrush, formColourChange, formOptimise,
 
+  fileconstants, matrixconstants,
+
   languagehandler,
 
   exportOptions, exportoptions_monobi, importdata, systemsettings, formSetIgnoredPixels, presethandler,
@@ -32,7 +33,7 @@ uses
 
   colours,
 
-  utility, matrixconstants, projectsettings, datadisplay,
+  utility, projectsettings, datadisplay,
 
   frameGradientPanel, framePalettePanel, frameFontPanel, frameLayerPanel, frameUndoPanel, frameQuickData,
 
@@ -624,6 +625,7 @@ type
     N24: TMenuItem;
     pQuickData: TPanel;
     miQuickData: TMenuItem;
+    miGradientBottomTop: TMenuItem;
     procedure sbBuildClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure sbClearClick(Sender: TObject);
@@ -737,6 +739,7 @@ type
     procedure MatrixOnColourChange(Sender : TObject);
     procedure MatrixOnMouseOver(const  x, y : integer);
     procedure MatrixOnPreviewMouseDown(const x, y : integer);
+    procedure MatrixOnDebug(const s : string);
     procedure SetPreview(aSize : integer; aView : TViewShape; aVoid : integer; aOffSet : integer; aDirection, aPopout : boolean);
     procedure miFadeFirstLastClick(Sender: TObject);
     procedure miExportToBitmapClick(Sender: TObject);
@@ -818,6 +821,7 @@ type
     procedure pCanvasMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure miQuickDataClick(Sender: TObject);
+    procedure miGradientBottomTopClick(Sender: TObject);
   public
     procedure PreviewWindowChangeFrame(aNewFrame : integer);
     procedure PreviewWindowCommand(aCommandID : integer);
@@ -974,6 +978,7 @@ begin
   MatrixMain.OnColourChange        := MatrixOnColourChange;
   MatrixMain.OnMouseOver           := MatrixOnMouseOver;
   MatrixMain.OnPreviewMouseDown    := MatrixOnPreviewMouseDown;
+  MatrixMain.OnDebug               := MatrixOnDebug;
 
   sbCopy.Tag                       := Ord(dmCopy);
   sbFilledRectangle.Tag            := Ord(dmFilledBox);
@@ -1441,7 +1446,8 @@ begin
 
   miGradientSelectRGB.Caption := GLanguageHandler.Text[kSelectColour] + '...';
   miGradSetRow.Caption := GLanguageHandler.Text[kSetRowToSelectedColour] + '...';
-  miGradFrom.Caption := GLanguageHandler.Text[kGradientFromTopBottom] + '...';
+  miGradFrom.Caption := GLanguageHandler.Text[kGradientFromTopBottom];
+  miGradientBottomTop.Caption := GLanguageHandler.Text[kGradientFlip];
 
   Playbackspeed1.Caption := GLanguageHandler.Text[kPlaybackSpeed];
   miPlaybackSpeedCustom.Caption := GLanguageHandler.Text[kCustom];
@@ -2834,7 +2840,7 @@ begin
     TMenuItem(Sender).Checked   := True;
   end
   else
-    MessageDlg(GLanguageHandler.Text[kCannotFindFont], mtError, [mbOK], 0);
+    MessageDlg(GLanguageHandler.Text[kCannotFindFont] + #13#10 + #13#10 + '"' + s + '"', mtError, [mbOK], 0);
 end;
 
 
@@ -2857,7 +2863,7 @@ begin
       LoadPreset(s);
     end
     else
-      MessageDlg(GLanguageHandler.Text[kCannotFindPresetFile], mtError, [mbOK], 0);
+      MessageDlg(GLanguageHandler.Text[kCannotFindPresetFile] + #13#10 + #13#10 + '"' + s + '"', mtError, [mbOK], 0);
   end;
 end;
 
@@ -3659,7 +3665,7 @@ begin
 
   if (LMSSettings.Project.clear) then begin
     if miFontMode.Checked then begin
-      tbFrames.Max := 96;
+      tbFrames.Max := FontCharacterCount;
     end
     else begin
       tbFrames.Max := MatrixMain.FrameCount;
@@ -4059,7 +4065,7 @@ begin
     end;
   end;
 
-  MatrixGradient[puGradient.Tag].Brush.Color  := MatrixMain.LEDColours[TMenuItem(Sender).Tag];
+  MatrixGradient[puGradient.Tag].Brush.Color   := MatrixMain.LEDColours[TMenuItem(Sender).Tag];
   MatrixMain.Render.GradientIY[puGradient.Tag] := TMenuItem(Sender).Tag;
 end;
 
@@ -4090,7 +4096,7 @@ begin
   ego := DoExportGIF(LMSSettings.ExportGIFSettings);
 
   if (ego.Process) then begin
-    MatrixMain.ExportToGIF(ego.Background, ego.PixelSize, ego.PixelShape, ego.FileName);
+    MatrixMain.ExportToGIF(ego.Background, ego.PixelSize, ego.PixelShape, ego.AnimationSpeed, ego.FileName);
 
     LMSSettings.ExportGIFSettings.FileName   := ego.FileName;
     LMSSettings.ExportGIFSettings.PixelSize  := ego.PixelSize;
@@ -4163,14 +4169,14 @@ begin
     AssignFile(tf, ExtractFilePath(Application.ExeName) + 'gradients\' + s + '.ledsgradient');
     Rewrite(tf);
 
-    Writeln(tf, '{gradient');
+    Writeln(tf, '{' + kGradientFileHeader);
 
     g := '';
     for t := 0 to MatrixMain.Matrix.Height - 1 do
       g := g + IntToStr(MatrixMain.Render.GradientIY[t]) + ' ';
 
-    Writeln(tf, 'g:' + g);
-    Writeln(tf, '}');
+    Writeln(tf, kGradientColour + ':' + g);
+    Writeln(tf, kDataBlockEnd);
 
     CloseFile(tf);
   end;
@@ -4845,7 +4851,7 @@ begin
       UpdateGradientColours;
     end
     else
-      MessageDlg(GLanguageHandler.Text[kCannotFindGradientFile], mtError, [mbOK], 0);
+      MessageDlg(GLanguageHandler.Text[kCannotFindGradientFile] + #13#10 + #13#10 + '"' + s + '"', mtError, [mbOK], 0);
   end;
 end;
 
@@ -4948,6 +4954,44 @@ begin
 end;
 
 
+procedure TfrmMain.miGradientBottomTopClick(Sender: TObject);
+var
+  y : integer;
+  lEnd, lTempColour, lIndex : integer;
+  lColours : TStringList;
+
+begin
+  lColours := TStringList.Create;
+
+  if sbGradient.Tag = 1 then begin
+    lEnd       := MatrixMain.Matrix.Height - 1;
+  end
+  else begin
+    lEnd       := MatrixMain.Matrix.Width - 1;
+  end;
+
+  for y := 0 to lEnd do
+    lColours.Add(IntToStr(MatrixGradient[y].Brush.Color));
+
+  lIndex := lColours.Count - 1;
+
+  for y := 0 to lEnd do begin
+    lTempColour := StrToInt(lColours[lIndex]);
+
+    MatrixGradient[y].Brush.Color  := lTempColour;
+
+    if sbGradient.Tag = 1 then
+      MatrixMain.Render.GradientIY[y] := lTempColour
+    else
+      MatrixMain.Render.GradientIX[y] := lTempColour;
+
+    dec(lIndex);
+  end;
+
+  FreeAndNil(lColours);
+end;
+
+
 procedure TfrmMain.miGradSetRowClick(Sender: TObject);
 var
   x : integer;
@@ -4955,12 +4999,12 @@ var
 begin
   if sbGradient.Tag = 1 then begin
     for x := 0 to MatrixMain.Matrix.Width do begin
-      MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, TMenuItem(Sender).Tag] := MatrixMain.Render.GradientIY[TMenuItem(Sender).Tag];
+      MatrixMain.PlotPixelMatrix(x, TMenuItem(Sender).Tag, MatrixMain.Render.GradientIY[TMenuItem(Sender).Tag]);
     end;
   end
   else begin
     for x := 0 to MatrixMain.Matrix.Height do begin
-      MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[TMenuItem(Sender).Tag, x] := MatrixMain.Render.GradientIX[TMenuItem(Sender).Tag];
+      MatrixMain.PlotPixelMatrix(TMenuItem(Sender).Tag, x, MatrixMain.Render.GradientIX[TMenuItem(Sender).Tag]);
     end;
   end;
 
@@ -5157,6 +5201,12 @@ end;
 procedure TfrmMain.MatrixOnPreviewMouseDown(const x, y : integer);
 begin
   puPreview.Popup(Left + X + 10, Top + Y + 10);
+end;
+
+
+procedure TfrmMain.MatrixOnDebug(const s : string);
+begin
+  Caption := s;
 end;
 
 

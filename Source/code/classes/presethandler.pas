@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -18,7 +17,7 @@ interface
 
 uses SysUtils, Vcl.StdCtrls,
 
-     matrixconstants,
+     fileconstants, matrixconstants,
 
      utility;
 
@@ -95,13 +94,13 @@ begin
     AssignFile(tf, aFileName);
     Rewrite(tf);
 
-    Writeln(tf, '{preset');
-    Writeln(tf, 'w:' + IntToStr(aMPP.Width));
-    Writeln(tf, 'h:' + IntToStr(aMPP.Height));
-    Writeln(tf, 'e:' + IntToStr(aMPP.PixelSize));
-    Writeln(tf, 'm:' + IntToStr(Ord(aMPP.MatrixMode)));
-    Writeln(tf, 's:' + IntToStr(aMPP.PixelShape));
-    Writeln(tf, '}');
+    Writeln(tf, '{' + kMatrixPresetHeader);
+    Writeln(tf, kMatrixPresetWidth +      ':' + IntToStr(aMPP.Width));
+    Writeln(tf, kMatrixPresetHeight +     ':' + IntToStr(aMPP.Height));
+    Writeln(tf, kMatrixPresetPixelSize +  ':' + IntToStr(aMPP.PixelSize));
+    Writeln(tf, kMatrixPresetMatrixMode + ':' + IntToStr(Ord(aMPP.MatrixMode)));
+    Writeln(tf, kMatrixPresetPixelShape + ':' + IntToStr(aMPP.PixelShape));
+    Writeln(tf, kDataBlockEnd);
   finally
     CloseFile(tf);
   end;
@@ -110,25 +109,25 @@ end;
 
 class function TPresetHandler.GetMatrixPresetParameterType(s : string): TMatrixPresetParameter;
  begin
-  if s[1] = '{' then
+  if s[1] = kDataBlockStart then
     Result := ppStructBegin
-  else if s[1] = '}' then
+  else if s[1] = kDataBlockEnd then
     Result := ppStructEnd
-  else if s[1] = 'w' then
+  else if s[1] = kMatrixPresetWidth then
     Result := ppProjectWidth
-  else if s[1] = 'h' then
+  else if s[1] = kMatrixPresetHeight then
     Result := ppProjectHeight
-  else if s[1] = 'a' then
+  else if s[1] = kAnimDataSource then
     Result := ppSource
-  else if s[1] = 'b' then
+  else if s[1] = kAnimSourceLSB then
     Result := ppSourceLSB
-  else if s[1] = 'c' then
+  else if s[1] = kAnimSourceDirection then
     Result := ppSourceDirection
   else if s[1] = 'd' then
     Result := ppUnused
-  else if s[1] = 'e' then
+  else if s[1] = kMatrixPresetPixelSize then
     Result := ppPixelSize
-  else if s[1] = 'm' then
+  else if s[1] = kMatrixPresetMatrixMode then
     Result := ppMatrixType
   else
     Result := ppUnknown;

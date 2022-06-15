@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 

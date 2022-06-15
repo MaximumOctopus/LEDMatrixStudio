@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -30,11 +29,12 @@ type
 
 
   TExportGIFObject = record
-    Process    : boolean;
-    FileName   : string;
-    PixelSize  : integer;
-    PixelShape : integer;
-    Background : integer;
+    Process        : boolean;
+    FileName       : string;
+    PixelSize      : integer;
+    PixelShape     : integer;
+    Background     : integer;
+    AnimationSpeed : integer; // percent of "normal" - 50 = half speed, 100 = normal, 1000 = 10x speed
   end;
 
 
@@ -112,10 +112,11 @@ begin
   App.ASCIIIndex            := 32;   // start ascii code (space)
   App.ExportUpdateMaxPixels := 100000;
 
-  ExportGIFSettings.FileName   := '';
-  ExportGIFSettings.PixelSize  := 1;
-  ExportGIFSettings.PixelShape := 0;
-  ExportGIFSettings.Background := $000000;
+  ExportGIFSettings.FileName       := '';
+  ExportGIFSettings.PixelSize      := 1;
+  ExportGIFSettings.PixelShape     := 0;
+  ExportGIFSettings.Background     := $000000;
+  ExportGIFSettings.AnimationSpeed := 100;     // 50 is half speed, 100 = normal speed, 1000 = 10x speed
 
   LoadSettings;
 end;

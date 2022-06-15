@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -159,7 +158,7 @@ begin
     FontMatrix.LoadFont(s);
   end
   else
-    MessageDlg(GLanguageHandler.Text[kCannotFindFont], mtError, [mbOK], 0);
+    MessageDlg(GLanguageHandler.Text[kCannotFindFont] + #13#10 + #13#10 + '"' + s + '"', mtError, [mbOK], 0);
 
   fLastFrame := -1;
 

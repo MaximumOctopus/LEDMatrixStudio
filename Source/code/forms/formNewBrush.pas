@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -23,7 +22,7 @@ uses
 
   thematrix,
 
-  matrixconstants, exportoptions;
+  fileconstants, matrixconstants, exportoptions;
 
 type
   TMatrixSettings = record
@@ -534,9 +533,9 @@ begin
 
     for lColumn := 0 to FMatrixSettings.Width - 1 do begin
       if aMode = CTGradientHorizontalDown then
-        FMatrixAutomate.SetPixel(1, lColumn, lRow, lColour)
+        FMatrixAutomate.PlotPixelMatrix(lColumn, lRow, lColour)
       else
-        FMatrixAutomate.SetPixel(1, lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
+        FMatrixAutomate.PlotPixelMatrix(lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
     end;
 
     if lColourIndex = clbMain.Items.Count - 1 then
@@ -563,9 +562,9 @@ begin
     for lRow := 0 to FMatrixSettings.Height - 1 do begin
 
       if aMode = CTGradientVerticalRight then
-        FMatrixAutomate.SetPixel(1, lColumn, lRow, lColour)
+        FMatrixAutomate.PlotPixelMatrix(lColumn, lRow, lColour)
       else
-        FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
+        FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
     end;
 
     if lColourIndex = clbMain.Items.Count - 1 then
@@ -594,9 +593,9 @@ begin
       lColour := TColor(clbMain.Items.Objects[lColourIndex]);
 
       if (aMode = CTGradientDiagonalUpRight) then
-        FMatrixAutomate.SetPixel(1, lColumn, lRow, lColour)
+        FMatrixAutomate.PlotPixelMatrix(lColumn, lRow, lColour)
       else
-        FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - lColumn - 1, lRow, lColour);
+        FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - lColumn - 1, lRow, lColour);
 
       if lColourIndex = clbMain.Items.Count - 1 then
         lColourIndex := 0
@@ -634,12 +633,12 @@ begin
         lColour := TColor(clbMain.Items.Objects[lColourIndex]);
 
         if aMode = CTChevronLeft then begin
-          FMatrixAutomate.SetPixel(1, lColumn, lRow, lColour);
-          FMatrixAutomate.SetPixel(1, lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(lColumn, lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
         end
         else begin
-          FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
-          FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - 1 - lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - 1 - lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
         end;
 
         if lColourIndex = clbMain.Items.Count - 1 then
@@ -666,12 +665,12 @@ begin
         lColour := TColor(clbMain.Items.Objects[lColourIndex]);
 
         if aMode = CTChevronUp then begin
-          FMatrixAutomate.SetPixel(1, lColumn,                             lRow, lColour);
-          FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(lColumn,                             lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - 1 - lColumn, lRow, lColour);
         end
         else begin
-          FMatrixAutomate.SetPixel(1, lColumn,                             FMatrixSettings.Height - 1 - lRow, lColour);
-          FMatrixAutomate.SetPixel(1, FMatrixSettings.Width - 1 - lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(lColumn,                             FMatrixSettings.Height - 1 - lRow, lColour);
+          FMatrixAutomate.PlotPixelMatrix(FMatrixSettings.Width - 1 - lColumn, FMatrixSettings.Height - 1 - lRow, lColour);
         end;
 
         if lColourIndex = clbMain.Items.Count - 1 then
@@ -715,7 +714,7 @@ begin
 
     for lColumn := 0 to FMatrixSettings.Width - 1 do begin
 
-       FMatrixAutomate.SetPixel(1, lColumn, lRow, TColor(clbMain.Items.Objects[lColourIndex]));
+       FMatrixAutomate.PlotPixelMatrix(lColumn, lRow, TColor(clbMain.Items.Objects[lColourIndex]));
 
        inc(lSquareX);
 
@@ -761,7 +760,7 @@ begin
   Rewrite(tf);
 
   for i := 0 to clbMain.Items.Count - 1 do begin
-    writeln(tf, 'col:' + IntToStr(TColor(clbMain.Items.Objects[i])));
+    writeln(tf, kColoursData + ':' + IntToStr(TColor(clbMain.Items.Objects[i])));
   end;
 
   CloseFile(tf);
@@ -896,49 +895,50 @@ begin
     Result := ldLoadBlockStartHeader
   else if Pos('colours', s) <> 0 then
     Result := ldLoadBlockStartColours
-  else if s[1] = '{' then
+  else if s[1] = kDataBlockStart then
     Result := ldLoadBlockBegin
-  else if s[1] = '}' then
+  else if s[1] = kDataBlockEnd then
     Result := ldLoadBlockEnd
   else begin
     if aHeaderMode then begin
       case s[1] of
-        'a' : Result := ldLoadHeaderSource;
-        'b' : Result := ldLoadHeaderSourceLSB;
-        'c' : Result := ldLoadHeaderSourceDirection;
-        '1' : Result := ldLoadHeaderPadMode;
-        '2' : Result := ldLoadHeaderHexFormat;
-        '3' : Result := ldLoadHeaderHexOutput;
-        '4' : Result := ldLoadHeaderBrackets;
-        'd' : Result := ldLoadHeaderDataSource;
-        'e' : Result := ldLoadHeaderOrientation;
-        'f' : Result := ldLoadHeaderScanDirection;
-        'g' : Result := ldLoadHeaderLSB;
-        'h' : Result := ldLoadHeaderLanguage;
-        'i' : Result := ldLoadHeaderNumberFormat;
-        'j' : Result := ldLoadHeaderNumberSize;
-        'k' : Result := ldLoadHeaderLineContent;
-        'l' : Result := ldLoadHeaderLineCount;
-        'm' : Result := ldLoadHeaderRGBMode;
-        'n' : Result := ldLoadHeaderRGBChangePixels;
-        'o' : Result := ldLoadHeaderRGBChangeColour;
-        'p' : Result := ldLoadHeaderOptimise;
-        'x' : Result := ldLoadHeaderMatrixComment;
-        'z' : Result := ldLoadHeaderRGBBackground;
-        'y' : Result := ldLoadHeaderASCIIIndex;
-        '}' : Result := ldLoadHeaderEnd;
+        kAnimDataSource      : Result := ldLoadHeaderSource;
+        kAnimSourceLSB       : Result := ldLoadHeaderSourceLSB;
+        kAnimSourceDirection : Result := ldLoadHeaderSourceDirection;
+        kAnimPadMode         : Result := ldLoadHeaderPadMode;
+        kAnimHexFormat       : Result := ldLoadHeaderHexFormat;
+        kAnimHexOutput       : Result := ldLoadHeaderHexOutput;
+        kAnimBrackets        : Result := ldLoadHeaderBrackets;
+        kAnimSource          : Result := ldLoadHeaderDataSource;
+        kAnimOrientation     : Result := ldLoadHeaderOrientation;
+        kAnimScanDirection   : Result := ldLoadHeaderScanDirection;
+        kAnimLSB             : Result := ldLoadHeaderLSB;
+        kAnimLanguage        : Result := ldLoadHeaderLanguage;
+        kAnimNumberFormat    : Result := ldLoadHeaderNumberFormat;
+        kAnimNumberSize      : Result := ldLoadHeaderNumberSize;
+        kAnimLineContent     : Result := ldLoadHeaderLineContent;
+        kAnimLineCount       : Result := ldLoadHeaderLineCount;
+        kAnimRGBMode         : Result := ldLoadHeaderRGBMode;
+        kAnimRGBChangePixels : Result := ldLoadHeaderRGBChangePixels;
+        kAnimRGBChangeColour : Result := ldLoadHeaderRGBChangeColour;
+        kAnimOptimise        : Result := ldLoadHeaderOptimise;
+        kAnimComment         : Result := ldLoadHeaderMatrixComment;
+        kAnimRGBBackground   : Result := ldLoadHeaderRGBBackground;
+        kAnimASCIIIndex      : Result := ldLoadHeaderASCIIIndex;
+
+        kAnimBlockEnd        : Result := ldLoadHeaderEnd;
       end;
     end
     else if aMatrixMode then begin
       case s[1] of
-        'w' : Result := ldLoadMatrixWidth;
-        'h' : Result := ldLoadMatrixHeight;
-        'r' : Result := ldLoadMatrixData;
+        kAnimWidth   : Result := ldLoadMatrixWidth;
+        kAnimHeight  : Result := ldLoadMatrixHeight;
+        kAnimRowData : Result := ldLoadMatrixData;
       end
     end
     else if aColoursMode then begin
       case s[1] of
-        'c' : Result := ldLoadColoursCustom;
+        kAnimBrushColours : Result := ldLoadColoursCustom;
       end;
     end;
   end;
@@ -1069,39 +1069,39 @@ begin
 
   // ===========================================================================
 
-  writeln(tf, '{header');
+  writeln(tf, '{' + kFileHeaderHeader);
   //writeln(tf, 'x:' + MatrixComment);
   //writeln(tf, 'z:' + IntToStr(RGBBackground));
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
   case FMatrixAutomate.Matrix.Mode of
-    mtMono         : writeln(tf, '{brush');
-    mtBiSequential : writeln(tf, '{brush2');
-    mtBiBitPlanes  : writeln(tf, '{brush3');
-    mtRGB          : writeln(tf, '{brush4');
-    mtRGB3BPP      : writeln(tf, '{brush5');
+    mtMono         : writeln(tf, '{' + kBrushPrefixMono);
+    mtBiSequential : writeln(tf, '{' + kBrushPrefixBiSequential);
+    mtBiBitPlanes  : writeln(tf, '{' + kBrushPrefixBiBitPlanes);
+    mtRGB          : writeln(tf, '{' + kBrushPrefixRGB);
+    mtRGB3BPP      : writeln(tf, '{' + kBrushPrefixRGB3BPP);
   end;
 
-  writeln(tf, 'w:' + IntToStr(FMatrixAutomate.Matrix.Width));
-  writeln(tf, 'h:' + IntToStr(FMatrixAutomate.Matrix.Height));
+  writeln(tf, kAnimWidth +  ':' + IntToStr(FMatrixAutomate.Matrix.Width));
+  writeln(tf, kAnimHeight + ':' + IntToStr(FMatrixAutomate.Matrix.Height));
 
   for y := 0 to FMatrixAutomate.Matrix.Height - 1 do begin
-    writeln(tf, 'r:' + FMatrixAutomate.RowToString(1, y));
+    writeln(tf, kAnimRowData + ':' + FMatrixAutomate.RowToString(1, y));
   end;
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
-  writeln(tf, '{colours');
+  writeln(tf, '{' + kFileHeaderColours);
 
   for i := 0 to clbMain.Count - 1 do begin
-    writeln(tf, 'c:' + IntToStr(TColor(clbMain.Items.Objects[i])));
+    writeln(tf, kAnimBrushColours + ':' + IntToStr(TColor(clbMain.Items.Objects[i])));
   end;
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 

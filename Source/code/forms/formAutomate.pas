@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -20,7 +19,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.UITypes, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls,
 
-  matrixconstants,
+  fileconstants, matrixconstants,
 
   formNewBrush,
 
@@ -847,7 +846,7 @@ begin
   Rewrite(tf);
 
   for i := 0 to aColourList.Items.Count - 1 do begin
-    writeln(tf, 'col:' + IntToStr(TColor(aColourList.Items.Objects[i])));
+    writeln(tf, kColoursData + ':' + IntToStr(TColor(aColourList.Items.Objects[i])));
   end;
 
   CloseFile(tf);
@@ -989,99 +988,99 @@ begin
 
   // ===========================================================================
 
-  writeln(tf, '{data');
+  writeln(tf, '{' + kFileHeaderData);
 
   if (rbProcessMode1.Checked) then
-    writeln(tf, 'v:1')
+    writeln(tf, kAutomationProcessMode + ':1')
   else if rbProcessMode2.Checked then
-    writeln(tf, 'v:0')
+    writeln(tf, kAutomationProcessMode + ':0')
   else
-    writeln(tf, 'v:2');
+    writeln(tf, kAutomationProcessMode + ':2');
 
-  writeln(tf, 'w:' + eFrameStart.Text);
-  writeln(tf, 'x:' + eFrameEnd.Text);
+  writeln(tf, kAutomationStartFrame + ':' + eFrameStart.Text);
+  writeln(tf, kAutomationEndFrame +   ':' + eFrameEnd.Text);
 
   if cbErase.Checked then
-    writeln(tf, 'y:1')
+    writeln(tf, kAutomationErase + ':1')
   else
-    writeln(tf, 'y:0');
+    writeln(tf, kAutomationErase + ':0');
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
   if lbActions.Count <> 0 then begin
-    writeln(tf, '{actions');
+    writeln(tf, '{' + kFileHeaderActions);
 
     for t := 0 to lbActions.Count - 1 do begin
-      writeln(tf, 'r:' + lbActions.Items[t]);
+      writeln(tf, kAutomationActionItem + ':' + lbActions.Items[t]);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   if lbPostProcessing.Count <> 0 then begin
-    writeln(tf, '{postprocessing');
+    writeln(tf, '{' + kFileHeaderPostProcessing);
 
     for t:= 0 to lbPostProcessing.Count - 1 do begin
-      writeln(tf, 'r:' + lbPostProcessing.Items[t]);
+      writeln(tf, kAutomationPostProcessingItem + ':' + lbPostProcessing.Items[t]);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
   if FCustomBrush[0].Count <> 0 then begin
-    writeln(tf, '{brush1');
+    writeln(tf, '{' + kFileHeaderBrush1);
 
-    writeln(tf, 'a:' + IntToStr(sCB1TransparentColour.Brush.Color));
-    writeln(tf, 'b:' + IntToStr(TUtility.BoolToInt(cbCB1Transparent.Checked)));
+    writeln(tf, kAutomationBrushColour +      ':' + IntToStr(sCB1TransparentColour.Brush.Color));
+    writeln(tf, kAutomationBrushTransparent + ':' + IntToStr(TUtility.BoolToInt(cbCB1Transparent.Checked)));
 
     for t := 0 to FCustomBrush[0].Count - 1 do begin
-      writeln(tf, 'r:' + FCustomBrush[0][t]);
+      writeln(tf, kAutomationBrushRowData + ':' + FCustomBrush[0][t]);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
   if FCustomBrush[1].Count <> 0 then begin
-    writeln(tf, '{brush2');
+    writeln(tf, '{' + kFileHeaderBrush2);
 
-    writeln(tf, 'a:' + IntToStr(sCB2TransparentColour.Brush.Color));
-    writeln(tf, 'b:' + IntToStr(TUtility.BoolToInt(cbCB2Transparent.Checked)));
+    writeln(tf, kAutomationBrushColour +      ':' + IntToStr(sCB2TransparentColour.Brush.Color));
+    writeln(tf, kAutomationBrushTransparent + ':' + IntToStr(TUtility.BoolToInt(cbCB2Transparent.Checked)));
 
     for t := 0 to FCustomBrush[1].Count - 1 do begin
-      writeln(tf, 'r:' + FCustomBrush[1][t]);
+      writeln(tf, kAutomationBrushRowData + ':' + FCustomBrush[1][t]);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
   if clbSource.Count <> 0 then begin
-    writeln(tf, '{source');
+    writeln(tf, '{' + kFileHeaderSource);
 
     for t := 0 to clbSource.Count - 1 do begin
-      writeln(tf, 'c:' + IntToStr(TColor(clbSource.Items.Objects[t])));
+      writeln(tf, kAutomationColor + ':' + IntToStr(TColor(clbSource.Items.Objects[t])));
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
   if clbTarget.Count <> 0 then begin
-    writeln(tf, '{target');
+    writeln(tf, '{' + kFileHeaderTarget);
 
     for t := 0 to clbTarget.Count - 1 do begin
-      writeln(tf, 'c:' + IntToStr(TColor(clbTarget.Items.Objects[t])));
+      writeln(tf, kAutomationColor + ':' + IntToStr(TColor(clbTarget.Items.Objects[t])));
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
@@ -1094,32 +1093,32 @@ function TfrmAutomate.LoadDataParameterType(aInput : string): integer;
 begin
   Result := -1;
 
-  if Pos('{data', aInput) <> 0 then
+  if Pos('{' + kFileHeaderData, aInput) <> 0 then
     Result := 1
-  else if Pos('{actions', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderActions, aInput) <> 0 then
     Result := 2
-  else if Pos('{postprocessing', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderPostProcessing, aInput) <> 0 then
     Result := 3
-  else if Pos('{brush1', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderBrush1, aInput) <> 0 then
     Result := 4
-  else if Pos('{brush2', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderBrush2, aInput) <> 0 then
     Result := 5
-  else if Pos('{source', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderSource, aInput) <> 0 then
     Result := 6
-  else if Pos('{target', aInput) <> 0 then
+  else if Pos('{' + kFileHeaderTarget, aInput) <> 0 then
     Result := 7
-  else if aInput[1] = '}' then
+  else if aInput[1] = kDataBlockEnd then
     Result := 8
   else begin
     case aInput[1] of
-      'a' : Result := 10;
-      'b' : Result := 11;
-      'c' : Result := 20;
-      'r' : Result := 21;
-      'v' : Result := 30;
-      'w' : Result := 31;
-      'x' : Result := 32;
-      'y' : Result := 33;
+      kAutomationBrushColour      : Result := 10;
+      kAutomationBrushTransparent : Result := 11;
+      kAutomationColor            : Result := 20;
+      kAutomationActionItem       : Result := 21;
+      kAutomationProcessMode      : Result := 30;
+      kAutomationStartFrame       : Result := 31;
+      kAutomationEndFrame         : Result := 32;
+      kAutomationErase            : Result := 33;
     end;
   end;
 end;

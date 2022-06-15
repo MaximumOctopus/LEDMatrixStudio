@@ -364,6 +364,10 @@ object frmExport: TfrmExport
     OnChange = pcExportChange
     object tsCode: TTabSheet
       Caption = '.'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0

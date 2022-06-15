@@ -3,7 +3,7 @@ object frmExportGIF: TfrmExportGIF
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Export GIF'
-  ClientHeight = 271
+  ClientHeight = 296
   ClientWidth = 687
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -966,15 +966,15 @@ object frmExportGIF: TfrmExportGIF
       000000000000000000000000000000000000}
   end
   object Bevel1: TBevel
-    Left = 4
-    Top = 230
+    Left = 6
+    Top = 255
     Width = 673
     Height = 4
     Shape = bsTopLine
   end
   object bOK: TBitBtn
     Left = 516
-    Top = 240
+    Top = 264
     Width = 75
     Height = 25
     Enabled = False
@@ -1035,7 +1035,7 @@ object frmExportGIF: TfrmExportGIF
   end
   object bCancel: TBitBtn
     Left = 604
-    Top = 240
+    Top = 264
     Width = 75
     Height = 25
     Cancel = True
@@ -1073,7 +1073,7 @@ object frmExportGIF: TfrmExportGIF
     Left = 126
     Top = 8
     Width = 553
-    Height = 217
+    Height = 241
     TabOrder = 2
     object Label1: TLabel
       Left = 24
@@ -1158,7 +1158,7 @@ object frmExportGIF: TfrmExportGIF
     end
     object Label4: TLabel
       Left = 24
-      Top = 163
+      Top = 195
       Width = 4
       Height = 13
       Caption = '.'
@@ -1184,6 +1184,20 @@ object frmExportGIF: TfrmExportGIF
       Brush.Color = clBlack
       OnMouseDown = ShapeNorfolkDigitalMouseDown
     end
+    object lAnimationSpeed: TLabel
+      Left = 24
+      Top = 163
+      Width = 4
+      Height = 13
+      Caption = '.'
+    end
+    object lAnimationSpeedHelp: TLabel
+      Left = 167
+      Top = 163
+      Width = 4
+      Height = 13
+      Caption = '.'
+    end
     object eFileName: TEdit
       Left = 96
       Top = 24
@@ -1202,7 +1216,7 @@ object frmExportGIF: TfrmExportGIF
     end
     object rbSquare: TRadioButton
       Left = 96
-      Top = 162
+      Top = 194
       Width = 65
       Height = 17
       Caption = '.'
@@ -1212,11 +1226,21 @@ object frmExportGIF: TfrmExportGIF
     end
     object rbCircle: TRadioButton
       Left = 96
-      Top = 181
+      Top = 213
       Width = 65
       Height = 17
       Caption = '.'
       TabOrder = 3
+    end
+    object seAnimationSpeed: TSpinEdit
+      Left = 96
+      Top = 160
+      Width = 65
+      Height = 22
+      MaxValue = 1000
+      MinValue = 0
+      TabOrder = 4
+      Value = 0
     end
   end
   object sdExportGIF: TSaveDialog
@@ -1228,6 +1252,6 @@ object frmExportGIF: TfrmExportGIF
   object cdExportGIF: TColorDialog
     Options = [cdFullOpen]
     Left = 11
-    Top = 232
+    Top = 256
   end
 end

@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -18,7 +17,7 @@ interface
 
 uses SysUtils, math, dialogs,
 
-     matrixconstants;
+     fileconstants, matrixconstants;
 
 
 type
@@ -55,7 +54,7 @@ begin
 
   if Pos('deadpixel', s) <> 0 then
     Result := dpDeadPixelBegin
-  else if s[1] = '}' then
+  else if s[1] = kDataBlockEnd then
     Result := dpDeadPixelEnd
   else begin
     if aIgnorePixelMode then begin
@@ -149,7 +148,7 @@ begin
     AssignFile(tf, aFileName);
     Rewrite(tf);
 
-    writeln(tf, '{deadpixel');
+    writeln(tf, '{' + kFileHeaderDeadPixel);
 
     for lRow := 0 to aHeight - 1 do begin
       s := '';
@@ -158,10 +157,10 @@ begin
         s := s + IntToStr(Ord(Grid[lColumn, lRow])) + ' ';
       end;
 
-      writeln(tf, 'p:' + s);
+      writeln(tf, kAnimDeadPixelData + ':' + s);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
 
     CloseFile(tf);
   except
@@ -261,9 +260,9 @@ begin
                            (y > 0) and (y < aHeight) then
                          Grid[x + a, y] := ptNormal;
 
-                         dec(x);
-                         inc(b, 2);
-                         inc(y, 1);
+                     dec(x);
+                     inc(b, 2);
+                     inc(y, 1);
                    end;
                  end;
   end;

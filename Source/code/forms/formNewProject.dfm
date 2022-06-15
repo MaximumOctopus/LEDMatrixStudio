@@ -344,6 +344,10 @@ object frmNewProject: TfrmNewProject
     TabOrder = 3
     object tsCustom: TTabSheet
       Caption = '.'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object gbMatrixOptions: TGroupBox
         Left = 10
         Top = 14

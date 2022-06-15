@@ -344,8 +344,8 @@ object frameGradient: TframeGradient
   end
   object sdGradient: TSaveDialog
     DefaultExt = '.ledsgradient'
-    Filter = 'LEDMatrixStudio Gradient files (*..ledsgradient)|*.ledsgradient'
-    Left = 80
-    Top = 472
+    Filter = 'LEDMatrixStudio Gradient files (*.ledsgradient)|*.ledsgradient'
+    Left = 88
+    Top = 448
   end
 end

@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -21,6 +20,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.Buttons, System.UITypes,
+
+  fileconstants,
 
   languagehandler,
 
@@ -246,11 +247,11 @@ var
 
  function parameterType(s : string): TLoadGradient;
  begin
-   if s[1] = '{' then
+   if s[1] = kDataBlockStart then
      Result := ldLoadBegin
-   else if s[1] = '}' then
+   else if s[1] = kDataBlockEnd then
      Result := ldLoadEnd
-   else if s[1] = 'g' then
+   else if s[1] = kGradientColour then
      Result := ldLoadData
    else
      Result := ldUnknown;
@@ -300,14 +301,14 @@ begin
   AssignFile(tf, aFileName);
   Rewrite(tf);
 
-  Writeln(tf, '{gradient');
+  Writeln(tf, '{' + kGradientFileHeader);
 
   g := '';
   for t := 0 to clbGradient.Items.Count - 1 do
     g := g + IntToStr(TColor(clbGradient.Items.Objects[t])) + ' ';
 
-  Writeln(tf, 'g:' + g);
-  Writeln(tf, '}');
+  Writeln(tf, kGradientColour + ':' + g);
+  Writeln(tf, kDataBlockEnd);
 
   CloseFile(tf);
 end;

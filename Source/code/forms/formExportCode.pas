@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -96,7 +95,7 @@ var
   frmExportCode: TfrmExportCode;
 
 
-function DoExportCode(mtype : TMatrixMode): word; // mode = 0 (animation), 1 = (user memories)
+function DoExportCode(mtype : TMatrixMode): word;
 
 
 implementation
@@ -112,7 +111,7 @@ var
   eeo : TExportOptions;
 
 
-function DoExportCode(mtype : TMatrixMode): word; // mode = 0 (animation), 1 = (user memories)
+function DoExportCode(mtype : TMatrixMode): word;
 begin
   with TfrmExportCode.Create(Application) do
     try
@@ -216,7 +215,6 @@ begin
         cbPlatforms.Items.Add(searchResult.Name);
     until FindNext(searchResult) <> 0;
 
-    // Must free up resources used by these successful finds
     FindClose(searchResult);
   end;
 
@@ -245,7 +243,6 @@ begin
         cbCode.Items.Add(searchResult.Name);
     until FindNext(searchResult) <> 0;
 
-    // Must free up resources used by these successful finds
     FindClose(searchResult);
   end;
 
@@ -271,6 +268,8 @@ var
   lUnique : TStringList;
 
 begin
+  if (not(cbCode.Enabled)) then Exit;
+
   eeo := TProfileHandler.LoadExportProfileFromFile(ExtractFilePath(Application.Exename) + 'codetemplates\' + cbPlatforms.Text + '\' + cbCode.Text + '.template');
 
   eeo.RGBBrightness := 100;
@@ -353,7 +352,7 @@ begin
     lOutput.Free;
   end
   else
-    MessageDlg(GLanguageHandler.Text[kErrorLoadingTemplate], mtError, [mbOK], 0);
+    MessageDlg(GLanguageHandler.Text[kErrorLoadingTemplate] + #13#10 + #13#10 +  '"' + ExtractFilePath(Application.Exename) + 'codetemplates\' + cbPlatforms.Text + '\' + cbCode.Text + '.template"' , mtError, [mbOK], 0);
 end;
 
 

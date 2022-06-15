@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -22,7 +21,7 @@ uses
 
   languagehandler,
 
-  systemsettings;
+  systemsettings, Vcl.Samples.Spin;
 
 type
   TfrmExportGIF = class(TForm)
@@ -44,6 +43,9 @@ type
     Label5: TLabel;
     ShapeNorfolkDigital: TShape;
     cdExportGIF: TColorDialog;
+    lAnimationSpeed: TLabel;
+    seAnimationSpeed: TSpinEdit;
+    lAnimationSpeedHelp: TLabel;
     procedure bSaveClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure eFileNameChange(Sender: TObject);
@@ -88,22 +90,25 @@ begin
 
       ShapeNorfolkDigital.Brush.Color := aExportGIFOld.Background;
 
+      seAnimationSpeed.Value := aExportGIFOld.AnimationSpeed;
+
       // =======================================================================
 
       ShowModal;
 
       if ModalResult = mrOK then begin
-        Result.Process    := True;
+        Result.Process        := True;
 
-        Result.FileName   := eFileName.Text;
-        Result.PixelSize  := StrToIntDef(ePixelSize.Text, 1);
+        Result.FileName       := eFileName.Text;
+        Result.PixelSize      := StrToIntDef(ePixelSize.Text, 1);
+
+        Result.Background     := ShapeNorfolkDigital.Brush.Color;
+        Result.AnimationSpeed := seAnimationSpeed.Value;
 
         if (rbSquare.Checked) then
           Result.PixelShape := 0
         else
           Result.PixelShape := 1;
-
-        Result.Background := ShapeNorfolkDigital.Brush.Color;
       end;
 
     finally
@@ -126,19 +131,21 @@ end;
 
 procedure TfrmExportGIF.SetGUILanguageText;
 begin
-  Caption          := GLanguageHandler.Text[kOK];
+  Caption                     := GLanguageHandler.Text[kOK];
 
-  Label1.Caption   := GLanguageHandler.Text[kFileName];
-  bSave.Caption    := GLanguageHandler.Text[kSave];
-  Label2.Caption   := GLanguageHandler.Text[kPixelSize];
-  Label3.Caption   := GLanguageHandler.Text[kSizeCoefficientHelpText];
-  Label5.Caption   := GLanguageHandler.Text[kBackground];
-  Label4.Caption   := GLanguageHandler.Text[kPixelShape];
-  rbSquare.Caption := GLanguageHandler.Text[kSquare];
-  rbCircle.Caption := GLanguageHandler.Text[kCircle];
+  Label1.Caption              := GLanguageHandler.Text[kFileName];
+  bSave.Caption               := GLanguageHandler.Text[kSave];
+  Label2.Caption              := GLanguageHandler.Text[kPixelSize];
+  Label3.Caption              := GLanguageHandler.Text[kSizeCoefficientHelpText];
+  Label5.Caption              := GLanguageHandler.Text[kBackground];
+  Label4.Caption              := GLanguageHandler.Text[kPixelShape];
+  lAnimationSpeed.Caption     := GLanguageHandler.Text[kAnimationSpeed];
+  lAnimationSpeedHelp.Caption := GLanguageHandler.Text[kAnimationSpeedHelp];
+  rbSquare.Caption            := GLanguageHandler.Text[kSquare];
+  rbCircle.Caption            := GLanguageHandler.Text[kCircle];
 
-  bOK.Caption      := GLanguageHandler.Text[kOK];
-  bCancel.Caption  := GLanguageHandler.Text[kCancel];
+  bOK.Caption                 := GLanguageHandler.Text[kOK];
+  bCancel.Caption             := GLanguageHandler.Text[kCancel];
 end;
 
 

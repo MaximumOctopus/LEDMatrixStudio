@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -17,6 +16,8 @@ interface
 
 
 uses SysUtils, Vcl.StdCtrls,
+
+     fileconstants,
 
      utility,
 
@@ -52,64 +53,64 @@ var
 
  function parameterType(s : string): TLoadProfile;
   begin
-   if s[1] = '{' then
+   if s[1] = kDataBlockStart then
      Result := lpDataBegin
-   else if s[1] = '}' then
+   else if s[1] = kDataBlockEnd then
      Result := lpDataEnd
-   else if s[1] = 'a' then
+   else if s[1] = kExportSource then
      Result := lpSource
-   else if s[1] = 'b' then
+   else if s[1] = kExportOrientation then
      Result := lpOrientation
-   else if s[1] = 'c' then
+   else if s[1] = kExportLSB then
      Result := lpLSB
-   else if s[1] = 'd' then
+   else if s[1] = kExportLanguage then
      Result := lpLanguage
-   else if s[1] = 'e' then
+   else if s[1] = kExportNumberFormat then
      Result := lpNumberFormat
-   else if s[1] = 'f' then
+   else if s[1] = kExportNumberSize then
      Result := lpNumberSize
-   else if s[1] = 'g' then
+   else if s[1] = kExportScanDirection then
      Result := lpScanDirection
-   else if s[1] = 'h' then
+   else if s[1] = kExportLineContent then
      Result := lpLineContent
-   else if s[1] = 'i' then
+   else if s[1] = kExportLineCount then
      Result := lpLineCount
-   else if s[1] = 'r' then
+   else if s[1] = kExportRGBMode then
      Result := lpRGBMode
-   else if s[1] = 's' then
+   else if s[1] = kExportRGBChangePixels then
      Result := lpRGBChangePixels
-   else if s[1] = 't' then
+   else if s[1] = kExportRGBChangeColour then
      Result := lpRGBChangeColour
-   else if s[1] = 'u' then
+   else if s[1] = kExportRGBBrightness then
      Result := lpRGBBrightness
-   else if s[1] = 'v' then
+   else if s[1] = kExportMinWidth then
      Result := lpMinWidth
-   else if s[1] = 'w' then
+   else if s[1] = kExportMaxWidth then
      Result := lpMaxWidth
-   else if s[1] = 'y' then
+   else if s[1] = kExportMinHeight then
      Result := lpMinHeight
-   else if s[1] = 'z' then
+   else if s[1] = kExportMaxHeight then
      Result := lpMaxHeight
-   else if s[1] = '!' then
+   else if s[1] = kExportInformation then
      Result := lpInformation
 
-   else if s[1] = '1' then
+   else if s[1] = kExportBinarySource then
      Result := lpBinarySource
-   else if s[1] = '2' then
+   else if s[1] = kExportBinaryOrientation then
      Result := lpBinaryOrientation
-   else if s[1] = '3' then
+   else if s[1] = kExportBinaryLSB then
      Result := lpBinaryLSB
-   else if s[1] = '4' then
-     Result := lpBinaryLSB
-   else if s[1] = '5' then
+   else if s[1] = kExportBinaryScanDirection then
+     Result := lpBinaryScanDirection
+   else if s[1] = kExportBinaryRGBMode then
      Result := lpBinaryRGBMode
-   else if s[1] = '6' then
+   else if s[1] = kExportBinaryRGBChangePixels then
      Result := lpBinaryRGBChangePixels
-   else if s[1] = '7' then
+   else if s[1] = kExportBinaryRGBChangeColour then
      Result := lpBinaryRGBChangeColour
-   else if s[1] = '8' then
+   else if s[1] = kExportBinaryRGBBrightness then
      Result := lpBinaryRGBBrightness
-   else if s[1] = '9' then
+   else if s[1] = kExportBinaryFileContents then
      Result := lpBinaryFileContents
    else
      Result := lpUnknown;
@@ -193,34 +194,34 @@ begin
   if aIsRGB then
     writeln(tf, '{RGB')
   else
-    writeln(tf, '{');
+    writeln(tf, kDataBlockStart);
 
-  writeln(tf, 'a:' + IntToStr(Ord(aEEO.Source)));
-  writeln(tf, 'b:' + IntToStr(Ord(aEEO.Orientation)));
-  writeln(tf, 'c:' + IntToStr(Ord(aEEO.LSB)));
-  writeln(tf, 'd:' + IntToStr(Ord(aEEO.Language)));
-  writeln(tf, 'e:' + IntToStr(Ord(aEEO.NumberFormat)));
-  writeln(tf, 'f:' + IntToStr(Ord(aEEO.NumberSize)));
-  writeln(tf, 'g:' + IntToStr(aEEO.ScanDirection));
-  writeln(tf, 'h:' + IntToStr(Ord(aEEO.LineContent)));
-  writeln(tf, 'i:' + IntToStr(aEEO.LineCount));
-  writeln(tf, 'r:' + IntToStr(Ord(aEEO.RGBMode)));
-  writeln(tf, 's:' + BoolToStr(aEEO.RGBChangePixels));
-  writeln(tf, 't:' + IntToStr(aEEO.RGBChangeColour));
-  writeln(tf, 'u:' + IntToStr(aEEO.RGBBrightness));
+  writeln(tf, kExportSource +          ':' + IntToStr(Ord(aEEO.Source)));
+  writeln(tf, kExportOrientation +     ':' + IntToStr(Ord(aEEO.Orientation)));
+  writeln(tf, kExportLSB +             ':' + IntToStr(Ord(aEEO.LSB)));
+  writeln(tf, kExportLanguage +        ':' + IntToStr(Ord(aEEO.Language)));
+  writeln(tf, kExportNumberFormat +    ':' + IntToStr(Ord(aEEO.NumberFormat)));
+  writeln(tf, kExportNumberSize +      ':' + IntToStr(Ord(aEEO.NumberSize)));
+  writeln(tf, kExportScanDirection +   ':' + IntToStr(aEEO.ScanDirection));
+  writeln(tf, kExportLineContent +     ':' + IntToStr(Ord(aEEO.LineContent)));
+  writeln(tf, kExportLineCount +       ':' + IntToStr(aEEO.LineCount));
+  writeln(tf, kExportRGBMode +         ':' + IntToStr(Ord(aEEO.RGBMode)));
+  writeln(tf, kExportRGBChangePixels + ':' + BoolToStr(aEEO.RGBChangePixels));
+  writeln(tf, kExportRGBChangeColour + ':' + IntToStr(aEEO.RGBChangeColour));
+  writeln(tf, kExportRGBBrightness +   ':' + IntToStr(aEEO.RGBBrightness));
 
   // binary export options
 
-  writeln(tf, '1:' + IntToStr(Ord(aEEO.BinarySource)));
-  writeln(tf, '2:' + IntToStr(Ord(aEEO.BinaryOrientation)));
-  writeln(tf, '3:' + IntToStr(Ord(aEEO.BinaryLSB)));
-  writeln(tf, '4:' + IntToStr(aEEO.BinaryScanDirection));
-  writeln(tf, '5:' + IntToStr(Ord(aEEO.BinaryRGBMode)));
-  writeln(tf, '6:' + BoolToStr(aEEO.BinaryRGBChangePixels));
-  writeln(tf, '7:' + IntToStr(aEEO.BinaryRGBChangeColour));
-  writeln(tf, '8:' + IntToStr(aEEO.BinaryRGBBrightness));
-  writeln(tf, '9:' + IntToStr(Ord(aEEO.BinaryFileContents)));
-  writeln(tf, '}');
+  writeln(tf, kExportBinarySource +          ':' + IntToStr(Ord(aEEO.BinarySource)));
+  writeln(tf, kExportBinaryOrientation   +   ':' + IntToStr(Ord(aEEO.BinaryOrientation)));
+  writeln(tf, kExportBinaryLSB +             ':' + IntToStr(Ord(aEEO.BinaryLSB)));
+  writeln(tf, kExportBinaryScanDirection +   ':' + IntToStr(aEEO.BinaryScanDirection));
+  writeln(tf, kExportBinaryRGBMode +         ':' + IntToStr(Ord(aEEO.BinaryRGBMode)));
+  writeln(tf, kExportBinaryRGBChangePixels + ':' + BoolToStr(aEEO.BinaryRGBChangePixels));
+  writeln(tf, kExportBinaryRGBChangeColour + ':' + IntToStr(aEEO.BinaryRGBChangeColour));
+  writeln(tf, kExportBinaryRGBBrightness +   ':' + IntToStr(aEEO.BinaryRGBBrightness));
+  writeln(tf, kExportBinaryFileContents +    ':' + IntToStr(Ord(aEEO.BinaryFileContents)));
+  writeln(tf, kDataBlockEnd);
 
   CloseFile(tf);
 end;

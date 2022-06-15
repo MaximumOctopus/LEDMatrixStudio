@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -19,7 +18,7 @@ interface
 uses System.UITypes, ExtCtrls, classes, controls, types, sysutils, graphics, math,
      contnrs, System.Generics.Collections, Vcl.Imaging.GIFImg, Vcl.StdCtrls, Vcl.Forms,
 
-     matrixconstants, importdata, drawingdata, languagehandler,
+     fileconstants, matrixconstants, importdata, drawingdata, languagehandler,
 
      exportoptions, layer,
 
@@ -32,6 +31,7 @@ uses System.UITypes, ExtCtrls, classes, controls, types, sysutils, graphics, mat
 
 type
   TMouseOverEvent = procedure(const x, y : integer) of object;
+  TDebugEvent     = procedure(const s : string) of object;
 
   TPreviewOptions = record
                       Active            : boolean;
@@ -94,6 +94,7 @@ type
     FOnColourChange        : TNotifyEvent;
     FOnMouseOver           : TMouseOverEvent;
     FOnPreviewMouseDown    : TMouseOverEvent;
+    FOnDebugEvent          : TDebugEvent;
 
     FCanvasBackground      : integer;
 
@@ -146,7 +147,7 @@ type
 
     procedure OnPreviewBoxMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 
-    function  LoadDataParameterType(s : string; aHeaderMode, aMatrixMode, aDeadPixelMode, aLayerMode, aColoursMode : boolean): TLoadData;
+    function  LoadDataParameterType(const s : string; aHeaderMode, aMatrixMode, aDeadPixelMode, aLayerMode, aColoursMode : boolean): TLoadData;
 
     procedure ClickPixel(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure Shape1MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
@@ -204,8 +205,7 @@ type
     procedure CopyShape;
     procedure UpdateDrawTool(aSetX, aSetY, aSetColour : integer; aIsGradient : boolean);
     procedure PlotInBounds(aX, aY, aColour : integer);
-    procedure PlotPixelMatrix(x, y, aDefaultColour : integer);
-    procedure PlotPixelMatrixFrame(aFrame, x, y, aDefaultColour : integer);
+
     procedure DrawShape(aRealTime : boolean; aColour : integer; aIsGradient : boolean);
 
     function  HexToInt(const s : string): integer;
@@ -279,7 +279,8 @@ type
 
     procedure   SetMouseButtonColours(aLMB, aMMB, aRMB : integer);
 
-    procedure   SetPixel(aFrame, aX, aY, aColour : integer);
+    procedure   PlotPixelMatrix(x, y, aDefaultColour : integer); // use only this function (or PlotPixelMatrixFrame) to draw on the matrix outside of this class
+    procedure   PlotPixelMatrixFrame(aFrame, x, y, aDefaultColour : integer);
 
     function    RowToString(aFrame, aRow : integer): string;
     procedure   StringToRow(aCopyBrush : boolean; aString : string; aFrame, aRow, aTransparentColour : integer; aTransparent : boolean);
@@ -387,7 +388,7 @@ type
     function    LoadLEDMatrixData(aFileName : string; var aEEO : TExportOptions; aLoadMode : TLoadMode; aStartFrame : integer): TImportData;
 
     function    ImportFromGIF(aFileName : string): TImportData;
-    procedure   ExportToGIF(aBackground, aPixelSize, aPixelShape : integer; aFileName : string);
+    procedure   ExportToGIF(aBackground, aPixelSize, aPixelShape, aAnimationSpeed : integer; aFileName : string);
 
     procedure   ClearUserBuffers;
     procedure   CopyToUserBuffer(aFrame : integer);
@@ -485,6 +486,7 @@ type
     property    OnMouseOver           : TMouseOverEvent read FOnMouseOver                      write FOnMouseOver;
     property    OnColourChange        : TNotifyEvent    read FOnColourChange                   write FOnColourChange;
     property    OnPreviewMouseDown    : TMouseOverEvent read FOnPreviewMouseDown               write FOnPreviewMouseDown;
+    property    OnDebug               : TDebugEvent     read FOnDebugEvent                     write FOnDebugEvent;
 
     property    MatrixMerge           : TMatrix         read FMatrixMerge;
   protected
@@ -494,6 +496,8 @@ type
     procedure   MatrixNewFrameDisplayed; dynamic;
     procedure   ColourChange; dynamic;
     procedure   MouseOver; dynamic;
+
+    procedure   Debug(const s : string); dynamic;
   end;
 
 
@@ -586,7 +590,7 @@ begin
   // ===========================================================================
 
   FScrollHorizontal := TScrollBar.Create(FOwner);
-  FScrollHorizontal.Parent   := FCanvas;
+  FScrollHorizontal.Parent   := FCanvas ;
   FScrollHorizontal.Align    := alBottom;
   FScrollHorizontal.Kind     := sbHorizontal;
   FScrollHorizontal.Name     := 'FSH';
@@ -779,6 +783,14 @@ procedure TTheMatrix.ColourChange;
 begin
   if (Assigned(FOnColourChange)) and (Matrix.Available) then
     FOnColourChange(Self);
+end;
+
+
+// sends debug text to the parent application
+procedure TTheMatrix.Debug(const s : string);
+begin
+  if (Assigned(FOnDebugEvent)) then
+    FOnDebugEvent(s);
 end;
 
 
@@ -1704,23 +1716,6 @@ begin
   SelectionLMB := aLMB;
   SelectionMMB := aMMB;
   SelectionRMB := aRMB;
-end;
-
-
-procedure TTheMatrix.SetPixel(aFrame, aX, aY, aColour : integer);
-begin
-  if IsThisFrameLocked(FCurrentLayer, aFrame) then
-    Exit;
-
-  if  Matrix.Mode = mtMono then begin
-    if aColour = $000000 then
-      MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[aX, aY] := 0
-    else
-      MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[aX, aY] := 1;
-  end
-  else begin
-    MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[aX, aY] := aColour;
-  end;
 end;
 
 
@@ -4409,7 +4404,9 @@ begin
 end;
 
 
-// draws the matrix array
+// this and PlotPixelMatrixFrame() are the only two safe methods of drawing on the matrix
+// this takes in to account the gradient status and allows for the drawing buffer and
+// various other drawing modes.
 procedure TTheMatrix.PlotPixelMatrix(x, y, aDefaultColour : integer);
 var
   lColour : integer;
@@ -4420,6 +4417,7 @@ begin
 
   if (FLastMouseButton = CMouseMiddle) then begin
     case (Render.Gradient) of
+     // goOff        : lColour := aDefaultColour;
       goVertical   : lColour := Render.GradientIY[y];
       goHorizontal : lColour := Render.GradientIX[x];
     end;
@@ -4428,6 +4426,8 @@ begin
   case FMirrorMode of
     mmHorizontal : lNewCoord := Matrix.Height - y - 1;
     mmVertical   : lNewCoord := Matrix.Width - x - 1;
+  else
+    lNewCoord := Matrix.Height - y - 1;
   end;
 
   FDisplayBuffer.Grid[x, y] := lColour;
@@ -4439,6 +4439,9 @@ begin
 end;
 
 
+// this and PlotPixelMatrix() are the only two safe methods of drawing on the matrix
+// this takes in to account the gradient status and allows for the drawing buffer and
+// various other drawing modes.
 procedure TTheMatrix.PlotPixelMatrixFrame(aFrame, x, y, aDefaultColour : integer); // check currentlayer is okay to o
 var
   lColour : integer;
@@ -4455,6 +4458,8 @@ begin
   case FMirrorMode of
     mmHorizontal : lNewCoord := Matrix.Height - y - 1;
     mmVertical   : lNewCoord := Matrix.Width - x - 1;
+  else
+    lNewCoord := Matrix.Height - y - 1;
   end;
 
   if (aFrame = FCurrentFrame) then begin
@@ -4777,7 +4782,7 @@ var
                               else
                                 a := x - 1;
 
-                              d := Render.DrawData.Parameter; // count beteen pixels X000X = 4
+                              d := Render.DrawData.Parameter; // count between pixels X000X = 4
 
                               while x <> a do begin
 
@@ -4854,7 +4859,7 @@ var
                               else
                                 b := y - 1;
 
-                              d := Render.DrawData.Parameter; // count beteen pixels X000X = 4
+                              d := Render.DrawData.Parameter; // count between pixels X000X = 4
 
                               while x <> a do begin
 
@@ -5005,7 +5010,7 @@ var
 begin
   dec(Render.DrawData.Coords[0].X);
 
-  for y:=Render.DrawData.Coords[0].Y downto Render.DrawData.Coords[0].Y - 7 do begin
+  for y := Render.DrawData.Coords[0].Y downto Render.DrawData.Coords[0].Y - 7 do begin
     if (Render.DrawData.Coords[0].X >= 0) and (Render.DrawData.Coords[0].X <= Matrix.Width - 1) and
        (y >= 0) and (y <= Matrix.Height - 1) then begin
 
@@ -5042,7 +5047,7 @@ begin
 
   Readln(tf, s);
 
-  if s = '{fontRGB' then begin
+  if s = '{' + kFileHeaderFontRGB then begin
     FontMatrixMode := mtRGB;
 
     headermode := True;
@@ -5051,69 +5056,69 @@ begin
       Readln(tf, s);
 
       case s[1] of
-        '{' : begin
-                if headermode then begin
-                  headermode := False;
-                end
-                else begin
-                  if pos('char', s) <> 0 then begin
-                    inc(lFrame);
+        kDataBlockStart : begin
+                            if headermode then begin
+                              headermode := False;
+                            end
+                            else begin
+                              if pos(kFontPrefixChar, s) <> 0 then begin
+                                inc(lFrame);
 
-                    colid := 0;
+                                colid := 0;
 
-                    lFirstData := -1;
-                    lLastData := -1;
-                  end;
-                end;
-              end;
-        '}' : begin
-                if not headermode then begin
-                  if lFirstData <> -1 then
-                    FontMatrixStart[lFrame] := lFirstData
-                  else
-                    FontMatrixStart[lFrame] := 0;
+                                lFirstData := -1;
+                                lLastData := -1;
+                              end;
+                            end;
+                          end;
+        kDataBlockEnd   : begin
+                            if not headermode then begin
+                              if lFirstData <> -1 then
+                                FontMatrixStart[lFrame] := lFirstData
+                              else
+                                FontMatrixStart[lFrame] := 0;
 
-                  if lLastData <> -1 then
-                    FontMatrixEnd[lFrame] := lLastData
-                  else
-                    FontMatrixEnd[lFrame] := FontMatrixStart[lFrame];
-                end;
-              end;
-        'c' : begin
-                lInput  := '';
-                rowid   := lHeight - 1;
-                haddata := False;
+                              if lLastData <> -1 then
+                                FontMatrixEnd[lFrame] := lLastData
+                              else
+                                FontMatrixEnd[lFrame] := FontMatrixStart[lFrame];
+                            end;
+                          end;
+        kRGBFontData    : begin
+                            lInput  := '';
+                            rowid   := lHeight - 1;
+                            haddata := False;
 
-                for t := 3 to length(s) do begin
-                  if s[t] = ' ' then begin
-                    if lInput = '-1' then
-                      FontMatrix[lFrame, colid, rowid] := -1
-                    else begin
-                      FontMatrix[lFrame, colid, rowid] := HexToInt(lInput);
+                            for t := 3 to length(s) do begin
+                              if s[t] = ' ' then begin
+                                if lInput = '-1' then
+                                  FontMatrix[lFrame, colid, rowid] := -1
+                                else begin
+                                  FontMatrix[lFrame, colid, rowid] := HexToInt(lInput);
 
-                      haddata := True;
-                    end;
+                                  haddata := True;
+                                end;
 
-                    dec(rowid);
+                                dec(rowid);
 
-                    lInput := '';
-                  end
-                  else
-                    lInput := lInput + s[t];
-                end;
+                                lInput := '';
+                              end
+                              else
+                                lInput := lInput + s[t];
+                            end;
 
-                if haddata then begin
-                  if lFirstData = -1 then
-                    lFirstData := colid
-                  else
-                    lLastData := colid;
-                end;
+                            if haddata then begin
+                              if lFirstData = -1 then
+                                lFirstData := colid
+                              else
+                                lLastData := colid;
+                            end;
 
-                inc(colid);
-              end;
-        'h' : if headermode then begin
-                lHeight := StrToInt(Copy(s, 3, length(s) - 2));
-              end;
+                            inc(colid);
+                          end;
+        kRGBFontHeight  : if headermode then begin
+                            lHeight := StrToInt(Copy(s, 3, length(s) - 2));
+                          end;
 
       end;
     end;
@@ -5364,7 +5369,7 @@ begin
 end;
 
 
-function TTheMatrix.LoadDataParameterType(s : string; aHeaderMode, aMatrixMode, aDeadPixelMode, aLayerMode, aColoursMode : boolean): TLoadData;
+function TTheMatrix.LoadDataParameterType(const s : string; aHeaderMode, aMatrixMode, aDeadPixelMode, aLayerMode, aColoursMode : boolean): TLoadData;
 begin
   Result := ldUnknown;
 
@@ -5374,9 +5379,9 @@ begin
     Result := ldLoadBlockStartDeadPixel
   else if Pos('colours', s) <> 0 then
     Result := ldLoadBlockStartColours
-  else if s[1] = '{' then
+  else if s[1] = kDataBlockStart then
     Result := ldLoadBlockBegin
-  else if s[1] = '}' then
+  else if s[1] = kDataBlockEnd then
     Result := ldLoadBlockEnd
   else if s[1] = '[' then
     Result := ldLoadBlockBeginLayout
@@ -5385,73 +5390,73 @@ begin
   else begin
     if aHeaderMode then begin
       case s[1] of
-        'a' : Result := ldLoadHeaderSource;
-        'b' : Result := ldLoadHeaderSourceLSB;
-        'c' : Result := ldLoadHeaderSourceDirection;
-        '1' : Result := ldLoadHeaderPadMode;
-        '2' : Result := ldLoadHeaderHexFormat;
-        '3' : Result := ldLoadHeaderHexOutput;
-        '4' : Result := ldLoadHeaderBrackets;
-        'd' : Result := ldLoadHeaderDataSource;
-        'e' : Result := ldLoadHeaderOrientation;
-        'f' : Result := ldLoadHeaderScanDirection;
-        'g' : Result := ldLoadHeaderLSB;
-        'h' : Result := ldLoadHeaderLanguage;
-        'i' : Result := ldLoadHeaderNumberFormat;
-        'j' : Result := ldLoadHeaderNumberSize;
-        'k' : Result := ldLoadHeaderLineContent;
-        'l' : Result := ldLoadHeaderLineCount;
-        'm' : Result := ldLoadHeaderRGBMode;
-        'n' : Result := ldLoadHeaderRGBChangePixels;
-        'o' : Result := ldLoadHeaderRGBChangeColour;
-        'p' : Result := ldLoadHeaderOptimise;
-        'q' : Result := ldLoadHeaderRGBBrightness;
+        kAnimDataSource         : Result := ldLoadHeaderSource;
+        kAnimSourceLSB          : Result := ldLoadHeaderSourceLSB;
+        kAnimSourceDirection    : Result := ldLoadHeaderSourceDirection;
+        kAnimPadMode            : Result := ldLoadHeaderPadMode;
+        kAnimHexFormat          : Result := ldLoadHeaderHexFormat;
+        kAnimHexOutput          : Result := ldLoadHeaderHexOutput;
+        kAnimBrackets           : Result := ldLoadHeaderBrackets;
+        kAnimSource             : Result := ldLoadHeaderDataSource;
+        kAnimOrientation        : Result := ldLoadHeaderOrientation;
+        kAnimScanDirection      : Result := ldLoadHeaderScanDirection;
+        kAnimLSB                : Result := ldLoadHeaderLSB;
+        kAnimLanguage           : Result := ldLoadHeaderLanguage;
+        kAnimNumberFormat       : Result := ldLoadHeaderNumberFormat;
+        kAnimNumberSize         : Result := ldLoadHeaderNumberSize;
+        kAnimLineContent        : Result := ldLoadHeaderLineContent;
+        kAnimLineCount          : Result := ldLoadHeaderLineCount;
+        kAnimRGBMode            : Result := ldLoadHeaderRGBMode;
+        kAnimRGBChangePixels    : Result := ldLoadHeaderRGBChangePixels;
+        kAnimRGBChangeColour    : Result := ldLoadHeaderRGBChangeColour;
+        kAnimOptimise           : Result := ldLoadHeaderOptimise;
+        kAnimRGBBrightness      : Result := ldLoadHeaderRGBBrightness;
 
-        'w' : Result := ldLoadHeaderAutomationFile;
-        'x' : Result := ldLoadHeaderMatrixComment;
-	    	'y' : Result := ldLoadHeaderASCIIIndex;
-        'z' : Result := ldLoadHeaderRGBBackground;
+        kAnimAutomationFileName : Result := ldLoadHeaderAutomationFile;
+        kAnimComment            : Result := ldLoadHeaderMatrixComment;
+	    	kAnimASCIIIndex         : Result := ldLoadHeaderASCIIIndex;
+        kAnimRGBBackground      : Result := ldLoadHeaderRGBBackground;
 
-        '5' : Result := ldLoadHeaderPreviewEnabled;
-        '6' : Result := ldLoadHeaderPreviewSize;
-        '7' : Result := ldLoadHeaderPreviewView;
-        '8' : Result := ldLoadHeaderPreviewVoid;
-        '9' : Result := ldLoadHeaderPreviewOffset;
-        '0' : Result := ldLoadHeaderPreviewOffsetDir;
-        '!' : Result := ldLoadHeaderPreviewIncRadially;
-        '%' : Result := ldLoadHeaderLayerCount;
+        kAnimPreviewEnabled     : Result := ldLoadHeaderPreviewEnabled;
+        kAnimPreviewSize        : Result := ldLoadHeaderPreviewSize;
+        kAnimPreviewView        : Result := ldLoadHeaderPreviewView;
+        kAnimPreviewVoid        : Result := ldLoadHeaderPreviewVoid;
+        kAnimPreviewOffset      : Result := ldLoadHeaderPreviewOffset;
+        kAnimPreviewDirection   : Result := ldLoadHeaderPreviewOffsetDir;
+        kAnimPreviewIncRadially : Result := ldLoadHeaderPreviewIncRadially;
+        kAnimLayerCount         : Result := ldLoadHeaderLayerCount;
 
-        '}' : Result := ldLoadHeaderEnd;
+        kAnimBlockEnd           : Result := ldLoadHeaderEnd;
       end;
     end
     else if aDeadPixelMode then begin
       case s[1] of
-        'p' : Result := ldLoadDeadPixelData;
+        kAnimDeadPixelData : Result := ldLoadDeadPixelData;
       end;
     end
     else if aMatrixMode then begin
       case s[1] of
-        'w' : Result := ldLoadMatrixWidth;
-        'h' : Result := ldLoadMatrixHeight;
-        'r' : Result := ldLoadMatrixData;
-        'p' : Result := ldLoadMatrixLocked;
+        kAnimWidth       : Result := ldLoadMatrixWidth;
+        kAnimHeight      : Result := ldLoadMatrixHeight;
+        kAnimRowData     : Result := ldLoadMatrixData;
+        kAnimFrameLocked : Result := ldLoadMatrixLocked;
       end
     end
     else if aLayerMode then begin
       case s[1] of
-        'n' : Result := ldLoadLayoutName;
-        'w' : Result := ldLoadLayoutWidth;
-        'h' : Result := ldLoadLayoutHeight;
-        'l' : Result := ldLoadLayoutLocked;
+        kAnimLayerName   : Result := ldLoadLayoutName;
+        kAnimLayerWidth  : Result := ldLoadLayoutWidth;
+        kAnimLayerHeight : Result := ldLoadLayoutHeight;
+        kAnimLayerLocked : Result := ldLoadLayoutLocked;
       end;
     end
     else if aColoursMode then begin
       case s[1] of
-        'c' : Result := ldLoadColoursCustom;
-        'l' : Result := ldLoadColoursDraw0;
-        'm' : Result := ldLoadColoursDraw1;
-        'r' : Result := ldLoadColoursDraw2;
-        'p' : Result := ldLoadColoursPaletteHistory;
+        kAnimColoursCustom         : Result := ldLoadColoursCustom;
+        kAnimColoursLeft           : Result := ldLoadColoursDraw0;
+        kAnimColoursMiddle         : Result := ldLoadColoursDraw1;
+        kAnimColoursRight          : Result := ldLoadColoursDraw2;
+        kAnimColoursPaletteHistory : Result := ldLoadColoursPaletteHistory;
       end;
     end;
   end;
@@ -5701,89 +5706,89 @@ begin
 
   // ===========================================================================
 
-  writeln(tf, '{header');
+  writeln(tf, '{' + kFileHeaderHeader);
 
-  writeln(tf, '1:' + IntToStr(Ord(aTED.PadMode)));
-  writeln(tf, '2:' + IntToStr(Ord(aTED.HexFormat)));
-  writeln(tf, '3:' + IntToStr(Ord(aTED.HexOutput)));
-  writeln(tf, '4:' + IntToStr(Ord(aTED.Brackets)));
+  writeln(tf, kAnimPadMode +            ':' + IntToStr(Ord(aTED.PadMode)));
+  writeln(tf, kAnimHexFormat +          ':' + IntToStr(Ord(aTED.HexFormat)));
+  writeln(tf, kAnimHexOutput +          ':' + IntToStr(Ord(aTED.HexOutput)));
+  writeln(tf, kAnimBrackets +           ':' + IntToStr(Ord(aTED.Brackets)));
 
-  writeln(tf, '5:' + BoolToStr(aTED.Preview.Enabled));
-  writeln(tf, '6:' + IntToStr(aTED.Preview.Size));
-  writeln(tf, '7:' + IntToStr(Ord(aTED.Preview.View)));
-  writeln(tf, '8:' + IntToStr(aTED.Preview.Void));
-  writeln(tf, '9:' + IntToStr(aTED.Preview.Offset));
-  writeln(tf, '0:' + BoolToStr(aTED.Preview.OffsetDirection));
-  writeln(tf, '!:' + BoolToStr(aTED.Preview.IncrementRadially));
+  writeln(tf, kAnimPreviewEnabled +     ':' + BoolToStr(aTED.Preview.Enabled));
+  writeln(tf, kAnimPreviewSize +        ':' + IntToStr(aTED.Preview.Size));
+  writeln(tf, kAnimPreviewView +        ':' + IntToStr(Ord(aTED.Preview.View)));
+  writeln(tf, kAnimPreviewVoid +        ':' + IntToStr(aTED.Preview.Void));
+  writeln(tf, kAnimPreviewOffset +      ':' + IntToStr(aTED.Preview.Offset));
+  writeln(tf, kAnimPreviewDirection +   ':' + BoolToStr(aTED.Preview.OffsetDirection));
+  writeln(tf, kAnimPreviewIncRadially + ':' + BoolToStr(aTED.Preview.IncrementRadially));
 
-  if aEEO.ExportMode <> esNone then begin // export options haven't been modified TO DO
-    writeln(tf, 'd:' + IntToStr(Ord(aEEO.Source)));
-    writeln(tf, 'e:' + IntToStr(Ord(aEEO.Orientation)));
-    writeln(tf, 'f:' + IntToStr(aEEO.ScanDirection));
-    writeln(tf, 'g:' + IntToStr(Ord(aEEO.LSB)));
-    writeln(tf, 'h:' + IntToStr(Ord(aEEO.Language)));
-    writeln(tf, 'i:' + IntToStr(Ord(aEEO.NumberFormat)));
-    writeln(tf, 'j:' + IntToStr(Ord(aEEO.NumberSize)));
-    writeln(tf, 'k:' + IntToStr(Ord(aEEO.LineContent)));
-    writeln(tf, 'l:' + IntToStr(aEEO.LineCount));
+  if (aEEO.ExportMode <> esNone) then begin // export options haven't been modified TO DO
+    writeln(tf, kAnimSource +           ':' + IntToStr(Ord(aEEO.Source)));
+    writeln(tf, kAnimOrientation +      ':' + IntToStr(Ord(aEEO.Orientation)));
+    writeln(tf, kAnimScanDirection +    ':' + IntToStr(aEEO.ScanDirection));
+    writeln(tf, kAnimLSB +              ':' + IntToStr(Ord(aEEO.LSB)));
+    writeln(tf, kAnimLanguage +         ':' + IntToStr(Ord(aEEO.Language)));
+    writeln(tf, kAnimNumberFormat +     ':' + IntToStr(Ord(aEEO.NumberFormat)));
+    writeln(tf, kAnimNumberSize +       ':' + IntToStr(Ord(aEEO.NumberSize)));
+    writeln(tf, kAnimLineContent +      ':' + IntToStr(Ord(aEEO.LineContent)));
+    writeln(tf, kAnimLineCount +        ':' + IntToStr(aEEO.LineCount));
 
-    writeln(tf, 'm:' + IntToStr(Ord(aEEO.RGBMode)));
-    writeln(tf, 'n:' + BoolToStr(aEEO.RGBChangePixels));
-    writeln(tf, 'o:' + IntToStr(aEEO.RGBChangeColour));
-    writeln(tf, 'q:' + IntToStr(aEEO.RGBBrightness));
+    writeln(tf, kAnimRGBMode +          ':' + IntToStr(Ord(aEEO.RGBMode)));
+    writeln(tf, kAnimRGBChangePixels +  ':' + BoolToStr(aEEO.RGBChangePixels));
+    writeln(tf, kAnimRGBChangeColour +  ':' + IntToStr(aEEO.RGBChangeColour));
+    writeln(tf, kAnimRGBBrightness +    ':' + IntToStr(aEEO.RGBBrightness));
 
-    writeln(tf, 'p:' + BoolToStr(aEEO.Optimise));
+    writeln(tf, kAnimOptimise +         ':' + BoolToStr(aEEO.Optimise));
   end;
 
-  writeln(tf, 'w:' + aTED.AutomationFileName);
-  writeln(tf, 'x:' + Matrix.Comment);
-  writeln(tf, 'z:' + IntToStr(FRGBBackground));
-  writeln(tf, '?:' + IntToStr(aTED.StartFrame) + ',' + IntToStr(aTED.EndFrame));
-  writeln(tf, '%:' + IntToStr(MatrixLayers.Count));
-  writeln(tf, '}');
+  writeln(tf, kAnimAutomationFileName + ':' + aTED.AutomationFileName);
+  writeln(tf, kAnimComment +            ':' + Matrix.Comment);
+  writeln(tf, kAnimRGBBackground +      ':' + IntToStr(FRGBBackground));
+  writeln(tf, kAnimFrameRange +         ':' + IntToStr(aTED.StartFrame) + ',' + IntToStr(aTED.EndFrame));
+  writeln(tf, kAnimLayerCount +         ':' + IntToStr(MatrixLayers.Count));
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
   if (aTED.MatrixMode = mtRGB) then begin
-    writeln(tf, '{colours');
+    writeln(tf, '{' + kFileHeaderColours);
 
     for i := 0 to 15 do
-      writeln(tf, 'c:' + IntToStr(aColours.CustomColours[i]));
+      writeln(tf, kAnimColoursCustom + ':' + IntToStr(aColours.CustomColours[i]));
 
     for i := 0 to 27 do
-      writeln(tf, 'p:' + IntToStr(aColours.PaletteHistory[i]));
+      writeln(tf, kAnimColoursPaletteHistory + ':' + IntToStr(aColours.PaletteHistory[i]));
 
-    writeln(tf, 'l:' + IntToStr(aColours.DrawColours[CMouseLeft]));
-    writeln(tf, 'm:' + IntToStr(aColours.DrawColours[CMouseMiddle]));
-    writeln(tf, 'r:' + IntToStr(aColours.DrawColours[CMouseRight]));
+    writeln(tf, kAnimColoursLeft +   ':' + IntToStr(aColours.DrawColours[CMouseLeft]));
+    writeln(tf, kAnimColoursMiddle + ':' + IntToStr(aColours.DrawColours[CMouseMiddle]));
+    writeln(tf, kAnimColoursRight +  ':' + IntToStr(aColours.DrawColours[CMouseRight]));
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
   for lLayer := 0 to MatrixLayers.Count - 1 do begin
 
-    writeln(tf, '[layer');
-    writeln(tf, 'n:' + MatrixLayers[lLayer].Name);
-    writeln(tf, 'w:' + IntToStr(Matrix.Width));
-    writeln(tf, 'h:' + IntToStr(Matrix.Height));
-    writeln(tf, 'l:' + BoolToStr(MatrixLayers[lLayer].Locked));
+    writeln(tf, '[' + kFileHeaderLayer);
+    writeln(tf, kAnimLayerName +   ':' + MatrixLayers[lLayer].Name);
+    writeln(tf, kAnimLayerWidth +  ':' + IntToStr(Matrix.Width));
+    writeln(tf, kAnimLayerHeight + ':' + IntToStr(Matrix.Height));
+    writeln(tf, kAnimLayerLocked + ':' + BoolToStr(MatrixLayers[lLayer].Locked));
     writeln(tf, ']');
 
     // =========================================================================
 
     for i := aTED.StartFrame to aTED.EndFrame do begin
       case aTED.MatrixMode of
-        mtMono         : writeln(tf, '{anim');
-        mtBiSequential : writeln(tf, '{anim2');
-        mtBiBitPlanes  : writeln(tf, '{anim3');
-        mtRGB          : writeln(tf, '{anim4');
-        mtRGB3BPP      : writeln(tf, '{anim5');
+        mtMono         : writeln(tf, '{' + kFilePrefixMono);
+        mtBiSequential : writeln(tf, '{' + kFilePrefixBiSequential);
+        mtBiBitPlanes  : writeln(tf, '{' + kFilePrefixBiBitPlanes);
+        mtRGB          : writeln(tf, '{' + kFilePrefixRGB);
+        mtRGB3BPP      : writeln(tf, '{' + kFilePrefixRGB3BPP);
       end;
 
-      writeln(tf, 'w:' + IntToStr(Matrix.Width));
-      writeln(tf, 'h:' + IntToStr(Matrix.Height));
+      writeln(tf, kAnimWidth +  ':' + IntToStr(Matrix.Width));
+      writeln(tf, kAnimHeight + ':' + IntToStr(Matrix.Height));
 
       for y := 0 to Matrix.Height - 1 do begin
         s := '';
@@ -5792,18 +5797,18 @@ begin
           s := s + Copy(IntToHex(MatrixLayers[lLayer].Frames[i].Grid[x, y], 6), 1, 6) + ' ';
         end;
 
-        writeln(tf, 'r:' + s);
+        writeln(tf, kAnimRowData + ':' + s);
       end;
 
-      writeln(tf, 'p:' + BoolToStr(MatrixLayers[lLayer].Frames[i].Locked));
+      writeln(tf, kAnimFrameLocked + ':' + BoolToStr(MatrixLayers[lLayer].Frames[i].Locked));
 
-      writeln(tf, '}');
+      writeln(tf, kDataBlockEnd);
     end;
   end;
 
   // ===========================================================================
 
-  writeln(tf, '{deadpixel');
+  writeln(tf, '{' + kFileHeaderDeadPixel);
 
   for y := 0 to Matrix.Height - 1 do begin
     s := '';
@@ -5812,10 +5817,10 @@ begin
       s := s + IntToStr(Ord(MatrixDead.Grid[x, y])) + ' ';
     end;
 
-    writeln(tf, 'p:' + s);
+    writeln(tf, kAnimDeadPixelData + ':' + s);
   end;
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
@@ -5836,58 +5841,59 @@ begin
 
   // ===========================================================================
 
-  writeln(tf, '{fontheader');
+  writeln(tf, '{' + kFileHeaderFontHeader);
 
-  writeln(tf, '5:' + BoolToStr(aTED.Preview.Enabled));
-  writeln(tf, '6:' + IntToStr(aTED.Preview.Size));
-  writeln(tf, '7:' + IntToStr(Ord(aTED.Preview.View)));
-  writeln(tf, '8:' + IntToStr(aTED.Preview.Void));
-  writeln(tf, '9:' + IntToStr(aTED.Preview.Offset));
-  writeln(tf, '0:' + BoolToStr(aTED.Preview.OffsetDirection));
+  writeln(tf, kAnimPreviewEnabled +   ':' + BoolToStr(aTED.Preview.Enabled));
+  writeln(tf, kAnimPreviewSize +      ':' + IntToStr(aTED.Preview.Size));
+  writeln(tf, kAnimPreviewView +      ':' + IntToStr(Ord(aTED.Preview.View)));
+  writeln(tf, kAnimPreviewVoid +      ':' + IntToStr(aTED.Preview.Void));
+  writeln(tf, kAnimPreviewOffset +    ':' + IntToStr(aTED.Preview.Offset));
+  writeln(tf, kAnimPreviewDirection + ':' + BoolToStr(aTED.Preview.OffsetDirection));
 
   if aEEO.ExportMode <> esNone then begin // export options haven't been modified
-    writeln(tf, 'd:' + IntToStr(Ord(aEEO.Source)));
-    writeln(tf, 'e:' + IntToStr(Ord(aEEO.Orientation)));
-    writeln(tf, 'f:' + IntToStr(aEEO.ScanDirection));
-    writeln(tf, 'g:' + IntToStr(Ord(aEEO.LSB)));
-    writeln(tf, 'h:' + IntToStr(Ord(aEEO.Language)));
-    writeln(tf, 'i:' + IntToStr(Ord(aEEO.NumberFormat)));
-    writeln(tf, 'j:' + IntToStr(Ord(aEEO.NumberSize)));
-    writeln(tf, 'k:' + IntToStr(Ord(aEEO.LineContent)));
-    writeln(tf, 'l:' + IntToStr(aEEO.LineCount));
+    writeln(tf, kAnimSource +           ':' + IntToStr(Ord(aEEO.Source)));
+    writeln(tf, kAnimOrientation +      ':' + IntToStr(Ord(aEEO.Orientation)));
+    writeln(tf, kAnimScanDirection +    ':' + IntToStr(aEEO.ScanDirection));
+    writeln(tf, kAnimLSB +              ':' + IntToStr(Ord(aEEO.LSB)));
+    writeln(tf, kAnimLanguage +         ':' + IntToStr(Ord(aEEO.Language)));
+    writeln(tf, kAnimNumberFormat +     ':' + IntToStr(Ord(aEEO.NumberFormat)));
+    writeln(tf, kAnimNumberSize +       ':' + IntToStr(Ord(aEEO.NumberSize)));
+    writeln(tf, kAnimLineContent +      ':' + IntToStr(Ord(aEEO.LineContent)));
+    writeln(tf, kAnimLineCount +        ':' + IntToStr(aEEO.LineCount));
 
-    writeln(tf, 'm:' + IntToStr(Ord(aEEO.RGBMode)));
-    writeln(tf, 'n:' + BoolToStr(aEEO.RGBChangePixels));
-    writeln(tf, 'o:' + IntToStr(aEEO.RGBChangeColour));
+    writeln(tf, kAnimRGBMode +          ':' + IntToStr(Ord(aEEO.RGBMode)));
+    writeln(tf, kAnimRGBChangePixels +  ':' + BoolToStr(aEEO.RGBChangePixels));
+    writeln(tf, kAnimRGBChangeColour +  ':' + IntToStr(aEEO.RGBChangeColour));
   end;
 
-  writeln(tf, 'w:' + aTED.AutomationFileName);
-  writeln(tf, 'x:' + Matrix.Comment);
-  writeln(tf, 'y:' + IntToStr(aTED.ASCIIIndex));
-  writeln(tf, 'z:' + IntToStr(FRGBBackground));
-  writeln(tf, '}');
+  writeln(tf, kAnimAutomationFileName + ':' + aTED.AutomationFileName);
+  writeln(tf, kAnimComment +            ':' + Matrix.Comment);
+  writeln(tf, kAnimASCIIIndex +         ':' + IntToStr(aTED.ASCIIIndex));
+  writeln(tf, kAnimRGBBackground +      ':' + IntToStr(FRGBBackground));
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
   for lLayer := 0 to MatrixLayers.Count - 1 do begin
 
-    writeln(tf, '[layer');
-    writeln(tf, 'n:' + MatrixLayers[lLayer].Name);
-    writeln(tf, 'w:' + IntToStr(Matrix.Width));
-    writeln(tf, 'h:' + IntToStr(Matrix.Height));
+    writeln(tf, '[' + kFileHeaderLayer);
+    writeln(tf, kAnimLayerName +   ':' + MatrixLayers[lLayer].Name);
+    writeln(tf, kAnimLayerWidth +  ':' + IntToStr(Matrix.Width));
+    writeln(tf, kAnimLayerHeight + ':' + IntToStr(Matrix.Height));
+    writeln(tf, kAnimLayerLocked + ':' + BoolToStr(MatrixLayers[lLayer].Locked));
     writeln(tf, ']');
 
-    for i := 1 to 96 do begin
+    for i := 1 to FontCharacterCount do begin
       case aTED.MatrixMode of
-        mtMono         : writeln(tf, '{font');
-        mtBiSequential : writeln(tf, '{font2');
-        mtBiBitPlanes  : writeln(tf, '{font3');
-        mtRGB          : writeln(tf, '{font4');
-        mtRGB3BPP      : writeln(tf, '{font5');
+        mtMono         : writeln(tf, '{' + kFontPrefixMono);
+        mtBiSequential : writeln(tf, '{' + kFontPrefixBiSequential);
+        mtBiBitPlanes  : writeln(tf, '{' + kFontPrefixBiBitPlanes);
+        mtRGB          : writeln(tf, '{' + kFontPrefixRGB);
+        mtRGB3BPP      : writeln(tf, '{' + kFontPrefixRGB3BPP);
       end;
 
-      writeln(tf, 'w:' + IntToStr(Matrix.Width));
-      writeln(tf, 'h:' + IntToStr(Matrix.Height));
+      writeln(tf, kAnimWidth +  ':' + IntToStr(Matrix.Width));
+      writeln(tf, kAnimHeight + ':' + IntToStr(Matrix.Height));
 
       for y := 0 to Matrix.Height - 1 do begin
         s := '';
@@ -5896,16 +5902,16 @@ begin
           s := s + IntToHex(MatrixLayers[lLayer].Frames[i].Grid[x, y], 4) + ' ';
         end;
 
-        writeln(tf, 'r:' + s);
+        writeln(tf, kAnimRowData + ':' + s);
       end;
 
-      writeln(tf, '}');
+      writeln(tf, kDataBlockEnd);
     end;
   end;
 
   // ===========================================================================
 
-  writeln(tf, '{deadpixel');
+  writeln(tf, '{' + kFileHeaderDeadPixel);
 
   for y := 0 to Matrix.Height - 1 do begin
     s := '';
@@ -5914,10 +5920,10 @@ begin
       s := s + IntToStr(Ord(MatrixDead.Grid[x, y])) + ' ';
     end;
 
-    writeln(tf, 'p:' + s);
+    writeln(tf, kAnimDeadPixelData + ':' + s);
   end;
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
@@ -5937,31 +5943,31 @@ begin
   Rewrite(tf);
 
   case aTED.MatrixMode of
-    mtMono         : writeln(tf, '{frame');
-    mtBiSequential : writeln(tf, '{frame2');
-    mtBiBitPlanes  : writeln(tf, '{frame3');
-    mtRGB          : writeln(tf, '{frame4');
-    mtRGB3BPP      : writeln(tf, '{frame5');
+    mtMono         : writeln(tf, '{' + kFramePrefixMono);
+    mtBiSequential : writeln(tf, '{' + kFramePrefixBiSequential);
+    mtBiBitPlanes  : writeln(tf, '{' + kFramePrefixBiBitPlanes);
+    mtRGB          : writeln(tf, '{' + kFramePrefixRGB);
+    mtRGB3BPP      : writeln(tf, '{' + kFramePrefixRGB3BPP);
   end;
 
-  writeln(tf, 'w:' + IntToStr(Matrix.Width));
-  writeln(tf, 'h:' + IntToStr(Matrix.Height));
-  writeln(tf, 'x:' + Matrix.Comment);
-  writeln(tf, 'z:' + IntToStr(FRGBBackground));
+  writeln(tf, kAnimWidth +         ':' + IntToStr(Matrix.Width));
+  writeln(tf, kAnimHeight +        ':' + IntToStr(Matrix.Height));
+  writeln(tf, kAnimComment +       ':' + Matrix.Comment);
+  writeln(tf, kAnimRGBBackground + ':' + IntToStr(FRGBBackground));
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================
 
   for lLayer := 0 to MatrixLayers.Count - 1 do begin
 
-    writeln(tf, '[layer');
-    writeln(tf, 'n:' + MatrixLayers[lLayer].Name);
-    writeln(tf, 'w:' + IntToStr(Matrix.Width));
-    writeln(tf, 'h:' + IntToStr(Matrix.Height));
+    writeln(tf, '[' + kFileHeaderLayer);
+    writeln(tf, kAnimLayerName +   ':' + MatrixLayers[lLayer].Name);
+    writeln(tf, kAnimLayerWidth +  ':' + IntToStr(Matrix.Width));
+    writeln(tf, kAnimLayerHeight + ':' + IntToStr(Matrix.Height));
     writeln(tf, ']');
 
-    writeln(tf, '{');
+    writeln(tf, kDataBlockStart);
 
     for y := 0 to Matrix.Height - 1 do begin
       s := '';
@@ -5970,15 +5976,15 @@ begin
         s := s + IntToHex(MatrixLayers[lLayer].Frames[aFrame].Grid[x, y], 6) + ' ';
       end;
 
-      writeln(tf, 'r:' + s);
+      writeln(tf, kAnimRowData + ':' + s);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   // ===========================================================================
 
-  writeln(tf, '{deadpixel');
+  writeln(tf, '{' + kFileHeaderDeadPixel);
 
   for y := 0 to Matrix.Height - 1 do begin
     s := '';
@@ -5987,10 +5993,10 @@ begin
       s := s + IntToStr(Ord(MatrixDead.Grid[x, y])) + ' ';
     end;
 
-    writeln(tf, 'p:' + s);
+    writeln(tf, kAnimDeadPixelData + ':' + s);
   end;
 
-  writeln(tf, '}');
+  writeln(tf, kDataBlockEnd);
 
   // ===========================================================================  
 
@@ -6008,7 +6014,7 @@ begin
   AssignFile(tf, aFileName);
   Rewrite(tf);
 
-  for t := 1 to 96 do begin
+  for t := 1 to FontCharacterCount do begin
     s := '';
 
     for x := 0 to Matrix.Width - 1 do begin
@@ -6042,13 +6048,13 @@ begin
   AssignFile(tf, aFileName);
   Rewrite(tf);
 
-  writeln(tf, '{fontRGB');
-  writeln(tf, 'w:' + IntToStr(Matrix.Width));
-  writeln(tf, 'h:' + IntToStr(Matrix.Height));
-  writeln(tf, '}');
+  writeln(tf, '{' + kFileHeaderFontRGB);
+  writeln(tf, kRGBFontWidth  + ':' + IntToStr(Matrix.Width));
+  writeln(tf, kRGBFontHeight + ':' + IntToStr(Matrix.Height));
+  writeln(tf, kDataBlockEnd);
 
-  for t := 1 to 96 do begin
-    writeln(tf, '{char');
+  for t := 1 to FontCharacterCount do begin
+    writeln(tf, '{' + kFontPrefixChar);
 
     for x := 0 to Matrix.Width - 1 do begin
       mydata := '';
@@ -6060,10 +6066,10 @@ begin
           mydata := mydata + '-1 ';
       end;
 
-      writeln(tf, 'c:' + mydata);
+      writeln(tf, kRGBFontData + ':' + mydata);
     end;
 
-    writeln(tf, '}');
+    writeln(tf, kDataBlockEnd);
   end;
 
   CloseFile(tf);
@@ -6354,7 +6360,7 @@ begin
 
         case LoadDataParameterType(LowerCase(s), lHeaderMode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode) of
           ldLoadBlockStartHeader        : begin
-                                           if UpperCase(s) = '{FONTHEADER' then
+                                           if UpperCase(s) = '{' + UpperCase(kFileHeaderFontHeader) then
                                              fontmode := True
                                            else
                                              fontmode := False;
@@ -6628,7 +6634,7 @@ begin
       Matrix.Available         := False;
 
       Result.ImportOk    := False;
-      Result.ErrorString := 'Error loading project: "' + E.Message + '"';
+      Result.ErrorString := GLanguageHandler.Text[kErrorLoadingProject] + ': "' + E.Message + '"';
     end;
   end;
 
@@ -6684,7 +6690,7 @@ begin
 
       case LoadDataParameterType(s, headermode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode) of // TO DO layermode
         ldLoadBlockStartHeader      : begin
-                                        if UpperCase(s) = '{FONTHEADER' then
+                                        if UpperCase(s) = '{' + UpperCase(kFileHeaderFontHeader) then
                                           fontmode := True
                                         else
                                           fontmode := False;
@@ -6815,11 +6821,11 @@ var
 
  function parameterType(s : string): integer;
  begin
-   if s[1] = '{' then
+   if s[1] = kDataBlockStart then
      Result := 0
-   else if s[1] = '}' then
+   else if s[1] = kDataBlockEnd then
      Result := 1
-   else if s[1] = 'g' then
+   else if s[1] = kGradientColour then
      Result := 2
    else
      Result := -1;
@@ -7195,7 +7201,7 @@ begin
     end;
 
     if FSoftwareMode = smFont then begin
-      Result := (a * b) * (96);
+      Result := (a * b) * (FontCharacterCount);         // always 96 frames in font mode
     end
     else begin
       Result := (a * b) * (FrameCount);
@@ -8308,17 +8314,19 @@ begin
 end;
 
 
-procedure TTheMatrix.ExportToGIF(aBackground, aPixelSize, aPixelShape : integer; aFileName : string);
+// if you decide to tweak the export yourself then don't bother with the Embarcadero docs, they are worse
+// than useless. open Vcl.Imaging.GIFImg and examine the code to see how things are done!
+procedure TTheMatrix.ExportToGIF(aBackground, aPixelSize, aPixelShape, aAnimationSpeed : integer; aFileName : string);
 var
   lGIF, lTGI : TGIFImage;
-  lTempFrame: TBitmap;
+  lTempFrame : TBitmap;
   lFrame, lColumn, lRow : integer;
 
 begin
   lGIF := TGIFImage.Create;
 
-  lGIF.Animate     := True;
-  lGIF.AnimateLoop := glContinously;
+  lGIF.Animate        := True;
+  lGIF.AnimateLoop    := glContinously;
 
   FMatrixMerge := TMatrix.Create(Matrix.Width, Matrix.Height, Matrix.Mode, FRGBBackground);
 
@@ -8366,6 +8374,9 @@ begin
 
       lTGI := TGIFImage.Create;
       lTGI.Assign(lTempFrame);
+
+      if (aAnimationSpeed <> 0) then
+        TGIFGraphicControlExtension.Create(lTGI.Images.Frames[0]).Delay := aAnimationSpeed;
 
       lGIF.Add(lTGI);
 

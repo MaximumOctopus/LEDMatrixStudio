@@ -864,6 +864,10 @@ object frmMain: TfrmMain
       object tsGradients: TTabSheet
         Caption = '.'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
       end
     end
   end
@@ -3077,7 +3081,7 @@ object frmMain: TfrmMain
       OnClick = sbMouseModeClick
     end
     object sbPatternLeftTriangle: TSpeedButton
-      Tag = 36
+      Tag = 20
       Left = 789
       Top = 3
       Width = 30
@@ -3213,34 +3217,6 @@ object frmMain: TfrmMain
       OnMouseDown = sColour3MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object lPixelColour: TLabel
-      Left = 264
-      Top = 9
-      Width = 4
-      Height = 13
-      Caption = '.'
-    end
-    object sSelectionRMB: TShape
-      Tag = 1
-      Left = 219
-      Top = 6
-      Width = 18
-      Height = 18
-      Cursor = crHandPoint
-      Hint = 'Colour drawn with the right mouse button'
-      Brush.Color = clBlack
-      Visible = False
-      OnMouseDown = sColour3MouseDown
-      OnMouseMove = sRGBPalette1MouseMove
-    end
-    object lColoursRight: TLabel
-      Left = 209
-      Top = 8
-      Width = 7
-      Height = 13
-      Caption = 'R'
-      Visible = False
-    end
     object iMMBGradient: TImage
       Left = 180
       Top = 6
@@ -3283,6 +3259,34 @@ object frmMain: TfrmMain
         80007E80007E80007E80007E80007E80007E80007E0000000000000000000000
         0000000000000000000000000000000000000000000000000000000000000000
         000000000000000000000000000000000000}
+      Visible = False
+    end
+    object lPixelColour: TLabel
+      Left = 264
+      Top = 9
+      Width = 4
+      Height = 13
+      Caption = '.'
+    end
+    object sSelectionRMB: TShape
+      Tag = 1
+      Left = 219
+      Top = 6
+      Width = 18
+      Height = 18
+      Cursor = crHandPoint
+      Hint = 'Colour drawn with the right mouse button'
+      Brush.Color = clBlack
+      Visible = False
+      OnMouseDown = sColour3MouseDown
+      OnMouseMove = sRGBPalette1MouseMove
+    end
+    object lColoursRight: TLabel
+      Left = 209
+      Top = 8
+      Width = 7
+      Height = 13
+      Caption = 'R'
       Visible = False
     end
     object lColoursMiddle: TLabel
@@ -5647,7 +5651,7 @@ object frmMain: TfrmMain
   object colorDialog: TColorDialog
     Options = [cdFullOpen]
     Left = 784
-    Top = 216
+    Top = 208
   end
   object timerAnimate: TTimer
     Tag = 1
@@ -6837,6 +6841,10 @@ object frmMain: TfrmMain
       Caption = '.'
       OnClick = miGradFromClick
     end
+    object miGradientBottomTop: TMenuItem
+      Caption = '.'
+      OnClick = miGradientBottomTopClick
+    end
   end
   object puRandom: TPopupMenu
     Left = 1160
@@ -7080,7 +7088,7 @@ object frmMain: TfrmMain
     Filter = 'GIF Image (*.gif)|*.gif'
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Left = 736
-    Top = 268
+    Top = 260
   end
   object puGradientRGB_3BPP: TPopupMenu
     Left = 928

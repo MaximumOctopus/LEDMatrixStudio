@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -439,7 +438,7 @@ begin
     end;
   end
   else
-    MessageDlg('Error, unknown orientation' + IntToStr(Ord(teo.Orientation)), mtError, [mbOK], 0);
+    MessageDlg('Error, unknown orientation ' + IntToStr(Ord(teo.Orientation)), mtError, [mbOK], 0);
 
   // ===========================================================================
 

@@ -6,7 +6,6 @@
 // https://github.com/MaximumOctopus/LEDMatrixStudio
 //
 // Please do not modifiy this comment section
-
 //
 // ===================================================================
 
@@ -570,6 +569,12 @@ const
   kQuickDataToolbar = 544;
   kSimpleExport = 545;
   kHexFormat = 546;
+  kErrorLoadingProject = 547;
+  kGradientFlip = 548;
+  kAnimationSpeed = 549;
+  kAnimationSpeedHelp = 550;
+
+  kLanguageConstantCount = 551;
   
   
 {$ENDREGION}
@@ -625,10 +630,10 @@ var
   tf : TextFile;
   lFileName : string;
   s : string;
-//  t : integer;
+  t : integer;
 
 begin
-  Result := False;
+  Result := True;
 
   lFileName := FAppPath + '\language\' + FLanguage + '.txt';
 
@@ -642,19 +647,31 @@ begin
       Readln(tf, s);
 
      Text.Add(s);
-     // Text.Add(IntToStr(t)); // swap-out the above line with this one if you want to debug
+     // Text.Add(IntToStr(t)); // swap-out the above line with this one if you want to debug, and uncomment the inc(t) below
 
-//      inc(t);
+     // inc(t);
     end;
 
     CloseFile(tf);
 
     // ======================================================================
 
-    Result := True;
+    if (Text.Count <> kLanguageConstantCount) then begin
+      MessageDlg('Check your language files are up-to-date. They appear to have an incorrect number of entries!' + #13#10 + #13#10 + '<install>\language\', mtError, [mbOK], 0);
+
+      for t := Text.Count to kLanguageConstantCount + 1 do
+        Text.Add('missing #' + IntToStr(Text.Count));
+
+      Result := False;
+    end;
+
+    // ======================================================================
   end
-  else
+  else begin
     MessageDlg('Language files missing!' + #13#10 + #13#10 + '<install>\language\', mtError, [mbOK], 0);
+
+    Result := False;
+  end;
 end;
 
 
