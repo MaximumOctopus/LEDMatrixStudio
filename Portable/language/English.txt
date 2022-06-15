@@ -545,3 +545,7 @@ GIF dimensions are too large (limit is 256x256)! This gif
 Simple export toolbar
 Simple Export
 Hex Prefix
+Error loading project
+Flip gradient
+Animation speed
+(in 1/100ths of a second, use zero for default)

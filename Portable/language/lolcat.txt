@@ -545,3 +545,7 @@ GIF DIMENSHUNS R 2 LARGE (LIMIT IZ 256X256)! DIS GIF
 Simpl xport toolbar
 Simpl xport
 Hex Prefix
+Error loading teh project
+Gradient from bottom->top
+Anmationz speedz
+(in 1/100ths of a second, use zero for default)
