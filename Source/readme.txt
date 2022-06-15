@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.10.8                                                  =
+ =  LED Matrix Studio v0.10.9                                                  =
  =                                                                             =
- =  May 21st 2021                                                              =
+ =  June 15th 2022                                                             =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             =
@@ -119,8 +119,8 @@
 
    All coding       : Paul A Freshney
    Development Cats : Rutherford, Freeman, and Maxwell
-   Thanks           : Lasa, Nitesh, Lorenz, Greg, Andrew, Apostolos, David,
-                      Peter, Zoltan, and Gary
+   Thanks           : Dennis, Lasa, Nitesh, Lorenz, Greg, Andrew, Apostolos, 
+                      David, Peter, Zoltan, and Gary
 
    Dedicated to Julie, Adam, and Dyanne.
 
@@ -132,7 +132,19 @@
 
  Please consider sending it to me so that I may include it with
  future updates!
+
+
+========================================================================
+== Updates for 0.10.9 beta =============================================
+======================================================================== 
+
+Added: Animation speed setting in GIF Export
+       This is currently a global setting; per-frame delay will come in 
+	   a future update.
  
+Fixed: Crash when selecting right triangle pattern.
+Fixed: Incorrect "scan direction" value when loading matrix preset.
+Fixed: A couple of minor issues with the gradient brush and gradient modes.
 
 ========================================================================
 == Updates for 0.10.8 beta =============================================

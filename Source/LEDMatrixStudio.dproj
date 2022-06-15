@@ -8,7 +8,7 @@
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>18.8</ProjectVersion>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -258,6 +258,12 @@
         <DCCReference Include="code\classes\profilehandler.pas"/>
         <DCCReference Include="code\classes\fonthandler.pas"/>
         <DCCReference Include="code\classes\languagehandler.pas"/>
+        <DCCReference Include="code\frames\frameQuickData.pas">
+            <Form>frameSimpleExport</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="code\units\fileconstants.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -290,6 +296,12 @@
             <Deployment Version="3">
                 <DeployFile LocalName="LEDMatrixStudio.32.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>LEDMatrixStudio.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="LEDMatrixStudio.64.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>LEDMatrixStudio.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

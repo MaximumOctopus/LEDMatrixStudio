@@ -79,7 +79,9 @@ uses
   presethandler in 'code\classes\presethandler.pas',
   profilehandler in 'code\classes\profilehandler.pas',
   fonthandler in 'code\classes\fonthandler.pas',
-  languagehandler in 'code\classes\languagehandler.pas';
+  languagehandler in 'code\classes\languagehandler.pas',
+  frameQuickData in 'code\frames\frameQuickData.pas' {frameSimpleExport: TFrame},
+  fileconstants in 'code\units\fileconstants.pas';
 
 {$R *.res}
 
