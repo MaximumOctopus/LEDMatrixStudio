@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -45,6 +45,7 @@ type
     class function  GetExampleCodeDisclaimer(teo : TExportOptions): string;
     class function  GetRGBMode(teo : TExportOptions; aIncludeComment : boolean): string;
     class function  GetRGBBrightness(teo : TExportOptions; aIncludeComment : boolean): string;
+    class function  GetColourSpace(teo : TExportOptions; aIncludeComment : boolean): string;
     class function  GetScanDirection(teo : TExportOptions; aIncludeComment : boolean): string;
     class function  GetSource(aLanguage : TExportLanguage; aSaveType : TReadSource): string;
     class procedure GetSpacerLine(aLanguage : TExportLanguage; var aOutput : TStringList);
@@ -365,10 +366,9 @@ begin
   cc := GetCommentCharacter(teo.Language);
 
   aOutput.Add(cc + '=================================================================');
-  aOutput.Add(cc + 'LED Matrix Studio - (c) Paul A Freshney 2021');
+  aOutput.Add(cc + 'LED Matrix Studio - (c) Paul A Freshney 2023');
   aOutput.Add(cc);
-  aOutput.Add(cc + 'www.MaximumOctopus.com');
-  aOutput.Add(cc + 'www.MaximumOctopus.com/electronics/builder.htm');
+  aOutput.Add(cc + 'https://github.com/MaximumOctopus/LEDMatrixStudio');
   aOutput.Add(cc);
   aOutput.Add(cc + TUtility.CreatedDate);
 
@@ -428,6 +428,7 @@ begin
       aOutput.Add(cc);
       aOutput.Add(GetRGBMode(teo, True));
       aOutput.Add(GetRGBBrightness(teo, True));
+      aOutput.Add(GetColourSpace(teo, True));
     end
     else
       aOutput.Add(GetNumberSize(teo.Language, teo.NumberSize, True));
@@ -477,6 +478,15 @@ begin
     Result := cc + IntToStr(teo.RGBBrightness) + '% - ' + GLanguageHandler.Text[kAreYouSure]
   else
     Result := cc + IntToStr(teo.RGBBrightness) + '%';
+end;
+
+
+class function TExportUtility.GetColourSpace(teo : TExportOptions; aIncludeComment : boolean): string;
+begin
+  if (teo.ColourSpaceRGB = csRGB32) then
+    Result := TitleWithComments('Colour Space : 8 bits', teo.Language, aIncludeComment)
+  else
+    Result := TitleWithComments('Colour Space : 5/6/5', teo.Language, aIncludeComment);
 end;
 
 

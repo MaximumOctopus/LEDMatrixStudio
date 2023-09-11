@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -17,7 +17,7 @@ interface
 
 type
   TNumberFormat       = (nfDecimal, nfBinary, nfHex);
-  TNumberSize         = (ns8Bit, ns16bit, ns32bit, ns8bitSwap, ns16bitSwap, ns64bit, nsRGB8bit, nsRGB32bit);
+  TNumberSize         = (ns8Bit, ns16bit, ns32bit, ns8bitSwap, ns16bitSwap, ns64bit, nsRGB8bit, nsRGB16bit, nsRGB32bit);
   TReadSource         = (rsColumns, rsRows);
   TInputOrientation   = (ioTopBottomLeftRight, ioBottomTopRightLeft, ioSure24x16);
   TRGBMode            = (cmRGB, cmBGR, cmGRB, cmBRG, cmRGBSimple);
@@ -26,6 +26,7 @@ type
   TExportLanguage     = (elCSV, elPICAXE, elC1Dim, elC2Dim, elCFastLED, elPython1Dim, elPython2Dim, elMicrochip, elPascal, elSpecial);
   TLineContent        = (lcRowCol, lcFrame, lcBytes);
   TBinaryFileContents = (bfEntireAnimation, bfSingleFrame);
+  TColourSpace        = (csRGB32, csRGB565);
 
 
   TExportOptions = record
@@ -72,6 +73,9 @@ type
                      BinaryRGBBrightness   : integer;
                      BinaryNumberSize      : TNumberSize;
                      BinaryFileContents    : TBinaryFileContents;
+
+                     ColourSpaceRGB        : TColourSpace;
+                     BinaryColourSpaceRGB  : TColourSpace;
 
                      Examples              : boolean; // include code example to output (BETA!)
                    end;

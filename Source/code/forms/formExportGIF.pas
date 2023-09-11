@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -46,6 +46,7 @@ type
     lAnimationSpeed: TLabel;
     seAnimationSpeed: TSpinEdit;
     lAnimationSpeedHelp: TLabel;
+    rbRoundRect: TRadioButton;
     procedure bSaveClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure eFileNameChange(Sender: TObject);
@@ -83,10 +84,11 @@ begin
       eFileName.Text  := aExportGIFOld.FileName;
       ePixelSize.Text := IntToStr(aExportGIFOld.PixelSize);
 
-      if (aExportGIFOld.PixelShape) = 0 then
-        rbSquare.Checked := True
-      else
-        rbSquare.Checked := False;
+      case (aExportGIFOld.PixelShape) of
+        0 : rbSquare.Checked := True;
+        1 : rbCircle.Checked := True;
+        2 : rbRoundRect.Checked := True;
+      end;
 
       ShapeNorfolkDigital.Brush.Color := aExportGIFOld.Background;
 
@@ -107,8 +109,10 @@ begin
 
         if (rbSquare.Checked) then
           Result.PixelShape := 0
+        else if (rbCircle.Checked) then
+          Result.PixelShape := 1
         else
-          Result.PixelShape := 1;
+          Result.PixelShape := 2;
       end;
 
     finally
@@ -143,6 +147,7 @@ begin
   lAnimationSpeedHelp.Caption := GLanguageHandler.Text[kAnimationSpeedHelp];
   rbSquare.Caption            := GLanguageHandler.Text[kSquare];
   rbCircle.Caption            := GLanguageHandler.Text[kCircle];
+  rbRoundRect.Caption         := GLanguageHandler.Text[kSquareR];
 
   bOK.Caption                 := GLanguageHandler.Text[kOK];
   bCancel.Caption             := GLanguageHandler.Text[kCancel];

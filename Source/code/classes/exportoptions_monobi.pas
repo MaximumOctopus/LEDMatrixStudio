@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -180,7 +180,7 @@ begin
       for y := teo.SelectiveStart - 1 to teo.SelectiveEnd - 1 do begin
         tdo := ExportRowData(teo, t, y, spacingstring);
 
-        for i := 0 to 7 do begin
+        for i := 0 to tdo.Count - 1 do begin
           if tdo.data[i] <> '' then begin
             lMatrixData[y].Add(ProcessUnique(prefix + tdo.data[i]) + spacingstring)
           end;
@@ -194,7 +194,7 @@ begin
       for x := teo.SelectiveStart - 1 to teo.SelectiveEnd - 1 do begin
         tdo := ExportColumnData(teo, t, x, spacingstring);
 
-        for i := 0 to 7 do begin
+        for i := 0 to tdo.Count - 1 do begin
           if tdo.data[i] <> '' then begin
             lMatrixData[x].Add(ProcessUnique(prefix + tdo.data[i]) + spacingstring)
           end;
@@ -386,7 +386,7 @@ begin
   case teo.language of
     elC1Dim,
     elC2Dim       : aOutput.Add(teo.DataPadding + '};');
-    elCFastLED      : {};
+    elCFastLED    : {};
     elPython1Dim,
     elPython2Dim  : aOutput.Add(teo.DataPadding + ']');
   end;
@@ -405,7 +405,7 @@ var
   s : string;
   nsbits, nspads : integer;
   bitcounter, dataindex, y, lScanDirection : integer;
-  lInternalNumber : array[0..7] of Int64;
+  lInternalNumber : array[0..DataOutDataMax] of Int64;
   lMatrixData : TMatrix;
 
 begin
@@ -413,10 +413,12 @@ begin
 
   MatrixMain.CreateMatrixMerge;
 
-  for y := 0 to 7 do begin
+  for y := 0 to DataOutDataMax do begin
     lInternalNumber[y] := -1;
-    Result.data[y] := '';
+    Result.Data[y] := '';
   end;
+
+  Result.Count := 0;
 
   nsbits := NumberSizes[Ord(teo.NumberSize)];
   nspads := NumberPadding[Ord(teo.NumberSize)];
@@ -515,9 +517,11 @@ begin
     end;
   end;
 
+  Result.Count := DataIndex;
+
   // ===========================================================================
 
-  for y := 0 to 7 do begin
+  for y := 0 to Result.Count - 1 do begin
     if lInternalNumber[y] <> -1 then begin
       inc(Result.count);
 
@@ -553,7 +557,7 @@ var
   s : string;
   nsbits, nspads : integer;
   bitcounter, dataindex, x, lScanDirection : integer;
-  lInternalNumber : array[0..7] of Int64;
+  lInternalNumber : array[0..DataOutDataMax] of Int64;
   lMatrixData : TMatrix;
 
 begin
@@ -561,10 +565,12 @@ begin
 
   MatrixMain.CreateMatrixMerge;
 
-  for x := 0 to 7 do begin
+  for x := 0 to DataOutDataMax do begin
     lInternalNumber[x] := -1;
-    Result.data[x]     := '';
+    Result.Data[x]     := '';
   end;
+
+  Result.Count := 0;
 
   nsbits := NumberSizes[Ord(teo.NumberSize)];
   nspads := NumberPadding[Ord(teo.NumberSize)];
@@ -650,7 +656,7 @@ begin
             lInternalNumber[dataindex] := lInternalNumber[dataindex] + (powers[nsbits - bitcounter]);
         end;
 
-        if bitcounter=nsbits then begin
+        if bitcounter = nsbits then begin
           bitcounter := 0;
           inc(dataindex);
 
@@ -663,9 +669,11 @@ begin
     end;
   end;
 
+  Result.Count := dataindex;
+
   // ===========================================================================
 
-  for x := 0 to 7 do begin
+  for x := 0 to Result.Count - 1 do begin
     if lInternalNumber[x] <> -1 then begin
       inc(Result.count);
 

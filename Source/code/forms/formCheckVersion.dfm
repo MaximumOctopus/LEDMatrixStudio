@@ -254,7 +254,6 @@ object frmCheckVersion: TfrmCheckVersion
     end
   end
   object httpMain: TIdHTTP
-    AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1

@@ -3,7 +3,7 @@ object frameCopyMultiple: TframeCopyMultiple
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Copy Multiple Frames'
-  ClientHeight = 312
+  ClientHeight = 296
   ClientWidth = 464
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,14 +19,14 @@ object frameCopyMultiple: TframeCopyMultiple
   TextHeight = 13
   object Bevel1: TBevel
     Left = 8
-    Top = 270
+    Top = 254
     Width = 445
     Height = 4
     Shape = bsTopLine
   end
   object Label4: TLabel
     Left = 8
-    Top = 251
+    Top = 235
     Width = 4
     Height = 13
     Caption = '.'
@@ -981,7 +981,7 @@ object frameCopyMultiple: TframeCopyMultiple
   end
   object bOK: TBitBtn
     Left = 299
-    Top = 280
+    Top = 264
     Width = 75
     Height = 25
     Enabled = False
@@ -1042,7 +1042,7 @@ object frameCopyMultiple: TframeCopyMultiple
   end
   object bCancel: TBitBtn
     Left = 380
-    Top = 280
+    Top = 264
     Width = 75
     Height = 25
     Cancel = True

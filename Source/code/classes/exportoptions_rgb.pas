@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -329,17 +329,27 @@ begin
       if MatrixMain.MatrixDead.Grid[aColId, lRowPixel] = ptNormal then begin
         if teo.NumberSize = nsRGB8bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
-            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar)
+            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB)
           else
-            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar);
+            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
+        else if (teo.NumberSize = nsRGB16bit) then begin
+          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness))
+          else
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness));
+
+          output := output + spacingchar;
+
+          inc(Result.Count);
+        end
         else if teo.NumberSize = nsRGB32bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
-            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB,  teo.RGBBrightness))
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
           else
-            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB,  teo.RGBBrightness));
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB,  teo.RGBBrightness));
 
           output := output + spacingchar;
 
@@ -353,17 +363,27 @@ begin
       if MatrixMain.MatrixDead.Grid[aColId, lRowPixel] = ptNormal then begin
         if teo.NumberSize = nsRGB8bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
-            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar)
+            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB)
           else
-            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar);
+            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
+        else if (teo.NumberSize = nsRGB16bit) then begin
+          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness))
+          else
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness));
+
+          output := output + spacingchar;
+
+          inc(Result.Count);
+        end
         else if teo.NumberSize = nsRGB32bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, lRowPixel] = MatrixMain.RGBBackground) then
-            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
           else
-            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB, teo.RGBBrightness));
+            output := output + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(lMatrixData.Grid[aColId, lRowPixel], teo.RGBMode, teo.LSB, teo.RGBBrightness));
 
           output := output + spacingchar;
 
@@ -447,17 +467,27 @@ begin
       if MatrixMain.MatrixDead.Grid[lColumnPixel, aRowId] = ptNormal then begin
         if teo.NumberSize = nsRGB8bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar)
+            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB)
           else
-            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar);
+            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
+        else if (teo.NumberSize = nsRGB16bit) then begin
+          if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness))
+          else
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness));
+
+          lOutput := lOutput + spacingchar;
+
+          inc(Result.Count);
+        end
         else if teo.NumberSize = nsRGB32bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
           else
-            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness));
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness));
 
           lOutput := lOutput + spacingchar;
 
@@ -471,17 +501,27 @@ begin
       if MatrixMain.MatrixDead.Grid[lColumnPixel, aRowId] = ptNormal then begin
         if teo.NumberSize = nsRGB8bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar)
+            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB)
           else
-            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar);
+            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, prefix, spacingchar, teo.ColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
+        else if (teo.NumberSize = nsRGB16bit) then begin
+          if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness))
+          else
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 4, TUtility.RGBConvertTo16(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.ColourSpaceRGB, teo.RGBBrightness));
+
+          lOutput := lOutput + spacingchar;
+
+          inc(Result.Count);
+        end
         else if teo.NumberSize = nsRGB32bit then begin
           if (teo.RGBChangePixels) and (lMatrixData.Grid[lColumnPixel, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness))
           else
-            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness));
+            lOutput := lOutput + prefix + TUtility.RGBColourNumberFormat(teo.NumberFormat, 8, TUtility.RGBConvertTo32(lMatrixData.Grid[lColumnPixel, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness));
 
           lOutput := lOutput + spacingchar;
 

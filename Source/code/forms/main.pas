@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -626,6 +626,8 @@ type
     pQuickData: TPanel;
     miQuickData: TMenuItem;
     miGradientBottomTop: TMenuItem;
+    N28: TMenuItem;
+    miFontWrap: TMenuItem;
     procedure sbBuildClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure sbClearClick(Sender: TObject);
@@ -822,6 +824,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure miQuickDataClick(Sender: TObject);
     procedure miGradientBottomTopClick(Sender: TObject);
+    procedure miFontWrapClick(Sender: TObject);
   public
     procedure PreviewWindowChangeFrame(aNewFrame : integer);
     procedure PreviewWindowCommand(aCommandID : integer);
@@ -2006,6 +2009,12 @@ begin
 end;
 
 
+procedure TfrmMain.miFontWrapClick(Sender: TObject);
+begin
+  MatrixMain.FontWrap := miFontWrap.Checked;
+end;
+
+
 procedure TfrmMain.UpdateDisplay(aNewFramePosition : integer);
 begin
   tbFrames.Max                  := MatrixMain.FrameCount;
@@ -2958,7 +2967,7 @@ end;
 procedure TfrmMain.sRGBPalette1MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
-  lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo(TShape(Sender).Brush.Color, cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(TShape(Sender).Brush.Color, cmRGBSimple, 100, nfDecimal, '', ' ') + ')';
+  lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo32(TShape(Sender).Brush.Color, cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(TShape(Sender).Brush.Color, cmRGBSimple, 100, nfDecimal, '', ' ', csRGB32) + ')';
 end;
 
 
@@ -5182,7 +5191,7 @@ begin
     case MatrixMain.Matrix.Mode of
       mtRGB     : statusMain.SimpleText := 'X: ' + IntToStr(x + 1) +
                                          '  Y: ' + IntToStr(y + 1) +
-                                         '  ' + GLanguageHandler.Text[kData] + ': ' + LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGB, llBottomRight, 100), 6);
+                                         '  ' + GLanguageHandler.Text[kData] + ': ' + LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo32(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGB, llBottomRight, 100), 6);
       mtRGB3BPP : statusMain.SimpleText := 'X: ' + IntToStr(x + 1) +
                                          '  Y: ' + IntToStr(y + 1) +
                                          '  ' + GLanguageHandler.Text[kData] + ': ' + LMSSettings.App.HexPrefix + IntToHex(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], 2);
@@ -5190,7 +5199,7 @@ begin
 
     if (lPixelColour.Visible) then begin
       if MatrixMain.Matrix.Mode = mtRGB then
-        lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGBSimple, 100, nfDecimal, '', ' ') + ')'
+        lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo32(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], cmRGBSimple, 100, nfDecimal, '', ' ', csRGB32) + ')'
       else
         lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(MatrixMain.MatrixLayers[MatrixMain.CurrentLayer].Frames[tbFrames.Position].Grid[x, y], 2);
     end;
@@ -6009,7 +6018,7 @@ end;
 
 procedure TfrmMain.PaletteColourOver(aColour : integer);
 begin
-  lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo(aColour, cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(aColour, cmRGBSimple, 100, nfDecimal, '', ' ') + ')';
+  lPixelColour.Caption := LMSSettings.App.HexPrefix + IntToHex(TUtility.RGBConvertTo32(aColour, cmRGB, llBottomRight, 100), 6) + ' (' + TUtility.RGBConvertToSplit(aColour, cmRGBSimple, 100, nfDecimal, '', ' ', csRGB32) + ')';
 end;
 
 

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -798,7 +798,7 @@ end;
 procedure TfrmNewBrush.sRGBPaletteColourMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
-  lPixelColour.Caption := '0x' + IntToHex(TUtility.RGBConvertTo(TShape(Sender).Brush.Color, cmRGB, llBottomRight, 100), 6);
+  lPixelColour.Caption := '0x' + IntToHex(TUtility.RGBConvertTo32(TShape(Sender).Brush.Color, cmRGB, llBottomRight, 100), 6);
 end;
 
 procedure TfrmNewBrush.sSelectionLMBMouseDown(Sender: TObject;

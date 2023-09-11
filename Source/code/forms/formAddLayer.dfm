@@ -28,6 +28,7 @@ object frmAddLayer: TfrmAddLayer
     Top = 8
     Width = 100
     Height = 100
+    Hint = 'Oh no, not again'
     AutoSize = True
     Picture.Data = {
       07544269746D617066750000424D667500000000000036000000280000006400

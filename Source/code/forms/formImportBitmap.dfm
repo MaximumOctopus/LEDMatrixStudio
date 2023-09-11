@@ -281,10 +281,6 @@ object frmImportBitmap: TfrmImportBitmap
     TabOrder = 4
     object tsSingleImage: TTabSheet
       Caption = '.'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Shape1: TShape
         Left = 15
         Top = 48
@@ -346,10 +342,6 @@ object frmImportBitmap: TfrmImportBitmap
     object tsMultipleImages: TTabSheet
       Caption = '.'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object iMultipleImages: TImage
         Left = 16
         Top = 19

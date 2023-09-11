@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -97,11 +97,11 @@ begin
       matrixdata[i].Clear;
 
 
-    if teo.Source = rsRows then begin
+    if teo.BinarySource = rsRows then begin
       for y := 0 to MatrixMain.Matrix.Height - 1 do begin
         tdo := BinaryExportRowData(teo, t, y, spacingstring);
 
-        for i:=0 to 7 do begin
+        for i:=0 to tdo.Count - 1 do begin
           if tdo.data[i] <> '' then begin
             matrixdata[y].Add(ProcessUnique(tdo.data[i]) + spacingstring)
           end;
@@ -111,11 +111,11 @@ begin
       end;
     end;
 
-    if teo.Source = rsColumns then begin
+    if teo.BinarySource = rsColumns then begin
       for x := 0 to MatrixMain.Matrix.Width - 1 do begin
         tdo := BinaryExportColumnData(teo, t, x, spacingstring);
 
-        for i := 0 to 7 do begin
+        for i := 0 to tdo.Count - 1 do begin
           if tdo.data[i] <> '' then begin
             matrixdata[x].Add(ProcessUnique(tdo.data[i]) + spacingstring)
           end;
@@ -133,8 +133,8 @@ begin
 
     op := '';
 
-    if teo.Source = rsRows then begin
-      if teo.orientation = ioTopBottomLeftRight then begin
+    if teo.BinarySource = rsRows then begin
+      if teo.BinaryOrientation = ioTopBottomLeftRight then begin
         zStart := 0;
         zInc   := 1;
       end
@@ -163,11 +163,11 @@ begin
     // col data
     // ===========================================================================
 
-    if teo.Source = rsColumns then begin
-      case teo.orientation of
+    if teo.BinarySource = rsColumns then begin
+      case teo.BinaryOrientation of
         ioTopBottomLeftRight,
         ioBottomTopRightLeft : begin
-                if teo.orientation = ioTopBottomLeftRight then begin
+                if teo.BinaryOrientation = ioTopBottomLeftRight then begin
                   zStart:= 0;
                   zInc  := 1;
                 end
@@ -258,7 +258,7 @@ begin
     for i := 0 to _MaxHeight do
       matrixdata[i] := '';
 
-    if teo.Source = rsRows then begin
+    if teo.BinarySource = rsRows then begin
       for y := 0 to MatrixMain.Matrix.Height - 1 do begin
         tdo := BinaryExportRowDataRGB(teo, t, y, spacingstring);
 
@@ -268,7 +268,7 @@ begin
       end;
     end;
 
-    if teo.Source = rsColumns then begin
+    if teo.BinarySource = rsColumns then begin
       for x := 0 to MatrixMain.Matrix.Width - 1 do begin
         tdo := BinaryExportColumnDataRGB(teo, t, x, spacingstring);
 
@@ -284,8 +284,8 @@ begin
     // ===========================================================================
     // ===========================================================================
 
-    if teo.Source = rsRows then begin
-      if teo.orientation = ioTopBottomLeftRight then begin
+    if teo.BinarySource = rsRows then begin
+      if teo.BinaryOrientation = ioTopBottomLeftRight then begin
         s := '';
 
         for y := 0 to MatrixMain.Matrix.Height - 1 do begin
@@ -309,11 +309,11 @@ begin
     // col data
     // ===========================================================================
 
-    if teo.Source = rsColumns then begin
-      case teo.orientation of
+    if teo.BinarySource = rsColumns then begin
+      case teo.BinaryOrientation of
         ioTopBottomLeftRight,
         ioBottomTopRightLeft : begin
-                if teo.orientation = ioTopBottomLeftRight then begin
+                if teo.BinaryOrientation = ioTopBottomLeftRight then begin
                   s := '';
 
                   for x := 0 to MatrixMain.Matrix.Width - 1 do begin
@@ -346,21 +346,23 @@ var
   s : string;
   nsbits, nspads : integer;
   bitcounter, dataindex, x, lScanDirection : integer;
-  internalnumber : array[0..7] of Int64;
+  internalnumber : array[0..DataOutDataMax] of Int64;
   lMatrixData : TMatrix;
 
 begin
   Result.count := 0;
 
-  for x := 0 to 7 do begin
+  for x := 0 to DataOutDataMax do begin
     internalnumber[x] := -1;
-    Result.data[x]    := '';
+    Result.Data[x]    := '';
   end;
 
-  nsbits := NumberSizes[Ord(teo.NumberSize)];
-  nspads := NumberPadding[Ord(teo.NumberSize)];
+  Result.Count := 0;
 
-  lScanDirection := teo.ScanDirection;
+  nsbits := NumberSizes[Ord(teo.BinaryNumberSize)];
+  nspads := NumberPadding[Ord(teo.BinaryNumberSize)];
+
+  lScanDirection := teo.BinaryScanDirection;
 
   // ===========================================================================
 
@@ -375,7 +377,7 @@ begin
   dataindex  := 0;
   internalnumber[dataindex] := 0;
 
-  if teo.Orientation = ioTopBottomLeftRight then begin
+  if teo.BinaryOrientation = ioTopBottomLeftRight then begin
     case lScanDirection of
       scanRowAltLeftRight : if odd(aRowId) then
                                 lScanDirection := scanRowRightToLeft
@@ -387,7 +389,7 @@ begin
                                 lScanDirection := scanRowRightToLeft;
     end;
   end
-  else if teo.Orientation = ioBottomTopRightLeft then begin
+  else if teo.BinaryOrientation = ioBottomTopRightLeft then begin
     case lScanDirection of
       scanRowAltLeftRight : if odd(MatrixMain.Matrix.Height - aRowId - 1) then
                                 lScanDirection := scanRowRightToLeft
@@ -406,7 +408,7 @@ begin
     for x := 0 to MatrixMain.Matrix.Width - 1 do begin
       if MatrixMain.MatrixDead.Grid[x, aRowId] = ptNormal then begin
         if lMatrixData.Grid[x, aRowId] = 1 then begin
-          if teo.LSB = llTopLeft then
+          if teo.BinaryLSB = llTopLeft then
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[bitcounter])
           else
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[nsbits - bitcounter]);
@@ -430,7 +432,7 @@ begin
     for x := MatrixMain.Matrix.Width - 1 downto 0 do begin
       if MatrixMain.MatrixDead.Grid[x, aRowId] = ptNormal then begin
         if lMatrixData.Grid[x, aRowId] = 1 then begin
-          if teo.LSB = llTopLeft then
+          if teo.BinaryLSB = llTopLeft then
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[bitcounter])
           else
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[nsbits - bitcounter]);
@@ -451,11 +453,13 @@ begin
     end;
   end;
 
+  Result.Count := DataIndex;
+
   // ===========================================================================
 
-  for x := 0 to 7 do begin
+  for x := 0 to Result.Count - 1 do begin
     if internalnumber[x] <> -1 then begin
-      case teo.NumberSize of
+      case teo.BinaryNumberSize of
         ns8bitSwap  : begin // swap nybbles
                         s := IntToHex(internalnumber[x], 2);
 
@@ -488,7 +492,7 @@ var
 begin
   Result.count   := 0;
   lOutput        := '';
-  lScanDirection := teo.ScanDirection;
+  lScanDirection := teo.BinaryScanDirection;
 
   // ===========================================================================
 
@@ -499,7 +503,7 @@ begin
 
   // ===========================================================================
 
-  if teo.Orientation = ioTopBottomLeftRight then begin
+  if teo.BinaryOrientation = ioTopBottomLeftRight then begin
     case lScanDirection of
       scanRowAltLeftRight : if odd(aRowId) then
                                 lScanDirection := scanRowRightToLeft
@@ -511,7 +515,7 @@ begin
                                 lScanDirection := scanRowRightToLeft;
     end;
   end
-  else if teo.Orientation = ioBottomTopRightLeft then begin
+  else if teo.BinaryOrientation = ioBottomTopRightLeft then begin
     case lScanDirection of
       scanRowAltLeftRight : if odd(MatrixMain.Matrix.Height - aRowId - 1) then
                                 lScanDirection := scanRowRightToLeft
@@ -529,19 +533,19 @@ begin
   if lScanDirection = scanRowLeftToRight then begin        // left to right
     for x := 0 to MatrixMain.Matrix.Width - 1 do begin
       if MatrixMain.MatrixDead.Grid[x, aRowId] = ptNormal then begin
-        if teo.NumberSize = nsRGB8bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar)
+        if teo.BinaryNumberSize = nsRGB8bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB)
           else
-            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[x, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar);
+            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[x, aRowId], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
-        else if teo.NumberSize = nsRGB32bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness), 8)
+        else if teo.BinaryNumberSize = nsRGB32bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8)
           else
-            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo(lMatrixData.Grid[x, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness), 8);
+            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo32(lMatrixData.Grid[x, aRowId], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
 
 //          if x <> MatrixMain.MatrixWidth - 1 then
             lOutput := lOutput + spacingchar;
@@ -554,19 +558,19 @@ begin
   else if lScanDirection = scanRowRightToLeft then begin        // right to left
     for x := MatrixMain.Matrix.Width - 1 downto 0 do begin
       if MatrixMain.MatrixDead.Grid[x, aRowId] = ptNormal then begin
-        if teo.NumberSize = nsRGB8bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar)
+        if teo.BinaryNumberSize = nsRGB8bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + TUtility.RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB)
           else
-            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[x, aRowId], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar);
+            lOutput := lOutput + TUtility.RGBConvertToSplit(lMatrixData.Grid[x, aRowId], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
-        else if teo.NumberSize = nsRGB32bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
-            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness), 8)
+        else if teo.BinaryNumberSize = nsRGB32bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[x, aRowId] = MatrixMain.RGBBackground) then
+            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8)
           else
-            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo(lMatrixData.Grid[x, aRowId], teo.RGBMode, teo.LSB, teo.RGBBrightness), 8);
+            lOutput := lOutput + IntToHex(TUtility.RGBConvertTo32(lMatrixData.Grid[x, aRowId], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
 
   //        if x <> 0 then
             lOutput := lOutput + spacingchar;
@@ -588,21 +592,23 @@ var
   s : string;
   nsbits, nspads : integer;
   bitcounter, dataindex, y, lScanDirection : integer;
-  internalnumber : array[0..7] of Int64;
+  internalnumber : array[0..DataOutDataMax] of Int64;
   lMatrixData : TMatrix;
 
 begin
   Result.count := 0;
 
-  for y := 0 to 7 do begin
+  for y := 0 to DataOutDataMax do begin
     internalnumber[y] := -1;
-    Result.data[y]    := '';
+    Result.Data[y]    := '';
   end;
 
-  nsbits := NumberSizes[Ord(teo.NumberSize)];
-  nspads := NumberPadding[Ord(teo.NumberSize)];
+  Result.Count := 0;
 
-  lScanDirection := teo.ScanDirection;
+  nsbits := NumberSizes[Ord(teo.BinaryNumberSize)];
+  nspads := NumberPadding[Ord(teo.BinaryNumberSize)];
+
+  lScanDirection := teo.BinaryScanDirection;
 
   // ===========================================================================
 
@@ -617,7 +623,7 @@ begin
   dataindex  := 0;
   internalnumber[dataindex] := 0;
 
-  if teo.Orientation = ioTopBottomLeftRight then begin
+  if teo.BinaryOrientation = ioTopBottomLeftRight then begin
     case lScanDirection of
       scanColAltDownUp : if odd(aColId) then
                            lScanDirection := scanColBottomToTop
@@ -629,7 +635,7 @@ begin
                            lScanDirection := scanColBottomToTop;
     end;
   end
-  else if teo.Orientation = ioBottomTopRightLeft then begin
+  else if teo.BinaryOrientation = ioBottomTopRightLeft then begin
     case lScanDirection of
       scanColAltDownUp : if odd(MatrixMain.Matrix.Width - aColId - 1) then
                            lScanDirection := scanColBottomToTop
@@ -648,7 +654,7 @@ begin
     for y := 0 to MatrixMain.Matrix.Height - 1 do begin
       if MatrixMain.MatrixDead.Grid[aColId, y] = ptNormal then begin
         if lMatrixData.Grid[aColId, y] = 1 then begin
-          if teo.LSB = llTopLeft then
+          if teo.BinaryLSB = llTopLeft then
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[bitcounter])
           else
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[nsbits - bitcounter]);
@@ -672,7 +678,7 @@ begin
     for y := MatrixMain.Matrix.Height - 1 downto 0 do begin
       if MatrixMain.MatrixDead.Grid[aColId, y] = ptNormal then begin
         if lMatrixData.Grid[aColId, y] = 1 then begin
-          if teo.LSB = llTopLeft then
+          if teo.BinaryLSB = llTopLeft then
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[bitcounter])
           else
             internalnumber[dataindex] := internalnumber[dataindex] + (powers[nsbits - bitcounter]);
@@ -693,11 +699,13 @@ begin
     end;
   end;
 
+  Result.Count := dataindex;
+
   // ===========================================================================
 
-  for y := 0 to 7 do begin
+  for y := 0 to Result.Count - 1 do begin
     if internalnumber[y] <> -1 then begin
-      case teo.NumberSize of
+      case teo.BinaryNumberSize of
         ns8bitSwap  : begin // swap nybbles
                         s := IntToHex(internalnumber[y], 2);
 
@@ -729,7 +737,7 @@ var
 
 begin
   Result.count   := 0;
-  lScanDirection := teo.ScanDirection;
+  lScanDirection := teo.BinaryScanDirection;
 
   // ===========================================================================
 
@@ -740,7 +748,7 @@ begin
 
   // ===========================================================================
 
-  if teo.Orientation = ioTopBottomLeftRight then begin
+  if teo.BinaryOrientation = ioTopBottomLeftRight then begin
     case lScanDirection of
       scanColAltDownUp : if odd(aColId) then
                            lScanDirection := scanColBottomToTop
@@ -752,7 +760,7 @@ begin
                            lScanDirection := scanColBottomToTop;
     end;
   end
-  else if teo.Orientation = ioBottomTopRightLeft then begin
+  else if teo.BinaryOrientation = ioBottomTopRightLeft then begin
     case lScanDirection of
       scanColAltDownUp : if odd(MatrixMain.Matrix.Width - aColId - 1) then
                            lScanDirection := scanColBottomToTop
@@ -770,19 +778,19 @@ begin
   if lScanDirection = scanColTopToBottom then begin             // top to bottom
     for y := 0 to MatrixMain.Matrix.Height - 1 do begin
       if MatrixMain.MatrixDead.Grid[aColId, y] = ptNormal then begin
-        if teo.NumberSize = nsRGB8bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
-            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar)
+        if teo.BinaryNumberSize = nsRGB8bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
+            output := output + TUtility.RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB)
           else
-            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, y], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar);
+            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, y], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
-        else if teo.NumberSize = nsRGB32bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
-            output := output + IntToHex(TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness), 8)
+        else if teo.BinaryNumberSize = nsRGB32bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
+            output := output + IntToHex(TUtility.RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8)
           else
-            output := output + IntToHex(TUtility.RGBConvertTo(lMatrixData.Grid[aColId, y], teo.RGBMode, teo.LSB, teo.RGBBrightness), 8);
+            output := output + IntToHex(TUtility.RGBConvertTo32(lMatrixData.Grid[aColId, y], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
 
           output := output + spacingchar;
 
@@ -794,19 +802,19 @@ begin
   else if lScanDirection = scanColBottomToTop then begin        // bottom to top
     for y := MatrixMain.Matrix.Height - 1 downto 0 do begin
       if MatrixMain.MatrixDead.Grid[aColId, y] = ptNormal then begin
-        if teo.NumberSize = nsRGB8bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
-            output := output + TUtility.RGBConvertToSplit(teo.RGBChangeColour, teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar)
+        if teo.BinaryNumberSize = nsRGB8bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
+            output := output + TUtility.RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB)
           else
-            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, y], teo.RGBMode, teo.RGBBrightness, teo.NumberFormat, '', spacingchar);
+            output := output + TUtility.RGBConvertToSplit(lMatrixData.Grid[aColId, y], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.NumberFormat, '', spacingchar, teo.BinaryColourSpaceRGB);
 
           inc(Result.Count, 3);
         end
-        else if teo.NumberSize = nsRGB32bit then begin
-          if (teo.RGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
-            output := output + IntToHex(TUtility.RGBConvertTo(teo.RGBChangeColour, teo.RGBMode, teo.LSB, teo.RGBBrightness), 8)
+        else if teo.BinaryNumberSize = nsRGB32bit then begin
+          if (teo.BinaryRGBChangePixels) and (lMatrixData.Grid[aColId, y] = MatrixMain.RGBBackground) then
+            output := output + IntToHex(TUtility.RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8)
           else
-            output := output + IntToHex(TUtility.RGBConvertTo(lMatrixData.Grid[aColId, y], teo.RGBMode, teo.LSB, teo.RGBBrightness), 8);
+            output := output + IntToHex(TUtility.RGBConvertTo32(lMatrixData.Grid[aColId, y], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
 
           output := output + spacingchar;
 

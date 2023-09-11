@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -133,6 +133,8 @@ type
 
     FScrollHorizontal      : TScrollBar;
     FScrollVertical        : TScrollBar;
+
+    FFontWrap              : boolean;
 
     procedure InitPreviewBox(aOwner : TComponent; aWinControl : TWinControl; aVisible : boolean);
     procedure InitMatrix;
@@ -468,6 +470,8 @@ type
     property    RadialOffsetDirection : boolean         read FRadialOffsetDirection            write SetRadialOffsetDirection;
     property    ShapeParameter        : integer         read Render.DrawData.Parameter         write SetShapeParameter;
     property    MirrorMode            : TMirrorMode     read FMirrorMode                       write SetMirrorMode;
+
+    property    FontWrap              : boolean         read FFontWrap                         write FFontWrap;
 
     property    PreviewActive         : boolean         read FPreviewOptions.Active            write SetPreviewActive;
     property    PreviewBoxSize        : integer         read FPreviewOptions.Size              write SetPreviewBoxSize;
@@ -4961,32 +4965,51 @@ end;
 
 procedure TTheMatrix.DrawFontCharacter(aASCIICode, aFrame : integer);
 var
-  x, startY, y : integer;
+  x, startY, y, outputx, outputy : integer;
   ts : string;
+  canwrite : boolean;
 
 begin
   startY := Render.DrawData.Coords[0].Y;
   ts     := '';
+  canwrite := true;
 
   for x := FontMatrixStart[aASCIICode] to FontMatrixEnd[aASCIICode] do begin
     for y := 0 to 7 do begin
-      if (Render.DrawData.Coords[0].X >= 0) and (Render.DrawData.Coords[0].X <= Matrix.Width - 1) and
-         (y >= 0) and (y <= Matrix.Height - 1) then begin
+      outputx := Render.DrawData.Coords[0].X;
+      outputy := startY - y;
 
+      if (FFontWrap) then begin
+        if (outputx > Matrix.Width - 1) then begin
+          outputx := outputx - Matrix.Width;
+          Render.DrawData.Coords[0].X := outputx;
+        end;
+
+        if (outputy < 0) then
+          outputy := outputy + Matrix.Height;
+
+      end
+      else begin
+        canwrite := (Render.DrawData.Coords[0].X >= 0) and
+                    (Render.DrawData.Coords[0].X <= Matrix.Width - 1) and
+                    (y >= 0) and (startY - y <= Matrix.Height - 1)
+      end;
+
+      if (canwrite) then begin
         if Matrix.Mode = mtRGB then begin // to do
           case FontMatrixMode of
             mtMono : if FontMatrix[aASCIICode, x, y] = 1 then
-                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[Render.DrawData.Coords[0].X, startY - y] := Render.DrawData.Colour;
+                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[outputx, outputy] := Render.DrawData.Colour;
             mtRGB  : if FontMatrix[aASCIICode, x, y] <> -1 then
-                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[Render.DrawData.Coords[0].X, startY - y] := FontMatrix[aASCIICode, x, y];
+                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[outputx, outputy] := FontMatrix[aASCIICode, x, y];
           end;
         end
         else begin
           case FontMatrixMode of
             mtMono : if FontMatrix[aASCIICode, x, y] = 1 then
-                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[Render.DrawData.Coords[0].X, startY - y] := Render.DrawData.Colour;
+                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[outputx, outputy] := Render.DrawData.Colour;
             mtRGB  : if FontMatrix[aASCIICode, x, y] <> -1 then
-                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[Render.DrawData.Coords[0].X, startY - y] := Render.DrawData.Colour;
+                       MatrixLayers[FCurrentLayer].Frames[aFrame].Grid[outputx, outputy] := Render.DrawData.Colour;
           end;
         end;
       end
@@ -8354,19 +8377,23 @@ begin
           for lRow := 0 to Matrix.Height - 1 do begin
             lTempFrame.Canvas.Brush.Color := FMatrixMerge.Grid[lColumn, lRow];
 
-            if (aPixelShape = 0) then begin
-              lTempFrame.Canvas.FillRect(Rect(lColumn * aPixelSize,
+            case (aPixelShape) of
+              0 : lTempFrame.Canvas.FillRect(Rect(lColumn * aPixelSize,
+                                                  lRow * aPixelSize,
+                                                 (lColumn * aPixelSize) + aPixelSize,
+                                                 (lRow * aPixelSize) + aPixelSize));
+
+              1 : lTempFrame.Canvas.Ellipse(lColumn * aPixelSize,
+                                            lRow * aPixelSize,
+                                           (lColumn * aPixelSize) + aPixelSize,
+                                           (lRow * aPixelSize) + aPixelSize);
+
+              2 : lTempFrame.Canvas.RoundRect(lColumn * aPixelSize,
                                               lRow * aPixelSize,
                                              (lColumn * aPixelSize) + aPixelSize,
-                                             (lRow * aPixelSize) + aPixelSize));
-            end
-            else begin
-              lTempFrame.Canvas.RoundRect(lColumn * aPixelSize,
-                                          lRow * aPixelSize,
-                                         (lColumn * aPixelSize) + aPixelSize,
-                                         (lRow * aPixelSize) + aPixelSize,
-                                          aPixelSize - (Round(aPixelSize / CRoundRectCoeff)),
-                                          aPixelSize - (Round(aPixelSize / CRoundRectCoeff)));
+                                             (lRow * aPixelSize) + aPixelSize,
+                                              aPixelSize - (Round(aPixelSize / CRoundRectCoeff)),
+                                              aPixelSize - (Round(aPixelSize / CRoundRectCoeff)));
             end;
           end;
         end;

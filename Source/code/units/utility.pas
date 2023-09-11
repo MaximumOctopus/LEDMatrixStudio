@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -24,10 +24,29 @@ uses ExtCtrls, shellapi, SysUtils, Windows, classes, dialogs, System.UITypes,
      matrixconstants, xglobal;
 
 
+const
+  LEDStudioDate      = 'September 11th 2023';
+
+  {$ifdef CPUX64}
+     LEDStudioVersion   = '0.10.10 (x64)';
+  {$else}
+     LEDStudioVersion   = '0.10.10 (x32)';
+  {$endif}
+
+  BiColoursLSBLeft   : array[0..3] of string = ('00', '01', '10', '11');
+  BiColoursLSBRight  : array[0..3] of string = ('00', '10', '01', '11');
+
+  NumberSizes        : array[0..7] of integer = (7, 15, 31, 7, 15, 63, 7, 31);
+  NumberPadding      : array[0..7] of integer = (2,  4,  8, 2,  4, 16, 2,  8);
+
+  DataOutDataMax     = 31;
+
+
+
 type
   TDataOut = record
-               count : integer;
-               data  : array[0..7] of string;
+               Count : integer;
+               Data  : array[0..DataOutDataMax] of string;
              end;
 
 
@@ -45,8 +64,9 @@ type
 
     class function  RGBPlusInteger(aWindowsFormatColour, aBrightness : integer): string;
     class function  RGBColourNumberFormat(aNumberFormat : TNumberFormat; aNybbles : integer; aColour : LongWord): string;
-    class function  RGBConvertTo(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aBrightness : integer): LongWord;
-    class function  RGBConvertToSplit(rgb : LongWord; convertmode : TRGBMode; aBrightness : integer; aNumberFormat : TNumberFormat; aPrefix, aSpacer : string): string;
+    class function  RGBConvertTo16(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aColourSpace : TColourSpace; aBrightness : integer): LongWord;
+    class function  RGBConvertTo32(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aBrightness : integer): LongWord;
+    class function  RGBConvertToSplit(rgb : LongWord; convertmode : TRGBMode; aBrightness : integer; aNumberFormat : TNumberFormat; aPrefix, aSpacer : string; aColourSpace : TColourSpace): string;
     class function  RGB3BPPFormatOutput(r, g, b : integer; aConvertMode : TRGBMode; aNumberFormat : TNumberFormat; aNumberSize : TNumberSize; aBrightness : integer; aPrefix, aSpacer : string): string;
 
     class function  IntegerToBinary(ns : integer; anumber : int64): string;
@@ -77,22 +97,6 @@ type
     class function  GetDate: string;
     class function  GetTime: string;
   end;
-
-
-const
-  LEDStudioDate      = 'June 15th 2022';
-
-  {$ifdef CPUX64}
-     LEDStudioVersion   = '0.10.9 (x64)';
-  {$else}
-     LEDStudioVersion   = '0.10.9 (x32)';
-  {$endif}
-
-  BiColoursLSBLeft   : array[0..3] of string = ('00', '01', '10', '11');
-  BiColoursLSBRight  : array[0..3] of string = ('00', '10', '01', '11');
-
-  NumberSizes        : array[0..7] of integer = (7, 15, 31, 7, 15, 63, 7, 31);
-  NumberPadding      : array[0..7] of integer = (2,  4,  8, 2,  4, 16, 2,  8);
 
 
 var
@@ -204,11 +208,59 @@ end;
 
 class function TUtility.RGBPlusInteger(aWindowsFormatColour, aBrightness : integer): string;
 begin
-  Result := '0x' + IntToHex(RGBConvertTo(aWindowsFormatColour, cmRGB, llBottomRight, aBrightness), 6) + ' (' + IntToStr(aWindowsFormatColour) + ')';
+  Result := '0x' + IntToHex(RGBConvertTo32(aWindowsFormatColour, cmRGB, llBottomRight, aBrightness), 6) + ' (' + IntToStr(aWindowsFormatColour) + ')';
 end;
 
 
-class function TUtility.RGBConvertTo(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aBrightness : integer): LongWord;
+class function TUtility.RGBConvertTo16(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aColourSpace : TColourSpace; aBrightness : integer): LongWord;
+var
+  xR : LongWord;
+  xG : LongWord;
+  xB : LongWord;
+  xT : LongWord;
+  t : integer;
+
+begin
+  xR := (rgb and $0000ff);         // Windows colour structure = BGR
+  xB := (rgb and $ff0000) shr 16;
+  xG := (rgb and $00ff00) shr 8;
+
+  if (aBrightness <> 100) then begin
+    xR := Round((aBrightness / 100) * xR);
+    xG := Round((aBrightness / 100) * xG);
+    xB := Round((aBrightness / 100) * xB);
+  end;
+
+  if (aColourSpace = csRGB565) then begin
+    xR := Round((xR / 255) * 31);
+    XG := Round((xG / 255) * 63);
+    xB := Round((xB / 255) * 31);
+
+    case convertmode of
+      cmRGB : xT := (xR shl 11) + (xG shl 5) + xB;
+      cmBGR : xT := (xB shl 11) + (xG shl 5) + xR;
+      cmGRB : xT := (xG shl 10) + (xR shl 5) + xB;
+      cmBRG : xT := (xB shl 11) + (xR shl 6) + xG;
+    else
+      xT := 0;
+    end;
+
+    if lsblocation = llTopLeft then begin // flip bit order
+      Result := 0;
+
+      for t := 0 to 15 do
+        if (xT and powers[t]) = powers[t] then
+          Result := Result + powers[31 - t];
+    end
+    else
+      Result := xT;
+  end
+  else
+    Result := 0;
+end;
+
+
+class function TUtility.RGBConvertTo32(rgb : LongWord; convertmode : TRGBMode; lsblocation : TLSB; aBrightness : integer): LongWord;
 var
   xR : LongWord;
   xG : LongWord;
@@ -270,11 +322,13 @@ end;
 // converts windows format colour to separate R G B values
 // eg ff0000 (blue)
 // => 00 00 ff
-class function TUtility.RGBConvertToSplit(rgb : LongWord; convertmode : TRGBMode; aBrightness : integer; aNumberFormat : TNumberFormat; aPrefix, aSpacer : string): string;
+// and converts to different colour space as required
+class function TUtility.RGBConvertToSplit(rgb : LongWord; convertmode : TRGBMode; aBrightness : integer; aNumberFormat : TNumberFormat; aPrefix, aSpacer : string; aColourSpace : TColourSpace): string;
 var
   xR : LongWord;
   xG : LongWord;
   xB : LongWord;
+  xColour : word;
 
 begin
   xR := (rgb and $0000ff);         // Windows colour structure = BGR
@@ -287,24 +341,44 @@ begin
     xB := Round((aBrightness / 100) * xB);
   end;
 
-   // (cmRGB, cmBGR, cmGRB, cmBRG);
+  case (aColourSpace) of
+    csRGB32  : begin
+                 case convertmode of
+                   cmRGB       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer;
+                   cmBGR       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer;
+                   cmGRB       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer;
+                   cmBRG       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
+                                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer;
+                   cmRGBSimple : Result := IntToStr(xR) + aSpacer +IntToStr(xG) + aSpacer + IntToStr(xB);
+                 else
+                   Result := aPrefix + '00' + aSpacer + aPrefix + '00' + aSpacer + aPrefix + '00' + aSpacer;   // !
+                 end;
+               end;
+    csRGB565 : begin
+                 xR := Round((xR / 255) * 31); // 5 bits
+                 xG := Round((xG / 255) * 63); // 6 bits
+                 xB := Round((xB / 255) * 31); // 5 bits
 
-  case convertmode of
-    cmRGB       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer;
-    cmBGR       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer;
-    cmGRB       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer;
-    cmBRG       : Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xB) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xR) + aSpacer +
-                            aPrefix + RGBColourNumberFormat(aNumberFormat, 2, xG) + aSpacer;
-    cmRGBSimple : Result := IntToStr(xR) + aSpacer +IntToStr(xG) + aSpacer + IntToStr(xB);
-  else
-    Result := aPrefix + '00' + aSpacer + aPrefix + '00' + aSpacer + aPrefix + '00' + aSpacer;   // !
+                 case convertmode of
+                   cmRGB       : xColour := (xR shl 11) + (xG shl 5) + xB;
+                   cmBGR       : xColour := (xB shl 11) + (xG shl 5) + xR;
+                   cmGRB       : xColour := (xG shl 10) + (xR shl 5) + xB;
+                   cmBRG       : xColour := (xB shl 11) + (xR shl 6) + xG;
+                   cmRGBSimple : xColour := (xR shl 11) + (xG shl 5) + xB;
+                 else
+                   xColour := 0;
+                 end;
+
+                 Result := aPrefix + RGBColourNumberFormat(aNumberFormat, 2, (xColour shr 8)) + aSpacer +
+                           aPrefix + RGBColourNumberFormat(aNumberFormat, 2, (xColour and $00FF)) + aSpacer;
+               end;
   end;
 end;
 

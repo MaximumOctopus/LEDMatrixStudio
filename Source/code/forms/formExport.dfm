@@ -364,10 +364,6 @@ object frmExport: TfrmExport
     OnChange = pcExportChange
     object tsCode: TTabSheet
       Caption = '.'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -378,7 +374,7 @@ object frmExport: TfrmExport
         BevelOuter = bvLowered
         TabOrder = 0
         object gbSource: TGroupBox
-          Left = 19
+          Left = 15
           Top = 8
           Width = 185
           Height = 257
@@ -549,7 +545,7 @@ object frmExport: TfrmExport
         end
         object gbNumberFormat: TGroupBox
           Left = 210
-          Top = 179
+          Top = 160
           Width = 185
           Height = 59
           Caption = '.'
@@ -582,7 +578,7 @@ object frmExport: TfrmExport
         end
         object gbNumberGrouping: TGroupBox
           Left = 210
-          Top = 358
+          Top = 330
           Width = 185
           Height = 122
           Caption = '.'
@@ -775,7 +771,7 @@ object frmExport: TfrmExport
         end
         object gbNumberGroupingRGB: TGroupBox
           Left = 210
-          Top = 253
+          Top = 230
           Width = 185
           Height = 90
           Caption = '.'
@@ -798,6 +794,34 @@ object frmExport: TfrmExport
             GroupIndex = 2
             Down = True
             Caption = '.'
+            OnClick = sbNumberSize8bitClick
+          end
+        end
+        object gbRGBColourSpace: TGroupBox
+          Left = 210
+          Top = 458
+          Width = 185
+          Height = 90
+          Caption = 'Colour Space'
+          TabOrder = 8
+          Visible = False
+          object sbCSRGB32: TSpeedButton
+            Left = 16
+            Top = 24
+            Width = 152
+            Height = 25
+            GroupIndex = 2
+            Down = True
+            Caption = 'RGB32'
+            OnClick = sbNumberSize8bitClick
+          end
+          object sbCSRGB565: TSpeedButton
+            Left = 16
+            Top = 55
+            Width = 152
+            Height = 25
+            GroupIndex = 2
+            Caption = 'RGB565'
             OnClick = sbNumberSize8bitClick
           end
         end
@@ -871,10 +895,6 @@ object frmExport: TfrmExport
     object tsBinary: TTabSheet
       Caption = '.'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -1197,6 +1217,34 @@ object frmExport: TfrmExport
             Height = 17
             Caption = '.'
             TabOrder = 1
+          end
+        end
+        object gbBinaryColourSpaceRGB: TGroupBox
+          Left = 210
+          Top = 252
+          Width = 185
+          Height = 90
+          Caption = 'Colour Space'
+          TabOrder = 6
+          Visible = False
+          object sbBCSRGB32: TSpeedButton
+            Left = 16
+            Top = 24
+            Width = 152
+            Height = 25
+            GroupIndex = 2
+            Down = True
+            Caption = 'RGB32'
+            OnClick = sbNumberSize8bitClick
+          end
+          object sbBCSRGB565: TSpeedButton
+            Left = 16
+            Top = 55
+            Width = 152
+            Height = 25
+            GroupIndex = 2
+            Caption = 'RGB565'
+            OnClick = sbNumberSize8bitClick
           end
         end
       end

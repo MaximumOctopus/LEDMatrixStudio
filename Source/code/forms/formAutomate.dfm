@@ -125,10 +125,6 @@ object frmAutomate: TfrmAutomate
     object tsActions: TTabSheet
       Caption = '.'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lSuggestion: TLabel
         Left = 24
         Top = 576
@@ -1573,10 +1569,6 @@ object frmAutomate: TfrmAutomate
     object tsOptions: TTabSheet
       Caption = '.'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object gbBrush: TGroupBox
         Left = 15
         Top = 16

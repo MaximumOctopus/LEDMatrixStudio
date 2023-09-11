@@ -864,10 +864,6 @@ object frmMain: TfrmMain
       object tsGradients: TTabSheet
         Caption = '.'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
     end
   end
@@ -6603,6 +6599,14 @@ object frmMain: TfrmMain
     object Fontviewer2: TMenuItem
       Caption = '.'
       OnClick = miFontViewerClick
+    end
+    object N28: TMenuItem
+      Caption = '-'
+    end
+    object miFontWrap: TMenuItem
+      AutoCheck = True
+      Caption = 'Wrap'
+      OnClick = miFontWrapClick
     end
   end
   object puAnimationSpeed: TPopupMenu

@@ -3,7 +3,7 @@ object frmExportGIF: TfrmExportGIF
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Export GIF'
-  ClientHeight = 296
+  ClientHeight = 371
   ClientWidth = 687
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -967,14 +967,14 @@ object frmExportGIF: TfrmExportGIF
   end
   object Bevel1: TBevel
     Left = 6
-    Top = 255
+    Top = 311
     Width = 673
     Height = 4
     Shape = bsTopLine
   end
   object bOK: TBitBtn
     Left = 516
-    Top = 264
+    Top = 336
     Width = 75
     Height = 25
     Enabled = False
@@ -1035,7 +1035,7 @@ object frmExportGIF: TfrmExportGIF
   end
   object bCancel: TBitBtn
     Left = 604
-    Top = 264
+    Top = 336
     Width = 75
     Height = 25
     Cancel = True
@@ -1073,7 +1073,7 @@ object frmExportGIF: TfrmExportGIF
     Left = 126
     Top = 8
     Width = 553
-    Height = 241
+    Height = 281
     TabOrder = 2
     object Label1: TLabel
       Left = 24
@@ -1242,6 +1242,14 @@ object frmExportGIF: TfrmExportGIF
       TabOrder = 4
       Value = 0
     end
+    object rbRoundRect: TRadioButton
+      Left = 96
+      Top = 232
+      Width = 65
+      Height = 17
+      Caption = '.'
+      TabOrder = 5
+    end
   end
   object sdExportGIF: TSaveDialog
     Filter = 'GIF images (*.gif)|*.gif'
@@ -1251,7 +1259,7 @@ object frmExportGIF: TfrmExportGIF
   end
   object cdExportGIF: TColorDialog
     Options = [cdFullOpen]
-    Left = 11
-    Top = 256
+    Left = 35
+    Top = 272
   end
 end

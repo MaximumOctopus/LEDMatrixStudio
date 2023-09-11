@@ -1,6 +1,6 @@
 // ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2022
+// (c) Paul Alan Freshney 2012-2023
 // www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 // https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -141,6 +141,12 @@ type
     Panel4: TPanel;
     reExport: TRichEdit;
     pPreviewStatus: TPanel;
+    gbRGBColourSpace: TGroupBox;
+    sbCSRGB32: TSpeedButton;
+    sbCSRGB565: TSpeedButton;
+    gbBinaryColourSpaceRGB: TGroupBox;
+    sbBCSRGB32: TSpeedButton;
+    sbBCSRGB565: TSpeedButton;
     procedure sbDataRowsClick(Sender: TObject);
     procedure FormConstrainedResize(Sender: TObject; var MinWidth, MinHeight, MaxWidth, MaxHeight: Integer);
     procedure FormCreate(Sender: TObject);
@@ -256,18 +262,24 @@ begin
                             gbNumberGrouping.Visible          := False;
 
                             gbRGB.Visible                     := True;
-                            gbRGB.Visible                     := True;
+                            gbBinaryRGB.Visible               := True;
 
                             gbNumberGroupingRGB.Visible       := True;
                             gbNumberGroupingBinaryRGB.Visible := True;
+
+                            gbRGBColourSpace.Visible          := True;
+                            gbRGBColourSpace.Top              := 415;
+
+                            gbBinaryColourSpaceRGB.Visible    := True;
+                            gbBinaryColourSpaceRGB.Top        := 415;
 
                             profileextension                  := 'ledsexportrgb';
                           end;
         mtRGB3BPP       : begin
                             gbNumberGrouping.Visible          := False;
 
-                            gbRGB.Visible                           := True;
-                            gbRGB.Height                            := 65;                    // hides background change option
+                            gbRGB.Visible                     := True;
+                            gbRGB.Height                      := 65;                    // hides background change option
                             gbBinaryRGB.Visible               := True;
 
                             gbNumberGroupingRGB.Visible       := True;
@@ -319,6 +331,8 @@ begin
         Result.RGBMode         := eeo.RGBMode;
         Result.RGBChangePixels := eeo.RGBChangePixels;
         Result.RGBChangeColour := eeo.RGBChangeColour;
+
+        Result.ColourSpaceRGB  := eeo.ColourSpaceRGB;
       end;
     finally
       Free;
@@ -806,7 +820,7 @@ begin
 
       // =======================================================================
 
-      tsBinary.Caption := GLanguageHandler.Text[kBinary] + ' (' + IntToStr(entrycount) + ' ' + GLanguageHandler.Text[kBytes];
+      tsBinary.Caption := GLanguageHandler.Text[kBinary] + ' (' + IntToStr(entrycount) + ' ' + GLanguageHandler.Text[kBytes] + ')';
 
       lOutput.Free;
       lUnique.Free;
@@ -1041,6 +1055,15 @@ begin
     eeo.RGBChangeColour := shapeBackgroundPixels.Brush.Color;
 
     eeo.RGBBrightness   := StrToIntDef(groupBoxRGBBrightness.Text, 100);
+
+    if (sbCSRGB32.Down) then begin
+      eeo.ColourSpaceRGB := csRGB32;
+      eeo.NumberSize     := nsRGB32bit;
+    end
+    else begin
+      eeo.ColourSpaceRGB := csRGB565;
+      eeo.NumberSize     := nsRGB16bit;
+    end;
   end
   else
     eeo.RGBEnabled := False;
@@ -1078,17 +1101,24 @@ begin
   if gbBinaryRGB.Visible then begin
     if sbBinaryRGB.Down then
       eeo.BinaryRGBMode := cmRGB
-    else if sbBGR.Down then
+    else if sbBinaryBGR.Down then
       eeo.BinaryRGBMode := cmBGR
-    else if sbGRB.Down then
+    else if sbBinaryGRB.Down then
       eeo.BinaryRGBMode := cmGRB
-    else if sbBRG.Down then
+    else if sbBinaryBRG.Down then
       eeo.BinaryRGBMode := cmBRG;
 
     eeo.BinaryRGBChangePixels := cbBinaryChangeBackgroundPixels.Checked;
     eeo.BinaryRGBChangeColour := shapeBinaryBackgroundPixels.Brush.Color;
 
     eeo.BinaryRGBBrightness   := StrToIntDef(groupBoxBinaryRGBBrightness.Text, 100);
+
+    if (sbBCSRGB32.Down) then begin
+      eeo.BinaryColourSpaceRGB := csRGB32;
+    end
+    else begin
+      eeo.BinaryColourSpaceRGB := csRGB565;
+    end;
   end;
 
   // ===========================================================================
@@ -1155,60 +1185,67 @@ begin
   eeo.SelectiveStart := lSS;
   eeo.SelectiveEnd   := lSE;
 
-  // ===========================================================================  
+  // ===========================================================================
 
   if sbBinaryDataRows.Down then
-    eeo.Source := rsRows
+    eeo.BinarySource := rsRows
   else
-    eeo.Source := rsColumns;
+    eeo.BinarySource := rsColumns;
 
   // ===========================================================================
 
-  eeo.orientation   := TInputOrientation(cbBinaryDirection.ItemIndex);
+  eeo.BinaryOrientation   := TInputOrientation(cbBinaryDirection.ItemIndex);
 
   // ===========================================================================
 
-  eeo.ScanDirection := cbBinaryScanDirection.ItemIndex;
+  eeo.BinaryScanDirection := cbBinaryScanDirection.ItemIndex;
 
   // ===========================================================================
 
   if sbBinaryLSBLeft.Down then
-    eeo.LSB := llTopLeft
+    eeo.BinaryLSB := llTopLeft
   else
-    eeo.LSB := llBottomRight;
+    eeo.BinaryLSB := llBottomRight;
 
   // ===========================================================================
 
   if gbNumberGrouping.Visible then begin
     if sbBinaryNumberSize8bit.Down then
-      eeo.NumberSize := ns8Bit
+      eeo.BinaryNumberSize := ns8Bit
     else if sbBinaryNumberSize8bitSwap.Down then
-      eeo.NumberSize := ns8bitSwap
+      eeo.BinaryNumberSize := ns8bitSwap
     else if sbBinaryNumberSize16bitSwap.Down then
-      eeo.NumberSize := ns16bitSwap;
+      eeo.BinaryNumberSize := ns16bitSwap;
   end
   else begin
-    eeo.NumberSize := nsRGB8bit
+    eeo.BinaryNumberSize := nsRGB8bit
   end;
 
   // ===========================================================================
 
-  if gbRGB.Visible then begin
+  if gbBinaryRGB.Visible then begin
     eeo.RGBEnabled := True;
 
     if sbBinaryRGB.Down then
-      eeo.RGBMode := cmRGB
+      eeo.BinaryRGBMode := cmRGB
     else if sbBinaryBGR.Down then
-      eeo.RGBMode := cmBGR
+      eeo.BinaryRGBMode := cmBGR
     else if sbBinaryGRB.Down then
-      eeo.RGBMode := cmGRB
+      eeo.BinaryRGBMode := cmGRB
     else if sbBinaryBRG.Down then
-      eeo.RGBMode := cmBRG;
+      eeo.BinaryRGBMode := cmBRG;
 
-    eeo.RGBChangePixels := cbBinaryChangeBackgroundPixels.Checked;
-    eeo.RGBChangeColour := shapeBinaryBackgroundPixels.Brush.Color;
+    eeo.BinaryRGBChangePixels := cbBinaryChangeBackgroundPixels.Checked;
+    eeo.BinaryRGBChangeColour := shapeBinaryBackgroundPixels.Brush.Color;
 
-    eeo.RGBBrightness   := StrToIntDef(groupBoxBinaryRGBBrightness.Text, 100);
+    eeo.BinaryRGBBrightness   := StrToIntDef(groupBoxBinaryRGBBrightness.Text, 100);
+
+    if (sbBCSRGB32.Down) then begin
+      eeo.BinaryColourSpaceRGB := csRGB32;
+    end
+    else begin
+      eeo.BinaryColourSpaceRGB := csRGB565;
+    end;
   end
   else
     eeo.RGBEnabled := False;
@@ -1279,7 +1316,7 @@ begin
   else begin
     case aEEO.NumberSize of
       nsRGB8bit  : sbNumberSizeRGB8bits.Down  := True;
-      nsRGB32bit : sbNumberSizeRGB32bits.Down := True;
+      nsRGB16bit, nsRGB32bit : sbNumberSizeRGB32bits.Down := True;
     end;
 
     sbNumberSize8bitClick(Nil);
@@ -1319,6 +1356,11 @@ begin
       aEEO.RGBBrightness := 100;
 
     groupBoxRGBBrightness.Text        := IntToStr(aEEO.RGBBrightness);
+
+    case (eeo.ColourSpaceRGB) of
+      csRGB32  : sbCSRGB32.Down := true;
+      csRGB565 : sbCSRGB565.Down := true;
+    end;
   end;
 
   // ===========================================================================
@@ -1328,6 +1370,60 @@ begin
   // ===========================================================================
 
   cbScanDirection.ItemIndex := aEEO.ScanDirection;
+
+  // ===========================================================================
+  // binary options
+  // ===========================================================================
+
+  if eeo.BinarySource = rsRows then
+    sbBinaryDataRows.Down := True
+  else
+    sbBinaryDataColumns.Down := True;
+
+  // ===========================================================================
+
+  cbBinaryDirection.ItemIndex := Ord(eeo.BinaryOrientation);
+
+  // ===========================================================================
+
+  cbBinaryScanDirection.ItemIndex := eeo.BinaryScanDirection;
+
+  // ===========================================================================
+
+  if eeo.BinaryLSB = llTopLeft then
+    sbBinaryLSBLeft.Down := True
+  else
+    sbBinaryLSBRight.Down := True;
+
+  // ===========================================================================
+
+  case eeo.BinaryNumberSize of
+    ns8Bit      : sbBinaryNumberSize8bit.Down := True;
+    ns8bitSwap  : sbBinaryNumberSize8bitSwap.Down := True;
+    ns16bitSwap : sbBinaryNumberSize16bitSwap.Down := True;
+    nsRGB8bit   : {};
+  else
+
+  end;
+
+  // ===========================================================================
+
+  case eeo.BinaryRGBMode of
+    cmRGB : sbBinaryRGB.Down := True;
+    cmBGR : sbBinaryBGR.Down := True;
+    cmGRB : sbBinaryGRB.Down := True;
+    cmBRG : sbBinaryBRG.Down := True;
+  end;
+
+  cbBinaryChangeBackgroundPixels.Checked := eeo.BinaryRGBChangePixels;
+  shapeBinaryBackgroundPixels.Brush.Color := eeo.BinaryRGBChangeColour;
+
+  groupBoxBinaryRGBBrightness.Text := IntToStr(eeo.BinaryRGBBrightness);
+
+  if (eeo.BinaryColourSpaceRGB = csRGB32) then
+    sbBCSRGB32.Down := True
+  else
+    sbBCSRGB565.Down := True;
 
   // ===========================================================================
 
