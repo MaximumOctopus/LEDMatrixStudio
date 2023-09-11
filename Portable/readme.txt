@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.10.9                                                  =
+ =  LED Matrix Studio v0.10.10                                                 =
  =                                                                             =
- =  June 15th 2022                                                             =
+ =  September 11th 2023                                                        =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             =
@@ -34,7 +34,7 @@
  the size and type of matrix you need.
 
  Incidentally, if you think there is an option missing then please email
- me and I'll make sure it gets added to the next release.
+ me and I'll make sure it gets added to a future release.
  
  There is a special Sure Electronics 24x16 mode that outputs the column
  data in the order that the device requires. This is one of my favourite
@@ -51,6 +51,7 @@
  - Support for standard square/rectangular matrices, plus circular and hollow squares
  - Support for unlimited layers (2 will double RAM requirements, 3 will triple RAM requirements, etc.)
  - Supports single colour, bi-colour, 3 bits per pixel RGB, and full 24bit RGB matrices
+ - Supports exporting RGB matrices in RGB565 format. Uses two bytes per colour instead of 3 or 4.
  - Seven sizes of display "pixel" allows for use on almost any resolution PC
    Plus auto-size!
  - Square, round, and rounded square "pixels"
@@ -113,6 +114,9 @@
    
     https://www.embarcadero.com/products/delphi/starter
 
+I'm planning a C++ rewrite (likely with C++ Builder), but it's a massive
+project and I'm not sure it's worth the effort.
+
 ========================================================================
 
  Credits:
@@ -135,12 +139,29 @@
 
 
 ========================================================================
+== Updates for 0.10.10 beta ============================================
+======================================================================== 
+
+Added: RGB565 mode. Select it from the Export options window when using
+       an RGB matrix.
+Added: Text wrappiing. Toggle it via the right mouse button menu 
+       available on the text tool selection (looks like a stylised A).
+Fixed: A massive bug that affects single colour matrices when the export
+       source (column or row) is greater than 64 pixels, and the output
+       is set to 8 bits.
+
+A few minor tweaks to the code.
+
+The export code is rather messy now. I'm going to refactor (at a minimum)
+or rewrite certain sections, plus tidy the code for the next release. 
+
+========================================================================
 == Updates for 0.10.9 beta =============================================
 ======================================================================== 
 
 Added: Animation speed setting in GIF Export
        This is currently a global setting; per-frame delay will come in 
-	   a future update.
+       a future update.
  
 Fixed: Crash when selecting right triangle pattern.
 Fixed: Incorrect "scan direction" value when loading matrix preset.
@@ -150,10 +171,10 @@ Fixed: A couple of minor issues with the gradient brush and gradient modes.
 == Updates for 0.10.8 beta =============================================
 ======================================================================== 
  
-- Added: Simple export toolbar. Retains the functionality from the
-         recently removed simple export GUI components. While limited in
-		 options, it's much quicker than using the Export dialog, but
-		 can still supply data in a format useful in many applications.
+Added: Simple export toolbar. Retains the functionality from the
+       recently removed simple export GUI components. While limited in
+       options, it's much quicker than using the Export dialog, but
+       can still supply data in a format useful in many applications.
 
 ========================================================================
 == Updates for 0.10.7.1 beta ===========================================
