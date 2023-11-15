@@ -1,0 +1,136 @@
+// ===================================================================
+//
+//   (c) Paul Alan Freshney 2012-2023
+//   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
+//
+//   https://github.com/MaximumOctopus/LEDMatrixStudio
+//
+//   https://maximumoctopus.hashnode.dev/
+//
+//   C++ Rewrite October 11th 2023
+//
+// ===================================================================
+
+#pragma once
+
+#include "matrixconstants.h"
+
+
+struct ProjectSettings
+{
+	bool Valid;
+
+	MatrixMode Mode;
+	int Width;
+	int Height;
+	bool Clear = false;
+	int Special;
+	bool SizeType;
+	int PixelSize;
+	PixelShape Pixel;
+	PixelShape Shape;
+
+	CustomShape ShapeCustom;
+	int CustomShapeParam;
+
+	int Background;
+
+	void CustomShapeFromInt(int i)
+	{
+		switch (i)
+		{
+		case 0:
+			ShapeCustom = CustomShape::kNone;
+			break;
+		case 1:
+			ShapeCustom = CustomShape::kCircle;
+			break;
+		case 2:
+			ShapeCustom = CustomShape::kBorders;
+			break;
+		case 3:
+			ShapeCustom = CustomShape::kTriangle;
+			break;
+		}
+	}
+
+	void MatrixModeFromInt(int i)
+	{
+		switch (i)
+		{
+		case 0:
+			Mode = MatrixMode::kNone;
+			break;
+		case 1:
+			Mode = MatrixMode::kMono;
+			break;
+		case 2:
+			Mode = MatrixMode::kBiSequential;
+			break;
+		case 3:
+			Mode = MatrixMode::kBiBitplanes;
+			break;
+		case 4:
+			Mode = MatrixMode::kRGB;
+			break;
+		case 5:
+			Mode = MatrixMode::kRGB3BPP;
+			break;
+
+		default:
+			Mode = MatrixMode::kNone;
+		}
+	}
+
+	void PixelShapeFromInt(int i)
+	{
+		switch (i)
+		{
+		case 0:
+			Pixel = PixelShape::kSquare;
+			break;
+		case 1:
+			Pixel = PixelShape::kCircle;
+			break;
+		case 2:
+			Pixel = PixelShape::kRoundRect;
+			break;
+		}
+	}
+
+	int MatrixModeToInt()
+	{
+		switch (Mode)
+		{
+		case MatrixMode::kNone:
+			return 0;
+		case MatrixMode::kMono:
+			return 1;
+		case MatrixMode::kBiSequential:
+			return 2;
+		case MatrixMode::kBiBitplanes:
+			return 3;
+		case MatrixMode::kRGB:
+			return 4;
+		case MatrixMode::kRGB3BPP:
+			return 5;
+		}
+
+		return 0;
+	}
+
+	int PixelShapeToInt()
+	{
+		switch (Pixel)
+		{
+		case PixelShape::kSquare:
+			return 0;
+		case PixelShape::kCircle:
+			return 1;
+		case PixelShape::kRoundRect:
+			return 2;
+		}
+
+        return 0;
+	}
+};
