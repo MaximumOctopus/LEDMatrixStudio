@@ -2,8 +2,8 @@ object frmExportCode: TfrmExportCode
   Left = 0
   Top = 0
   Caption = 'frmExportCode'
-  ClientHeight = 624
-  ClientWidth = 916
+  ClientHeight = 618
+  ClientWidth = 910
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,15 +18,14 @@ object frmExportCode: TfrmExportCode
     Left = 0
     Top = 0
     Width = 262
-    Height = 624
+    Height = 618
     Align = alLeft
     BevelInner = bvRaised
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitHeight = 618
     DesignSize = (
       262
-      624)
+      618)
     object gbPlatforms: TGroupBox
       Left = 10
       Top = 8
@@ -575,7 +574,7 @@ object frmExportCode: TfrmExportCode
     end
     object bClose: TBitBtn
       Left = 10
-      Top = 593
+      Top = 587
       Width = 116
       Height = 25
       Anchors = [akLeft, akBottom]
@@ -626,14 +625,13 @@ object frmExportCode: TfrmExportCode
         FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
         FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
       TabOrder = 5
-      ExplicitTop = 587
     end
   end
   object Memo1: TMemo
     Left = 262
     Top = 0
-    Width = 654
-    Height = 624
+    Width = 648
+    Height = 618
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -643,8 +641,6 @@ object frmExportCode: TfrmExportCode
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitWidth = 648
-    ExplicitHeight = 618
   end
   object sdExportCode: TSaveDialog
     Left = 304

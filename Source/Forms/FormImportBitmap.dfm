@@ -3,8 +3,8 @@ object frmImportBitmap: TfrmImportBitmap
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmImportBitmap'
-  ClientHeight = 401
-  ClientWidth = 750
+  ClientHeight = 395
+  ClientWidth = 744
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

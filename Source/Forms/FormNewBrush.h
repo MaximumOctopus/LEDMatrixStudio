@@ -26,6 +26,7 @@
 #include "MatrixConstants.h"
 #include "RGBPaletteColours.h"
 #include "TheMatrix.h"
+#include <Vcl.Graphics.hpp>
 
 //---------------------------------------------------------------------------
 
@@ -92,11 +93,8 @@ __published:	// IDE-managed Components
 	TShape *sRGBP21;
 	TLabel *lPaletteColourText;
 	TLabel *lPixelColour;
-	TLabel *lColoursLeft;
 	TShape *sSelectionLMB;
-	TLabel *lColoursRight;
 	TShape *sSelectionRMB;
-	TLabel *lColoursMiddle;
 	TShape *sSelectionMMB;
 	TBevel *Bevel1;
 	TTrackBar *tbRed;
@@ -109,6 +107,9 @@ __published:	// IDE-managed Components
 	TColorDialog *cdNewBrush;
 	TSaveDialog *sdSaveBrush;
 	TOpenDialog *odLoadBrush;
+	TImage *Image1;
+	TImage *iColoursMiddle;
+	TImage *iColoursRight;
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);

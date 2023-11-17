@@ -229,7 +229,7 @@ void TfrmExportCode::LoadCode()
 
 		eeo = GProfileHandler->Load(path.c_str());
 
-		eeo.RGBBrightness = 100;
+		eeo.Code.RGBBrightness = 100;
 
 		if (eeo.Valid)
 		{
@@ -237,18 +237,18 @@ void TfrmExportCode::LoadCode()
 
 			int totalentrycount = 0;
 
-			eeo.StartFrame     = 1;
-			eeo.EndFrame       = matrix->GetFrameCount();
+			eeo.Code.StartFrame     = 1;
+			eeo.Code.EndFrame       = matrix->GetFrameCount();
 
-			if (eeo.Source == ReadSource::kRows)
+			if (eeo.Code.Source == ReadSource::kRows)
 			{
-				eeo.SelectiveStart = 1;
-				eeo.SelectiveEnd = matrix->Details.Height;
+				eeo.Code.SelectiveStart = 0;
+				eeo.Code.SelectiveEnd = matrix->Details.Height - 1;
 			}
 			else
 			{
-				eeo.SelectiveStart = 1;
-				eeo.SelectiveEnd = matrix->Details.Width;
+				eeo.Code.SelectiveStart = 0;
+				eeo.Code.SelectiveEnd = matrix->Details.Width - 1;
 			}
 
 			UpdateSettingsDisplay();
@@ -256,7 +256,7 @@ void TfrmExportCode::LoadCode()
 			std::vector<std::wstring> Output;
 			std::vector<std::wstring> Unique;
 
-			if (eeo.RGBEnabled)
+			if (eeo.Code.RGBEnabled)
 			{
 				ExportRGB::CreateExportAnimationRGB(matrix, eeo, Output, totalentrycount, Unique);
 			}
@@ -402,7 +402,7 @@ void TfrmExportCode::UpdateSettingsDisplay()
 {
 	if (cbCode->Enabled)
 	{
-		switch (eeo.Source)
+		switch (eeo.Code.Source)
 		{
 		case ReadSource::kColumns:
 			lSource->Caption    = GLanguageHandler->Text[kColumns].c_str();
@@ -419,9 +419,9 @@ void TfrmExportCode::UpdateSettingsDisplay()
 		}
 
 		lLSB->Caption    = ExportUtility::GetLSB(eeo, false).c_str();
-		lFormat->Caption = ExportUtility::GetLanguage(eeo.Language, false).c_str();
+		lFormat->Caption = ExportUtility::GetLanguage(eeo.Code.Language, false).c_str();
 
-		switch (eeo.Format)
+		switch (eeo.Code.Format)
 		{
 		case NumberFormat::kDecimal:
 			lNumbers->Caption = GLanguageHandler->Text[kDecimal].c_str();
@@ -434,9 +434,9 @@ void TfrmExportCode::UpdateSettingsDisplay()
 			break;
 		}
 
-		lGrouping->Caption = ExportUtility::GetNumberSize(eeo.Language, eeo.Size, false).c_str();
+		lGrouping->Caption = ExportUtility::GetNumberSize(eeo.Code.Language, eeo.Code.Size, false).c_str();
 
-		if (eeo.RGBEnabled)
+		if (eeo.Code.RGBEnabled)
 		{
 			lRGB->Caption = ExportUtility::GetRGBMode(eeo, false).c_str();
 		}

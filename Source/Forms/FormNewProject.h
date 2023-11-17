@@ -32,7 +32,6 @@ class TForm16 : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel19;
-	TImage *Image1;
 	TBitBtn *bOK;
 	TBitBtn *bCancel;
 	TGroupBox *gbAnimation;
@@ -87,10 +86,8 @@ __published:	// IDE-managed Components
 	TComboBox *ComboBox4;
 	TComboBox *ComboBox11;
 	TComboBox *ComboBox12;
-	TRadioButton *rbPixelSquare;
-	TRadioButton *rbPixelCircle;
-	TRadioButton *rbPixelRoundRect;
 	TMemo *mHelp;
+	TColorDialog *cdNewProject;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall bOKClick(TObject *Sender);
 	void __fastcall cbCustomShapeChange(TObject *Sender);
@@ -100,7 +97,8 @@ __published:	// IDE-managed Components
 	void __fastcall rbCommonClick(TObject *Sender);
 	void __fastcall sBackgroundMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
-	void __fastcall rbPixelSquareClick(TObject *Sender);
+	void __fastcall shapeSquareMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
 private:
 
 	void SetGUILanguageText();

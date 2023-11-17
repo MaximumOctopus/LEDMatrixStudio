@@ -42,7 +42,7 @@ extern SystemSettings *GSystemSettings;
 #pragma resource "*.dfm"
 TfrmExport *frmExport;
 
-ExportOptions OpenExportData(TheMatrix *thematrix, ExportOptions ieo, ExportSource source, MatrixMode mode) // mode = 0 (animation), 1 = (user memories) TO DO (now .exportopions
+void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, ExportSource source, MatrixMode mode) // mode = 0 (animation), 1 = (user memories) TO DO (now .exportopions
 {
 	TfrmExport *frmExport = new TfrmExport(Application);
 
@@ -55,87 +55,26 @@ ExportOptions OpenExportData(TheMatrix *thematrix, ExportOptions ieo, ExportSour
 	if (frmExport->InternalEO.ExportMode == ExportSource::kNone)
 	{
 		frmExport->InternalEO.ExportMode = ExportSource::kAnimation;
+
+		ieo.ExportMode = ExportSource::kAnimation;
 	}
 
-	frmExport->InternalEO.IncludePreamble = true;
+	frmExport->InternalEO.Code.IncludePreamble = true;
 
-	switch (mode)
-	{
-	case MatrixMode::kNone:
-		break;
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		frmExport->ProfileExtension                  = L"ledsexport";
-		frmExport->gbNumberGrouping->Top              = frmExport->gbNumberGroupingRGB->Top;
-		break;
-	case MatrixMode::kRGB:
-		frmExport->gbNumberGrouping->Visible          = false;
-
-		frmExport->gbRGB->Visible                     = true;
-		frmExport->gbBinaryRGB->Visible               = true;
-
-		frmExport->gbNumberGroupingRGB->Visible       = true;
-		frmExport->gbNumberGroupingBinaryRGB->Visible = true;
-
-		frmExport->gbRGBColourSpace->Visible          = true;
-		frmExport->gbRGBColourSpace->Top              = 415;
-
-		frmExport->gbBinaryColourSpaceRGB->Visible    = true;
-		frmExport->gbBinaryColourSpaceRGB->Top        = 415;
-
-		frmExport->ProfileExtension                  = L"ledsexportrgb";
-		break;
-	case MatrixMode::kRGB3BPP:
-		frmExport->gbNumberGrouping->Visible          = false;
-
-		frmExport->gbRGB->Visible                     = true;
-		frmExport->gbRGB->Height                      = 65;                    // hides background change option
-		frmExport->gbBinaryRGB->Visible               = true;
-
-		frmExport->gbNumberGroupingRGB->Visible       = true;
-		frmExport->gbNumberGroupingBinaryRGB->Visible = true;
-
-		frmExport->ProfileExtension                  = L"ledsexportrgb3bpp";
-		break;
-	}
-
-	if (source == ExportSource::kAnimation)
-	{
-		frmExport->SetMaxFrameCount(thematrix->GetFrameCount()); 	// anim
-	}
-	else
-	{
-		frmExport->SetMaxFrameCount(10);						// user memories
-	}
-
-	frmExport->eSelectiveStart->Text       = L"1";
-	frmExport->eSelectiveEnd->Text         = thematrix->Details.Height;
-
-	frmExport->eBinarySelectiveStart->Text = L"1";
-	frmExport->eBinarySelectiveEnd->Text   = thematrix->Details.Height;
-
-	if (ieo.ExportMode != ExportSource::kNone)
-	{
-		frmExport->BuildFromProfile(ieo);
-	}
-
-	ExportOptions eeo;
-
-	frmExport->cbDirectionChange(nullptr);         // these must be executed after the matrix has been assigned (or crash!!)
-	frmExport->sbBinaryDataRowsClick(nullptr);
-
+	frmExport->BuildUI(ieo);
 
 	if (frmExport->ShowModal() == mrOk)
 	{
-		eeo.Valid = true;
+		ieo.Valid = true;
 
-		eeo = frmExport->InternalEO;
+		ieo = frmExport->InternalEO;
+	}
+	else
+	{
+		ieo.Valid = false;
 	}
 
 	delete frmExport;
-
-	return eeo;
 }
 
 
@@ -179,9 +118,77 @@ __fastcall TfrmExport::TfrmExport(TComponent* Owner)
 }
 
 
+void TfrmExport::BuildUI(ExportOptions ieo)
+{
+	switch (Mode)
+	{
+	case MatrixMode::kNone:
+		break;
+	case MatrixMode::kMono:
+	case MatrixMode::kBiSequential:
+	case MatrixMode::kBiBitplanes:
+		ProfileExtension = L"ledsexport";
+		gbNumberGrouping->Top = gbNumberGroupingRGB->Top;
+		break;
+	case MatrixMode::kRGB:
+		gbNumberGrouping->Visible = false;
+
+		gbRGB->Visible = true;
+		gbBinaryRGB->Visible = true;
+
+		gbNumberGroupingRGB->Visible = true;
+		gbNumberGroupingBinaryRGB->Visible = true;
+
+		gbRGBColourSpace->Visible = true;
+		gbRGBColourSpace->Top = 415;
+
+		gbBinaryColourSpaceRGB->Visible = true;
+		gbBinaryColourSpaceRGB->Top = 415;
+
+		ProfileExtension = L"ledsexportrgb";
+		break;
+	case MatrixMode::kRGB3BPP:
+		gbNumberGrouping->Visible = false;
+
+		gbRGB->Visible = true;
+		gbRGB->Height = 65;                    		// hides background change option
+		gbBinaryRGB->Visible = true;
+
+		gbNumberGroupingRGB->Visible = true;
+		gbNumberGroupingBinaryRGB->Visible = true;
+
+		ProfileExtension = L"ledsexportrgb3bpp";
+		break;
+	}
+
+	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	{
+		SetMaxFrameCount(matrix->GetFrameCount()); 	// anim
+	}
+	else
+	{
+		SetMaxFrameCount(10);						// user memories
+	}
+
+	eSelectiveStart->Text = L"1";
+	eSelectiveEnd->Text = matrix->Details.Height;
+
+	eBinarySelectiveStart->Text = L"1";
+	eBinarySelectiveEnd->Text = matrix->Details.Height;
+
+	if (ieo.ExportMode != ExportSource::kNone)
+	{
+		BuildFromProfile(ieo);
+	}
+
+	cbDirectionChange(nullptr);         // these must be executed after the matrix has been assigned (or crash!!)
+	sbBinaryDataRowsClick(nullptr);
+}
+
+
 void TfrmExport::BuildFromProfile(ExportOptions eeo)
 {
-	if (eeo.Source == ReadSource::kRows)
+	if (eeo.Code.Source == ReadSource::kRows)
 	{
 		sbDataRows->Down = true;
 	}
@@ -196,7 +203,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ======================================================================
 
-	if (eeo.LSB == LeastSignificantBit::kTopLeft)
+	if (eeo.Code.LSB == LeastSignificantBit::kTopLeft)
 	{
 		sbLSBLeft->Down  = true;
 	}
@@ -215,7 +222,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	if (gbNumberFormat->Visible)
 	{
-		switch (eeo.Format)
+		switch (eeo.Code.Format)
 		{
 		case NumberFormat::kDecimal:
 			sbNumberDecimal->Down = true;
@@ -233,7 +240,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	if (gbNumberGrouping->Visible)
 	{
-		switch (eeo.Size)
+		switch (eeo.Code.Size)
 		{
 		case NumberSize::k8Bit:
 			sbNumberSize8bit->Down      = true;
@@ -256,7 +263,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 	}
 	else
 	{
-		switch  (eeo.Size)
+		switch (eeo.Code.Size)
 		{
 		case NumberSize::kRGB8bit:
 			sbNumberSizeRGB8bits->Down = true;
@@ -272,7 +279,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ===========================================================================
 
-	switch (eeo.Content)
+	switch (eeo.Code.Content)
 	{
 	case LineContent::kRowCol:
 		sbOutputRow->Down = true;
@@ -289,17 +296,17 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ===========================================================================
 
-	cbLineCount->Text = std::to_wstring(eeo.LineCount).c_str();
+	cbLineCount->Text = std::to_wstring(eeo.Code.LineCount).c_str();
 
 	// ===========================================================================
 
 	if (gbRGB->Visible)
 	{
-		switch (eeo.TextRGBMode)
+		switch (eeo.Code.RGBFormat)
 		{
 		case RGBMode::kRGB:
 			sbRGB->Down = true;
-            break;
+			break;
 		case RGBMode::kBGR:
 			sbBGR->Down = true;
 			break;
@@ -311,17 +318,17 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 			break;
 		}
 
-		cbChangeBackgroundPixels->Checked  = eeo.RGBChangePixels;
-		shapeBackgroundPixels->Brush->Color = TColor(eeo.RGBChangeColour);
+		cbChangeBackgroundPixels->Checked  = eeo.Code.RGBChangePixels;
+		shapeBackgroundPixels->Brush->Color = TColor(eeo.Code.RGBChangeColour);
 
-		if (eeo.RGBBrightness > 100)
+		if (eeo.Code.RGBBrightness > 100)
 		{
-			eeo.RGBBrightness = 100;
+			eeo.Code.RGBBrightness = 100;
 		}
 
-		groupBoxRGBBrightness->Text = eeo.RGBBrightness;
+		groupBoxRGBBrightness->Text = eeo.Code.RGBBrightness;
 
-		switch (eeo.ColourSpaceRGB)
+		switch (eeo.Code.ColourSpaceRGB)
 		{
 		case ColourSpace::kRGB32:
 			sbCSRGB32->Down = true;
@@ -344,7 +351,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 	// binary options
 	// ===========================================================================
 
-	if (eeo.BinarySource == ReadSource::kRows)
+	if (eeo.Binary.Source == ReadSource::kRows)
 	{
 		sbBinaryDataRows->Down = true;
 	}
@@ -363,7 +370,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ===========================================================================
 
-	if (eeo.BinaryLSB == LeastSignificantBit::kTopLeft)
+	if (eeo.Binary.LSB == LeastSignificantBit::kTopLeft)
 	{
 		sbBinaryLSBLeft->Down = true;
 	}
@@ -374,7 +381,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ===========================================================================
 
-	switch (eeo.BinarySize)
+	switch (eeo.Binary.Size)
 	{
 	case NumberSize::k8Bit:
 		sbBinaryNumberSize8bit->Down = true;
@@ -391,7 +398,7 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 	// ===========================================================================
 
-	switch (eeo.BinaryRGBMode)
+	switch (eeo.Binary.RGBFormat)
 	{
 	case RGBMode::kRGB:
 		sbBinaryRGB->Down = true;
@@ -407,12 +414,12 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		break;
 	}
 
-	cbBinaryChangeBackgroundPixels->Checked  = eeo.BinaryRGBChangePixels;
-	shapeBinaryBackgroundPixels->Brush->Color = TColor(eeo.BinaryRGBChangeColour);
+	cbBinaryChangeBackgroundPixels->Checked  = eeo.Binary.RGBChangePixels;
+	shapeBinaryBackgroundPixels->Brush->Color = TColor(eeo.Binary.RGBChangeColour);
 
-	groupBoxBinaryRGBBrightness->Text = std::to_wstring(eeo.BinaryRGBBrightness).c_str();
+	groupBoxBinaryRGBBrightness->Text = std::to_wstring(eeo.Binary.RGBBrightness).c_str();
 
-	if (eeo.BinaryColourSpaceRGB == ColourSpace::kRGB32)
+	if (eeo.Binary.ColourSpaceRGB == ColourSpace::kRGB32)
 	{
 		sbBCSRGB32->Down = true;
 	}
@@ -434,26 +441,26 @@ void TfrmExport::CreateExportOptions()
 {
 	if (cbOptimise->Checked)
 	{
-		InternalEO.IncludePreamble = false;
-		InternalEO.CleanMode       = true;
+		InternalEO.Code.IncludePreamble = false;
+		InternalEO.Code.CleanMode       = true;
 	}
 	else
 	{
-		InternalEO.IncludePreamble = true;
-		InternalEO.CleanMode       = false;
+		InternalEO.Code.IncludePreamble = true;
+		InternalEO.Code.CleanMode       = false;
 	}
 
 	// =======================================================================
 
 	if (InternalEO.ExportMode == ExportSource::kAnimation)
 	{
-		InternalEO.StartFrame = eFrameStart->Text.ToInt();
-		InternalEO.EndFrame   = eFrameEnd->Text.ToInt();
+		InternalEO.Code.StartFrame = eFrameStart->Text.ToInt() - 1;
+		InternalEO.Code.EndFrame   = eFrameEnd->Text.ToInt() - 1;
 	}
 	else
 	{
-		InternalEO.StartFrame = eFrameStart->Text.ToInt();
-		InternalEO.EndFrame   = eFrameEnd->Text.ToInt();
+		InternalEO.Code.StartFrame = eFrameStart->Text.ToInt() - 1;
+		InternalEO.Code.EndFrame   = eFrameEnd->Text.ToInt() - 1;
 	}
 
 	// =======================================================================
@@ -480,18 +487,18 @@ void TfrmExport::CreateExportOptions()
 		}
 	}
 
-	InternalEO.SelectiveStart = ss;
-	InternalEO.SelectiveEnd   = se;
+	InternalEO.Code.SelectiveStart = ss;
+	InternalEO.Code.SelectiveEnd   = se;
 
 	// =======================================================================
 
 	if (sbDataRows->Down)
 	{
-		InternalEO.Source = ReadSource::kRows;
+		InternalEO.Code.Source = ReadSource::kRows;
 	}
 	else
 	{
-		InternalEO.Source = ReadSource::kColumns;
+		InternalEO.Code.Source = ReadSource::kColumns;
 	}
 
 	// =======================================================================
@@ -500,17 +507,17 @@ void TfrmExport::CreateExportOptions()
 
 	// =======================================================================
 
-	InternalEO.ScanDirectionFromInt(InternalEO.Source, cbScanDirection->ItemIndex);
+	InternalEO.ScanDirectionFromInt(InternalEO.Code.Source, cbScanDirection->ItemIndex);
 
 	// =======================================================================
 
 	if (sbLSBLeft->Down)
 	{
-		InternalEO.LSB = LeastSignificantBit::kTopLeft;
+		InternalEO.Code.LSB = LeastSignificantBit::kTopLeft;
 	}
 	else
 	{
-		InternalEO.LSB = LeastSignificantBit::kBottomRight;
+		InternalEO.Code.LSB = LeastSignificantBit::kBottomRight;
 	}
 
 	// =======================================================================
@@ -525,20 +532,20 @@ void TfrmExport::CreateExportOptions()
 	{
 		if (sbNumberDecimal->Down)
 		{
-			InternalEO.Format = NumberFormat::kDecimal;
+			InternalEO.Code.Format = NumberFormat::kDecimal;
 		}
 		else if (sbNumberBinary->Down)
 		{
-			InternalEO.Format = NumberFormat::kBinary;
+			InternalEO.Code.Format = NumberFormat::kBinary;
 		}
 		else
 		{
-			InternalEO.Format = NumberFormat::kHex;
+			InternalEO.Code.Format = NumberFormat::kHex;
 		}
 	}
 	else
 	{
-		InternalEO.Format = NumberFormat::kHex;
+		InternalEO.Code.Format = NumberFormat::kHex;
 	}
 
 	// =======================================================================
@@ -547,38 +554,38 @@ void TfrmExport::CreateExportOptions()
 	{
 		if (sbNumberSize8bit->Down)
 		{
-			InternalEO.Size = NumberSize::k8Bit;
+			InternalEO.Code.Size = NumberSize::k8Bit;
 		}
 		else if (sbNumberSize16bit->Down)
 		{
-			InternalEO.Size = NumberSize::k16bit;
+			InternalEO.Code.Size = NumberSize::k16bit;
 		}
 		else if (sbNumberSize32bit->Down)
 		{
-			InternalEO.Size = NumberSize::k32bit;
+			InternalEO.Code.Size = NumberSize::k32bit;
 		}
 		else if (sbNumberSize8bitSwap->Down)
 		{
-			InternalEO.Size = NumberSize::k8bitSwap;
+			InternalEO.Code.Size = NumberSize::k8bitSwap;
 		}
 		else if (sbNumberSize16bitSwap->Down)
 		{
-			InternalEO.Size = NumberSize::k16bitSwap;
+			InternalEO.Code.Size = NumberSize::k16bitSwap;
 		}
 	}
 	else
 	{
 		if (sbNumberSizeRGB8bits->Down)
 		{
-			InternalEO.Size = NumberSize::kRGB8bit;
+			InternalEO.Code.Size = NumberSize::kRGB8bit;
 		}
 		else if (sbNumberSizeRGB32bits->Down)
 		{
-			InternalEO.Size = NumberSize::kRGB32bit;
+			InternalEO.Code.Size = NumberSize::kRGB32bit;
 		}
 		else
 		{
-			InternalEO.Size = NumberSize::kRGB32bit;
+			InternalEO.Code.Size = NumberSize::kRGB32bit;
 		}
 	}
 
@@ -586,64 +593,64 @@ void TfrmExport::CreateExportOptions()
 
 	if (sbOutputRow->Down)
 	{
-		InternalEO.Content = LineContent::kRowCol;
+		InternalEO.Code.Content = LineContent::kRowCol;
 	}
 	else if (sbOutputFrame->Down)
 	{
-		InternalEO.Content = LineContent::kFrame;
+		InternalEO.Code.Content = LineContent::kFrame;
 	}
 	else if (sbOutputBytes->Down)
 	{
-		InternalEO.Content = LineContent::kBytes;
+		InternalEO.Code.Content = LineContent::kBytes;
 	}
 
 	// =======================================================================
 
 	if (gbRGB->Visible)
 	{
-		InternalEO.RGBEnabled = true;
+		InternalEO.Code.RGBEnabled = true;
 
 		if (sbRGB->Down)
 		{
-			InternalEO.TextRGBMode = RGBMode::kRGB;
+			InternalEO.Code.RGBFormat = RGBMode::kRGB;
 		}
 		else if (sbBGR->Down)
 		{
-			InternalEO.TextRGBMode = RGBMode::kBGR;
+			InternalEO.Code.RGBFormat = RGBMode::kBGR;
 		}
 		else if (sbGRB->Down)
 		{
-			InternalEO.TextRGBMode = RGBMode::kGRB;
+			InternalEO.Code.RGBFormat = RGBMode::kGRB;
 		}
 		else if (sbBRG->Down)
 		{
-			InternalEO.TextRGBMode = RGBMode::kBRG;
+			InternalEO.Code.RGBFormat  = RGBMode::kBRG;
 		}
 
-		InternalEO.RGBChangePixels = cbChangeBackgroundPixels->Checked;
-		InternalEO.RGBChangeColour = shapeBackgroundPixels->Brush->Color;
+		InternalEO.Code.RGBChangePixels = cbChangeBackgroundPixels->Checked;
+		InternalEO.Code.RGBChangeColour = shapeBackgroundPixels->Brush->Color;
 
-		InternalEO.RGBBrightness   = groupBoxRGBBrightness->Text.ToIntDef(100);
+		InternalEO.Code.RGBBrightness   = groupBoxRGBBrightness->Text.ToIntDef(100);
 
 		if (sbCSRGB32->Down)
 		{
-			InternalEO.ColourSpaceRGB = ColourSpace::kRGB32;
-			InternalEO.Size     = NumberSize::kRGB32bit;
+			InternalEO.Code.ColourSpaceRGB = ColourSpace::kRGB32;
+			InternalEO.Code.Size     = NumberSize::kRGB32bit;
 		}
 		else
 		{
-			InternalEO.ColourSpaceRGB = ColourSpace::kRGB565;
-			InternalEO.Size     = NumberSize::kRGB16bit;
+			InternalEO.Code.ColourSpaceRGB = ColourSpace::kRGB565;
+			InternalEO.Code.Size     = NumberSize::kRGB16bit;
 		}
 	}
 	else
 	{
-		InternalEO.RGBEnabled = false;
+		InternalEO.Code.RGBEnabled = false;
 	}
 
 	// =======================================================================
 
-	InternalEO.LineCount = cbLineCount->Text.ToInt();
+	InternalEO.Code.LineCount = cbLineCount->Text.ToInt();
 
 	// =======================================================================
 	//   binary file specific options
@@ -651,11 +658,11 @@ void TfrmExport::CreateExportOptions()
 
 	if (sbBinaryDataRows->Down)
 	{
-		InternalEO.BinarySource = ReadSource::kRows;
+		InternalEO.Binary.Source = ReadSource::kRows;
 	}
 	else
 	{
-		InternalEO.BinarySource = ReadSource::kColumns;
+		InternalEO.Binary.Source = ReadSource::kColumns;
 	}
 
 	// =======================================================================
@@ -664,17 +671,17 @@ void TfrmExport::CreateExportOptions()
 
 	// =======================================================================
 
-	InternalEO.BinaryScanDirectionFromInt(InternalEO.BinarySource, cbBinaryScanDirection->ItemIndex);
+	InternalEO.BinaryScanDirectionFromInt(InternalEO.Binary.Source, cbBinaryScanDirection->ItemIndex);
 
 	// =======================================================================
 
 	if (sbBinaryLSBLeft->Down)
 	{
-		InternalEO.BinaryLSB = LeastSignificantBit::kTopLeft;
+		InternalEO.Binary.LSB = LeastSignificantBit::kTopLeft;
 	}
 	else
 	{
-		InternalEO.BinaryLSB = LeastSignificantBit::kBottomRight;
+		InternalEO.Binary.LSB = LeastSignificantBit::kBottomRight;
 	}
 
 	// =======================================================================
@@ -683,49 +690,49 @@ void TfrmExport::CreateExportOptions()
 	{
 		if (sbBinaryRGB->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kRGB;
+			InternalEO.Binary.RGBFormat = RGBMode::kRGB;
 		}
 		else if (sbBinaryBGR->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kBGR;
+			InternalEO.Binary.RGBFormat = RGBMode::kBGR;
 		}
 		else if (sbBinaryGRB->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kGRB;
+			InternalEO.Binary.RGBFormat = RGBMode::kGRB;
 		}
 		else if (sbBinaryBRG->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kBRG;
+			InternalEO.Binary.RGBFormat = RGBMode::kBRG;
 		}
 
-		InternalEO.BinaryRGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
-		InternalEO.BinaryRGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
+		InternalEO.Binary.RGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
+		InternalEO.Binary.RGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
 
-		InternalEO.BinaryRGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
+		InternalEO.Binary.RGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
 
 		if (sbBCSRGB32->Down)
 		{
-			InternalEO.BinaryColourSpaceRGB = ColourSpace::kRGB32;
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB32;
 		}
 		else
 		{
-			InternalEO.BinaryColourSpaceRGB = ColourSpace::kRGB565;
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB565;
 		}
 	}
 
 	// =======================================================================
 
-	InternalEO.BinarySize = NumberSize::kRGB8bit;
+	InternalEO.Binary.Size = NumberSize::kRGB8bit;
 
 	// =======================================================================
 
 	if (rbSaveAnimation->Checked)
 	{
-		InternalEO.BinaryContent = BinaryFileContents::kEntireAnimation;
+		InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;
 	}
 	else
 	{
-		InternalEO.BinaryContent = BinaryFileContents::kSingleFrame;
+		InternalEO.Binary.Content = BinaryFileContents::kSingleFrame;
 	}
 }
 
@@ -733,33 +740,20 @@ void TfrmExport::CreateExportOptions()
 void TfrmExport::CreateBinaryExportOptions()
 {
 	//  eeo.Language     := -1; // none
-	InternalEO.Content  = LineContent::kFrame;  // process in frames
-	InternalEO.Format = NumberFormat::kHex;   // always in hex format
-
-	// =======================================================================
-
-	if (cbBinaryOptimise->Checked)
-	{
-		InternalEO.IncludePreamble = false;
-		InternalEO.CleanMode       = true;
-	}
-	else
-	{
-		InternalEO.IncludePreamble = true;
-		InternalEO.CleanMode       = false;
-	}
+	InternalEO.Code.Content  = LineContent::kFrame;  // process in frames
+	InternalEO.Code.Format = NumberFormat::kHex;   // always in hex format
 
 	// =========================================================================
 
 	if (InternalEO.ExportMode == ExportSource::kAnimation)
 	{
-		InternalEO.StartFrame = eFrameStart->Text.ToInt();
-		InternalEO.EndFrame   = eFrameEnd->Text.ToInt();
+		InternalEO.Binary.StartFrame = eBinaryFrameStart->Text.ToInt() - 1;
+		InternalEO.Binary.EndFrame   = eBinaryFrameEnd->Text.ToInt() - 1;
 	}
 	else
 	{
-		InternalEO.StartFrame = eFrameStart->Text.ToInt();
-		InternalEO.EndFrame   = eFrameEnd->Text.ToInt();
+		InternalEO.Binary.StartFrame = eBinaryFrameStart->Text.ToInt() - 1;
+		InternalEO.Binary.EndFrame   = eBinaryFrameEnd->Text.ToInt() - 1;
 	}
 
 	// =========================================================================
@@ -786,18 +780,18 @@ void TfrmExport::CreateBinaryExportOptions()
 		}
 	}
 
-	InternalEO.SelectiveStart = ss;
-	InternalEO.SelectiveEnd   = se;
+	InternalEO.Binary.SelectiveStart = ss;
+	InternalEO.Binary.SelectiveEnd   = se;
 
 	// =========================================================================
 
 	if (sbBinaryDataRows->Down)
 	{
-		InternalEO.BinarySource = ReadSource::kRows;
+		InternalEO.Binary.Source = ReadSource::kRows;
 	}
 	else
 	{
-		InternalEO.BinarySource = ReadSource::kColumns;
+		InternalEO.Binary.Source = ReadSource::kColumns;
 	}
 
 	// =========================================================================
@@ -806,17 +800,17 @@ void TfrmExport::CreateBinaryExportOptions()
 
 	// =========================================================================
 
-	InternalEO.BinaryScanDirectionFromInt(InternalEO.BinarySource, cbBinaryScanDirection->ItemIndex);
+	InternalEO.BinaryScanDirectionFromInt(InternalEO.Binary.Source, cbBinaryScanDirection->ItemIndex);
 
 	// =========================================================================
 
 	if (sbBinaryLSBLeft->Down)
 	{
-		InternalEO.BinaryLSB = LeastSignificantBit::kTopLeft;
+		InternalEO.Binary.LSB = LeastSignificantBit::kTopLeft;
 	}
 	else
 	{
-		InternalEO.BinaryLSB = LeastSignificantBit::kBottomRight;
+		InternalEO.Binary.LSB = LeastSignificantBit::kBottomRight;
 	}
 
 	// =========================================================================
@@ -825,19 +819,19 @@ void TfrmExport::CreateBinaryExportOptions()
 	{
 		if (sbBinaryNumberSize8bit->Down)
 		{
-			InternalEO.BinarySize = NumberSize::k8Bit;
+			InternalEO.Binary.Size = NumberSize::k8Bit;
 		}
 		else if (sbBinaryNumberSize8bitSwap->Down)
 		{
-			InternalEO.BinarySize = NumberSize::k8bitSwap;
+			InternalEO.Binary.Size = NumberSize::k8bitSwap;
 		}
 		else if (sbBinaryNumberSize16bitSwap->Down)
 		{
-			InternalEO.BinarySize = NumberSize::k16bitSwap;
+			InternalEO.Binary.Size = NumberSize::k16bitSwap;
 		}
 		else
 		{
-			InternalEO.BinarySize = NumberSize::kRGB8bit;
+			InternalEO.Binary.Size = NumberSize::kRGB8bit;
 		}
 	}
 
@@ -845,42 +839,42 @@ void TfrmExport::CreateBinaryExportOptions()
 
 	if (gbBinaryRGB->Visible)
 	{
-		InternalEO.RGBEnabled = true;
+		InternalEO.Binary.RGBEnabled = true;
 
 		if (sbBinaryRGB->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kRGB;
+			InternalEO.Binary.RGBFormat = RGBMode::kRGB;
 		}
 		else if (sbBinaryBGR->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kBGR;
+			InternalEO.Binary.RGBFormat = RGBMode::kBGR;
 		}
 		else if (sbBinaryGRB->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kGRB;
+			InternalEO.Binary.RGBFormat = RGBMode::kGRB;
 		}
 		else if (sbBinaryBRG->Down)
 		{
-			InternalEO.BinaryRGBMode = RGBMode::kBRG;
+			InternalEO.Binary.RGBFormat = RGBMode::kBRG;
 		}
 
-		InternalEO.BinaryRGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
-		InternalEO.BinaryRGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
+		InternalEO.Binary.RGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
+		InternalEO.Binary.RGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
 
-		InternalEO.BinaryRGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
+		InternalEO.Binary.RGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
 
 		if (sbBCSRGB32->Down)
 		{
-			InternalEO.BinaryColourSpaceRGB = ColourSpace::kRGB32;
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB32;
 		}
 		else
 		{
-			InternalEO.BinaryColourSpaceRGB = ColourSpace::kRGB565;
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB565;
 		}
 	}
 	else
 	{
-		InternalEO.RGBEnabled = false;
+		InternalEO.Code.RGBEnabled = false;
 	}
 }
 
@@ -1057,7 +1051,6 @@ void __fastcall TfrmExport::cbOptimiseClick(TObject *Sender)
 #pragma end_region
 
 
-
 void TfrmExport::AddPreviewSection()
 {
 	std::wstring s = Caption.c_str();
@@ -1108,7 +1101,9 @@ void TfrmExport::PreviewBinary()
 		endframelimit = 9;
 	}
 
-	if (InternalEO.StartFrame <= InternalEO.EndFrame && InternalEO.EndFrame <= endframelimit && InternalEO.StartFrame >= 1)
+	if (InternalEO.Binary.StartFrame <= InternalEO.Binary.EndFrame &&
+		InternalEO.Binary.EndFrame <= endframelimit &&
+		InternalEO.Binary.StartFrame >= 0)
 	{
 		std::vector<std::wstring> Unique;
 		std::vector<std::wstring> IOutput;
@@ -1116,9 +1111,6 @@ void TfrmExport::PreviewBinary()
 
 		auto ClearForRetry = [&]()
 		{
-			InternalEO.IncludePreamble = true;
-			InternalEO.CleanMode       = false;
-
 			IOutput.clear();
 			Unique.clear();
 		};
@@ -1176,7 +1168,7 @@ void TfrmExport::PreviewBinary()
 
 		mBinary->Lines->BeginUpdate();
 
-		for (int t = 0; t < Output.size(); t++)
+		for (int t = 0; t < IOutput.size(); t++)
 		{
 			mBinary->Lines->Add(IOutput[t].c_str());
 		}
@@ -1239,15 +1231,17 @@ void TfrmExport::PreviewCode()
 		endframelimit = 9;
 	}
 
-	if (InternalEO.StartFrame <= InternalEO.EndFrame && InternalEO.EndFrame <= endframelimit && InternalEO.StartFrame >= 1)
+	if (InternalEO.Code.StartFrame <= InternalEO.Code.EndFrame &&
+		InternalEO.Code.EndFrame <= endframelimit &&
+		InternalEO.Code.StartFrame >= 0)
 	{
 		std::vector<std::wstring> Unique;
 		Output.clear();
 
 		auto ClearForRetry = [&]()
 		{
-			InternalEO.IncludePreamble = true;
-			InternalEO.CleanMode       = false;
+			InternalEO.Code.IncludePreamble = true;
+			InternalEO.Code.CleanMode       = false;
 
 			Output.clear();
 			Unique.clear();
@@ -1820,7 +1814,7 @@ void TfrmExport::AddExampleCode()
 {
 	std::wstring s = L"";
 
-	switch (InternalEO.Language)
+	switch (InternalEO.Code.Language)
 	{
 	case ExportLanguage::kCSV:
 	case ExportLanguage::kPICAXE:
@@ -1872,4 +1866,10 @@ bool TfrmExport::ValidateNumberEdit(TEdit *edit)
 	edit->Color = clWindow;
 
     return true;
+}
+
+
+void __fastcall TfrmExport::bCloseClick(TObject *Sender)
+{
+	CreateExportOptions();
 }

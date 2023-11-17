@@ -163,6 +163,7 @@ __published:	// IDE-managed Components
 	void __fastcall sbDeleteClick(TObject *Sender);
 	void __fastcall sbOpenClick(TObject *Sender);
 	void __fastcall sbBinaryDataRowsClick(TObject *Sender);
+	void __fastcall bCloseClick(TObject *Sender);
 private:
 
 	std::vector<std::wstring> Output;
@@ -207,6 +208,8 @@ public:
 
 	ExportOptions InternalEO;
 
+    void BuildUI(ExportOptions);
+
     void SetGuiLanguageText();
 
 	void SetMaxFrameCount(int);
@@ -216,7 +219,7 @@ public:
 
 //---------------------------------------------------------------------------
 
-ExportOptions OpenExportData(TheMatrix*, ExportOptions, ExportSource, MatrixMode);
+void OpenExportData(TheMatrix*, ExportOptions&, ExportSource, MatrixMode);
 
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmExport *frmExport;

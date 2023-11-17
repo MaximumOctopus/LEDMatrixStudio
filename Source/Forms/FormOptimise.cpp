@@ -103,9 +103,9 @@ void __fastcall TfrmOptimise::sbOptimiseClick(TObject *Sender)
 
 	ExportOptions teo;
 
-	teo.Size = GetDataSize();
-	teo.Language  = ExportLanguage(cbLanguageFormat->ItemIndex);
-	teo.LineCount = cbPerRow->Text.ToIntDef(10);
+	teo.Code.Size = GetDataSize();
+	teo.Code.Language  = ExportLanguage(cbLanguageFormat->ItemIndex);
+	teo.Code.LineCount = cbPerRow->Text.ToIntDef(10);
 
 	if (Optimiser::OptimiseDataSimple(thematrix, teo, MatrixData, output))
 	{

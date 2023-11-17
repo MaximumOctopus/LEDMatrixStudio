@@ -133,13 +133,13 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 	switch (ps.Pixel)
 	{
 	case PixelShape::kSquare:
-		rbPixelSquare->Checked = true;
+		shapeSquare->Brush->Color = clLime;
 		break;
 	case PixelShape::kCircle:
-		rbPixelCircle->Checked = true;
+		shapeCircle->Brush->Color = clLime;
 		break;
 	case PixelShape::kRoundRect:
-		rbPixelRoundRect->Checked = true;
+		shapeRoundRect->Brush->Color = clLime;
 	}
 
 	sBackground->Brush->Color = TColor(ps.Background);
@@ -199,11 +199,11 @@ void TForm16::SetTo(ProjectSettings &ps)
 	ps.Clear = cbClearAll->Checked;
 	ps.Special = cbFrames->Text.ToInt();
 
-	if (rbPixelSquare->Checked)
+	if (shapeSquare->Brush->Color == clLime)
 	{
 		ps.Pixel = PixelShape::kSquare;
 	}
-	else if (rbPixelCircle->Checked)
+	else if (shapeCircle->Brush->Color == clLime)
 	{
 		ps.Pixel = PixelShape::kCircle;
 	}
@@ -373,26 +373,9 @@ void __fastcall TForm16::rbCommonClick(TObject *Sender)
 void __fastcall TForm16::sBackgroundMouseDown(TObject *Sender, TMouseButton Button,
 		  TShiftState Shift, int X, int Y)
 {
- //	if (cdNewProject->Execute)
-//	{
-//		sBackground->Brush->Color = cdNewProject->Color;
-//	}
-}
-
-
-void __fastcall TForm16::rbPixelSquareClick(TObject *Sender)
-{
-	TShape *s = (TShape*)Sender;
-
-	switch (s->Tag)
+	if (cdNewProject->Execute())
 	{
-	case 0:
-		rbPixelSquare->Checked = true;
-		break;
-	case 1: rbPixelCircle->Checked = true;
-		break;
-	case 2: rbPixelRoundRect->Checked = true;
-		break;
+		sBackground->Brush->Color = cdNewProject->Color;
 	}
 }
 
@@ -417,4 +400,28 @@ void TForm16::UpdateHelp(MatrixMode mode)
 		mHelp->Text = GLanguageHandler->Text[kNPModeRGB3BPP].c_str();
 		break;
 	}
+}
+
+
+void __fastcall TForm16::shapeSquareMouseDown(TObject *Sender, TMouseButton Button,
+		  TShiftState Shift, int X, int Y)
+{
+	TShape *shape = (TShape*)Sender;
+
+	if (shapeSquare->Tag != shape->Tag)
+	{
+		shapeSquare->Brush->Color = clWhite;
+	}
+
+	if (shapeCircle->Tag != shape->Tag)
+	{
+		shapeCircle->Brush->Color = clWhite;
+	}
+
+	if (shapeRoundRect->Tag != shape->Tag)
+	{
+		shapeRoundRect->Brush->Color = clWhite;
+	}
+
+	shape->Brush->Color = clLime;
 }
