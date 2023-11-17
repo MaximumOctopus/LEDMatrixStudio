@@ -57,7 +57,7 @@ namespace Utility
 
 		if (i != std::wstring::npos)
 		{
-			return s.substr(i - 1);
+			return s.substr(0, i);
 		}
 
 		return s;
@@ -212,11 +212,17 @@ namespace Utility
 	{
 		switch (mm)
 		{
-		case 0: return GLanguageHandler->Text[kSingleColour];
-		case 1: return GLanguageHandler->Text[kBiColourSequential];
-		case 2: return GLanguageHandler->Text[kBiColourBitplanes];
-		case 3: return GLanguageHandler->Text[kRGB];
-		case 5: return GLanguageHandler->Text[kRGB3BPP];
+		case 0:
+			return GLanguageHandler->Text[kSingleColour];
+		case 1:
+			return GLanguageHandler->Text[kBiColourSequential];
+		case 2:
+			return GLanguageHandler->Text[kBiColourBitplanes];
+		case 3:
+			return GLanguageHandler->Text[kRGB];
+		case 4:
+			return GLanguageHandler->Text[kRGB3BPP];
+
 		default:
 			return L"unknown :(";
 		}

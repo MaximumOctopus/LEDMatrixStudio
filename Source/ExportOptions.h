@@ -1,16 +1,23 @@
+// ===================================================================
 //
-// (c) Paul Alan Freshney 2012-2023
-// www.freshney.org :: paul@freshney.org :: maximumoctopus.com
+//   (c) Paul Alan Freshney 2012-2023
+//   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
-// https://sourceforge.net/projects/led-matrix-studio/
+//   https://github.com/MaximumOctopus/LEDMatrixStudio
 //
-// C++ Rewrite October 11th 2023
+//   https://maximumoctopus.hashnode.dev/
 //
-// Please do not redistribute the source code!
+//   C++ Rewrite October 11th 2023
 //
+// ===================================================================
 
 #pragma once
 
+#include <fstream>
+#include <sstream>
+
+#include "FileConstants.h"
+#include "Formatting.h"
 
 	enum class NumberFormat { kDecimal = 0, kBinary, kHex };
 	enum class NumberSize { k8Bit = 0, k16bit, k32bit, k8bitSwap, k16bitSwap, k64bit, kRGB8bit, kRGB16bit, kRGB32bit };
@@ -27,26 +34,151 @@
 							   kColTopToBottom, kColBottomToTop, kColAltDownUp, kColAltUpDown };
 
 
+struct BinaryOptions
+{
+	int StartFrame = 0;
+	int EndFrame = 0;
+	int SelectiveStart = 0;
+	int SelectiveEnd = 0;
+
+	ReadSource Source = ReadSource::kRows;
+	ScanDirection Direction = ScanDirection::kRowLeftToRight;
+
+	InputOrientation Orientation = InputOrientation::kTopBottomLeftRight;
+
+	NumberSize Size = NumberSize::k8Bit;
+	NumberFormat Format = NumberFormat::kHex;
+
+	LeastSignificantBit LSB = LeastSignificantBit::kBottomRight;
+
+	ColourSpace ColourSpaceRGB;
+
+	BinaryFileContents Content = BinaryFileContents::kEntireAnimation;
+
+	bool RGBEnabled = false;
+	RGBMode RGBFormat = RGBMode::kRGB;
+	bool RGBChangePixels = false;
+	int RGBChangeColour = 0x00000000;
+	int RGBBrightness = 100;
+
+	void clear(bool isRGB)
+	{
+		StartFrame = 0;
+		EndFrame = 0;
+
+		Source = ReadSource::kRows;
+		Orientation = InputOrientation::kTopBottomLeftRight;
+		Direction = ScanDirection::kRowLeftToRight;
+		LSB = LeastSignificantBit::kBottomRight;
+		Format = NumberFormat::kHex;
+		Size = NumberSize::k8Bit;
+
+		Content = BinaryFileContents::kEntireAnimation;
+
+		if (isRGB)
+		{
+			RGBEnabled = true;
+			RGBFormat = RGBMode::kRGB;
+			RGBChangePixels = false;
+			RGBChangeColour = 0x00000000;
+		}
+		else
+		{
+			RGBEnabled = false;
+			RGBFormat = RGBMode::kRGB;
+			RGBChangePixels = false;
+			RGBChangeColour = 0x00000000;
+		}
+
+
+		RGBBrightness = 100;
+	}
+};
+
+
+struct CodeOptions
+{
+	int StartFrame = 0;
+	int EndFrame = 0;
+	int SelectiveStart = 0;
+	int SelectiveEnd = 0;
+
+	ReadSource Source = ReadSource::kRows;
+	ScanDirection Direction = ScanDirection::kRowLeftToRight;
+
+	NumberSize Size = NumberSize::k8Bit;
+	NumberFormat Format = NumberFormat::kHex;
+
+	LeastSignificantBit LSB = LeastSignificantBit::kBottomRight;
+
+	InputOrientation Orientation = InputOrientation::kTopBottomLeftRight;
+
+	ExportLanguage Language = ExportLanguage::kCSV;
+
+	ColourSpace ColourSpaceRGB;
+
+	LineContent Content = LineContent::kRowCol;
+
+	int LineCount = 10;
+
+	bool IncludePreamble = true;
+	bool CleanMode = false; // True = exclude everything from data output except the data!
+
+	bool RGBEnabled = false;
+	RGBMode RGBFormat = RGBMode::kRGB;
+	bool RGBChangePixels = false;
+	int RGBChangeColour = 0x00000000;
+	int RGBBrightness = 100;
+
+	void clear(bool isRGB)
+	{
+		IncludePreamble = true;
+		CleanMode = false;
+
+		StartFrame = 0;
+		EndFrame = 0;
+
+		Source = ReadSource::kRows;
+		Orientation = InputOrientation::kTopBottomLeftRight;
+		Direction = ScanDirection::kRowLeftToRight;
+		LSB = LeastSignificantBit::kBottomRight;
+		Language = ExportLanguage::kCSV;
+		Format = NumberFormat::kHex;
+		Size = NumberSize::k8Bit;
+
+		Content = LineContent::kRowCol;
+		LineCount = 10;
+
+		if (isRGB)
+		{
+			RGBEnabled = true;
+			RGBFormat = RGBMode::kRGB;
+			RGBChangePixels = false;
+			RGBChangeColour = 0x00000000;
+		}
+		else
+		{
+			RGBEnabled = false;
+			RGBFormat = RGBMode::kRGB;
+			RGBChangePixels = false;
+			RGBChangeColour = 0x00000000;
+		}
+
+
+		RGBBrightness = 100;
+	}
+};
+
+
 struct ExportOptions
 {
 	bool Valid = false;
 
-	bool IncludePreamble = true;
-	bool CleanMode = false; // True = exclude everything from data output except the data!
+	BinaryOptions Binary;
+	CodeOptions Code;
+
 	ExportSource ExportMode = ExportSource::kNone;
-	int StartFrame = 1;
-	int EndFrame = 1;
-	int SelectiveStart;
-	int SelectiveEnd;
-	ReadSource Source = ReadSource::kRows;
-	InputOrientation Orientation = InputOrientation::kTopBottomLeftRight;
-	ScanDirection Direction = ScanDirection::kRowLeftToRight;
-	LeastSignificantBit LSB = LeastSignificantBit::kBottomRight;
-	ExportLanguage Language = ExportLanguage::kCSV;
-	NumberFormat Format = NumberFormat::kHex;
-	NumberSize Size = NumberSize::k8Bit;
-	LineContent Content = LineContent::kRowCol;
-	int LineCount = 10;
+
 	bool FontMode = false;
 	bool Optimise = false;
 
@@ -55,52 +187,18 @@ struct ExportOptions
 	int MinHeight = -1;
 	int MaxHeight = -1;
 
-	bool RGBEnabled = false;
-	RGBMode TextRGBMode = RGBMode::kRGB;
-	bool RGBChangePixels = false;
-	int RGBChangeColour = 0x00000000;
-	int RGBBrightness = 100;
-
 	std::wstring Description = L"";
 	std::wstring Information = L"";
 	std::wstring DataPadding = L"";
 
-	ReadSource BinarySource = ReadSource::kRows;
-	InputOrientation BinaryOrientation = InputOrientation::kTopBottomLeftRight;
-	ScanDirection BinaryDirection = ScanDirection::kRowLeftToRight;
-	LeastSignificantBit BinaryLSB = LeastSignificantBit::kTopLeft;
+	bool Examples = false; // include code example to output (BETA!)
 
-	RGBMode BinaryRGBMode;
-	bool BinaryRGBChangePixels;
-	int BinaryRGBChangeColour;
-	int BinaryRGBBrightness;
-
-	NumberSize BinarySize = NumberSize::k8Bit;
-	BinaryFileContents BinaryContent;
-
-	ColourSpace ColourSpaceRGB;
-	ColourSpace BinaryColourSpaceRGB;
-
-	bool Examples; // include code example to output (BETA!)
-
-	//
-
-	void Clear(bool IsRGB)
+	void clear(bool IsRGB)
 	{
-		IncludePreamble = true;
-		CleanMode = false;		             // True = exclude everything from data output except the data!
+		Binary.clear(IsRGB);
+		Code.clear(IsRGB);
+
 		ExportMode = ExportSource::kNone;
-		StartFrame = 1;
-		EndFrame = 1;
-		Source = ReadSource::kRows;
-		Orientation = InputOrientation::kTopBottomLeftRight;
-		Direction = ScanDirection::kRowLeftToRight;
-		LSB = LeastSignificantBit::kBottomRight;
-		Language = ExportLanguage::kCSV;
-		Format = NumberFormat::kHex;
-		Size = NumberSize::k8Bit;
-		Content = LineContent::kRowCol;
-		LineCount = 10;
 
 		FontMode = false;
 		Optimise = false;
@@ -110,51 +208,63 @@ struct ExportOptions
 		MinHeight = -1;
 		MaxHeight = -1;
 
-		if (IsRGB)
-		{
-			RGBEnabled = true;
-			TextRGBMode = RGBMode::kRGB;
-			RGBChangePixels = false;
-			RGBChangeColour = 0x00000000;
-		}
-		else
-		{
-			RGBEnabled = false;
-			TextRGBMode = RGBMode::kRGB;
-			RGBChangePixels = false;
-			RGBChangeColour = 0x00000000;
-		}
-
-		RGBBrightness = 100;
-
 		Description = L"";
 		DataPadding = L"";
+		Information = L"";
+	}
 
-		// == binary output settings =================================================
-
-		BinarySource = ReadSource::kRows;
-		BinaryOrientation = InputOrientation::kTopBottomLeftRight;
-		BinaryDirection = ScanDirection::kRowLeftToRight;
-		BinaryLSB = LeastSignificantBit::kBottomRight;
-
-		if (IsRGB)
+	void SaveToFile(std::ofstream& ofile)
+	{
+		if (ExportMode != ExportSource::kNone)	// export options haven't been modified TO DO
 		{
-			BinaryRGBMode = RGBMode::kRGB;
-			BinaryRGBChangePixels = false;
-			BinaryRGBChangeColour = 0x00000000;
+			ofile << Formatting::to_utf8(kAnimSourceF +           std::to_wstring(SourceToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimOrientationF +      std::to_wstring(OrientationToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimScanDirectionF +    std::to_wstring(ScanDirectionToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimLSBF +              std::to_wstring(LSBToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimLanguageF +         std::to_wstring(LanguageToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimNumberFormatF +     std::to_wstring(NumberFormatToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimNumberSizeF +       std::to_wstring(NumberSizeToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimLineContentF +      std::to_wstring(ContentToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimLineCountF +        std::to_wstring(Code.LineCount) + L"\n");
+
+			ofile << Formatting::to_utf8(kAnimRGBModeF +          std::to_wstring(RGBFormatToInt()) + L"\n");
+			ofile << Formatting::to_utf8(kAnimRGBChangePixelsF +  std::to_wstring(Code.RGBChangePixels) + L"\n");
+			ofile << Formatting::to_utf8(kAnimRGBChangeColourF +  std::to_wstring(Code.RGBChangeColour) + L"\n");
+			ofile << Formatting::to_utf8(kAnimRGBBrightnessF +    std::to_wstring(Code.RGBBrightness) + L"\n");
+
+			ofile << Formatting::to_utf8(kAnimOptimiseF +         std::to_wstring(Optimise) + L"\n");
+
+			std::wstring binary = std::to_wstring(BinarySourceToInt()) + L" " + std::to_wstring(BinaryOrientationToInt()) + L" " + std::to_wstring(BinaryScanDirectionToInt()) + L" ";
+			binary += std::to_wstring(BinaryLSBToInt()) + L" " + std::to_wstring(BinaryFileContentsToInt()) + L" ";
+			binary += std::to_wstring(BinaryRGBFormatToInt()) + L" " + std::to_wstring(Binary.RGBChangePixels) + L" " + std::to_wstring(Binary.RGBChangeColour) + L" " + std::to_wstring(Binary.RGBBrightness);
+
+            ofile << Formatting::to_utf8(kAnimBinaryF + binary + L"\n");
 		}
-		else
+	}
+
+	void SetBinaryFromFile(const std::wstring input)
+	{
+		if (input.empty()) return;
+
+		std::vector<int> data;
+
+		std::wstringstream ss(input);
+		std::wstring token = L"";
+
+		while (ss >> token)
 		{
-			BinaryRGBMode = RGBMode::kRGB;
-			BinaryRGBChangePixels = false;
-			BinaryRGBChangeColour = 0x00000000;
+			data.push_back(stoi(token));
 		}
 
-		BinaryRGBBrightness = 100;
-
-		BinarySize = NumberSize::k8Bit;
-
-		BinaryContent =	BinaryFileContents::kEntireAnimation;
+		BinarySourceFromInt(data[0]);
+		BinaryOrientationFromInt(data[1]);
+		BinaryScanDirectionFromInt(Binary.Source, data[2]);
+		BinaryLSBFromInt(data[3]);
+		BinaryFileContentsFromInt(data[4]);
+		BinaryRGBFormatFromInt(data[5]);
+		Binary.RGBChangePixels = data[6];
+		Binary.RGBChangeColour = data[7];
+		Binary.RGBBrightness = data[8];
 	}
 
 	// returns size in bits 0-n
@@ -209,7 +319,7 @@ struct ExportOptions
 
 	int SourceToInt()
 	{
-		switch (Source)
+		switch (Code.Source)
 		{
 		case ReadSource::kColumns:
 			return 0;
@@ -222,7 +332,7 @@ struct ExportOptions
 
 	int OrientationToInt()
 	{
-		switch (Orientation)
+		switch (Code.Orientation)
 		{
 		case InputOrientation::kTopBottomLeftRight:
 			return 0;
@@ -237,9 +347,9 @@ struct ExportOptions
 
 	int ScanDirectionToInt()
 	{
-		if (Source == ReadSource::kRows)
+		if (Code.Source == ReadSource::kRows)
 		{
-			switch (Direction)
+			switch (Code.Direction)
 			{
 			case ScanDirection::kRowLeftToRight:
 				return 0;
@@ -253,7 +363,7 @@ struct ExportOptions
 		}
 		else
 		{
-			switch (Direction)
+			switch (Code.Direction)
 			{
 			case ScanDirection::kColTopToBottom:
 				return 0;
@@ -271,7 +381,7 @@ struct ExportOptions
 
 	int LSBToInt()
 	{
-		switch (LSB)
+		switch (Code.LSB)
 		{
 		case LeastSignificantBit::kTopLeft:
 			return 0;
@@ -284,7 +394,7 @@ struct ExportOptions
 
 	int LanguageToInt()
 	{
-		switch (Language)
+		switch (Code.Language)
 		{
 		case ExportLanguage::kCSV:
 			return 0;
@@ -315,7 +425,7 @@ struct ExportOptions
 
 	int NumberFormatToInt()
 	{
-		switch (Format)
+		switch (Code.Format)
 		{
 		case NumberFormat::kDecimal:
 			return 0;
@@ -328,7 +438,7 @@ struct ExportOptions
 
 	int NumberSizeToInt()
 	{
-		switch (Size)
+		switch (Code.Size)
 		{
 		case NumberSize::k8Bit:
 			return 0;
@@ -355,7 +465,7 @@ struct ExportOptions
 
 	int ContentToInt()
 	{
-		switch (Content)
+		switch (Code.Content)
 		{
 		case LineContent::kRowCol:
 			return 0;
@@ -368,9 +478,9 @@ struct ExportOptions
 		return 0;
 	}
 
-	int TextRGBModeToInt()
+	int RGBFormatToInt()
 	{
-		 switch (TextRGBMode)
+		 switch (Code.RGBFormat)
 		 {
 		 case RGBMode::kRGB:
 			return 0;
@@ -389,7 +499,7 @@ struct ExportOptions
 
 	int BinarySourceToInt()
 	{
-		switch (BinarySource)
+		switch (Binary.Source)
 		{
 		case ReadSource::kColumns:
 			return 0;
@@ -402,7 +512,7 @@ struct ExportOptions
 
 	int BinaryOrientationToInt()
 	{
-		switch (BinaryOrientation)
+		switch (Binary.Orientation)
 		{
 		case InputOrientation::kTopBottomLeftRight:
 			return 0;
@@ -417,9 +527,9 @@ struct ExportOptions
 
 	int BinaryScanDirectionToInt()
 	{
-		if (BinarySource == ReadSource::kRows)
+		if (Binary.Source == ReadSource::kRows)
 		{
-			switch (BinaryDirection)
+			switch (Binary.Direction)
 			{
 			case ScanDirection::kRowLeftToRight:
 				return 0;
@@ -433,7 +543,7 @@ struct ExportOptions
 		}
 		else
 		{
-			switch (BinaryDirection)
+			switch (Binary.Direction)
 			{
 			case ScanDirection::kColTopToBottom:
 				return 0;
@@ -451,7 +561,7 @@ struct ExportOptions
 
 	int BinaryLSBToInt()
 	{
-		switch (BinaryLSB)
+		switch (Binary.LSB)
 		{
 		case LeastSignificantBit::kTopLeft:
 			return 0;
@@ -462,9 +572,9 @@ struct ExportOptions
 		return 0;
 	}
 
-	int BinaryRGBModeToInt()
+	int BinaryRGBFormatToInt()
 	{
-		 switch (BinaryRGBMode)
+		 switch (Binary.RGBFormat)
 		 {
 		 case RGBMode::kRGB:
 			return 0;
@@ -483,7 +593,7 @@ struct ExportOptions
 
 	int BinaryFileContentsToInt()
 	{
-		switch (BinaryContent)
+		switch (Binary.Content)
 		{
 		case BinaryFileContents::kEntireAnimation:
 			return 0;
@@ -501,10 +611,10 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Source = ReadSource::kColumns;
+			Code.Source = ReadSource::kColumns;
 			break;
 		case 1:
-			Source = ReadSource::kRows;
+			Code.Source = ReadSource::kRows;
 			break;
 		}
 	}
@@ -514,13 +624,13 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Orientation = InputOrientation::kTopBottomLeftRight;
+			Code.Orientation = InputOrientation::kTopBottomLeftRight;
 			break;
 		case 1:
-			Orientation = InputOrientation::kBottomTopRightLeft;
+			Code.Orientation = InputOrientation::kBottomTopRightLeft;
 			break;
 		case 2:
-			Orientation = InputOrientation::kSure24x16;
+			Code.Orientation = InputOrientation::kSure24x16;
 			break;
 		}
 	}
@@ -532,16 +642,16 @@ struct ExportOptions
 			switch (i)
 			{
 			case 0:
-				Direction = ScanDirection::kRowLeftToRight;
+				Code.Direction = ScanDirection::kRowLeftToRight;
 				break;
 			case 1:
-				Direction = ScanDirection::kRowRightToLeft;
+				Code.Direction = ScanDirection::kRowRightToLeft;
 				break;
 			case 2:
-				Direction = ScanDirection::kRowAltLeftRight;
+				Code.Direction = ScanDirection::kRowAltLeftRight;
 				break;
 			case 3:
-				Direction = ScanDirection::kRowAltRightLeft;
+				Code.Direction = ScanDirection::kRowAltRightLeft;
 				break;
 			}
 		}
@@ -550,16 +660,16 @@ struct ExportOptions
 			switch (i)
 			{
 			case 0:
-				Direction = ScanDirection::kColTopToBottom;
+				Code.Direction = ScanDirection::kColTopToBottom;
 				break;
 			case 1:
-				Direction = ScanDirection::kColBottomToTop;
+				Code.Direction = ScanDirection::kColBottomToTop;
 				break;
 			case 2:
-				Direction = ScanDirection::kColAltDownUp;
+				Code.Direction = ScanDirection::kColAltDownUp;
 				break;
 			case 3:
-				Direction = ScanDirection::kColAltUpDown;
+				Code.Direction = ScanDirection::kColAltUpDown;
 				break;
 			}
 		}
@@ -570,10 +680,10 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			LSB = LeastSignificantBit::kTopLeft;
+			Code.LSB = LeastSignificantBit::kTopLeft;
 			break;
 		case 1:
-			LSB = LeastSignificantBit::kBottomRight;
+			Code.LSB = LeastSignificantBit::kBottomRight;
 			break;
 		}
 	}
@@ -583,34 +693,34 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Language = ExportLanguage::kCSV;
+			Code.Language = ExportLanguage::kCSV;
 			break;
 		case 1:
-			Language = ExportLanguage::kPICAXE;
+			Code.Language = ExportLanguage::kPICAXE;
 			break;
 		case 2:
-			Language = ExportLanguage::kC1Dim;
+			Code.Language = ExportLanguage::kC1Dim;
 			break;
 		case 3:
-			Language = ExportLanguage::kC2Dim;
+			Code.Language = ExportLanguage::kC2Dim;
 			break;
 		case 4:
-			Language = ExportLanguage::kCFastLED;
+			Code.Language = ExportLanguage::kCFastLED;
 			break;
 		case 5:
-			Language = ExportLanguage::kPython1Dim;
+			Code.Language = ExportLanguage::kPython1Dim;
 			break;
 		case 6:
-			Language = ExportLanguage::kPython2Dim;
+			Code.Language = ExportLanguage::kPython2Dim;
 			break;
 		case 7:
-			Language = ExportLanguage::kMicrochip;
+			Code.Language = ExportLanguage::kMicrochip;
 			break;
 		case 8:
-			Language = ExportLanguage::kPascal;
+			Code.Language = ExportLanguage::kPascal;
 			break;
 		case 9:
-			Language = ExportLanguage::kSpecial;
+			Code.Language = ExportLanguage::kSpecial;
 			break;
 		}
 	}
@@ -620,13 +730,13 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Format = NumberFormat::kDecimal;
+			Code.Format = NumberFormat::kDecimal;
 			break;
 		case 1:
-			Format = NumberFormat::kBinary;
+			Code.Format = NumberFormat::kBinary;
 			break;
 		case 2:
-			Format = NumberFormat::kHex;
+			Code.Format = NumberFormat::kHex;
 			break;
 		}
 	}
@@ -636,31 +746,31 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Size = NumberSize::k8Bit;
+			Code.Size = NumberSize::k8Bit;
 			break;
 		case 1:
-			Size = NumberSize::k16bit;
+			Code.Size = NumberSize::k16bit;
 			break;
 		case 2:
-			Size = NumberSize::k32bit;
+			Code.Size = NumberSize::k32bit;
 			break;
 		case 3:
-			Size = NumberSize::k8bitSwap;
+			Code.Size = NumberSize::k8bitSwap;
 			break;
 		case 4:
-			Size = NumberSize::k16bitSwap;
+			Code.Size = NumberSize::k16bitSwap;
 			break;
 		case 5:
-			Size = NumberSize::k64bit;
+			Code.Size = NumberSize::k64bit;
 			break;
 		case 6:
-			Size = NumberSize::kRGB8bit;
+			Code.Size = NumberSize::kRGB8bit;
 			break;
 		case 7:
-			Size = NumberSize::kRGB16bit;
+			Code.Size = NumberSize::kRGB16bit;
 			break;
 		case 8:
-			Size = NumberSize::kRGB32bit;
+			Code.Size = NumberSize::kRGB32bit;
 			break;
 		}
 	}
@@ -670,13 +780,13 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			Content = LineContent::kRowCol;
+			Code.Content = LineContent::kRowCol;
 			break;
 		case 1:
-			Content = LineContent::kFrame;
+			Code.Content = LineContent::kFrame;
 			break;
 		case 2:
-			Content = LineContent::kBytes;
+			Code.Content = LineContent::kBytes;
 			break;
 		}
 	}
@@ -686,19 +796,19 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			TextRGBMode = RGBMode::kRGB;
+			Code.RGBFormat = RGBMode::kRGB;
 			break;
 		case 1:
-			TextRGBMode = RGBMode::kBGR;
+			Code.RGBFormat = RGBMode::kBGR;
 			break;
 		case 2:
-			TextRGBMode = RGBMode::kGRB;
+			Code.RGBFormat = RGBMode::kGRB;
 			break;
 		case 3:
-			TextRGBMode = RGBMode::kBRG;
+			Code.RGBFormat = RGBMode::kBRG;
 			break;
 		case 4:
-			TextRGBMode = RGBMode::kRGBSimple;
+			Code.RGBFormat = RGBMode::kRGBSimple;
 			break;
 		}
 	}
@@ -708,10 +818,10 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			BinarySource = ReadSource::kColumns;
+			Binary.Source = ReadSource::kColumns;
 			break;
 		case 1:
-			BinarySource = ReadSource::kRows;
+			Binary.Source = ReadSource::kRows;
 			break;
 		}
 	}
@@ -721,13 +831,13 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			BinaryOrientation = InputOrientation::kTopBottomLeftRight;
+			Binary.Orientation = InputOrientation::kTopBottomLeftRight;
 			break;
 		case 1:
-			BinaryOrientation = InputOrientation::kBottomTopRightLeft;
+			Binary.Orientation = InputOrientation::kBottomTopRightLeft;
 			break;
 		case 2:
-			BinaryOrientation = InputOrientation::kSure24x16;
+			Binary.Orientation = InputOrientation::kSure24x16;
 			break;
 		}
 	}
@@ -739,16 +849,16 @@ struct ExportOptions
 			switch (i)
 			{
 			case 0:
-				BinaryDirection = ScanDirection::kRowLeftToRight;
+				Binary.Direction = ScanDirection::kRowLeftToRight;
 				break;
 			case 1:
-				BinaryDirection = ScanDirection::kRowRightToLeft;
+				Binary.Direction = ScanDirection::kRowRightToLeft;
 				break;
 			case 2:
-				BinaryDirection = ScanDirection::kRowAltLeftRight;
+				Binary.Direction = ScanDirection::kRowAltLeftRight;
 				break;
 			case 3:
-				BinaryDirection = ScanDirection::kRowAltRightLeft;
+				Binary.Direction = ScanDirection::kRowAltRightLeft;
 				break;
 			}
 		}
@@ -757,16 +867,16 @@ struct ExportOptions
 			switch (i)
 			{
 			case 0:
-				BinaryDirection = ScanDirection::kColTopToBottom;
+				Binary.Direction = ScanDirection::kColTopToBottom;
 				break;
 			case 1:
-				BinaryDirection = ScanDirection::kColBottomToTop;
+				Binary.Direction = ScanDirection::kColBottomToTop;
 				break;
 			case 2:
-				BinaryDirection = ScanDirection::kColAltDownUp;
+				Binary.Direction = ScanDirection::kColAltDownUp;
 				break;
 			case 3:
-				BinaryDirection = ScanDirection::kColAltUpDown;
+				Binary.Direction = ScanDirection::kColAltUpDown;
 				break;
 			}
 		}
@@ -777,32 +887,32 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			BinaryLSB = LeastSignificantBit::kTopLeft;
+			Binary.LSB = LeastSignificantBit::kTopLeft;
 			break;
 		case 1:
-			BinaryLSB = LeastSignificantBit::kBottomRight;
+			Binary.LSB = LeastSignificantBit::kBottomRight;
 			break;
 		}
 	}
 
-	void BinaryRGBModeFromInt(int i)
+	void BinaryRGBFormatFromInt(int i)
 	{
 		switch (i)
 		{
 		case 0:
-			BinaryRGBMode = RGBMode::kRGB;
+			Binary.RGBFormat = RGBMode::kRGB;
 			break;
 		case 1:
-			BinaryRGBMode = RGBMode::kBGR;
+			Binary.RGBFormat = RGBMode::kBGR;
 			break;
 		case 2:
-			BinaryRGBMode = RGBMode::kGRB;
+			Binary.RGBFormat = RGBMode::kGRB;
 			break;
 		case 3:
-			BinaryRGBMode = RGBMode::kBRG;
+			Binary.RGBFormat = RGBMode::kBRG;
 			break;
 		case 4:
-			BinaryRGBMode = RGBMode::kRGBSimple;
+			Binary.RGBFormat = RGBMode::kRGBSimple;
 			break;
 		}
 	}
@@ -812,10 +922,10 @@ struct ExportOptions
 		switch (i)
 		{
 		case 0:
-			BinaryContent = BinaryFileContents::kEntireAnimation;
+			Binary.Content = BinaryFileContents::kEntireAnimation;
 			break;
 		case 1:
-			BinaryContent = BinaryFileContents::kSingleFrame;
+			Binary.Content = BinaryFileContents::kSingleFrame;
 			break;
 		}
 	}

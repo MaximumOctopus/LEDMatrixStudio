@@ -71,14 +71,14 @@ namespace ExportOutputBinary
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.StartFrame; t <= teo.EndFrame; t++)
+		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
 		{
 			for (int i = 0; i < MatrixDataCount; i++)
 			{
 				MatrixData[i]->clear();
 			}
 
-			if (teo.BinarySource == ReadSource::kRows)
+			if (teo.Binary.Source == ReadSource::kRows)
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
@@ -95,7 +95,7 @@ namespace ExportOutputBinary
 					entrycount += dataout.Count;
 				}
 			}
-			else if (teo.BinarySource == ReadSource::kColumns)
+			else if (teo.Binary.Source == ReadSource::kColumns)
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
@@ -119,12 +119,12 @@ namespace ExportOutputBinary
 
 			op = L"";
 
-			if (teo.BinarySource == ReadSource::kRows)
+			if (teo.Binary.Source == ReadSource::kRows)
 			{
 				int start = 0;
 				int delta = 0;
 
-				if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+				if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
 					start = 0;
 					delta   = 1;
@@ -159,9 +159,9 @@ namespace ExportOutputBinary
 			// col data
 			// ===========================================================================
 
-			if (teo.BinarySource == ReadSource::kColumns)
+			if (teo.Binary.Source == ReadSource::kColumns)
 			{
-				switch (teo.BinaryOrientation)
+				switch (teo.Binary.Orientation)
 				{
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
@@ -169,7 +169,7 @@ namespace ExportOutputBinary
 					int start = 0;
 					int delta = 0;
 
-					if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+					if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
 						  start= 0;
 						  delta  = 1;
@@ -269,14 +269,14 @@ namespace ExportOutputBinary
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.StartFrame; t <= teo.EndFrame; t++)
+		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
 		{
 			for (int i = 0; i < MatrixDataCount; i++)
 			{
 				MatrixData[i] = L"";
 			}
 
-			if (teo.BinarySource == ReadSource::kRows)
+			if (teo.Binary.Source == ReadSource::kRows)
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
@@ -288,7 +288,7 @@ namespace ExportOutputBinary
 				}
 			}
 
-			if (teo.BinarySource == ReadSource::kColumns)
+			if (teo.Binary.Source == ReadSource::kColumns)
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
@@ -306,9 +306,9 @@ namespace ExportOutputBinary
 			// ===========================================================================
 			// ===========================================================================
 
-			if (teo.BinarySource == ReadSource::kRows)
+			if (teo.Binary.Source == ReadSource::kRows)
 			{
-				if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+				if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
 					s = L"";
 
@@ -336,14 +336,14 @@ namespace ExportOutputBinary
 			// col data
 			// ===========================================================================
 
-			if (teo.BinarySource == ReadSource::kColumns)
+			if (teo.Binary.Source == ReadSource::kColumns)
 			{
-				switch (teo.BinaryOrientation)
+				switch (teo.Binary.Orientation)
 				{
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
 				{
-					if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+					if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
 						s = L"";
 
@@ -385,15 +385,15 @@ namespace ExportOutputBinary
 		InternalArray ia;
 		ia.Clear();
 
-		int bits = teo.GetNumberSizeLength(teo.BinarySize);
-		int pads = teo.GetNumberSizePadLength(teo.BinarySize);
+		int bits = teo.GetNumberSizeLength(teo.Binary.Size);
+		int pads = teo.GetNumberSizePadLength(teo.Binary.Size);
 
 		int bitcounter = 0;
 		int dataindex  = 0;
 
         std::wstring s = L"";
 
-		ScanDirection direction = teo.BinaryDirection;
+		ScanDirection direction = teo.Binary.Direction;
 
 		Matrix *selectedmatrix;
 
@@ -410,7 +410,7 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -428,7 +428,7 @@ namespace ExportOutputBinary
 				break;
 			}
 		}
-		else if (teo.BinaryOrientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -457,7 +457,7 @@ namespace ExportOutputBinary
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
-						if (teo.BinaryLSB == LeastSignificantBit::kTopLeft)
+						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 							ia.Data[dataindex] += powers[bitcounter];
 						else
 							ia.Data[dataindex] += powers[bits - bitcounter];
@@ -490,7 +490,7 @@ namespace ExportOutputBinary
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
-						if (teo.BinaryLSB == LeastSignificantBit::kTopLeft)
+						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 							ia.Data[dataindex] += powers[bitcounter];
 						  else
 							ia.Data[dataindex] += powers[bits - bitcounter];
@@ -524,7 +524,7 @@ namespace ExportOutputBinary
 		{
 			if (ia.Data[x] != -1)
 			{
-				switch (teo.BinarySize)
+				switch (teo.Binary.Size)
 				{
 				case NumberSize::k8bitSwap: // swap nybbles
 				{
@@ -554,7 +554,7 @@ namespace ExportOutputBinary
 				}
 				}
 
-				switch (teo.Format)
+				switch (teo.Binary.Format)
 				{
 				case NumberFormat::kDecimal:
 					dataout.Data[x] = std::to_wstring(ia.Data[x]);
@@ -577,7 +577,7 @@ namespace ExportOutputBinary
 	{
 		DataOut dataout;
 		std::wstring output = L"";
-		ScanDirection direction = teo.BinaryDirection;
+		ScanDirection direction = teo.Binary.Direction;
 
 		Matrix *selectedmatrix;
 
@@ -590,7 +590,7 @@ namespace ExportOutputBinary
 
 	  // ===========================================================================
 
-		if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -608,7 +608,7 @@ namespace ExportOutputBinary
 				break;
 			}
 		}
-		else if (teo.BinaryOrientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -635,21 +635,29 @@ namespace ExportOutputBinary
 			{
 				 if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				 {
-					if (teo.BinarySize == NumberSize::kRGB8bit)
+					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + row] == matrix->RGBBackground)
-							output += ColourUtility::RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + row] == matrix->RGBBackground)
+						{
+							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 						else
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + row], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						{
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + row], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 
 						dataout.Count += 3;
 					}
-					else if (teo.BinarySize == NumberSize::kRGB32bit)
+					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 						else
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 
 			//          if x <> matrix->DetailsWidth - 1 then
 						output += spacingchar;
@@ -665,21 +673,29 @@ namespace ExportOutputBinary
 			{
 				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
-					if (teo.BinarySize == NumberSize::kRGB8bit)
+					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
-							output += ColourUtility::RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						{
+							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 						else
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						{
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 
 						dataout.Count += 3;
 					}
-					else if (teo.BinarySize == NumberSize::kRGB32bit)
+					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 						else
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+                        }
 
 		  //        if x <> 0 then
 						output += spacingchar;
@@ -702,7 +718,7 @@ namespace ExportOutputBinary
 	{
 		std::wstring s = L"";
 		DataOut dataout;
-		ScanDirection direction = teo.BinaryDirection;
+		ScanDirection direction = teo.Binary.Direction;
 		InternalArray ia;
 		ia.Clear();
 
@@ -711,8 +727,8 @@ namespace ExportOutputBinary
 		int bitcounter = 0;
 		int dataindex  = 0;
 
-		int bits = teo.GetNumberSizeLength(teo.BinarySize);
-		int pads = teo.GetNumberSizePadLength(teo.BinarySize);
+		int bits = teo.GetNumberSizeLength(teo.Binary.Size);
+		int pads = teo.GetNumberSizePadLength(teo.Binary.Size);
 
 		for (int y = 0; y < DataOutDataMax; y++)
 		{
@@ -728,7 +744,7 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -746,7 +762,7 @@ namespace ExportOutputBinary
 				break;
 			}
 		}
-		else if (teo.BinaryOrientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -775,7 +791,7 @@ namespace ExportOutputBinary
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
-						if (teo.BinaryLSB == LeastSignificantBit::kTopLeft)
+						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 							ia.Data[dataindex] += powers[bitcounter];
 						else
 							ia.Data[dataindex] += powers[bits - bitcounter];
@@ -808,7 +824,7 @@ namespace ExportOutputBinary
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
-						if (teo.BinaryLSB == LeastSignificantBit::kTopLeft)
+						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 						{
 							ia.Data[dataindex] += powers[bitcounter];
 						}
@@ -846,7 +862,7 @@ namespace ExportOutputBinary
 		{
 			if (ia.Data[y] != -1)
 			{
-				switch (teo.BinarySize)
+				switch (teo.Binary.Size)
 				{
 				case NumberSize::k8bitSwap:		// swap nybbles
 				{
@@ -876,7 +892,7 @@ namespace ExportOutputBinary
 				}
 				}
 
-				switch (teo.Format)
+				switch (teo.Binary.Format)
 				{
 				case NumberFormat::kDecimal:
 					dataout.Data[y] = std::to_wstring(ia.Data[y]);
@@ -901,7 +917,7 @@ namespace ExportOutputBinary
 
 		DataOut dataout;
 		std::wstring output = L"";
-		ScanDirection direction = teo.BinaryDirection;
+		ScanDirection direction = teo.Binary.Direction;
 
 		// ===========================================================================
 
@@ -912,7 +928,7 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		if (teo.BinaryOrientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -930,7 +946,7 @@ namespace ExportOutputBinary
 				break;
 			}
 		}
-		else if (teo.BinaryOrientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -957,21 +973,29 @@ namespace ExportOutputBinary
 			{
 				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Height + col] == PixelAlive)
 				{
-					if (teo.BinarySize == NumberSize::kRGB8bit)
+					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
-							output += ColourUtility::RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						{
+							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 						else
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						{
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 
 						dataout.Count += 3;
 					}
-					else if (teo.BinarySize == NumberSize::kRGB32bit)
+					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 						else
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+                        }
 
 						output += spacingchar;
 
@@ -986,21 +1010,29 @@ namespace ExportOutputBinary
 			{
 				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Height + col] == PixelAlive)
 				{
-					if (teo.BinarySize == NumberSize::kRGB8bit)
+					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
-							output += ColourUtility::RGBConvertToSplit(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						{
+							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+						}
 						else
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.BinaryRGBMode, teo.BinaryRGBBrightness, teo.Format, L"", spacingchar, teo.BinaryColourSpaceRGB);
+						{
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+                        }
 
 						dataout.Count += 3;
 					}
-					else if (teo.BinarySize == NumberSize::kRGB32bit)
+					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.BinaryRGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.BinaryRGBChangeColour, teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 						else
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.BinaryRGBMode, teo.BinaryLSB, teo.BinaryRGBBrightness), 8);
+						{
+							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+						}
 
 						output += spacingchar;
 

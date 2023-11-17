@@ -33,7 +33,7 @@ SystemSettings::SystemSettings()
 
 	BuildLanguageList(path + L"language\\*.txt");
 
-	App.LastExport.Clear(false);
+	App.LastExport.clear(false);
 }
 
 

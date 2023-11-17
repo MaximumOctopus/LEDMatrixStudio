@@ -130,12 +130,21 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	//
 
 	SetFromSettings();
+
+	// ===========================================================================
+
+	//if (FileExists(GSystemSettings->App.LMSFilePath + L"fonts\\5x7.ledsfont")))
+   //	{
+   //		thematrix->LoadFont(GSystemSettings->App.LMSFilePath + L"fonts\\5x7.ledsfont");
+   //	}
+
+	// ===========================================================================
 }
 
 
 void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 {
-//  OnResize = Nil;       // stops the resize firing after the matrix has been freed!
+	OnResize = nullptr;       // stops the resize firing after the matrix has been freed!
 
 	// =======================================================================
 
@@ -215,11 +224,11 @@ void __fastcall TfrmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
 {
 	int tick = GetTickCount();
 
-	if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key == VK_TAB)	// backspace, 1 column
+	if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key == VK_BACK)	// backspace, 1 column
 	{
 		thematrix->DeleteFontCharacter(GetSelectedFrame());
 	}
-	else if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key > 31 && tick - LastTick >= 400)
+	else if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key > 31 && tick - LastTick >= 300)
 	{
 		LastTick = tick;
 
@@ -1615,6 +1624,7 @@ void TfrmMain::BuildFontMenu()
 		for (int t = 0; t < GFontHandler->Fonts.size(); t++)
 		{
 			TMenuItem *mi = new TMenuItem(miLoadFont);
+            mi->Caption = GFontHandler->Fonts[t].c_str();
 			mi->Tag = t;
 			mi->RadioItem = true;
 			mi->Checked = false;
@@ -1706,7 +1716,7 @@ void __fastcall TfrmMain::miSaveAsClick(TObject *Sender)
 	{
 		ImportData tid;
 
-		BuildImportData(tid, 1, thematrix->GetFrameCount());
+		BuildImportData(tid, 0, thematrix->GetFrameCount() - 1);
 
 		if (thematrix->GetSoftwareMode() == SoftwareMode::kFont)
 		{
@@ -2002,7 +2012,7 @@ void __fastcall TfrmMain::miSaveRangeClick(TObject *Sender)
 		{
 			ImportData ted;
 
-			BuildImportData(ted, sfro.StartFrame, sfro.EndFrame);
+			BuildImportData(ted, sfro.StartFrame - 1, sfro.EndFrame - 1);
 
 			// =========================================================================
 
@@ -2818,7 +2828,7 @@ void __fastcall TfrmMain::miMemoryR1Click(TObject *Sender)
 
 void __fastcall TfrmMain::miExportUserMemoriesClick(TObject *Sender)
 {
-	ExportOptions teo = OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kUserMemories, thematrix->Details.Mode);
+	OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kUserMemories, thematrix->Details.Mode);
 }
 
 
@@ -3084,11 +3094,11 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 		if (GSystemSettings->Project.Mode == MatrixMode::kRGB)
 		{
-			GSystemSettings->App.LastExport.Clear(true);
+			GSystemSettings->App.LastExport.clear(true);
 		}
 		else
 		{
-			GSystemSettings->App.LastExport.Clear(false);
+			GSystemSettings->App.LastExport.clear(false);
 		}
 
 		ChangeMatrixType();
@@ -3217,7 +3227,7 @@ void __fastcall TfrmMain::sbSaveClick(TObject *Sender)
 	{
 		ImportData tid;
 
-		BuildImportData(tid, 1, thematrix->GetFrameCount());
+		BuildImportData(tid, 0, thematrix->GetFrameCount() - 1);
 
 		if (thematrix->GetSoftwareMode() == SoftwareMode::kFont)
 		{
@@ -3235,30 +3245,11 @@ void __fastcall TfrmMain::sbSaveClick(TObject *Sender)
 
 void __fastcall TfrmMain::sbExportClick(TObject *Sender)
 {
-	ExportOptions teo = OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kAnimation, thematrix->Details.Mode);
+	OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kAnimation, thematrix->Details.Mode);
 
-	if (teo.Valid)
+	if (GSystemSettings->App.LastExport.Valid)
 	{
-		GSystemSettings->App.LastExport.ExportMode      = teo.ExportMode;
-
-		GSystemSettings->App.LastExport.StartFrame      = teo.StartFrame;
-		GSystemSettings->App.LastExport.EndFrame        = teo.EndFrame;
-		GSystemSettings->App.LastExport.Source          = teo.Source;
-		GSystemSettings->App.LastExport.Orientation     = teo.Orientation;
-		GSystemSettings->App.LastExport.Direction       = teo.Direction;
-		GSystemSettings->App.LastExport.LSB             = teo.LSB;
-		GSystemSettings->App.LastExport.Language        = teo.Language;
-		GSystemSettings->App.LastExport.Format   		= teo.Format;
-		GSystemSettings->App.LastExport.Size     		= teo.Size;
-		GSystemSettings->App.LastExport.Content     	= teo.Content;
-		GSystemSettings->App.LastExport.LineCount       = teo.LineCount;
-		GSystemSettings->App.LastExport.RGBEnabled      = teo.RGBEnabled;
-		GSystemSettings->App.LastExport.TextRGBMode     = teo.TextRGBMode;
-		GSystemSettings->App.LastExport.RGBChangePixels = teo.RGBChangePixels;
-		GSystemSettings->App.LastExport.RGBChangeColour = teo.RGBChangeColour;
-		GSystemSettings->App.LastExport.RGBBrightness   = teo.RGBBrightness;
-
-		SetSimpleExport(teo);
+		SetSimpleExport(GSystemSettings->App.LastExport);
 	}
 }
 
@@ -3986,7 +3977,7 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 
 	// =======================================================================
 
-	GSystemSettings->App.LastExport.Clear(false);
+	GSystemSettings->App.LastExport.clear(false);
 
 	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, LoadMode::kNew, -1);
 
@@ -4036,8 +4027,6 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 		thematrix->SetCurrentFrame(0);
 
 		SetFrameCaption(0);
-
-			ShowMessage(tbFrames->Position);
 
 		SetCurrentProjectFileName(file_name);
 
@@ -4102,7 +4091,7 @@ bool TfrmMain::AppendFromFileName(const std::wstring file_name)
 	// causing a pixel to be drawm on the first frame
 	Application->ProcessMessages();
 
-	GSystemSettings->App.LastExport.Clear(false);
+	GSystemSettings->App.LastExport.clear(false);
 
 	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, LoadMode::kAppend, -1);
 
@@ -4132,7 +4121,7 @@ bool TfrmMain::MergeFromFileName(const std::wstring file_name, int start_frame, 
 	// causing a pixel to be drawm on the first frame
 	Application->ProcessMessages();
 
-	GSystemSettings->App.LastExport.Clear(false);
+	GSystemSettings->App.LastExport.clear(false);
 
 	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, merge_mode, start_frame);
 
@@ -4163,7 +4152,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 
 	// =======================================================================
 
-	GSystemSettings->App.LastExport.Clear(false);
+	GSystemSettings->App.LastExport.clear(false);
 
 	ImportData ted = thematrix->ImportFromGIF(file_name);
 
@@ -4472,8 +4461,6 @@ void TfrmMain::SetFrameCaption(int i)
 
 	if (tbFrames->Position != i + 1)
 	{
-		ShowMessage(i + 1);
-
 		tbFrames->Position = i + 1;
 	}
 
@@ -4577,8 +4564,6 @@ void TfrmMain::UpdateDisplay(int new_frame_position)
 		tbFrames->Position = 1;
 	}
 
-
-	ShowMessage(tbFrames->Position);
 
 	frmPreviewPopout->tbFrames->Max      = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = new_frame_position;
@@ -5675,7 +5660,7 @@ void __fastcall TfrmMain::timerAutosaveTimer(TObject *Sender)
 	{
 		ImportData ted;
 
-		BuildImportData(ted, 1, thematrix->GetFrameCount());
+		BuildImportData(ted, 0, thematrix->GetFrameCount() - 1);
 
 		// ===================================================================
 

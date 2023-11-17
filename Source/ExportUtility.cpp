@@ -44,33 +44,33 @@ namespace ExportUtility
 
 		if (teo.FontMode)
 		{
-			wchar_t chr(frame + teo.StartFrame - 1);
+			wchar_t chr(frame + teo.Code.StartFrame - 1);
 
-			switch (teo.Language)
+			switch (teo.Code.Language)
 			{
 			case ExportLanguage::kCSV:
-				output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";  // " + wchar_t(frame + teo.StartFrame - 1) + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";  // " + wchar_t(frame + teo.Code.StartFrame - 1) + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kPICAXE:
-				output.push_back(L"EEPROM (" + m + L")  ; " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(L"EEPROM (" + m + L")  ; " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kC1Dim:
-				output.push_back(teo.DataPadding + m + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(teo.DataPadding + m + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kC2Dim:
-				output.push_back(teo.DataPadding + L"{" + m + L"},  // " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(teo.DataPadding + L"{" + m + L"},  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kCFastLED:
-				output.push_back(teo.DataPadding + s + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(teo.DataPadding + s + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kPython1Dim:
-				output.push_back(teo.DataPadding + s + L"  # " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(teo.DataPadding + s + L"  # " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kPython2Dim:
-				output.push_back(teo.DataPadding + L"[" + m + L"],  # " + chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(teo.DataPadding + L"[" + m + L"],  # " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kMicrochip:
-				output.push_back(L"dt " + m + L" ; " +chr + L" ASCII " + std::to_wstring(frame + teo.StartFrame - 1));
+				output.push_back(L"dt " + m + L" ; " +chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
 				break;
 			case ExportLanguage::kPascal:
 				output.push_back(L"matrixdata : array[0..__LEDCount] of integer = (" + m + L");");
@@ -82,7 +82,7 @@ namespace ExportUtility
 		}
 		else
 		{
-			switch (teo.Language)
+			switch (teo.Code.Language)
 			{
 			case ExportLanguage::kCSV:
 				output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";  // " + teo.Description + L" " + std::to_wstring(frame));
@@ -125,7 +125,7 @@ namespace ExportUtility
 
 		std::wstring m = s.substr(0, s.length() - 2); // trims last (and unnecessary) ", " from data
 
-		switch (teo.Language)
+		switch (teo.Code.Language)
 		{
 		case ExportLanguage::kCSV:
 			output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L';');
@@ -280,13 +280,13 @@ namespace ExportUtility
 
 	std::wstring GetLineContent(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Line   : ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Line   : ", teo.Code.Language, includecomment);
 
-		switch (teo.Content)
+		switch (teo.Code.Content)
 		{
 		case LineContent::kRowCol:
 		{
-			switch (teo.Source)
+			switch (teo.Code.Source)
 			{
 			case ReadSource::kColumns:
 				return cc + GLanguageHandler->Text[kColumn];
@@ -298,7 +298,7 @@ namespace ExportUtility
 		case LineContent::kFrame:
 			return cc + GLanguageHandler->Text[kAnimationFrame];
 		case LineContent::kBytes:
-			return cc + std::to_wstring(teo.LineCount) + L" " + GLanguageHandler->Text[kBytes];
+			return cc + std::to_wstring(teo.Code.LineCount) + L" " + GLanguageHandler->Text[kBytes];
 
 		default:
 			return L"unknown!!!";
@@ -308,13 +308,13 @@ namespace ExportUtility
 
 	std::wstring GetLSB(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Bits   : ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Bits   : ", teo.Code.Language, includecomment);
 
-		switch (teo.Source)
+		switch (teo.Code.Source)
 		{
 		case ReadSource::kColumns:
 		{
-			switch (teo.LSB)
+			switch (teo.Code.LSB)
 			{
 			case LeastSignificantBit::kTopLeft:
 				return cc + GLanguageHandler->Text[kLSBAtTop];
@@ -325,7 +325,7 @@ namespace ExportUtility
 		}
 		case ReadSource::kRows:
 		{
-			switch (teo.LSB)
+			switch (teo.Code.LSB)
 			{
 			case LeastSignificantBit::kTopLeft:
 				return cc + GLanguageHandler->Text[kLSBAtLeft];
@@ -464,13 +464,13 @@ namespace ExportUtility
 
 	std::wstring GetOrientation(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Order  : ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Order  : ", teo.Code.Language, includecomment);
 
-		switch (teo.Source)
+		switch (teo.Code.Source)
 		{
 		case ReadSource::kColumns:
 		{
-			switch (teo.Orientation)
+			switch (teo.Code.Orientation)
 			{
 			case InputOrientation::kTopBottomLeftRight:
 				return cc + GLanguageHandler->Text[kLeftToRight];
@@ -485,7 +485,7 @@ namespace ExportUtility
 		}
 		case ReadSource::kRows:
 		{
-			switch (teo.Orientation)
+			switch (teo.Code.Orientation)
 			{
 			case InputOrientation::kTopBottomLeftRight:
 				return cc + GLanguageHandler->Text[kTopToBottom];
@@ -502,7 +502,7 @@ namespace ExportUtility
 
 	void GetPreamble(ExportOptions teo, std::vector<std::wstring> &output, bool simple, const std::wstring comment)
 	{
-		std::wstring cc = GetCommentCharacter(teo.Language);
+		std::wstring cc = GetCommentCharacter(teo.Code.Language);
 
 		output.push_back(cc + L"=================================================================");
 		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2023");
@@ -540,46 +540,46 @@ namespace ExportUtility
 			{
 				if (teo.FontMode)
 				{
-					output.push_back(cc + GLanguageHandler->Text[kFontCharacters] + L" " + std::to_wstring(teo.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" " + std::to_wstring(teo.StartFrame + 95));
+					output.push_back(cc + GLanguageHandler->Text[kFontCharacters] + L" " + std::to_wstring(teo.Code.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" " + std::to_wstring(teo.Code.StartFrame + 95));
 				}
 				else
 				{
-					if (teo.StartFrame == teo.EndFrame)
+					if (teo.Code.StartFrame == teo.Code.EndFrame)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.StartFrame));
+						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame));
 					}
 					else
 					{
-					  output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.EndFrame));
+					  output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.Code.EndFrame));
 					}
 
-					if (teo.Source == ReadSource::kRows)
+					if (teo.Code.Source == ReadSource::kRows)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.SelectiveStart) + L" - #" + std::to_wstring(teo.SelectiveEnd));
+						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
 					}
 					else
 					{
-					  output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.SelectiveStart) + L" - #" + std::to_wstring(teo.SelectiveEnd));
+					  output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
 					}
 				}
 			}
 		}
 		else
 		{
-			output.push_back(cc + GLanguageHandler->Text[kMemoryBuffers] + L" #" + std::to_wstring(teo.StartFrame + 1) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.EndFrame + 1));
+			output.push_back(cc + GLanguageHandler->Text[kMemoryBuffers] + L" #" + std::to_wstring(teo.Code.StartFrame + 1) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.Code.EndFrame + 1));
 		}
 
 		output.push_back(cc);
 		output.push_back(cc + L"=================================================================");
 		output.push_back(cc);
 
-		output.push_back(GetSource(teo.Language, teo.Source));
+		output.push_back(GetSource(teo.Code.Language, teo.Code.Source));
 		output.push_back(GetLineContent(teo, True));
 		output.push_back(GetLSB(teo, True));
 		output.push_back(GetOrientation(teo, True));
 		output.push_back(GetScanDirection(teo, True));
 
-		if (teo.RGBEnabled)
+		if (teo.Code.RGBEnabled)
 		{
 			output.push_back(cc);
 			output.push_back(GetRGBMode(teo, True));
@@ -588,14 +588,14 @@ namespace ExportUtility
 		}
 		else
 		{
-			output.push_back(GetNumberSize(teo.Language, teo.Size, True));
+			output.push_back(GetNumberSize(teo.Code.Language, teo.Code.Size, True));
 		}
 	}
 
 
 	std::wstring GetExampleCodeDisclaimer(ExportOptions teo)
 	{
-		std::wstring cc = GetCommentCharacter(teo.Language);
+		std::wstring cc = GetCommentCharacter(teo.Code.Language);
 
 		std::wstring s = L"\n";
 		s += cc + L"=================================================================\n";
@@ -609,9 +609,9 @@ namespace ExportUtility
 
 	std::wstring GetRGBMode(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Colour Format: ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Colour Format: ", teo.Code.Language, includecomment);
 
-		switch (teo.TextRGBMode)
+		switch (teo.Code.RGBFormat)
 		{
 		case RGBMode::kRGB:
 			return cc + L"RGB";
@@ -629,37 +629,37 @@ namespace ExportUtility
 
 	std::wstring GetRGBBrightness(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Brightness   : ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Brightness   : ", teo.Code.Language, includecomment);
 
-		if (teo.RGBBrightness <= 0)
+		if (teo.Code.RGBBrightness <= 0)
 		{
-			return cc + std::to_wstring(teo.RGBBrightness) + L"% - " + GLanguageHandler->Text[kAreYouSure];
+			return cc + std::to_wstring(teo.Code.RGBBrightness) + L"% - " + GLanguageHandler->Text[kAreYouSure];
 		}
 
-		return cc + std::to_wstring(teo.RGBBrightness) + L"%";
+		return cc + std::to_wstring(teo.Code.RGBBrightness) + L"%";
 	}
 
 
 	std::wstring GetColourSpace(ExportOptions teo, bool includecomment)
 	{
-		if (teo.ColourSpaceRGB == ColourSpace::kRGB32)
+		if (teo.Code.ColourSpaceRGB == ColourSpace::kRGB32)
 		{
-			return TitleWithComments(L"Colour Space : 8 bits", teo.Language, includecomment);
+			return TitleWithComments(L"Colour Space : 8 bits", teo.Code.Language, includecomment);
 		}
 
-		return TitleWithComments(L"Colour Space : 5/6/5", teo.Language, includecomment);
+		return TitleWithComments(L"Colour Space : 5/6/5", teo.Code.Language, includecomment);
 	}
 
 
 	std::wstring GetScanDirection(ExportOptions teo, bool includecomment)
 	{
-		std::wstring cc = TitleWithComments(L"Scan   : ", teo.Language, includecomment);
+		std::wstring cc = TitleWithComments(L"Scan   : ", teo.Code.Language, includecomment);
 
-		switch (teo.Source)
+		switch (teo.Code.Source)
 		{
 		case ReadSource::kColumns:
 		{
-			switch (teo.Direction)
+			switch (teo.Code.Direction)
 			{
 			case ScanDirection::kColTopToBottom:
 				return cc + GLanguageHandler->Text[kTopToBottom];
@@ -677,7 +677,7 @@ namespace ExportUtility
 		}
 		case ReadSource::kRows:
 		{
-			switch (teo.Direction)
+			switch (teo.Code.Direction)
 			{
 			case ScanDirection::kRowLeftToRight:
 				return cc + GLanguageHandler->Text[kLeftToRight];

@@ -54,7 +54,7 @@ namespace ExportMonoBi
 		{
 			std::wstring m = s.substr(0, s.length() - 2); // trims last (and unnecessary) ", " from data
 
-			switch(teo.Language)
+			switch(teo.Code.Language)
 			{
 			case ExportLanguage::kCSV:
 				return GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";";
@@ -112,13 +112,13 @@ namespace ExportMonoBi
 
 		// ===========================================================================
 
-		prefix = ExportUtility::GetNumberFormat(teo.Language, teo.Format);
+		prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
 
-		if (teo.CleanMode)
+		if (teo.Code.CleanMode)
 		{
 			spacingstring = L" ";
 
-			teo.Language = ExportLanguage::kSpecial;
+			teo.Code.Language = ExportLanguage::kSpecial;
 		}
 		else
 		{
@@ -127,7 +127,7 @@ namespace ExportMonoBi
 
 		// ===========================================================================
 
-		if (teo.IncludePreamble)
+		if (teo.Code.IncludePreamble)
 		{
 			if (teo.ExportMode == ExportSource::kAnimation)
 			{
@@ -142,7 +142,7 @@ namespace ExportMonoBi
 
 			ExportUtility::GetPreamble(teo, output, false, matrix->Details.Comment);
 
-			ExportUtility::GetSpacerLine(teo.Language, output);
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
 			output.push_back(L"");
 		}
 
@@ -154,8 +154,8 @@ namespace ExportMonoBi
 		lc = 0;
 		rc = 0;
 
-		vartype = ExportUtility::GetVariableType(teo.Language, teo.Size) +
-             ExportUtility::GetVariableID(teo.Language);
+		vartype = ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) +
+			 ExportUtility::GetVariableID(teo.Code.Language);
 
 		if (!vartype.empty())
 		{
@@ -169,11 +169,11 @@ namespace ExportMonoBi
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.StartFrame; t <= teo.EndFrame; t++)
+		for (int t = teo.Code.StartFrame; t <= teo.Code.EndFrame; t++)
 		{
-			if (teo.Language == ExportLanguage::kCFastLED)
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
 			{
-				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Language, t));
+				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, t));
 			}
 
 			// =========================================================================
@@ -183,9 +183,9 @@ namespace ExportMonoBi
 				MatrixData[i]->clear();
 			}
 
-			if (teo.Source == ReadSource::kRows)
+			if (teo.Code.Source == ReadSource::kRows)
 			{
-				for (int y = teo.SelectiveStart - 1; y < teo.SelectiveEnd; y++)
+				for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 				{
 					tdo = ExportRowData(matrix, teo, t, y, spacingstring);
 
@@ -201,9 +201,9 @@ namespace ExportMonoBi
 				}
 			}
 
-			if (teo.Source == ReadSource::kColumns)
+			if (teo.Code.Source == ReadSource::kColumns)
 			{
-				for (int x = teo.SelectiveStart - 1; x < teo.SelectiveEnd; x++)
+				for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
 				{
 					tdo = ExportColumnData(matrix, teo, t, x, spacingstring);
 
@@ -225,27 +225,27 @@ namespace ExportMonoBi
 			// ===========================================================================
 			// ===========================================================================
 
-			if (teo.Content != LineContent::kBytes)	// maintain data when saving in blocks
+			if (teo.Code.Content != LineContent::kBytes)	// maintain data when saving in blocks
 			{
 				op = L"";
 			}
 
-			if (teo.Source == ReadSource::kRows)
+			if (teo.Code.Source == ReadSource::kRows)
 			{
 				int start = 0;
 				int end = 0;
 				int delta = 0;
 
-				if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+				if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
-					start = teo.SelectiveStart - 1;
-					end   = teo.SelectiveEnd - 1;
+					start = teo.Code.SelectiveStart - 1;
+					end   = teo.Code.SelectiveEnd - 1;
 					delta   = 1;
 				}
 				else
 				{
-					start = teo.SelectiveEnd - 1;
-					end   = teo.SelectiveStart - 1;
+					start = teo.Code.SelectiveEnd - 1;
+					end   = teo.Code.SelectiveStart - 1;
 					delta   = -1;
 				}
 
@@ -253,7 +253,7 @@ namespace ExportMonoBi
 
 				while (y != 999)
 				{
-					if (teo.Content == LineContent::kRowCol)
+					if (teo.Code.Content == LineContent::kRowCol)
 					{
 						op = L"";
 					}
@@ -262,11 +262,11 @@ namespace ExportMonoBi
 					{
 						op = op + (*MatrixData[y])[z];
 
-						if (teo.Content == LineContent::kBytes)
+						if (teo.Code.Content == LineContent::kBytes)
 						{
 							lc++;
 
-							if (lc == teo.LineCount)
+							if (lc == teo.Code.LineCount)
 							{
 								if (!op.empty())
 								{
@@ -280,14 +280,14 @@ namespace ExportMonoBi
 						}
 					}
 
-					if (teo.Content == LineContent::kRowCol)
+					if (teo.Code.Content == LineContent::kRowCol)
 					{
 						ExportUtility::AddContentByRowCol(teo, op, output);
 					}
 
 					y += delta;
 
-					if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+					if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
 						if (y > end || y < 0) y = 999;
 					}
@@ -297,14 +297,14 @@ namespace ExportMonoBi
 					}
 				}
 
-				switch (teo.Content)
+				switch (teo.Code.Content)
 				{
 				case LineContent::kFrame:
 					ExportUtility::AddContentByFrame(teo, op, t, output);
 
 				case LineContent::kBytes:
 
-					switch (teo.Language)
+					switch (teo.Code.Language)
 					{
 					case ExportLanguage::kC2Dim:
 					case ExportLanguage::kPython2Dim:
@@ -324,9 +324,9 @@ namespace ExportMonoBi
 			// col data
 			// ===========================================================================
 
-			if (teo.Source == ReadSource::kColumns)
+			if (teo.Code.Source == ReadSource::kColumns)
 			{
-				switch (teo.Orientation)
+				switch (teo.Code.Orientation)
 				{
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
@@ -335,16 +335,16 @@ namespace ExportMonoBi
 					int end = 0;
 					int delta = 0;
 
-					if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+					if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
-						start = teo.SelectiveStart - 1;
-						end   = teo.SelectiveEnd - 1;
+						start = teo.Code.SelectiveStart - 1;
+						end   = teo.Code.SelectiveEnd - 1;
 						delta = 1;
 					}
 					else
 					{
-						start = teo.SelectiveEnd - 1;
-						end   = teo.SelectiveStart - 1;
+						start = teo.Code.SelectiveEnd - 1;
+						end   = teo.Code.SelectiveStart - 1;
 						delta = -1;
 					}
 
@@ -352,7 +352,7 @@ namespace ExportMonoBi
 
 					while (y != 999)
 					{
-						if (teo.Content == LineContent::kRowCol)
+						if (teo.Code.Content == LineContent::kRowCol)
 						{
 							op = L"";
 						}
@@ -361,7 +361,7 @@ namespace ExportMonoBi
 						{
 							op += (*MatrixData[y])[z];
 
-							if (teo.Content == LineContent::kBytes)
+							if (teo.Code.Content == LineContent::kBytes)
 							{
 								lc++;
 
@@ -379,7 +379,7 @@ namespace ExportMonoBi
 							}
 						}
 
-						if (teo.Content == LineContent::kRowCol)
+						if (teo.Code.Content == LineContent::kRowCol)
 						{
 							if (!op.empty())
 							{
@@ -389,7 +389,7 @@ namespace ExportMonoBi
 
 						y += delta;
 
-						if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+						if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 						{
 							if (y > end || y < 0) y = 999;
 						}
@@ -426,13 +426,13 @@ namespace ExportMonoBi
                     break;
 				}
 
-				switch (teo.Content)
+				switch (teo.Code.Content)
 				{
 				case LineContent::kFrame:
 					ExportUtility::AddContentByFrame(teo, op, t, output);
 					break;
 				case LineContent::kBytes:
-					switch (teo.Language)
+					switch (teo.Code.Language)
 					{
 					case ExportLanguage::kC2Dim:
 					case ExportLanguage::kPython2Dim:
@@ -448,15 +448,15 @@ namespace ExportMonoBi
 				}
 			}
 
-			if (teo.Language == ExportLanguage::kCFastLED)
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
 			{
-				output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Language));
+				output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Code.Language));
 
 				output.push_back(L"");
 			}
 		}
 
-		switch (teo.Content)
+		switch (teo.Code.Content)
 		{
 		case LineContent::kBytes:
 			if (!op.empty())
@@ -466,7 +466,7 @@ namespace ExportMonoBi
 			break;
 		}
 
-		switch (teo.Language)
+		switch (teo.Code.Language)
 		{
 		case ExportLanguage::kC1Dim:
 		case ExportLanguage::kC2Dim:
@@ -487,9 +487,9 @@ namespace ExportMonoBi
 
 		//delete[] MatrixData;
 
-		if (teo.IncludePreamble)
+		if (teo.Code.IncludePreamble)
         {
-			ExportUtility::GetSpacerLine(teo.Language, output);
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
 		}
 
 		return true;
@@ -505,7 +505,7 @@ namespace ExportMonoBi
 
 		std::wstring s = L"";
 		DataOut dataout;
-		ScanDirection direction = teo.Direction;
+		ScanDirection direction = teo.Code.Direction;
 
 		int bitcounter = 0;
 		int dataindex = 0;
@@ -518,8 +518,8 @@ namespace ExportMonoBi
 			dataout.Data[y] = L"";
         }
 
-		int bits = teo.GetNumberSizeLength(teo.Size);
-		int pads = teo.GetNumberSizePadLength(teo.Size);
+		int bits = teo.GetNumberSizeLength(teo.Code.Size);
+		int pads = teo.GetNumberSizePadLength(teo.Code.Size);
 
 		// ===========================================================================
 
@@ -543,7 +543,7 @@ namespace ExportMonoBi
 
 		// ===========================================================================
 
-		if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -569,7 +569,7 @@ namespace ExportMonoBi
 				break;
 			}
 		}
-		else if (teo.Orientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -606,7 +606,7 @@ namespace ExportMonoBi
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
-						if (teo.LSB == LeastSignificantBit::kTopLeft)
+						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
 							ia.Data[dataindex] += powers[bitcounter];
 						}
@@ -641,7 +641,7 @@ namespace ExportMonoBi
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
-						if (teo.LSB == LeastSignificantBit::kTopLeft)
+						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
 							ia.Data[dataindex] += powers[bitcounter];
 						}
@@ -679,7 +679,7 @@ namespace ExportMonoBi
 			{
 				dataout.Count++;
 
-				switch (teo.Size)
+				switch (teo.Code.Size)
 				{
 				case NumberSize::k8bitSwap:		// swap nybbles
 				{
@@ -709,7 +709,7 @@ namespace ExportMonoBi
 				}
 				}
 
-				switch (teo.Format)
+				switch (teo.Code.Format)
 				{
 				case NumberFormat::kDecimal:
 					dataout.Data[y] = std::to_wstring(ia.Data[y]);
@@ -748,10 +748,10 @@ namespace ExportMonoBi
 			dataout.Data[x]     = L"";
 		}
 
-		int bits = teo.GetNumberSizeLength(teo.Size);
-		int pads = teo.GetNumberSizePadLength(teo.Size);
+		int bits = teo.GetNumberSizeLength(teo.Code.Size);
+		int pads = teo.GetNumberSizePadLength(teo.Code.Size);
 
-		ScanDirection direction = teo.Direction;
+		ScanDirection direction = teo.Code.Direction;
 
 		int bitcounter = 0;
 		int dataindex = 0;
@@ -779,7 +779,7 @@ namespace ExportMonoBi
 
 		// ===========================================================================
 
-		if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -797,7 +797,7 @@ namespace ExportMonoBi
 				break;
 			}
 		}
-		else if (teo.Orientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -826,7 +826,7 @@ namespace ExportMonoBi
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Height + x] == 1)
 					{
-						if (teo.LSB == LeastSignificantBit::kTopLeft)
+						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 							ia.Data[dataindex] += powers[bitcounter];
 						else
 							ia.Data[dataindex] += powers[bits - bitcounter];
@@ -857,7 +857,7 @@ namespace ExportMonoBi
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Height + x] == 1)
 					{
-						if (teo.LSB == LeastSignificantBit::kTopLeft)
+						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
 							ia.Data[dataindex] += powers[bitcounter];
 						}
@@ -895,7 +895,7 @@ namespace ExportMonoBi
 			{
 				dataout.Count++;
 
-				switch (teo.Size)
+				switch (teo.Code.Size)
 				{
 				case NumberSize::k8bitSwap:		// swap nybbles
 				{
@@ -925,7 +925,7 @@ namespace ExportMonoBi
 				}
 				}
 
-				switch (teo.Format)
+				switch (teo.Code.Format)
 				{
 				case NumberFormat::kDecimal:
 					dataout.Data[x] = std::to_wstring(ia.Data[x]);

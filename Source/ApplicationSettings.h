@@ -52,6 +52,8 @@ struct AppSettings
 	int ExportUpdateMaxPixels = 100000;
 	int ExportPreviewSize = 0;
 
+    bool IgnoreWarnings = false;
+
 	std::wstring Language = L"";
 
 	void SetPadModeHexColRow(int value)

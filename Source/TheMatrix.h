@@ -21,6 +21,7 @@
 #include "DrawingData.h"
 #include "ExportOptions.h"
 #include "FileConstants.h"
+#include "Font.h"
 #include "Gradient.h"
 #include "ImportData.h"
 #include "LanguageConstants.h"
@@ -32,14 +33,6 @@
 #include "PreviewSettings.h"
 
 extern LanguageHandler *GLanguageHandler;
-
-
-//uses System.UITypes, ExtCtrls, controls, types, sysutils, graphics, math,
-//	 contnrs, System.Generics.Collections, Vcl.Imaging.GIFImg, Vcl.StdCtrls, Vcl.Forms,
-//      languagehandler,
-//
-
-//     xglobal, colours,
 
 
 typedef void __fastcall (__closure *MouseOverEvent)(int, int);
@@ -92,6 +85,8 @@ private:
 	TPaintBox *PaintBox;
 	TPaintBox *PreviewBox;
 
+	Font *TextFont = nullptr;
+
 	int CanvasBackground;
 
 	int LastMouseButton = 0;
@@ -103,7 +98,7 @@ private:
 
 	bool AutomateMode = false;
 
-	int CurrentFrame = 1;
+	int CurrentFrame = 0;
 	int CurrentLayer = 0;
 	int LightBox = 0;
 	int RandomCoeff = 30;
@@ -250,11 +245,6 @@ public:
 	Matrix *MatrixRender;
 	Matrix *MatrixMerge;
 
-	MatrixMode FontMatrixMode; // mirrors Matrix.Mode, but shows what the font was loaded as
-	int *FontMatrix;
-	int FontMatrixStart[96];
-	int FontMatrixEnd[96];
-
 	TheMatrix(TComponent*, TWinControl*);
     ~TheMatrix();
 
@@ -322,7 +312,6 @@ public:
 	void WipeAllFramesCurrentLayer();
 	void WipeAllFramesAllLayers();
 	void ClearAllFramesGradient(int);
-	void ClearFont();
 
 	// =========================================================================
 

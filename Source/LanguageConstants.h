@@ -563,6 +563,7 @@
     static const int kErrorLoadingProject = 547;
     static const int kGradientFlip = 548;
     static const int kAnimationSpeed = 549;
-    static const int kAnimationSpeedHelp = 550;
-	static const int kLanguageConstantCount = 551;
+	static const int kAnimationSpeedHelp = 550;
+	static const int kIgnoreWarnings = 551;
+	static const int kLanguageConstantCount = 552;
 

@@ -55,11 +55,11 @@ ExportOptions ProfileHandler::Load(const std::wstring file_name)
 					case LoadProfile::kDataBegin:
 						if (s.find(L"RGB") != std::wstring::npos)
 						{
-							eeo.RGBEnabled = true;
+							eeo.Code.RGBEnabled = true;
 						}
 						else
 						{
-							eeo.RGBEnabled = false;
+							eeo.Code.RGBEnabled = false;
 						}
                         break;
 					case LoadProfile::kDataEnd:
@@ -83,26 +83,26 @@ ExportOptions ProfileHandler::Load(const std::wstring file_name)
 						eeo.NumberSizeFromInt(stoi(v));
 						break;
 					case LoadProfile::kScanDirection:
-						eeo.ScanDirectionFromInt(eeo.Source, stoi(v));
+						eeo.ScanDirectionFromInt(eeo.Code.Source, stoi(v));
 						break;
 					case LoadProfile::kLineContent:
 						eeo.LineContentFromInt(stoi(v));
 						break;
 					case LoadProfile::kLineCount:
-						eeo.LineCount = stoi(v);
+						eeo.Code.LineCount = stoi(v);
 						break;
 
 					case LoadProfile::kRGBMode:
 						eeo.RGBModeFromInt(stoi(v));
 						break;
 					case LoadProfile::kRGBChangePixels:
-						eeo.RGBChangePixels = stoi(v);
+						eeo.Code.RGBChangePixels = stoi(v);
 						break;
 					case LoadProfile::kRGBChangeColour:
-						eeo.RGBChangeColour = stoi(v);
+						eeo.Code.RGBChangeColour = stoi(v);
 						break;
 					case LoadProfile::kRGBBrightness:
-						eeo.RGBBrightness = stoi(v);
+						eeo.Code.RGBBrightness = stoi(v);
 						break;
 
 					case LoadProfile::kMinWidth:
@@ -132,20 +132,20 @@ ExportOptions ProfileHandler::Load(const std::wstring file_name)
 						eeo.BinaryLSBFromInt(stoi(v));
 						break;
 					case LoadProfile::kBinaryScanDirection:
-						eeo.BinaryScanDirectionFromInt(eeo.BinarySource, stoi(v));
+						eeo.BinaryScanDirectionFromInt(eeo.Binary.Source, stoi(v));
 						break;
 
 					case LoadProfile::kBinaryRGBMode:
-						eeo.BinaryRGBModeFromInt(stoi(v));
+						eeo.BinaryRGBFormatFromInt(stoi(v));
 						break;
 					case LoadProfile::kBinaryRGBChangePixels:
-						eeo.BinaryRGBChangePixels = stoi(v);
+						eeo.Binary.RGBChangePixels = stoi(v);
 						break;
 					case LoadProfile::kBinaryRGBChangeColour:
-						eeo.BinaryRGBChangeColour = stoi(v);
+						eeo.Binary.RGBChangeColour = stoi(v);
 						break;
 					case LoadProfile::kBinaryRGBBrightness:
-						eeo.BinaryRGBBrightness = stoi(v);
+						eeo.Binary.RGBBrightness = stoi(v);
 						break;
 					case LoadProfile::kBinaryFileContents:
 						eeo.BinaryFileContentsFromInt(stoi(v));
@@ -185,11 +185,11 @@ bool ProfileHandler::Save(const std::wstring file_name, bool IsRGB, ExportOption
 		file << Formatting::to_utf8(kExportNumberSize +      L":" + std::to_wstring(eeo.NumberSizeToInt()) + L"\n");
 		file << Formatting::to_utf8(kExportScanDirection +   L":" + std::to_wstring(eeo.ScanDirectionToInt()) + L"\n");
 		file << Formatting::to_utf8(kExportLineContent +     L":" + std::to_wstring(eeo.ContentToInt()) + L"\n");
-		file << Formatting::to_utf8(kExportLineCount +       L":" + std::to_wstring(eeo.LineCount) + L"\n");
-		file << Formatting::to_utf8(kExportRGBMode +         L":" + std::to_wstring(eeo.TextRGBModeToInt()) + L"\n");
-		file << Formatting::to_utf8(kExportRGBChangePixels + L":" + std::to_wstring(eeo.RGBChangePixels) + L"\n");
-		file << Formatting::to_utf8(kExportRGBChangeColour + L":" + std::to_wstring(eeo.RGBChangeColour) + L"\n");
-		file << Formatting::to_utf8(kExportRGBBrightness +   L":" + std::to_wstring(eeo.RGBBrightness) + L"\n");
+		file << Formatting::to_utf8(kExportLineCount +       L":" + std::to_wstring(eeo.Code.LineCount) + L"\n");
+		file << Formatting::to_utf8(kExportRGBMode +         L":" + std::to_wstring(eeo.RGBFormatToInt()) + L"\n");
+		file << Formatting::to_utf8(kExportRGBChangePixels + L":" + std::to_wstring(eeo.Code.RGBChangePixels) + L"\n");
+		file << Formatting::to_utf8(kExportRGBChangeColour + L":" + std::to_wstring(eeo.Code.RGBChangeColour) + L"\n");
+		file << Formatting::to_utf8(kExportRGBBrightness +   L":" + std::to_wstring(eeo.Code.RGBBrightness) + L"\n");
 
 		// binary export options
 
@@ -197,10 +197,10 @@ bool ProfileHandler::Save(const std::wstring file_name, bool IsRGB, ExportOption
 		file << Formatting::to_utf8(kExportBinaryOrientation   +   L":" + std::to_wstring(eeo.BinaryOrientationToInt()) + L"\n");
 		file << Formatting::to_utf8(kExportBinaryLSB +             L":" + std::to_wstring(eeo.BinaryLSBToInt()) + L"\n");
 		file << Formatting::to_utf8(kExportBinaryScanDirection +   L":" + std::to_wstring(eeo.BinaryScanDirectionToInt()) + L"\n");
-		file << Formatting::to_utf8(kExportBinaryRGBMode +         L":" + std::to_wstring(eeo.BinaryRGBModeToInt()) + L"\n");
-		file << Formatting::to_utf8(kExportBinaryRGBChangePixels + L":" + std::to_wstring(eeo.BinaryRGBChangePixels) + L"\n");
-		file << Formatting::to_utf8(kExportBinaryRGBChangeColour + L":" + std::to_wstring(eeo.BinaryRGBChangeColour) + L"\n");
-		file << Formatting::to_utf8(kExportBinaryRGBBrightness +   L":" + std::to_wstring(eeo.BinaryRGBBrightness) + L"\n");
+		file << Formatting::to_utf8(kExportBinaryRGBMode +         L":" + std::to_wstring(eeo.BinaryRGBFormatToInt()) + L"\n");
+		file << Formatting::to_utf8(kExportBinaryRGBChangePixels + L":" + std::to_wstring(eeo.Binary.RGBChangePixels) + L"\n");
+		file << Formatting::to_utf8(kExportBinaryRGBChangeColour + L":" + std::to_wstring(eeo.Binary.RGBChangeColour) + L"\n");
+		file << Formatting::to_utf8(kExportBinaryRGBBrightness +   L":" + std::to_wstring(eeo.Binary.RGBBrightness) + L"\n");
 		file << Formatting::to_utf8(kExportBinaryFileContents +    L":" + std::to_wstring(eeo.BinaryFileContentsToInt()) + L"\n");
 		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
 

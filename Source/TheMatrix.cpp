@@ -37,6 +37,8 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 	PaintBox->Parent = Canvas;
    //	PaintBox->OnPaint = PaintBoxUpdate;
 
+	TextFont = new Font();
+
 	InitPreviewBox(owner, Zig, false);
 
 	// ===========================================================================
@@ -91,8 +93,6 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 
   // ===========================================================================
 
-	FontMatrix = new int[96 * 8 * 8];
-
 	CurrentFrame = 0;
 	CurrentLayer = 0;
 
@@ -104,7 +104,7 @@ TheMatrix::~TheMatrix()
 {
 	delete PreviewBox;
 
-	delete[] FontMatrix;
+	delete TextFont;
 }
 
 
@@ -115,7 +115,7 @@ void TheMatrix::InitPreviewBox(TComponent *Owner, TWinControl *WinControl, bool 
 	PreviewBox->Visible = Visible;
 	PreviewBox->Top = 0;
 	PreviewBox->Left = 0;
-	PreviewBox->OnMouseDown = OnPreviewBoxMouseDown;
+	PreviewBox->OnMouseDown = &OnPreviewBoxMouseDown;
 
 	PreviewBox->Canvas->Pen->Color = clBtnFace;
 
@@ -187,27 +187,29 @@ int TheMatrix::GetPreviewPixelSize(int ROffset)
 {
 	// calculate circumference at ROffSet pixels from centre = 2 * pi * ROffSet
 	// this is the circumference of the smallest part of the display, we need
-	// to make sure that the pixels fit in this gap!
+	// to make sure that the pixels fit in this distance
 	// Divide this by the number of pixels and we get the maximium pixel size.
 
 	int pixel_size = 1;
 
+	double c = (2 * 3.1415926535 * ROffset);
+
 	switch (Preview.View)
 	{
 	case ViewShape::kSquare:
-		pixel_size = std::round((2 * 3.1415926535 * ROffset) / Details.Width);
+		pixel_size = std::round(c / Details.Width);
 		break;
 	case ViewShape::kRadial:
-		pixel_size = std::round((2 * 3.1415926535 * ROffset) / Details.Width);
+		pixel_size = std::round(c / Details.Width);
 		break;
 	case ViewShape::kRadial3Q:
-		pixel_size = std::round((2 * 3.1415926535 * ROffset) / Details.Width);
+		pixel_size = std::round(c / Details.Width);
 		break;
 	case ViewShape::kSemiCircle:
-		pixel_size = std::round((2 * 3.1415926535 * ROffset) / (2 * Details.Width));
+		pixel_size = std::round(c / (2 * Details.Width));
 		break;
 	case ViewShape::kSemiCircleInverted:
-		pixel_size = std::round((2 * 3.1415926535 * ROffset) / (2 * Details.Width));
+		pixel_size = std::round(c / (2 * Details.Width));
 		break;
 	}
 
@@ -224,8 +226,10 @@ void TheMatrix::SetPreviewBoxSize(int size)
 {
 	if (PreviewPopout)
 	{
-		PreviewBox->Width     = TPanel(PreviewBox->Parent).Width;
-		PreviewBox->Height    = TPanel(PreviewBox->Parent).Height;
+		TPanel *panel = (TPanel*)PreviewBox->Parent;
+
+		PreviewBox->Width     = panel->Width;
+		PreviewBox->Height    = panel->Height;
 
 		int s = std::min(std::round(PreviewBox->Width / Details.Width), std::round(PreviewBox->Height / Details.Height));
 
@@ -341,7 +345,7 @@ void TheMatrix::SetPreviewPopout(bool Popout)
 
 		TPanel *panel = (TPanel*)PreviewCanvas;
 
-		panel->OnResize = OnPreviewBoxCanvasResize;
+		panel->OnResize = &OnPreviewBoxCanvasResize;
 	}
 	else
 	{
@@ -1292,21 +1296,6 @@ void TheMatrix::ClearAllFramesGradient(int mode)
 
 // =============================================================================
 // =============================================================================
-
-
-void TheMatrix::ClearFont()
-{
-	for (int i = 0; i < 96 * 8 * 8; i++)
-	{
-		FontMatrix[i] = -1;
-	}
-
-	for (int i = 0; i < 96; i++)
-	{
-		FontMatrixStart[i] = 0;
-		FontMatrixEnd[i] = 0;
-	}
-}
 
 
 void TheMatrix::SetMouseButtonColours(int LMB, int MMB, int RMB)
@@ -5082,11 +5071,14 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 void TheMatrix::DrawFontCharacter(int ascii, int frame)
 {
+	const int __FontWidth = 8;
+	const int __FontHeight = 8;
+
 	int startY = Render.Draw.Coords[0].Y;
 	std::wstring temp = L"";
 	bool canwrite = true;
 
-	for (int x = FontMatrixStart[ascii]; x < FontMatrixEnd[ascii]; x++)
+	for (int x = TextFont->Start[ascii]; x <= TextFont->End[ascii]; x++)
 	{
 		for (int y = 0; y < 8; y++)
 		{
@@ -5115,36 +5107,38 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 
 			if (canwrite)
 			{
+				int data_index = (ascii * __FontWidth * __FontHeight) + (y * __FontWidth + x);
+
 				if (Details.Mode == MatrixMode::kRGB)
 				{
-					switch (FontMatrixMode)
+					switch (TextFont->Mode)
 					{
 					case MatrixMode::kMono:
-						if (FontMatrix[(ascii * Details.Width * Details.Height) + (y * Details.Width + x)] == 1)
+						if (TextFont->Data[data_index] == 1)
 						{
 							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Draw.Colour;
 						}
 						break;
 					case MatrixMode::kRGB:
-						if (FontMatrix[(ascii * Details.Width * Details.Height) + (y * Details.Width + x)] != -1)
+						if (TextFont->Data[data_index] != -1)
 						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = FontMatrix[(ascii * Details.Width * Details.Height) + (y * Details.Width + x)];
+							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = TextFont->Data[data_index];
 						}
 						break;
 					}
 				}
 			   else
 			   {
-					switch (FontMatrixMode)
+					switch (TextFont->Mode)
 					{
 					case MatrixMode::kMono:
-						if (FontMatrix[(ascii * Details.Width * Details.Height) + (y * Details.Width + x)] == 1)
+						if (TextFont->Data[data_index] == 1)
 						{
 							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Draw.Colour;
 						}
 						break;
 					case MatrixMode::kRGB:
-						if (FontMatrix[(ascii * Details.Width * Details.Height) + (y * Details.Width + x)] != -1)
+						if (TextFont->Data[data_index] != -1)
 						{
 							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Draw.Colour;
 						}
@@ -5166,7 +5160,7 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 
 void TheMatrix::DeleteFontCharacter(int frame)
 {
-	Render.Draw.Coords[0].X++;
+	Render.Draw.Coords[0].X--;
 
 	for (int y = Render.Draw.Coords[0].Y; y >= Render.Draw.Coords[0].Y - 7; y--)
 	{
@@ -5186,200 +5180,7 @@ void TheMatrix::DeleteFontCharacter(int frame)
 
 void TheMatrix::LoadTextToolFont(const std::wstring file_name)
 {
-	ClearFont();
-
-	// =======================================================================
-
-	std::wifstream file(file_name);
-
-	if (file)
-	{
-		std::wstring s = L"";
-
-		std::getline(file, s);
-
-		if (s.find(kFileHeaderFontRGB) != std::wstring::npos)
-		{
-			int frame     = 0;
-			int colid      = 0;
-			int height = 0;
-			int FirstData = -1;
-			int LastData  = -1;
-			bool headermode = true;
-
-			FontMatrixMode = MatrixMode::kRGB;
-
-			while (std::getline(file, s))
-			{
-				if (s != L"")
-				{
-					if (s[0] == L'/' || s[0] == L'#')
-					{
-						// comment, do nothing
-					}
-					else
-					{
-						switch (s[0])
-						{
-						case kDataBlockStart:
-						{
-							if (headermode)
-							{
-								headermode = false;
-							}
-							else
-							{
-								if (s.find(kFontPrefixChar) != std::wstring::npos)
-								{
-									frame++;
-
-									colid = 0;
-
-									FirstData = -1;
-									LastData = -1;
-								}
-							}
-							break;
-						}
-						case kDataBlockEnd:
-						{
-							if (!headermode)
-							{
-								if (FirstData != -1)
-								{
-									FontMatrixStart[frame] = FirstData;
-								}
-								else
-								{
-									FontMatrixStart[frame] = 0;
-								}
-
-								if (LastData != -1)
-								{
-									FontMatrixEnd[frame] = LastData;
-								}
-								else
-								{
-									FontMatrixEnd[frame] = FontMatrixStart[frame];
-								}
-							}
-							break;
-						}
-						case kRGBFontData:
-						{
-							std::wstring Input = L"";
-							int rowid   = height - 1;
-							bool haddata = false;
-
-							for (int t = 2; t < s.length(); t++)
-							{
-								if (s[t] == L' ')
-								{
-									if (Input == L"-1")
-									{
-										FontMatrix[(frame * 64) + (rowid * 8) + colid] = -1;
-									}
-									else
-									{
-										FontMatrix[(frame * 64) + (rowid * 8) + colid] = Convert::HexToInt(Input);
-
-										haddata = true;
-									}
-
-									rowid--;
-
-									Input = L"";
-								}
-								else
-								{
-									Input += s[t];
-								}
-							}
-
-							if (haddata)
-							{
-								if (FirstData == -1)
-								{
-									FirstData = colid;
-								}
-								else
-								{
-									LastData = colid;
-								}
-                            }
-
-							colid++;
-							break;
-						}
-						case kRGBFontHeight:
-							if (headermode)
-							{
-								height = stoi(s.substr(2));
-							}
-						}
-					}
-				}
-			}
-		}
-		else	// could do with seeking to beginning of file
-		{
-			FontMatrixMode = MatrixMode::kMono;
-			int frame = 0;
-
-            while (std::getline(file, s))
-			{
-				if (s != L"")
-				{
-					if (s[0] == L'/' || s[0] == L'#')
-					{
-						// comment, do nothing
-					}
-					else
-					{
-						std::wstring Input = L"";
-						int t = 0;
-						int byte = 0;
-						int colid  = 0;
-
-						while (s[t] != L'/' && t <= s.length())
-						{
-							if (s[t] == 32)
-							{
-								if (!Input.empty())
-								{
-									byte = stoi(Input);
-
-									for (int p = 0; p < 8; p++)
-									{
-										if ((byte & powers[p]) == powers[p])
-										{
-											FontMatrix[(frame * 64) + (p * 8) + colid] = 1;
-										}
-									}
-
-									Input = L"";
-									colid++;
-								}
-							}
-							else if (isdigit(s[t]))
-							{
-								Input += s[t];
-							}
-
-							t++;
-						}
-
-						FontMatrixStart[frame] = 0;
-						FontMatrixEnd[frame] = colid - 1;
-
-						frame++;
-					}
-				}
-			}
-		}
-
-		file.close();
-	}
+	TextFont->Load(file_name);
 }
 
 
@@ -5762,8 +5563,6 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 
 		for (int frame = FrameStart; frame <= FrameEnd; frame++)
 		{
-			//ShowMessage(frame);
-
 			int wo = (frame - FrameStart) * width;
 
 			if (MatrixLayers[CurrentLayer]->Cells.size() < frame + 1)
@@ -6024,25 +5823,7 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 		file << Formatting::to_utf8(kAnimPreviewDirectionF +   std::to_wstring(tid.Preview.OffsetDirection) + L"\n");
 		file << Formatting::to_utf8(kAnimPreviewIncRadiallyF + std::to_wstring(tid.Preview.IncrementRadially) + L"\n");
 
-		if (eeo.ExportMode != ExportSource::kNone)	// export options haven't been modified TO DO
-		{
-			file << Formatting::to_utf8(kAnimSourceF +           std::to_wstring(eeo.SourceToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimOrientationF +      std::to_wstring(eeo.OrientationToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimScanDirectionF +    std::to_wstring(eeo.ScanDirectionToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLSBF +              std::to_wstring(eeo.LSBToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLanguageF +         std::to_wstring(eeo.LanguageToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimNumberFormatF +     std::to_wstring(eeo.NumberFormatToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimNumberSizeF +       std::to_wstring(eeo.NumberSizeToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLineContentF +      std::to_wstring(eeo.ContentToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLineCountF +        std::to_wstring(eeo.LineCount) + L"\n");
-
-			file << Formatting::to_utf8(kAnimRGBModeF +          std::to_wstring(eeo.TextRGBModeToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBChangePixelsF +  std::to_wstring(eeo.RGBChangePixels) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBChangeColourF +  std::to_wstring(eeo.RGBChangeColour) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBBrightnessF +    std::to_wstring(eeo.RGBBrightness) + L"\n");
-
-			file << Formatting::to_utf8(kAnimOptimise +          std::to_wstring(eeo.Optimise) + L"\n");
-		}
+		eeo.SaveToFile(file);
 
 		file << Formatting::to_utf8(kAnimAutomationFileNameF + tid.AutomationFileName + L"\n");
 		file << Formatting::to_utf8(kAnimCommentF +            Details.Comment + L"\n");
@@ -6083,7 +5864,7 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
 			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
 			file << Formatting::to_utf8(kAnimLayerLockedF + std::to_wstring(MatrixLayers[layer]->Locked) + L"\n");
-			file << Formatting::to_utf8(L"]");
+			file << Formatting::to_utf8(L"]\n");
 
 			// ===============================================================
 
@@ -6132,7 +5913,7 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 
 		// ===========================================================================
 
-		file << Formatting::to_utf8(L'{' + kFileHeaderDeadPixel);
+		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel + L"\n");
 
 		for (int y = 0; y < Details.Height; y++)
 		{
@@ -6175,23 +5956,7 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 		file << Formatting::to_utf8(kAnimPreviewDirectionF +   std::to_wstring(tid.Preview.OffsetDirection) + L"\n");
 		file << Formatting::to_utf8(kAnimPreviewIncRadiallyF + std::to_wstring(tid.Preview.IncrementRadially) + L"\n");
 
-		if (eeo.ExportMode != ExportSource::kNone)	 // export options haven't been modified to do - need to set defaults?!
-		{
-			file << Formatting::to_utf8(kAnimSourceF +           std::to_wstring(eeo.SourceToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimOrientationF +      std::to_wstring(eeo.OrientationToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimScanDirectionF +    std::to_wstring(eeo.ScanDirectionToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLSBF +              std::to_wstring(eeo.LSBToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLanguageF +         std::to_wstring(eeo.LanguageToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimNumberFormatF +     std::to_wstring(eeo.NumberFormatToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimNumberSizeF +       std::to_wstring(eeo.NumberSizeToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLineContentF +      std::to_wstring(eeo.ContentToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimLineCountF +        std::to_wstring(eeo.LineCount) + L"\n");
-
-			file << Formatting::to_utf8(kAnimRGBModeF +          std::to_wstring(eeo.TextRGBModeToInt()) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBChangePixelsF +  std::to_wstring(eeo.RGBChangePixels) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBChangeColourF +  std::to_wstring(eeo.RGBChangeColour) + L"\n");
-			file << Formatting::to_utf8(kAnimRGBBrightnessF +    std::to_wstring(eeo.RGBBrightness) + L"\n");
-		}
+		eeo.SaveToFile(file);
 
 		file << Formatting::to_utf8(kAnimAutomationFileNameF + tid.AutomationFileName + L"\n");
 		file << Formatting::to_utf8(kAnimCommentF +            Details.Comment + L"\n");
@@ -6808,8 +6573,6 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 					if (s.length() >= 3) v = s.substr(2);
 
-//					ShowMessage(s.c_str());
-
 					std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
 					switch (LoadDataParameterType(s, headermode, matrixdatamode, deadpixelmode, layermode, coloursmode))
@@ -6934,7 +6697,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						eeo.OrientationFromInt(stoi(v));
 						break;
 					case LoadData::kLoadHeaderScanDirection:
-						eeo.ScanDirectionFromInt(eeo.Source, stoi(v));
+						eeo.ScanDirectionFromInt(eeo.Code.Source, stoi(v));
 						break;
 					case LoadData::kLoadHeaderLSB:
 						eeo.LSBFromInt(stoi(v));
@@ -6952,16 +6715,16 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						eeo.LineContentFromInt(stoi(v));
 						break;
 					case LoadData::kLoadHeaderLineCount:
-						eeo.LineCount = stoi(v);
+						eeo.Code.LineCount = stoi(v);
 						break;
 					case LoadData::kLoadHeaderRGBMode:
 						eeo.RGBModeFromInt(stoi(v));
 						break;
 					case LoadData::kLoadHeaderRGBChangePixels:
-						eeo.RGBChangePixels    = SafeStringToBool(v);
+						eeo.Code.RGBChangePixels    = SafeStringToBool(v);
 						break;
 					case LoadData::kLoadHeaderRGBChangeColour:
-						eeo.RGBChangeColour    = stoi(v);
+						eeo.Code.RGBChangeColour    = stoi(v);
 						break;
 
 					case LoadData::kLoadHeaderOptimise:
@@ -6982,8 +6745,8 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						break;
 
 					case LoadData::kLoadHeaderRGBBrightness:
-						eeo.RGBBrightness = stoi(v);
-						import.RGBBrightness = eeo.RGBBrightness;
+						eeo.Code.RGBBrightness = stoi(v);
+						import.RGBBrightness = eeo.Code.RGBBrightness;
 						break;
 
 					 // ======================================================================
@@ -7699,7 +7462,6 @@ void TheMatrix::ConfigurePaintboxDrawing()
 			PaintBox->OnPaint = PaintBoxUpdate;
 			break;
 		case MatrixMode::kRGB:
-            ShowMessage(L"RGB");
 			PaintBox->OnPaint = PaintBoxUpdateRGB;
 			break;
 		case MatrixMode::kRGB3BPP:

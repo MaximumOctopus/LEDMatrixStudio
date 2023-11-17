@@ -54,22 +54,22 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 
 		ExportUtility::GetPreamble(teo, data, false, thematrix->Details.Comment);
 
-		ExportUtility::GetSpacerLine(teo.Language, data);
+		ExportUtility::GetSpacerLine(teo.Code.Language, data);
 
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"Unoptimised size: " + std::to_wstring(thematrix->CalculateMemoryUsage()) + L" bytes");
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"          Saving: " + std::to_wstring(thematrix->CalculateMemoryUsage() - os) + L" bytes (" +
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(thematrix->CalculateMemoryUsage()) + L" bytes");
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(thematrix->CalculateMemoryUsage() - os) + L" bytes (" +
 										 std::to_wstring(std::round(((thematrix->CalculateMemoryUsage() - os) / thematrix->CalculateMemoryUsage()) * 100)) + L"%)");
 
-		ExportUtility::GetSpacerLine(teo.Language, data);
+		ExportUtility::GetSpacerLine(teo.Code.Language, data);
 
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L" " + GLanguageHandler->Text[kAccessWithLEDDataIndex] + L" ");
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L" " + GLanguageHandler->Text[kAccessWithLEDDataIndex] + L" ");
 
-		ExportUtility::GetSpacerLine(teo.Language, data);
+		ExportUtility::GetSpacerLine(teo.Code.Language, data);
 
 		data.push_back(L"");
 
-		data.push_back(ExportUtility::GetVariableType(teo.Language, teo.Size) + L"leddataindex[] = {");
+		data.push_back(ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) + L"leddataindex[] = {");
 
 		std::wstring s = L"";
 		for (int t = 0; t < unique_items.size(); t++)
@@ -88,12 +88,12 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 
 		// =========================================================================
 
-		teo.CleanMode = false;
+		teo.Code.CleanMode = false;
 		//teo.NumberSize := lIndexDataSize; // this was causing issues, but no idea what it was meant to do... !
 
         int i = 0;
 
-		if (teo.RGBEnabled)
+		if (teo.Code.RGBEnabled)
 		{
 			if (ExportRGB::CreateExportAnimationRGB(thematrix, teo, output, i, unique_items))
 			{
@@ -157,32 +157,32 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 
 	// =======================================================================
 
-	int uos = data.size() * teo.GetNumberSizeLengthBytes(teo.Size); // check these two values... to do
+	int uos = data.size() * teo.GetNumberSizeLengthBytes(teo.Code.Size); // check these two values... to do
 
-	int os  = teo.GetNumberSizeLengthBytes(teo.Size) * unique_items.size() + (data.size() * indexdatasize);             // lut size of data
+	int os  = teo.GetNumberSizeLengthBytes(teo.Code.Size) * unique_items.size() + (data.size() * indexdatasize);             // lut size of data
 
 	output.clear();
 
 	ExportUtility::GetPreamble(teo, output, true, thematrix->Details.Comment);
 
-	ExportUtility::GetSpacerLine(teo.Language, output);
+	ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
-	output.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"Unoptimised size: " + std::to_wstring(uos) + L" bytes");
-	output.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
-	output.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L"          Saving: " + std::to_wstring(uos - os) + L" bytes (" +
+	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(uos) + L" bytes");
+	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
+	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(uos - os) + L" bytes (" +
 												std::to_wstring(std::round(((uos - os) / uos) * 100)) + L"%)");
 
-	ExportUtility::GetSpacerLine(teo.Language, output);
+	ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
-	output.push_back(ExportUtility::GetCommentCharacter(teo.Language) + L" Access with leddataindex[ledarray[x]] ");
+	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L" Access with leddataindex[ledarray[x]] ");
 
-	ExportUtility::GetSpacerLine(teo.Language, output);
+	ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
 	// =======================================================================
 
 	output.push_back(L"");
 
-	output.push_back(ExportUtility::GetVariableType(teo.Language, teo.Size) + L"leddataindex[] = {");
+	output.push_back(ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) + L"leddataindex[] = {");
 
 	std::wstring s = L"";
 	for (int t = 0; t < unique_items.size(); t++)
@@ -213,7 +213,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 		}
 	}
 
-	output.push_back(ExportUtility::GetVariableType(teo.Language, teo.Size) + L"ledarray[] = {");
+	output.push_back(ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) + L"ledarray[] = {");
 
 	s      = L"";
 	int i = std::to_wstring(unique_items.size()).length();
@@ -225,7 +225,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 
 		count++;
 
-		if (count == teo.LineCount)
+		if (count == teo.Code.LineCount)
 		{
 			output.push_back(s);
 

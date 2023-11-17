@@ -16,7 +16,7 @@
 
 static const std::wstring __LEDStudioDate = L"November 15th 2023";
 
-#ifdef CPUX64
+#if _WIN64
 static const std::wstring __LEDStudioVersion = L"0.20.0 (x64)";
 #else
 static const std::wstring __LEDStudioVersion = L"0.20.0 (x32)";

@@ -279,6 +279,14 @@
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>78</BuildOrder>
         </None>
+        <CppCompile Include="Font.cpp">
+            <VirtualFolder>{B4A7D0C6-E424-4C17-BAA9-C8DE4630B7DE}</VirtualFolder>
+            <BuildOrder>97</BuildOrder>
+        </CppCompile>
+        <None Include="Font.h">
+            <VirtualFolder>{B4A7D0C6-E424-4C17-BAA9-C8DE4630B7DE}</VirtualFolder>
+            <BuildOrder>96</BuildOrder>
+        </None>
         <CppCompile Include="FontHandler.cpp">
             <VirtualFolder>{B4A7D0C6-E424-4C17-BAA9-C8DE4630B7DE}</VirtualFolder>
             <BuildOrder>92</BuildOrder>
@@ -635,34 +643,34 @@
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>62</BuildOrder>
         </None>
+        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
         <FormResources Include="main.dfm"/>
+        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
         <FormResources Include="Forms\FormSaveRange.dfm"/>
         <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
-        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
+        <FormResources Include="Forms\FormOptimise.dfm"/>
         <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
         <FormResources Include="Forms\FormPreferences.dfm"/>
-        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
+        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
         <FormResources Include="Frames\FramePalettePanel.dfm"/>
         <FormResources Include="Frames\FrameQuickData.dfm"/>
-        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
+        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
         <FormResources Include="Frames\FrameFontPanel.dfm"/>
         <FormResources Include="Frames\FrameGradientPanel.dfm"/>
-        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
+        <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
         <FormResources Include="Forms\FormExport.dfm"/>
         <FormResources Include="Forms\FormExportCode.dfm"/>
-        <FormResources Include="Forms\FormExportGIF.dfm"/>
+        <FormResources Include="Forms\FormAutomate.dfm"/>
         <FormResources Include="Forms\FormColourChange.dfm"/>
         <FormResources Include="Forms\FormCopyMultiple.dfm"/>
-        <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
+        <FormResources Include="Forms\FormMerge.dfm"/>
         <FormResources Include="Forms\FormNewBrush.dfm"/>
         <FormResources Include="Forms\FormNewProject.dfm"/>
-        <FormResources Include="Forms\FormOptimise.dfm"/>
+        <FormResources Include="Forms\FormExportGIF.dfm"/>
         <FormResources Include="Forms\FormFontViewer.dfm"/>
         <FormResources Include="Forms\FormImportBitmap.dfm"/>
-        <FormResources Include="Forms\FormMerge.dfm"/>
         <FormResources Include="Forms\FormAbout.dfm"/>
         <FormResources Include="Forms\FormAddLayer.dfm"/>
-        <FormResources Include="Forms\FormAutomate.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

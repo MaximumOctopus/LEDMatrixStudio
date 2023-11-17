@@ -32,7 +32,7 @@ namespace ExportRGB3BPP
 		{
 			std::wstring m = s.substr(0, s.length() - 2); // trims last (and unnecessary) ", " from data
 
-			switch (teo.Language)
+			switch (teo.Code.Language)
 			{
 			case ExportLanguage::kCSV:
 				return GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";";
@@ -85,17 +85,17 @@ namespace ExportRGB3BPP
 		std::wstring s = L"";
 		std::wstring vartype = L"";
 		std::wstring spacingstring = L"";
-		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Language, teo.Format);
+		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
 		std::wstring cdescription = L"";
 		DataOut dataout;
 
 		// ===========================================================================
 
-		if (teo.CleanMode)
+		if (teo.Code.CleanMode)
 		{
 			spacingstring = L" ";
 
-			teo.Language = ExportLanguage::kSpecial;
+			teo.Code.Language = ExportLanguage::kSpecial;
 		}
 		else
 		{
@@ -104,7 +104,7 @@ namespace ExportRGB3BPP
 
 		// ===========================================================================
 
-		if (teo.IncludePreamble)
+		if (teo.Code.IncludePreamble)
 		{
 			if (teo.ExportMode == ExportSource::kAnimation)
 			{
@@ -119,7 +119,7 @@ namespace ExportRGB3BPP
 
 			ExportUtility::GetPreamble(teo, output, false, matrix->Details.Comment);
 
-			ExportUtility::GetSpacerLine(teo.Language, output);
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
 			output.push_back(L"");
 		}
@@ -128,8 +128,8 @@ namespace ExportRGB3BPP
 		// =========================================================================
 		// =========================================================================
 
-		vartype = ExportUtility::GetVariableType(teo.Language, teo.Size) +
-				  ExportUtility::GetVariableID(teo.Language);
+		vartype = ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) +
+				  ExportUtility::GetVariableID(teo.Code.Language);
 
 		if (vartype != L"")
 		{
@@ -141,11 +141,11 @@ namespace ExportRGB3BPP
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.StartFrame; t <= teo.EndFrame; t++)
+		for (int t = teo.Code.StartFrame; t <= teo.Code.EndFrame; t++)
 		{
-			if (teo.Language == ExportLanguage::kCFastLED)
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
 			{
-				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Language, t));
+				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, t));
 			}
 
 			// =========================================================================
@@ -153,9 +153,9 @@ namespace ExportRGB3BPP
 			for (int i = 0; i < __MaxHeight; i++)
 				MatrixData[i] = L"";
 
-			if (teo.Source == ReadSource::kRows)
+			if (teo.Code.Source == ReadSource::kRows)
 			{
-				for (int y = teo.SelectiveStart - 1; y <= teo.SelectiveEnd - 1; y++)
+				for (int y = teo.Code.SelectiveStart - 1; y <= teo.Code.SelectiveEnd - 1; y++)
 				{
 					dataout = ExportRowDataRGB3BPP(matrix, prefix, teo, t, y, spacingstring);
 
@@ -165,9 +165,9 @@ namespace ExportRGB3BPP
 				}
 			}
 
-			if (teo.Source == ReadSource::kColumns)
+			if (teo.Code.Source == ReadSource::kColumns)
 			{
-				for (int x = teo.SelectiveStart - 1; x < teo.SelectiveEnd - 1; x++)
+				for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd - 1; x++)
 				{
 					dataout = ExportColumnDataRGB3BPP(matrix, prefix, teo, t, x, spacingstring);
 
@@ -181,15 +181,15 @@ namespace ExportRGB3BPP
 			// row data
 			// ===========================================================================
 
-			if (teo.Source == ReadSource::kRows)
+			if (teo.Code.Source == ReadSource::kRows)
 			{
-				if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+				if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
 					s = L"";
 
-					for (int y = teo.SelectiveStart - 1; y < teo.SelectiveEnd; y++)
+					for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 					{
-						switch (teo.Content)
+						switch (teo.Code.Content)
 						{
 						case LineContent::kRowCol:
 							if (!MatrixData[y].empty())
@@ -203,7 +203,7 @@ namespace ExportRGB3BPP
 						}
 					}
 
-					if (teo.Content == LineContent::kFrame)
+					if (teo.Code.Content == LineContent::kFrame)
 					{
 						ExportUtility::AddContentByFrame(teo, s, t, output);
 					}
@@ -212,9 +212,9 @@ namespace ExportRGB3BPP
 				{
 					s = L"";
 
-					for (int y = teo.SelectiveEnd - 1; y >= teo.SelectiveStart - 1; y++)
+					for (int y = teo.Code.SelectiveEnd - 1; y >= teo.Code.SelectiveStart - 1; y++)
 					{
-						switch (teo.Content)
+						switch (teo.Code.Content)
 						{
 						case LineContent::kRowCol:
 							if (!MatrixData[y].empty())
@@ -228,7 +228,7 @@ namespace ExportRGB3BPP
 						}
 					}
 
-					if (teo.Content == LineContent::kFrame)
+					if (teo.Code.Content == LineContent::kFrame)
 					{
 						ExportUtility::AddContentByFrame(teo, s, t, output);
 					}
@@ -239,20 +239,20 @@ namespace ExportRGB3BPP
 			// col data
 			// ===========================================================================
 
-			if (teo.Source == ReadSource::kColumns)
+			if (teo.Code.Source == ReadSource::kColumns)
 			{
-				switch (teo.Orientation)
+				switch (teo.Code.Orientation)
 				{
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
 				{
-					if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+					if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
 						s = L"";
 
-						for (int x = teo.SelectiveStart - 1; x < teo.SelectiveEnd ; x++)
+						for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd ; x++)
 						{
-							 switch (teo.Content)
+							 switch (teo.Code.Content)
 							 {
 							 case LineContent::kRowCol:
 								if (!MatrixData[x].empty())
@@ -266,7 +266,7 @@ namespace ExportRGB3BPP
 							 }
 						}
 
-						if (teo.Content == LineContent::kFrame)
+						if (teo.Code.Content == LineContent::kFrame)
 						{
 							ExportUtility::AddContentByFrame(teo, s, t, output);
 						}
@@ -275,9 +275,9 @@ namespace ExportRGB3BPP
 					{
 						s = L"";
 
-						for (int x = teo.SelectiveEnd - 1; x >= teo.SelectiveStart - 1; x--)
+						for (int x = teo.Code.SelectiveEnd - 1; x >= teo.Code.SelectiveStart - 1; x--)
 						{
-							switch (teo.Content)
+							switch (teo.Code.Content)
 							{
 							case LineContent::kRowCol:
 								if (!MatrixData[x].empty())
@@ -291,7 +291,7 @@ namespace ExportRGB3BPP
 							}
 						}
 
-						if (teo.Content == LineContent::kFrame)
+						if (teo.Code.Content == LineContent::kFrame)
 						{
 							ExportUtility::AddContentByFrame(teo, s, t, output);
 						}
@@ -305,16 +305,16 @@ namespace ExportRGB3BPP
 				}
 
 
-				if (teo.Language == ExportLanguage::kCFastLED)
+				if (teo.Code.Language == ExportLanguage::kCFastLED)
 				{
-					output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Language));
+					output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Code.Language));
 
 					output.push_back(L"");
 				}
 			}
 		}
 
-		switch (teo.Language)
+		switch (teo.Code.Language)
 		{
 		case ExportLanguage::kC1Dim:
 		case ExportLanguage::kC2Dim:
@@ -328,9 +328,9 @@ namespace ExportRGB3BPP
 			break;
 		}
 
-		if (teo.IncludePreamble)
+		if (teo.Code.IncludePreamble)
 		{
-			ExportUtility::GetSpacerLine(teo.Language, output);
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
 		}
 
         return true;
@@ -342,7 +342,7 @@ namespace ExportRGB3BPP
 		DataOut dataout;
 		dataout.Count = 0;
 		std::wstring output = L"";
-		ScanDirection direction = teo.Direction;
+		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
 
@@ -361,7 +361,7 @@ namespace ExportRGB3BPP
 
 		// ===========================================================================
 
-		if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -379,7 +379,7 @@ namespace ExportRGB3BPP
 				break;
 			}
 		}
-		else if (teo.Orientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -450,7 +450,7 @@ namespace ExportRGB3BPP
 			}
 		}
 
-		output += ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.TextRGBMode, teo.Format, teo.Size, teo.RGBBrightness, prefix, spacingchar);
+		output += ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.Code.RGBFormat, teo.Code.Format, teo.Code.Size, teo.Code.RGBBrightness, prefix, spacingchar);
 
 		dataout.Count += 3;
 
@@ -471,7 +471,7 @@ namespace ExportRGB3BPP
 		DataOut dataout;
 		dataout.Clear();
 		std::wstring output = L"";
-		ScanDirection direction = teo.Direction;
+		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
 
@@ -503,7 +503,7 @@ namespace ExportRGB3BPP
 		int g = 0;
 		int b = 0;
 
-		if (teo.Orientation == InputOrientation::kTopBottomLeftRight)
+		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
 			switch (direction)
 			{
@@ -521,7 +521,7 @@ namespace ExportRGB3BPP
 				break;
 			}
 		}
-		else if (teo.Orientation == InputOrientation::kBottomTopRightLeft)
+		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
 		{
 			switch (direction)
 			{
@@ -591,7 +591,7 @@ namespace ExportRGB3BPP
 			}
 		}
 
-		output += output + ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.TextRGBMode, teo.Format, teo.Size, teo.RGBBrightness, prefix, spacingchar);
+		output += output + ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.Code.RGBFormat, teo.Code.Format, teo.Code.Size, teo.Code.RGBBrightness, prefix, spacingchar);
 
 		dataout.Count += 3;
 

@@ -111,7 +111,6 @@
 
 	static const wchar_t kAnimBlockEnd = L'}';
 
-
 	static const std::wstring kAnimPadModeF = L"1:";
 	static const std::wstring kAnimHexFormatF = L"2:";
 	static const std::wstring kAnimHexOutputF = L"3:";
@@ -175,6 +174,8 @@
 	static const std::wstring kAnimBrushColoursF = L"c:";
 
 	static const std::wstring kAnimBlockEndF = L"}:";
+
+	static const std::wstring kAnimBinaryF = L"@:";
 
 	// =================================================================
 	// == Automation File (.automation) ================================
