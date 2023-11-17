@@ -3,6 +3,8 @@ object framePalette: TframePalette
   Top = 0
   Width = 190
   Height = 480
+  DoubleBuffered = True
+  ParentDoubleBuffered = False
   TabOrder = 0
   object lPaletteColourHex: TLabel
     Left = 85
@@ -21,8 +23,8 @@ object framePalette: TframePalette
     Tag = 6
     Left = 156
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -33,8 +35,8 @@ object framePalette: TframePalette
     Tag = 5
     Left = 132
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -45,8 +47,8 @@ object framePalette: TframePalette
     Tag = 4
     Left = 108
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -57,8 +59,8 @@ object framePalette: TframePalette
     Tag = 3
     Left = 84
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -69,8 +71,8 @@ object framePalette: TframePalette
     Tag = 2
     Left = 60
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -81,8 +83,8 @@ object framePalette: TframePalette
     Tag = 1
     Left = 36
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -92,8 +94,8 @@ object framePalette: TframePalette
   object sRGBP1: TShape
     Left = 12
     Top = 188
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -103,8 +105,8 @@ object framePalette: TframePalette
   object sRGBP8: TShape
     Left = 12
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -115,8 +117,8 @@ object framePalette: TframePalette
     Tag = 1
     Left = 36
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -126,8 +128,8 @@ object framePalette: TframePalette
   object sRGBP15: TShape
     Left = 12
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -138,8 +140,8 @@ object framePalette: TframePalette
     Tag = 1
     Left = 36
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -150,8 +152,8 @@ object framePalette: TframePalette
     Tag = 1
     Left = 36
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -161,8 +163,8 @@ object framePalette: TframePalette
   object sRGBP22: TShape
     Left = 12
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -173,8 +175,8 @@ object framePalette: TframePalette
     Tag = 2
     Left = 60
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -185,8 +187,8 @@ object framePalette: TframePalette
     Tag = 2
     Left = 60
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -197,8 +199,8 @@ object framePalette: TframePalette
     Tag = 2
     Left = 60
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -209,8 +211,8 @@ object framePalette: TframePalette
     Tag = 3
     Left = 84
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -221,8 +223,8 @@ object framePalette: TframePalette
     Tag = 3
     Left = 84
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -233,8 +235,8 @@ object framePalette: TframePalette
     Tag = 3
     Left = 84
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -245,8 +247,8 @@ object framePalette: TframePalette
     Tag = 4
     Left = 108
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -257,8 +259,8 @@ object framePalette: TframePalette
     Tag = 4
     Left = 108
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -269,8 +271,8 @@ object framePalette: TframePalette
     Tag = 4
     Left = 108
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -281,8 +283,8 @@ object framePalette: TframePalette
     Tag = 5
     Left = 132
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -293,8 +295,8 @@ object framePalette: TframePalette
     Tag = 5
     Left = 132
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -305,8 +307,8 @@ object framePalette: TframePalette
     Tag = 5
     Left = 132
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -317,8 +319,8 @@ object framePalette: TframePalette
     Tag = 6
     Left = 156
     Top = 260
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -329,8 +331,8 @@ object framePalette: TframePalette
     Tag = 6
     Left = 156
     Top = 236
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
@@ -341,8 +343,8 @@ object framePalette: TframePalette
     Tag = 6
     Left = 156
     Top = 212
-    Width = 18
-    Height = 18
+    Width = 22
+    Height = 22
     Cursor = crHandPoint
     Hint = 'Colour 0 (off), click with either mouse button to select'
     Brush.Color = clBlack
