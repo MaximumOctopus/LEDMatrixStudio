@@ -64,6 +64,8 @@ public:
 	void SetGuiLanguageText();
 	void UpdateLayerTable();
 
+    void UpdateExisting();
+
 	void SetSyncAll(bool);
 	bool GetSyncAll();
 

@@ -273,6 +273,47 @@ void TframeLayers::UpdateLayerTable()
 }
 
 
+// updates the lock/visible status of currently available layers
+void TframeLayers::UpdateExisting()
+{
+	int count = ParentMatrix->GetLayerCount();
+
+	sgLayers->RowCount = count + 1;
+
+	for (int t = 0; t < count; t++)
+	{
+		sgLayers->Cells[CCellName][1 + count - 1 - t] = ParentMatrix->GetLayerName(t).c_str();
+
+		if (ParentMatrix->IsVisible(t))
+		{
+			sgLayers->Cells[CCellVisible][1 + count - 1 - t] = L"x";
+		}
+		else
+		{
+			if (count == 1)
+			{
+				ParentMatrix->SetVisibility(t, True);
+
+				sgLayers->Cells[CCellVisible][1 + count - 1 - t] = L"x";
+			}
+			else
+			{
+				sgLayers->Cells[CCellVisible][1 + count - 1 - t] = L"";
+			}
+		}
+
+		if (ParentMatrix->IsLayerLocked(t))
+		{
+			sgLayers->Cells[CCellLocked][1 + count - 1 - t] = L"L";
+		}
+		else
+		{
+			sgLayers->Cells[CCellLocked][1 + count - 1 - t] = L"";
+		}
+	}
+}
+
+
 void TframeLayers::SetSyncAll(bool sync)
 {
 	cbSyncAllLayers->Checked = sync;
