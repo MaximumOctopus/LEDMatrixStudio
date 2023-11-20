@@ -23,7 +23,7 @@
 #include <Vcl.Graphics.hpp>
 
 
-class TForm22 : public TForm
+class TfrmToggleLockStatus : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel1;
@@ -43,7 +43,7 @@ private:
 	void SetGuiLanguageText();
 
 public:		// User declarations
-	__fastcall TForm22(TComponent* Owner);
+	__fastcall TfrmToggleLockStatus(TComponent* Owner);
 };
 
 
@@ -58,6 +58,6 @@ struct ToggleLockFrameRange
 ToggleLockFrameRange OpenToggleLockStatus();
 
 //---------------------------------------------------------------------------
-extern PACKAGE TForm22 *Form22;
+extern PACKAGE TfrmToggleLockStatus *frmToggleLockStatus;
 //---------------------------------------------------------------------------
 #endif

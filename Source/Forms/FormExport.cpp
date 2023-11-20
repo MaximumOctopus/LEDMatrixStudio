@@ -17,6 +17,7 @@
 #include <fstream>
 
 #include "Convert.h"
+#include "FileUtility.h"
 #include "FormExport.h"
 #include "LanguageConstants.h"
 #include "LanguageHandler.h"
@@ -180,9 +181,12 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 	{
 		BuildFromProfile(ieo);
 	}
+	else
+	{
+        sbBinaryDataRowsClick(nullptr);
+	}
 
 	cbDirectionChange(nullptr);         // these must be executed after the matrix has been assigned (or crash!!)
-	sbBinaryDataRowsClick(nullptr);
 }
 
 
@@ -359,6 +363,8 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 	{
 		sbBinaryDataColumns->Down = true;
 	}
+
+	sbBinaryDataRowsClick(nullptr);
 
 	// ===========================================================================
 
@@ -722,10 +728,6 @@ void TfrmExport::CreateExportOptions()
 
 	// =======================================================================
 
-	InternalEO.Binary.Size = NumberSize::kRGB8bit;
-
-	// =======================================================================
-
 	if (rbSaveAnimation->Checked)
 	{
 		InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;
@@ -815,7 +817,7 @@ void TfrmExport::CreateBinaryExportOptions()
 
 	// =========================================================================
 
-	if (gbNumberGrouping->Visible)
+	if (gbNumberGroupingBinary->Visible)
 	{
 		if (sbBinaryNumberSize8bit->Down)
 		{
@@ -919,7 +921,9 @@ void __fastcall TfrmExport::shapeBackgroundPixelsMouseDown(TObject *Sender, TMou
 {
 	if (cdExport->Execute())
 	{
-		shapeBackgroundPixels->Brush->Color = cdExport->Color;
+		TShape *shape = (TShape*)Sender;
+
+		shape->Brush->Color = cdExport->Color;
 
 		if (cbAutoPreview->Checked && !IsBuilding)
 		{
@@ -1347,11 +1351,9 @@ void __fastcall TfrmExport::sbDeleteClick(TObject *Sender)
 					  L"\n\n" +
 					  L"\"" + cbProfileList->Text.c_str() + L"\""), mtWarning, mbYesNo, 0) == mrYes)
 		{
-			std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
 			std::wstring name = cbProfileList->Text.c_str();
 
-			path += L"export\\" + name + L"." + ProfileExtension;
+			std::wstring path = GSystemSettings->App.LMSFilePath + L"export\\" + name + L"." + ProfileExtension;
 
 			if (!GProfileHandler->DeleteExportProfile(path))
 			{
@@ -1372,9 +1374,7 @@ void __fastcall TfrmExport::sbSaveClick(TObject *Sender)
 	{
 		CreateExportOptions();
 
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-		path += L"export\\" + s + L"." + ProfileExtension;
+		std::wstring path = L"export\\" + s + L"." + ProfileExtension;
 
 		GProfileHandler->Save(path,
 							  gbRGB->Visible,
@@ -1406,7 +1406,7 @@ void __fastcall TfrmExport::bExportClick(TObject *Sender)
 		{
 			Preview();
 
-			// to do IMPORTANT Output.SaveToFile(sdExport->Filename);
+			FileUtility::SaveVector(sdExport->FileName.c_str(), Output);
 
 			ModalResult = mrOk;
 		}
@@ -1792,9 +1792,7 @@ void TfrmExport::PopulateProfileList()
 
 void TfrmExport::LoadProfile(const std::wstring file_name)
 {
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-	path += L"export\\" + file_name + L"." + ProfileExtension;
+	std::wstring path = GSystemSettings->App.LMSFilePath + L"export\\" + file_name + L"." + ProfileExtension;
 
 	ExportOptions eeo = GProfileHandler->Load(path);
 

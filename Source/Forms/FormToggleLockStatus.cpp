@@ -20,7 +20,7 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm22 *Form22;
+TfrmToggleLockStatus *frmToggleLockStatus;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -29,19 +29,19 @@ extern LanguageHandler *GLanguageHandler;
 
 ToggleLockFrameRange OpenToggleLockStatus()
 {
-	TForm22 *Form22 = new TForm22(Application);
+	TfrmToggleLockStatus *frmToggleLockStatus = new TfrmToggleLockStatus(Application);
 
 	ToggleLockFrameRange tlfr;
 
-	if (Form22->ShowModal() == mrOk)
+	if (frmToggleLockStatus->ShowModal() == mrOk)
 	{
 		tlfr.Process = true;
-		tlfr.LockStatus = Form22->cbLockStatus->Checked;
-		tlfr.StartFrame = Form22->eStartFrame->Text.ToIntDef(1);
-		tlfr.EndFrame   = Form22->eEndFrame->Text.ToIntDef(1);
+		tlfr.LockStatus = frmToggleLockStatus->cbLockStatus->Checked;
+		tlfr.StartFrame = frmToggleLockStatus->eStartFrame->Text.ToIntDef(1);
+		tlfr.EndFrame   = frmToggleLockStatus->eEndFrame->Text.ToIntDef(1);
 	}
 
-	delete Form22;
+	delete frmToggleLockStatus;
 
 	return tlfr;
 }
@@ -50,20 +50,20 @@ ToggleLockFrameRange OpenToggleLockStatus()
 //---------------------------------------------------------------------------
 
 
-__fastcall TForm22::TForm22(TComponent* Owner)
+__fastcall TfrmToggleLockStatus::TfrmToggleLockStatus(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm22::eStartFrameChange(TObject *Sender)
+void __fastcall TfrmToggleLockStatus::eStartFrameChange(TObject *Sender)
 {
 	bOk->Enabled = ValidateInputs;
 }
 
 
-bool TForm22::ValidateInputs()
+bool TfrmToggleLockStatus::ValidateInputs()
 {
 	int sf = eStartFrame->Text.ToIntDef(-1);
 	int ef = eEndFrame->Text.ToIntDef(-1);
@@ -72,7 +72,7 @@ bool TForm22::ValidateInputs()
 }
 
 
-void TForm22::SetGuiLanguageText()
+void TfrmToggleLockStatus::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kToggleFrameLockStatus].c_str();
 	Label1->Caption = GLanguageHandler->Text[kStart].c_str();

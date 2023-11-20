@@ -144,7 +144,7 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 
 	sBackground->Brush->Color = TColor(ps.Background);
 
-	cbMatrixType->ItemIndex  = ps.MatrixModeToInt();
+	cbMatrixType->ItemIndex  = ps.MatrixModeToInt() - 1;
 
 	cbMatrixTypeChange(nullptr);
 
@@ -180,13 +180,13 @@ void TForm16::SetTo(ProjectSettings &ps)
 
 	if (pcNew->ActivePageIndex == 0)
 	{
-		ps.Mode = Utility::MatrixModeFromInt(cbMatrixType->ItemIndex);
+		ps.MatrixModeFromInt(cbMatrixType->ItemIndex + 1);
 		ps.Width = cbWidth->Text.ToInt();
 		ps.Height = cbHeight->Text.ToInt();
 	}
 	else
 	{
-		ps.Mode = Utility::MatrixModeFromInt(lPresetType->Tag);
+		ps.MatrixModeFromInt(lPresetType->Tag - 1);
 		ps.Width = lPresetWidth->Caption.ToInt();
 		ps.Height = lPresetHeight->Caption.ToInt();
 	}

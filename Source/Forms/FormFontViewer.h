@@ -36,6 +36,7 @@ __published:	// IDE-managed Components
 	TLabel *Label3;
 	TLabel *lCharacter;
 	TTrackBar *tbFont;
+	TPanel *pFont;
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall tbFontChange(TObject *Sender);
 	void __fastcall cbFontsChange(TObject *Sender);

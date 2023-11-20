@@ -3,7 +3,7 @@ object frmOptimise: TfrmOptimise
   Top = 0
   Caption = 'frmOptimise'
   ClientHeight = 596
-  ClientWidth = 1002
+  ClientWidth = 1001
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,13 +11,13 @@ object frmOptimise: TfrmOptimise
   Font.Name = 'Segoe UI'
   Font.Style = []
   DesignSize = (
-    1002
+    1001
     596)
   TextHeight = 15
   object Bevel1: TBevel
     Left = 8
     Top = 36
-    Width = 976
+    Width = 975
     Height = 4
     Anchors = [akLeft, akTop, akRight]
     Shape = bsTopLine
@@ -40,7 +40,7 @@ object frmOptimise: TfrmOptimise
   object mMemo: TMemo
     Left = 263
     Top = 245
-    Width = 731
+    Width = 730
     Height = 346
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = DEFAULT_CHARSET
@@ -51,11 +51,13 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
+    ExplicitWidth = 725
+    ExplicitHeight = 340
   end
   object mData: TMemo
     Left = 263
     Top = 46
-    Width = 731
+    Width = 730
     Height = 193
     Anchors = [akLeft, akTop, akRight]
     Font.Charset = DEFAULT_CHARSET
@@ -68,6 +70,7 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
+    ExplicitWidth = 725
   end
   object Panel1: TPanel
     Left = 8
@@ -78,6 +81,7 @@ object frmOptimise: TfrmOptimise
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
+    ExplicitHeight = 538
     object gbOutputOptions: TGroupBox
       Left = 8
       Top = 6

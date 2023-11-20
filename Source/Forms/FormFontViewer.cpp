@@ -17,9 +17,11 @@
 #include "FontHandler.h"
 #include "FormFontViewer.h"
 #include "MatrixConstants.h"
+#include "SystemSettings.h"
 #include "Utility.h"
 
 extern FontHandler *GFontHandler;
+extern SystemSettings *GSystemSettings;
 
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -41,9 +43,12 @@ void OpenFontViewer()
 __fastcall TfrmFontViewer::TfrmFontViewer(TComponent* Owner)
 	: TForm(Owner)
 {
-	FontMatrix = new TheMatrix(this, this);
+	DoubleBuffered = true;
+	pFont->DoubleBuffered = true;
 
-	FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 150, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+	FontMatrix = new TheMatrix(this, pFont);
+
+	FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 
 	FontMatrix->LEDColours[0] = 0x00ffffff;
 	FontMatrix->LEDColours[1] = 0x00000000;
@@ -72,14 +77,9 @@ void __fastcall TfrmFontViewer::FormShow(TObject *Sender)
 
 void __fastcall TfrmFontViewer::cbFontsChange(TObject *Sender)
 {
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
 	std::wstring name = cbFonts->Text.c_str();
 
-	path += L"fonts\\" + name + L".ledsfont";
-
-//	for t := 1 to length(temp) do
- ///	if temp[t] <> '&' then
-   //	  s := s + temp[t];
+	std::wstring path = GSystemSettings->App.LMSFilePath + L"fonts\\" + name + L".ledsfont";
 
 	if (FileExists(path.c_str()))
 	{
@@ -105,7 +105,7 @@ void __fastcall TfrmFontViewer::tbFontChange(TObject *Sender)
 		FontMatrix->Render.Draw.Coords[0].X = 0;
 		FontMatrix->Render.Draw.Coords[0].Y = 7;
 
-		FontMatrix->DrawFontCharacter(tbFont->Position - 32, 1);
+		FontMatrix->DrawFontCharacter(tbFont->Position - 32, 0);
 
 		LastFrame = tbFont->Position;
 
@@ -118,11 +118,11 @@ void __fastcall TfrmFontViewer::cbRGBModeClick(TObject *Sender)
 {
 	if (cbRGBMode->Checked)
 	{
-		FontMatrix->NewMatrix(MatrixMode::kRGB, 1, 6, 150, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+		FontMatrix->NewMatrix(MatrixMode::kRGB, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 	}
 	else
 	{
-		FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 150, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+		FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 	}
 
 	FontMatrix->Render.Draw.Colour = 1;

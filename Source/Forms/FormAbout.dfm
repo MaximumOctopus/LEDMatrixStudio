@@ -1,6 +1,7 @@
 object frmAbout: TfrmAbout
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'About'
   ClientHeight = 578
   ClientWidth = 458
@@ -10,6 +11,7 @@ object frmAbout: TfrmAbout
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poMainFormCenter
   TextHeight = 15
   object Shape1: TShape
     Left = -1

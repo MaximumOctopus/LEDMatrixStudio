@@ -3,7 +3,7 @@ object frmPreferences: TfrmPreferences
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmPreferences'
-  ClientHeight = 536
+  ClientHeight = 531
   ClientWidth = 527
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

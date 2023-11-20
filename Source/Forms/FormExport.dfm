@@ -24,8 +24,8 @@ object frmExport: TfrmExport
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 618
-    ExplicitWidth = 1097
+    ExplicitTop = 600
+    ExplicitWidth = 1079
     DesignSize = (
       1085
       64)
@@ -208,7 +208,7 @@ object frmExport: TfrmExport
       Anchors = [akRight, akBottom]
       Caption = '.'
       TabOrder = 1
-      ExplicitLeft = 767
+      ExplicitLeft = 749
       object bCancel: TBitBtn
         Left = 228
         Top = 21
@@ -436,19 +436,20 @@ object frmExport: TfrmExport
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
-    ExplicitWidth = 1097
-    ExplicitHeight = 618
+    ExplicitWidth = 1079
+    ExplicitHeight = 600
     object tsCode: TTabSheet
       Caption = '.'
       object Panel2: TPanel
         Left = 0
         Top = 0
         Width = 409
-        Height = 588
+        Height = 576
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
+        ExplicitHeight = 570
         object gbSource: TGroupBox
           Left = 15
           Top = 8
@@ -908,13 +909,13 @@ object frmExport: TfrmExport
         Height = 576
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 680
-        ExplicitHeight = 588
+        ExplicitWidth = 662
+        ExplicitHeight = 570
         object reExport: TRichEdit
           Left = 1
           Top = 1
-          Width = 678
-          Height = 563
+          Width = 666
+          Height = 551
           Align = alClient
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -963,8 +964,8 @@ object frmExport: TfrmExport
           Height = 23
           Align = alBottom
           TabOrder = 1
-          ExplicitTop = 564
-          ExplicitWidth = 678
+          ExplicitTop = 546
+          ExplicitWidth = 660
         end
       end
     end
@@ -975,7 +976,7 @@ object frmExport: TfrmExport
         Left = 0
         Top = 0
         Width = 409
-        Height = 582
+        Height = 576
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
@@ -1339,8 +1340,6 @@ object frmExport: TfrmExport
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 1
-        ExplicitWidth = 674
-        ExplicitHeight = 582
       end
     end
   end

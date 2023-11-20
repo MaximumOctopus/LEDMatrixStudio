@@ -36,13 +36,15 @@ ColourChange OpenColourChange(std::vector<int> &colours)
 
 	for (int t = 0; t < colours.size(); t++)
 	{
-		frmColourChange->clbUserFrom->AddItem(ColourUtility::RGBPlusInteger(colours[t], 100).c_str(), (TObject*)colours[t]);
-		frmColourChange->clbUserTo->AddItem(ColourUtility::RGBPlusInteger(colours[t], 100).c_str(), (TObject*)colours[t]);
+		TObject *colour = (TObject*)colours[t];
+
+		frmColourChange->clbUserFrom->AddItem(ColourUtility::RGBPlusInteger(colours[t], 100).c_str(), colour);
+		frmColourChange->clbUserTo->AddItem(ColourUtility::RGBPlusInteger(colours[t], 100).c_str(), colour);
 	}
 
 	if (frmColourChange->ShowModal() == mrOk)
 	{
-		cco.Process    = false;
+		cco.Process    = true;
 		cco.ColourFrom = frmColourChange->sFrom->Brush->Color;
 		cco.ColourTo   = frmColourChange->sTo->Brush->Color;
 	}

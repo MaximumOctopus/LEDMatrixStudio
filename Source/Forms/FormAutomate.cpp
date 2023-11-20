@@ -1348,6 +1348,8 @@ void TfrmAutomate::SetCaption(const std::wstring path)
 
 	if (!path.empty())
 	{
-		Caption = Caption + " "" + aPath + """;
+		std::wstring p = L" \"" + path + L"\"";
+
+		Caption += p.c_str();
 	}
 }

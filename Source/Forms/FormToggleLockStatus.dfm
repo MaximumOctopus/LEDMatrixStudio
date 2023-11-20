@@ -1,7 +1,8 @@
-object Form22: TForm22
+object frmToggleLockStatus: TfrmToggleLockStatus
   Left = 0
   Top = 0
-  Caption = 'Form22'
+  BorderStyle = bsDialog
+  Caption = 'frmToggleLockStatus'
   ClientHeight = 183
   ClientWidth = 372
   Color = clBtnFace

@@ -1,9 +1,10 @@
 object frmFontViewer: TfrmFontViewer
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'frmFontViewer'
-  ClientHeight = 356
-  ClientWidth = 901
+  ClientHeight = 350
+  ClientWidth = 489
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -11,6 +12,7 @@ object frmFontViewer: TfrmFontViewer
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poMainFormCenter
   OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 15
@@ -18,12 +20,12 @@ object frmFontViewer: TfrmFontViewer
     Left = 0
     Top = 0
     Width = 145
-    Height = 304
+    Height = 298
     Align = alLeft
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 298
+    ExplicitHeight = 292
     object bSelectFont: TLabel
       Left = 8
       Top = 15
@@ -52,15 +54,15 @@ object frmFontViewer: TfrmFontViewer
   end
   object Panel2: TPanel
     Left = 0
-    Top = 304
-    Width = 901
+    Top = 298
+    Width = 489
     Height = 52
     Align = alBottom
     Color = clWhite
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 298
-    ExplicitWidth = 895
+    ExplicitTop = 292
+    ExplicitWidth = 889
     object lCharacterValue: TLabel
       Left = 8
       Top = 9
@@ -101,5 +103,17 @@ object frmFontViewer: TfrmFontViewer
       TickStyle = tsNone
       OnChange = tbFontChange
     end
+  end
+  object pFont: TPanel
+    Left = 145
+    Top = 0
+    Width = 344
+    Height = 298
+    Align = alClient
+    TabOrder = 2
+    ExplicitLeft = 248
+    ExplicitTop = 112
+    ExplicitWidth = 185
+    ExplicitHeight = 41
   end
 end

@@ -16,6 +16,7 @@
 
 #include <fstream>
 
+#include "CalcUtility.h"
 #include "ColourUtility.h"
 #include "Convert.h"
 #include "Formatting.h"
@@ -72,7 +73,7 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 	{
 		for (int t = 0; t < BrushData.size(); t++)
 		{
-			frmNewBrush->MatrixAutomate->StringToRow(false, BrushData[t], 1, t, 0, false);
+			frmNewBrush->MatrixAutomate->StringToRow(false, BrushData[t], 0, t, 0, false);
 		}
 	}
 
@@ -86,7 +87,7 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 	frmNewBrush->MatrixAutomate->LEDColours[1]   = 0x00000000;
 
 	frmNewBrush->MatrixAutomate->Render.Draw.Colour = 1;
-	frmNewBrush->MatrixAutomate->RGBBackground   = 0x00FFFFFF;
+	frmNewBrush->MatrixAutomate->RGBBackground   = 0x00000000;
 
 	// =======================================================================
 
@@ -94,14 +95,14 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 	{
 		brush.Proceed = true;
 
-		brush.Width   = frmNewBrush->MatrixAutomate->RightBounds();
-		brush.Height  = frmNewBrush->MatrixAutomate->BottomBounds();
+		brush.Width   = frmNewBrush->MatrixAutomate->RightBounds() + 1;
+		brush.Height  = frmNewBrush->MatrixAutomate->BottomBounds() + 1;
 
 		BrushData.clear();
 
 		for (int t = 0; t < frmNewBrush->Settings.Height; t++)
 		{
-			BrushData.push_back(frmNewBrush->MatrixAutomate->RowToString(1, t));
+			BrushData.push_back(frmNewBrush->MatrixAutomate->RowToString(0, t));
 		}
 	}
 
@@ -117,10 +118,10 @@ __fastcall TfrmNewBrush::TfrmNewBrush(TComponent* Owner)
 	RGBPaletteHistoryIndex = 0;
 
 	MatrixAutomate = new TheMatrix(this, pCanvas);
-//	MatrixAutomate->OnChange           = Nil;
-//	MatrixAutomate->OnColourChange     = Nil;
-//	MatrixAutomate->OnMouseOver        = Nil;
-//	MatrixAutomate->OnPreviewMouseDown = Nil;
+	MatrixAutomate->OnChange           = nullptr;
+	MatrixAutomate->OnColourChange     = nullptr;
+	MatrixAutomate->OnMouseOver        = nullptr;
+	MatrixAutomate->OnPreviewMouseDown = nullptr;
 
 	_RGBPaletteHistory[0]  = sRGBP1;  _RGBPaletteHistory[1]  = sRGBP2;  _RGBPaletteHistory[2]  = sRGBP3;  _RGBPaletteHistory[3]  = sRGBP4;
 	_RGBPaletteHistory[4]  = sRGBP5;  _RGBPaletteHistory[5]  = sRGBP6;  _RGBPaletteHistory[6]  = sRGBP7;  _RGBPaletteHistory[7]  = sRGBP8;
@@ -518,14 +519,8 @@ void TfrmNewBrush::GradientHorizontal(int mode)
 			}
 		}
 
-		if (ColourIndex == clbMain->Items->Count - 1)
-		{
-			ColourIndex = 0;
-		}
-		else
-		{
-			ColourIndex++;
-        }
+
+		CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 	}
 
 	MatrixAutomate->Refresh();
@@ -552,14 +547,7 @@ void TfrmNewBrush::GradientVertical(int mode)
 			}
 		}
 
-		if (ColourIndex == clbMain->Items->Count - 1)
-		{
-			ColourIndex = 0;
-		}
-		else
-		{
-			ColourIndex++;
-		}
+		CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 	}
 
 	MatrixAutomate->Refresh();
@@ -587,24 +575,10 @@ void TfrmNewBrush::GradientDiagonal(int mode)
 				MatrixAutomate->PlotPixelMatrix(Settings.Width - column - 1, row, colour);
 			}
 
-			if (ColourIndex == clbMain->Items->Count - 1)
-			{
-				ColourIndex = 0;
-			}
-			else
-			{
-				ColourIndex++;
-			}
+			CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 		}
 
-		if (ColourOffset == clbMain->Items->Count - 1)
-		{
-			ColourOffset = 0;
-		}
-		else
-		{
-			ColourOffset++;
-		}
+		CalcUtility::IncWithRollOver(ColourOffset, clbMain->Items->Count - 1);
 	}
 
 	MatrixAutomate->Refresh();
@@ -638,24 +612,11 @@ void TfrmNewBrush::GenerateChevron(int mode)
 					MatrixAutomate->PlotPixelMatrix(Settings.Width - 1 - column, Settings.Height - 1 - row, colour);
 				}
 
-				if (ColourIndex == clbMain->Items->Count - 1)
-				{
-					ColourIndex = 0;
-				}
-				else
-				{
-					ColourIndex++;
-				}
+
+				CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 			}
 
-			if (ColourOffset == clbMain->Items->Count - 1)
-			{
-				ColourOffset = 0;
-			}
-			else
-			{
-				ColourOffset++;
-			}
+			CalcUtility::IncWithRollOver(ColourOffset, clbMain->Items->Count - 1);
 		}
 	}
 	else
@@ -681,24 +642,10 @@ void TfrmNewBrush::GenerateChevron(int mode)
 					MatrixAutomate->PlotPixelMatrix(Settings.Width - 1 - column, Settings.Height - 1 - row, colour);
 				}
 
-				if (ColourIndex == clbMain->Items->Count - 1)
-				{
-					ColourIndex = 0;
-				}
-				else
-				{
-					ColourIndex++;
-				}
+				CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 			}
 
-			if (ColourOffset == clbMain->Items->Count - 1)
-			{
-				ColourOffset = 0;
-			}
-			else
-			{
-				ColourOffset++;
-			}
+			CalcUtility::IncWithRollOver(ColourOffset, clbMain->Items->Count - 1);
 		}
 	}
 
@@ -747,14 +694,7 @@ void TfrmNewBrush::GenerateCheckerboard(int mode)
 
 			if (SquareX == coeff)
 			{
-				if (ColourIndex == clbMain->Items->Count - 1)
-				{
-					ColourIndex = 0;
-				}
-				else
-				{
-					ColourIndex++;
-				}
+				CalcUtility::IncWithRollOver(ColourIndex, clbMain->Items->Count - 1);
 
 				SquareX = 0;
 			}
@@ -766,14 +706,7 @@ void TfrmNewBrush::GenerateCheckerboard(int mode)
 
 		if (SquareY == coeff)
 		{
-			if (ColourIndexOld == clbMain->Items->Count - 1)
-			{
-				ColourIndexOld = 0;
-			}
-			else
-			{
-				ColourIndexOld++;
-			}
+			CalcUtility::IncWithRollOver(ColourIndexOld, clbMain->Items->Count - 1);
 
 			ColourIndex = ColourIndexOld;
 
@@ -1207,3 +1140,4 @@ void TfrmNewBrush::SaveBrush(const std::wstring file_name)
 		file.close();
 	}
 }
+
