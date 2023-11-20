@@ -178,7 +178,7 @@ namespace ExportMonoBi
 
 			// =========================================================================
 
-			for (int i = 0; i < __MaxHeight; i++)
+			for (int i = 0; i < MatrixDataCount; i++)
 			{
 				MatrixData[i]->clear();
 			}
@@ -480,7 +480,7 @@ namespace ExportMonoBi
 			break;
 		}
 
-		for (int t = 0; t < __MaxHeight; t++)
+		for (int t = 0; t < MatrixDataCount; t++)
 		{
 			delete MatrixData[t];
 		}
@@ -1143,15 +1143,23 @@ namespace ExportMonoBi
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
 				if (sourceLSB == 0)
+				{
 					temp += ColourUtility::BiColoursLSBLeft[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
+				}
 				else
+				{
 					temp += ColourUtility::BiColoursLSBRight[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + (matrix->Details.Width - x - 1)]];
+				}
 			}
 
 			if (hexformat)
+			{
 				s = IntToHex(Convert::BinToInt(temp), GSystemSettings->App.PadModeHexRow);
+			}
 			else
+			{
 				s = std::to_wstring(Convert::BinToInt(temp));
+			}
 
 			dod.RowData[y] = s;
 		}
@@ -1163,15 +1171,23 @@ namespace ExportMonoBi
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
 				if (sourceLSB == 0)
+				{
 					temp = temp + ColourUtility::BiColoursLSBLeft[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
+				}
 				else
+				{
 					temp = temp + ColourUtility::BiColoursLSBRight[matrix->MatrixLayers[0]->Cells[frame]->Grid[(matrix->Details.Height - y - 1) * matrix->Details.Width + x]];
+				}
 			}
 
 			if (hexformat)
+			{
 				s = IntToHex(Convert::BinToInt(temp), GSystemSettings->App.PadModeHexCol);
+			}
 			else
+			{
 				s = std::to_wstring(Convert::BinToInt(temp));
+            }
 
 			dod.ColumnData[x] = s;
 		}

@@ -634,6 +634,13 @@ __published:	// IDE-managed Components
 	TImage *iColoursLeft;
 	TImage *iColoursMiddle;
 	TImage *iColoursRight;
+	TBitBtn *bTimer;
+	TMenuItem *N34;
+	TMenuItem *miGradientFillFrame;
+	TMenuItem *N49;
+	TMenuItem *N62;
+	TMenuItem *miGradientLoad;
+	TMenuItem *miGradientSave;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -796,6 +803,10 @@ __published:	// IDE-managed Components
 	void __fastcall MonoColours1Click(TObject *Sender);
 	void __fastcall CurrentLayerFrame1Click(TObject *Sender);
 	void __fastcall Controls1Click(TObject *Sender);
+	void __fastcall miMouseModeClick(TObject *Sender);
+	void __fastcall tbFramesTracking(TObject *Sender);
+	void __fastcall bTimerClick(TObject *Sender);
+	void __fastcall miGradientFillFrameClick(TObject *Sender);
 
 private:
 
@@ -890,8 +901,11 @@ private:
 	void __fastcall ReopenClick(TObject*);
 	void BuildReOpenMenu();
 
+	// -- menu draw ----------------------------------------------------------
+	void SetDrawingMode(int);
+
 	// -- menu gradient ------------------------------------------------------
-    void __fastcall SelectGradient(TObject*);
+	void __fastcall SelectGradient(TObject*);
 
 
 	// import/export

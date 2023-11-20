@@ -71,7 +71,7 @@ namespace Utility
 
 		if (i != std::wstring::npos)
 		{
-			return file_name.substr(i - 1);
+			return file_name.substr(0, i);
 		}
 
 		return file_name;
@@ -177,11 +177,16 @@ namespace Utility
 	{
 		switch (mode)
 		{
-		case MatrixMode::kMono: 	    return 0;
-		case MatrixMode::kBiSequential: return 1;
-		case MatrixMode::kBiBitplanes:  return 2;
-		case MatrixMode::kRGB:          return 3;
-		case MatrixMode::kRGB3BPP:      return 4;
+		case MatrixMode::kMono:
+			return 0;
+		case MatrixMode::kBiSequential:
+			return 1;
+		case MatrixMode::kBiBitplanes:
+			return 2;
+		case MatrixMode::kRGB:
+			return 3;
+		case MatrixMode::kRGB3BPP:
+		    return 4;
 		default:
 			return 0;
 		}

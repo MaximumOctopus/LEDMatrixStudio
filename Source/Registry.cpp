@@ -92,7 +92,7 @@ bool Registry::WriteString(HKEY hKey, const std::wstring& key_name, const std::w
 		                   0,
 		                   REG_SZ,
 		                   (LPBYTE)(value.c_str()),
-		                   (value.size() + 1) * sizeof(wchar_t)) == ERROR_SUCCESS);
+						   (value.size() + 1) * sizeof(wchar_t)) == ERROR_SUCCESS);
 }
 
 
@@ -100,8 +100,8 @@ bool Registry::WriteInteger(HKEY hKey, const std::wstring& key_name, const int &
 {
 	return (RegSetValueExW(hKey,
 		                   key_name.c_str(),
-		                   0,
-		                   REG_SZ,
+						   0,
+						   REG_DWORD,
 						   (const byte*)&value,
 						   sizeof(value)) == ERROR_SUCCESS);
 }

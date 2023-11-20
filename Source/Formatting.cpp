@@ -89,7 +89,7 @@ namespace Formatting
 	{
 		std::wstring s = input;
 
-		while (input.length() < count)
+		while (s.length() < count)
 		{
 			s = L'0' + s;
 		}

@@ -179,6 +179,10 @@
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>95</BuildOrder>
         </None>
+        <CppCompile Include="CalcUtility.cpp">
+            <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
+            <BuildOrder>99</BuildOrder>
+        </CppCompile>
         <None Include="CalcUtility.h">
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>71</BuildOrder>
@@ -275,6 +279,10 @@
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>11</BuildOrder>
         </None>
+        <CppCompile Include="FileUtility.cpp">
+            <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
+            <BuildOrder>98</BuildOrder>
+        </CppCompile>
         <None Include="FileUtility.h">
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>78</BuildOrder>
@@ -445,7 +453,7 @@
         </CppCompile>
         <CppCompile Include="Forms\FormToggleLockStatus.cpp">
             <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form22</Form>
+            <Form>frmToggleLockStatus</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormToggleLockStatus.h</DependentOn>
             <BuildOrder>58</BuildOrder>
@@ -657,20 +665,20 @@
         <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
         <FormResources Include="Frames\FrameFontPanel.dfm"/>
         <FormResources Include="Frames\FrameGradientPanel.dfm"/>
+        <FormResources Include="Forms\FormNewProject.dfm"/>
+        <FormResources Include="Forms\FormCopyMultiple.dfm"/>
         <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
         <FormResources Include="Forms\FormExport.dfm"/>
-        <FormResources Include="Forms\FormExportCode.dfm"/>
+        <FormResources Include="Forms\FormAddLayer.dfm"/>
         <FormResources Include="Forms\FormAutomate.dfm"/>
         <FormResources Include="Forms\FormColourChange.dfm"/>
-        <FormResources Include="Forms\FormCopyMultiple.dfm"/>
+        <FormResources Include="Forms\FormImportBitmap.dfm"/>
         <FormResources Include="Forms\FormMerge.dfm"/>
         <FormResources Include="Forms\FormNewBrush.dfm"/>
-        <FormResources Include="Forms\FormNewProject.dfm"/>
+        <FormResources Include="Forms\FormExportCode.dfm"/>
         <FormResources Include="Forms\FormExportGIF.dfm"/>
         <FormResources Include="Forms\FormFontViewer.dfm"/>
-        <FormResources Include="Forms\FormImportBitmap.dfm"/>
         <FormResources Include="Forms\FormAbout.dfm"/>
-        <FormResources Include="Forms\FormAddLayer.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

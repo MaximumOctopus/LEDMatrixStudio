@@ -36,10 +36,10 @@ bool MatrixGradient::Load(const std::wstring file_name)
 				}
 				else
 				{
-					std::wstring v = s.substr(2);
-
 					if (s[0] == kGradientColour[0])
 					{
+						std::wstring v = s.substr(2);
+
 						int idx     = 0;
 						std::wstring colour = L"";
 
@@ -74,7 +74,7 @@ bool MatrixGradient::Load(const std::wstring file_name)
 
 		// ===================================================================
 
-	   /*	for (int slot = 1; slot < MatrixLayers[0].Frames.size(); slot++)     TO DO, why does it draw to all frames?!
+	   /*	for (int slot = 1; slot < MatrixLayers[0].Frames.size(); slot++)     TO DO, why does it draw to all frames?! move to thematrix, add option for frame/layer/etc.
 		{
 			for (int x = 0; x < Matrix.Width; x++)
 			{
@@ -123,4 +123,18 @@ bool MatrixGradient::Save(const std::wstring file_name)
 	}
 
     return false;
+}
+
+
+void MatrixGradient::Clear(int colour)
+{
+	for (int t = 0; t < Width; t++)
+	{
+		IX[t] = colour;
+	}
+
+	for (int t = 0; t < Height; t++)
+	{
+		IY[t] = colour;
+	}
 }

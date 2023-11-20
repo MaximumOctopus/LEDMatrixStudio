@@ -256,15 +256,18 @@ struct ExportOptions
 			data.push_back(stoi(token));
 		}
 
-		BinarySourceFromInt(data[0]);
-		BinaryOrientationFromInt(data[1]);
-		BinaryScanDirectionFromInt(Binary.Source, data[2]);
-		BinaryLSBFromInt(data[3]);
-		BinaryFileContentsFromInt(data[4]);
-		BinaryRGBFormatFromInt(data[5]);
-		Binary.RGBChangePixels = data[6];
-		Binary.RGBChangeColour = data[7];
-		Binary.RGBBrightness = data[8];
+		if (data.size() != 9)
+		{
+			BinarySourceFromInt(data[0]);
+			BinaryOrientationFromInt(data[1]);
+			BinaryScanDirectionFromInt(Binary.Source, data[2]);
+			BinaryLSBFromInt(data[3]);
+			BinaryFileContentsFromInt(data[4]);
+			BinaryRGBFormatFromInt(data[5]);
+			Binary.RGBChangePixels = data[6];
+			Binary.RGBChangeColour = data[7];
+			Binary.RGBBrightness = data[8];
+		}
 	}
 
 	// returns size in bits 0-n

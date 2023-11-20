@@ -27,11 +27,9 @@ SystemSettings::SystemSettings()
 
 	LoadSettings();
 
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
+	BuildGradientList(App.LMSFilePath + L"gradients\\*.ledsgradient");
 
-	BuildGradientList(path + L"gradients\\*.ledsgradient");
-
-	BuildLanguageList(path + L"language\\*.txt");
+	BuildLanguageList(App.LMSFilePath + L"language\\*.txt");
 
 	App.LastExport.clear(false);
 }
@@ -245,7 +243,7 @@ bool SystemSettings::SaveSettings()
 	dwRet = RegOpenKeyEx(HKEY_CURRENT_USER,
 						 L"SOFTWARE\\freshney.org\\MatrixBuilder",
 						 NULL,
-						 KEY_QUERY_VALUE,
+						 KEY_ALL_ACCESS,
 						 &hKey);
 
 	if (dwRet != ERROR_SUCCESS)
@@ -289,9 +287,9 @@ bool SystemSettings::SaveSettings()
 
 	// =======================================================================
 
-	Registry::WriteInteger(hKey, L"sSelectionLMB",    SelectionColours[1]);
-	Registry::WriteInteger(hKey, L"sSelectionMMB",    SelectionColours[2]);
-	Registry::WriteInteger(hKey, L"sSelectionRMB",    SelectionColours[3]);
+	Registry::WriteInteger(hKey, L"sSelectionLMB",    SelectionColours[0]);
+	Registry::WriteInteger(hKey, L"sSelectionMMB",    SelectionColours[1]);
+	Registry::WriteInteger(hKey, L"sSelectionRMB",    SelectionColours[2]);
 
 	// =======================================================================
 

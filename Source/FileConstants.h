@@ -109,6 +109,8 @@
 
 	static const wchar_t kAnimBrushColours = L'c';
 
+	static const wchar_t kAnimBinary = L'@';
+
 	static const wchar_t kAnimBlockEnd = L'}';
 
 	static const std::wstring kAnimPadModeF = L"1:";

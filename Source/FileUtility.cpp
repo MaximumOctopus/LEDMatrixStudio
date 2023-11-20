@@ -11,14 +11,27 @@
 //
 // ===================================================================
 
-#pragma once
+#include <fstream>
 
-#include <vector>
+#include "Formatting.h"
+#include "FileUtility.h"
 
 
-namespace FileUtility
+bool FileUtility::SaveVector(const std::wstring file_name, const std::vector<std::wstring> &v)
 {
-	// to do, move all stuff from other utils to here...
+	std::ofstream file(file_name);
 
-	bool SaveVector(const std::wstring, const std::vector<std::wstring>&);
+	if (file)
+	{
+		for (int t = 0; t < v.size(); t++)
+		{
+			file << Formatting::to_utf8(v[t] + L"\n");
+		}
+
+		file.close();
+
+		return true;
+	}
+
+    return false;
 }

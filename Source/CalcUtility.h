@@ -11,10 +11,12 @@
 //
 // ===================================================================
 
+#pragma once
+
+
 namespace CalcUtility
 {
-	double DegToRadians(double degrees)
-	{
-		return degrees * (3.14159265358979323846 / 180);
-	}
+	double DegToRadians(double degrees);
+
+	void IncWithRollOver(int &, const int);
 }

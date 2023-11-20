@@ -44,5 +44,5 @@ namespace Utility
 
     PixelShape PixelShapeFromInt(int);
 
-    System::UnicodeString WS2US(const std::wstring);
+	System::UnicodeString WS2US(const std::wstring);
 }

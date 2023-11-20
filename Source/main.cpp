@@ -124,6 +124,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	BuildGradientMenu();
 	BuildLanguageMenu();
 	BuildPresetMenu();
+	BuildReOpenMenu();
 
 	GenerateShades(sSelectionLMB->Brush->Color);
 
@@ -1218,6 +1219,7 @@ void TfrmMain::SetGuiLanguageText()
 	MenuItem1->Caption = GLanguageHandler->Text[kFonts].c_str();
 	miLoadFont->Caption = GLanguageHandler->Text[kLoad].c_str();
 	Fontviewer2->Caption = GLanguageHandler->Text[kFontViewer].c_str();
+	miFontWrap->Caption = GLanguageHandler->Text[kFontWrap].c_str();
 
 	Presets1->Caption = GLanguageHandler->Text[kPresets].c_str();
 	miLoadPreset->Caption = GLanguageHandler->Text[kLoad].c_str();
@@ -1406,7 +1408,6 @@ void TfrmMain::SetGuiLanguageText()
 	miPatternPyramid->Caption = GLanguageHandler->Text[kPatternPyramid].c_str();
 	miPatternLeftTriangle->Caption = GLanguageHandler->Text[kPatternLeftTriangle].c_str();
 	miPatternRightTriangle->Caption = GLanguageHandler->Text[kPatternRightTriangle].c_str();
-
 	//
 	Frames1->Caption = GLanguageHandler->Text[kFrames].c_str();
 	miAddFrame->Caption = GLanguageHandler->Text[kAddFrame].c_str();
@@ -1419,7 +1420,6 @@ void TfrmMain::SetGuiLanguageText()
 	miToggleLayoutPanel->Caption = GLanguageHandler->Text[kToggleLayoutPanel].c_str();
 	miClearLayer->Caption = GLanguageHandler->Text[kClearLayerAllFrames].c_str();
 	miFlattenLayers->Caption = GLanguageHandler->Text[kFlattenAllLayers].c_str();
-
 	//
 	Colours1->Caption = GLanguageHandler->Text[kColours].c_str();
 	miChangeColoursFrame->Caption = Utility::WS2US(GLanguageHandler->Text[kChangeColoursInTheFrameLayer] + L"...");
@@ -1428,6 +1428,11 @@ void TfrmMain::SetGuiLanguageText()
 	miCountColours->Caption = GLanguageHandler->Text[kCountColours].c_str();
 	Currentframe1->Caption = GLanguageHandler->Text[kCurrentFrame].c_str();
 	Animation1->Caption = GLanguageHandler->Text[kAnimation].c_str();
+	//
+	N34->Caption = GLanguageHandler->Text[kGradients].c_str();
+	miGradientFillFrame->Caption = GLanguageHandler->Text[kFillFrame].c_str();
+	miGradientLoad->Caption = GLanguageHandler->Text[kLoad].c_str();
+	miGradientSave->Caption = GLanguageHandler->Text[kSaveCurrent].c_str();
 	//
 	Buffer1->Caption = GLanguageHandler->Text[kMemories].c_str();
 	miCopyCurrentTo->Caption = GLanguageHandler->Text[kCopyCurrentTo].c_str();
@@ -1652,10 +1657,19 @@ void TfrmMain::BuildGradientMenu()
 		for (int t = 0; t < GSystemSettings->Gradients.size(); t++)
 		{
 			TMenuItem *mi = new TMenuItem(miLoadGradients);
+			mi->Caption = GSystemSettings->Gradients[t].c_str();
 			mi->Tag = t;
 			mi->OnClick = SelectGradient;
 
 			miLoadGradients->Add(mi);
+
+            // copy to main menu "Gradients"
+			TMenuItem *mi2 = new TMenuItem(miGradientLoad);
+			mi2->Caption = GSystemSettings->Gradients[t].c_str();
+			mi2->Tag = t;
+			mi2->OnClick = SelectGradient;
+
+			miGradientLoad->Add(mi2);
 		}
 	}
 }
@@ -1762,15 +1776,7 @@ void __fastcall TfrmMain::ReopenClick(TObject *Sender)
 
 void __fastcall TfrmMain::New1Click(TObject *Sender)
 {
-	if (timerAnimate->Enabled)
-	{
-		bPlayAnimationClick(bStopAnimation);
-
-		if (MessageDlg(GLanguageHandler->Text[kReallyClearEverything].c_str(), mtWarning, mbYesNo, 0) == mrYes)
-		{
-			sbBuildClick(nullptr);
-		}
-	}
+	sbBuildClick(nullptr);
 }
 
 
@@ -2016,13 +2022,13 @@ void __fastcall TfrmMain::miSaveRangeClick(TObject *Sender)
 
 			// =========================================================================
 
-			std::wstring file_name = ExtractFilePath(Application->ExeName).c_str();
+			std::wstring FileName = Utility::GetAutoSaveName();
 
 			ProjectColours colours = GetColours();
 
-			thematrix->SaveAnimation(file_name + L"saves\\autosave\\" + Utility::GetAutoSaveName(), ted, GSystemSettings->App.LastExport, colours);
+			thematrix->SaveAnimation(GSystemSettings->App.LMSFilePath + L"saves\\autosave\\" + FileName, ted, GSystemSettings->App.LastExport, colours);
 
-			statusMain->SimpleText = Utility::WS2US(GLanguageHandler->Text[kAutosavedCurrentMatrixRange] + L" (" + file_name + L")");
+			statusMain->SimpleText = Utility::WS2US(GLanguageHandler->Text[kAutosavedCurrentMatrixRange] + L" (" + FileName + L")");
 		}
 	}
 }
@@ -2299,15 +2305,13 @@ void __fastcall TfrmMain::miAddCommentClick(TObject *Sender)
 	std::wstring s = thematrix->Details.Comment;
 
 	s = InputBox(GLanguageHandler->Text[kMatrixComment].c_str(),
-				 GLanguageHandler->Text[kAddCommentMatrix].c_str(), L"1").c_str();
+				 GLanguageHandler->Text[kAddCommentMatrix].c_str(), L"Comment").c_str();
 
 	if (!s.empty())
 	{
 		thematrix->Details.Comment = s;
 	}
 }
-//---------------------------------------------------------------------------
-
 #pragma end_region
 
 
@@ -2711,6 +2715,15 @@ void __fastcall TfrmMain::miToggleLockStatusClick(TObject *Sender)
 #pragma end_region
 
 
+void __fastcall TfrmMain::miMouseModeClick(TObject *Sender)
+{
+	TMenuItem *mi = (TMenuItem*)Sender;
+
+    SetDrawingMode(mi->Tag);
+}
+
+
+
 #pragma region Menu_Layers
 void __fastcall TfrmMain::miToggleLayoutPanelClick(TObject *Sender)
 {
@@ -2796,6 +2809,14 @@ void __fastcall TfrmMain::Animation1Click(TObject *Sender)
 #pragma end_region
 
 
+#pragma region Menu_Gradients
+void __fastcall TfrmMain::miGradientFillFrameClick(TObject *Sender)
+{
+	thematrix->GradientFillFrame();
+}
+#pragma end_region
+
+
 #pragma region Menu_Memories
 void __fastcall TfrmMain::miMemory1Click(TObject *Sender)
 {
@@ -2859,9 +2880,7 @@ void __fastcall TfrmMain::Help1Click(TObject *Sender)
 {
 	if (FileExists(ExtractFilePath(Application->ExeName) + L"help\\en\\help.pdf"))
 	{
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-		Utility::ExecuteFile(path + L"help\\en\\help.pdf");
+		Utility::ExecuteFile(GSystemSettings->App.LMSFilePath + L"help\\en\\help.pdf");
 	}
 	else
 	{
@@ -2874,9 +2893,7 @@ void __fastcall TfrmMain::Showshortcutkeys1Click(TObject *Sender)
 {
 	if (FileExists(ExtractFilePath(Application->ExeName) + L"help\\en\\shortcuts.pdf"))
 	{
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-		Utility::ExecuteFile(path + L"help\\en\\shortcuts.pdf");
+		Utility::ExecuteFile(GSystemSettings->App.LMSFilePath + L"help\\en\\shortcuts.pdf");
 	}
 	else
 	{
@@ -2887,9 +2904,7 @@ void __fastcall TfrmMain::Showshortcutkeys1Click(TObject *Sender)
 
 void __fastcall TfrmMain::Examples1Click(TObject *Sender)
 {
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-	Utility::ExecuteFile(path + L"example code\\");
+	Utility::ExecuteFile(GSystemSettings->App.LMSFilePath + L"example code\\");
 }
 
 
@@ -2978,9 +2993,7 @@ void __fastcall TfrmMain::miAutosave2Click(TObject *Sender)
 
 void __fastcall TfrmMain::Openautosavefolder1Click(TObject *Sender)
 {
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-	path += L"saves\\autosave\\";
+	std::wstring path = GSystemSettings->App.LMSFilePath + L"saves\\autosave\\";
 
 	Utility::ExecuteFile(path);
 }
@@ -3444,31 +3457,27 @@ void __fastcall TfrmMain::bLockFrameClick(TObject *Sender)
 	if (bLockFrame->Tag == 0)
 	{
 		bLockFrame->Tag = 1;
+		thematrix->LockCurrentFrame();
 	}
 	else
 	{
 		bLockFrame->Tag = 0;
+		thematrix->UnLockCurrentFrame();
 	}
 
 	bLockFrame->ImageIndex = 24 + bLockFrame->Tag;
 
-	if (bLockFrame->Tag == 0)
-	{
-		thematrix->UnLockCurrentFrame();
-	}
-	else
-	{
-		thematrix->LockCurrentFrame();
-	}
+	//if (pLayers->Visible)
+	//{
+	//	FrameLayerPanel->UpdateExisting();
+	//}
 }
 #pragma end_region
 
 #pragma region Toolbar_Drawing_Tools
-void __fastcall TfrmMain::sbMouseModeClick(TObject *Sender)
+void TfrmMain::SetDrawingMode(int drawingmode)
 {
-	TSpeedButton *sb = (TSpeedButton*)Sender;
-
-	thematrix->Render.Draw.SetModeFromInt(sb->Tag);
+	thematrix->Render.Draw.SetModeFromInt(drawingmode);
 	thematrix->Render.Draw.Point       = CDrawPointNone;
 	thematrix->Render.Draw.Coords[0].X = -1;
 	thematrix->Render.Draw.Coords[0].Y = -1;
@@ -3477,8 +3486,8 @@ void __fastcall TfrmMain::sbMouseModeClick(TObject *Sender)
 	{
 		thematrix->Render.Draw.SinglePoint  = true;
 
-		thematrix->Render.Draw.Parameter    = DefaultPatternParameter[sb->Tag];
-		thematrix->Render.Draw.ParameterMax = DefaultPatternParameterMax[sb->Tag];
+		thematrix->Render.Draw.Parameter    = DefaultPatternParameter[drawingmode];
+		thematrix->Render.Draw.ParameterMax = DefaultPatternParameterMax[drawingmode];
 
 		if (thematrix->Details.Mode == MatrixMode::kRGB || thematrix->Details.Mode == MatrixMode::kRGB3BPP)
 		{
@@ -3510,9 +3519,17 @@ void __fastcall TfrmMain::sbMouseModeClick(TObject *Sender)
 	thematrix->Render.Draw.CopyPos.Y = 0;
 	thematrix->Render.Draw.Special   = tbFrames->Max;
 
-	lSelectedTool->Caption           = DrawModes[sb->Tag].c_str();
+	lSelectedTool->Caption           = DrawModes[drawingmode].c_str();
 
 	DisplayFrame(GetSelectedFrame());
+}
+
+
+void __fastcall TfrmMain::sbMouseModeClick(TObject *Sender)
+{
+	TSpeedButton *sb = (TSpeedButton*)Sender;
+
+	SetDrawingMode(sb->Tag);
 }
 
 
@@ -3706,7 +3723,7 @@ void __fastcall TfrmMain::sRGBPalette1MouseDown(TObject *Sender, TMouseButton Bu
 
 		if (thematrix->Render.Draw.Mode == DrawMode::kPicker || Shift.Contains(ssCtrl))
 		{
-		  colorDialog->Color = shape->Brush->Color;
+		  	colorDialog->Color = shape->Brush->Color;
 
 			if (colorDialog->Execute())
 			{
@@ -3830,10 +3847,24 @@ void __fastcall TfrmMain::Shape47MouseDown(TObject *Sender, TMouseButton Button,
 										 thematrix->LEDRGBColours[CMouseRight]);
 	}
 }
+
+
+void __fastcall TfrmMain::tbFramesTracking(TObject *Sender)
+{
+	SetFrameCaption(GetSelectedFrame());
+
+	thematrix->SetCurrentFrame(GetSelectedFrame());
+}
 #pragma end_region
 
 
 #pragma region Toolbar_Animation
+void __fastcall TfrmMain::bTimerClick(TObject *Sender)
+{
+	puAnimationSpeed->Popup(Left + bTimer->Left, pAnimationToolbar->Top - 80);
+}
+
+
 void __fastcall TfrmMain::bPlayAnimationClick(TObject *Sender)
 {
 	TBitBtn *bb = (TBitBtn*)Sender;
@@ -3844,12 +3875,14 @@ void __fastcall TfrmMain::bPlayAnimationClick(TObject *Sender)
 
 void __fastcall TfrmMain::bAddFrameClick(TObject *Sender)
 {
+	int oldselectedframe = tbFrames->Position;
+
 	thematrix->InsertBlankFrameAt(tbFrames->Position);
 
 	tbFrames->Max = thematrix->GetFrameCount();
-	tbFrames->Position  = tbFrames->Max;
+	tbFrames->Position  = oldselectedframe + 1;
 
-	thematrix->SetCurrentFrame(tbFrames->Position);
+	thematrix->SetCurrentFrame(GetSelectedFrame());
 
 	frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = tbFrames->Position;
@@ -3860,12 +3893,14 @@ void __fastcall TfrmMain::bAddFrameClick(TObject *Sender)
 
 void __fastcall TfrmMain::bAddFrameCopyClick(TObject *Sender)
 {
-	thematrix->InsertCopyFrameAt(tbFrames->Position);
+	int oldselectedframe = tbFrames->Position;
+
+	thematrix->InsertCopyFrameAt(tbFrames->Position - 1);
 
 	tbFrames->Max = thematrix->GetFrameCount();
-	tbFrames->Position  = tbFrames->Position + 1;
+	tbFrames->Position  = oldselectedframe + 1;
 
-	thematrix->SetCurrentFrame(tbFrames->Position);
+	thematrix->SetCurrentFrame(GetSelectedFrame());
 
 	frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = tbFrames->Position;
@@ -3921,7 +3956,7 @@ void __fastcall TfrmMain::bDeleteMultipleFramesClick(TObject *Sender)
 
 		for (int t = dmo.StartFrame; t <= dmo.EndFrame; t++)
 		{
-			thematrix->DeleteFrame(dmo.StartFrame);
+			thematrix->DeleteFrame(t);
 		}
 
 		if (tbFrames->Position > thematrix->GetFrameCount())
@@ -3957,9 +3992,7 @@ void __fastcall TfrmMain::bLightboxClick(TObject *Sender)
 
 void __fastcall TfrmMain::tbFramesChange(TObject *Sender)
 {
-	SetFrameCaption(GetSelectedFrame());
-
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+//
 }
 #pragma end_region
 
@@ -4301,7 +4334,7 @@ void TfrmMain::ChangeMatrixType()
 		statusMouseButtonSelect = true;
 		statusColourSelect0     = true;
 		statusColourSelect123   = true;
-		pCurrentColours->Visible = false;
+		pCurrentColours->Visible = true;
 		panelRGBPalette->Visible = false;
 		break;
 	case MatrixMode::kBiBitplanes:
@@ -4310,7 +4343,7 @@ void TfrmMain::ChangeMatrixType()
 		statusMouseButtonSelect = true;
 		statusColourSelect0     = true;
 		statusColourSelect123   = true;
-		pCurrentColours->Visible = false;
+		pCurrentColours->Visible = true;
 		panelRGBPalette->Visible = false;
 		break;
 	case MatrixMode::kRGB:
@@ -4559,11 +4592,6 @@ void TfrmMain::UpdateDisplay(int new_frame_position)
 	{
 		tbFrames->Position = new_frame_position;
 	}
-	else
-	{
-		tbFrames->Position = 1;
-	}
-
 
 	frmPreviewPopout->tbFrames->Max      = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = new_frame_position;
@@ -4571,7 +4599,7 @@ void TfrmMain::UpdateDisplay(int new_frame_position)
 	SetFrameCaption(GetSelectedFrame());
 
 	// move to onnewframedisplayed
-	if (thematrix->IsLocked)
+	if (thematrix->IsLocked())
 	{
 		bLockFrame->Tag = 1;
 	}
@@ -4971,19 +4999,9 @@ void __fastcall TfrmMain::SelectGradient(TObject *Sender)
 	{
 		TMenuItem *mi = (TMenuItem*)Sender;
 
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
+		std::wstring name = GSystemSettings->Gradients[mi->Tag];
 
-		path += L"gradients\\";
-
-		std::wstring name = mi->Caption.c_str();
-
-		name += L".ledsgradient";
-
-		path += name;
-
-		//for t = 1 to length(temp) do
-		//  if temp[t] <> '&' then
-		//	s = s + temp[t];
+		std::wstring path = GSystemSettings->App.LMSFilePath + L"gradients\\"  + name + L".ledsgradient";
 
 		if (FileExists(path.c_str()))
 		{
@@ -5045,9 +5063,7 @@ void __fastcall TfrmMain::miSaveGradientClick(TObject *Sender)
 
 	if (!s.empty())
 	{
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-		std::wstring file_name = path + L"gradients\\" + s + L".ledsgradient";
+		std::wstring file_name = GSystemSettings->App.LMSFilePath + L"gradients\\" + s + L".ledsgradient";
 
 		thematrix->Render.Gradient.Save(file_name);
 	}
@@ -5639,13 +5655,13 @@ void TfrmMain::GenerateShades(int colour)
 #pragma region Timers
 void __fastcall TfrmMain::timerAnimateTimer(TObject *Sender)
 {
-	SetFrameCaption(timerAnimate->Tag - 1);
+	SetFrameCaption(timerAnimate->Tag);
 
-	thematrix->SetCurrentFrame(timerAnimate->Tag - 1);
+	thematrix->SetCurrentFrame(timerAnimate->Tag);
 
-	if (timerAnimate->Tag == tbFrames->Max)
+	if (timerAnimate->Tag == tbFrames->Max - 1)
 	{
-		timerAnimate->Tag = 1;
+		timerAnimate->Tag = 0;
 	}
 	else
 	{
@@ -5664,9 +5680,9 @@ void __fastcall TfrmMain::timerAutosaveTimer(TObject *Sender)
 
 		// ===================================================================
 
-		std::wstring FileName = ExtractFilePath(Application->ExeName).c_str();
+		std::wstring FileName = Utility::GetAutoSaveName();
 
-		std::wstring FullPath = FileName + L"saves\\autosave\\" + Utility::GetAutoSaveName();
+		std::wstring FullPath = GSystemSettings->App.LMSFilePath + L"saves\\autosave\\" + FileName;
 
 		ProjectColours colours = GetColours();
 
@@ -5695,9 +5711,7 @@ void __fastcall TfrmMain::miPresetSaveCurrentClick(TObject *Sender)
 		mpp.Mode       = thematrix->Details.Mode;
 		mpp.PixelShape = sbPixelShape->Tag;
 
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-
-		GPresetHandler->Save(path + L"presets\\" + s + L".ledspreset", mpp);
+		GPresetHandler->Save(GSystemSettings->App.LMSFilePath + L"presets\\" + s + L".ledspreset", mpp);
 	}
 }
 #pragma end_region
@@ -5914,8 +5928,7 @@ void __fastcall TfrmMain::SelectFont(TObject *Sender)
 	std::wstring name = mi->Caption.c_str();
 	name += L".ledsfont";
 
-	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-	path += L"fonts\\" + name;
+	std::wstring path = GSystemSettings->App.LMSFilePath + L"fonts\\" + name;
 
 //  for t = 1 to length(temp) do
 //    if temp[t] <> '&' then
@@ -5943,8 +5956,7 @@ void __fastcall TfrmMain::SelectPreset(TObject *Sender)
 		std::wstring name = mi->Caption.c_str();
 		name += L".ledspreset";
 
-		std::wstring path = ExtractFilePath(Application->ExeName).c_str();
-		path += L"presets\\" + name;
+		std::wstring path = GSystemSettings->App.LMSFilePath + L"presets\\" + name;
 
 //		for t = 1 to length(temp) do
 //		if temp[t] <> '&' then

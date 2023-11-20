@@ -304,14 +304,15 @@ public:
 	void SetDeadPixelsFromFileName(std::wstring);
 	void SaveDeadPixels(std::wstring);
 
-	void ClearGradients();
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
 	void ClearFrame(int);
 	void ClearAllMatrixData(bool);
 	void WipeAllFramesCurrentLayer();
 	void WipeAllFramesAllLayers();
+
 	void ClearAllFramesGradient(int);
+	void GradientFillFrame();
 
 	// =========================================================================
 

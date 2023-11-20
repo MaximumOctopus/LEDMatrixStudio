@@ -31,4 +31,6 @@ public:
 
 	bool Load(const std::wstring);
 	bool Save(const std::wstring);
+
+	void Clear(int colour);
 };

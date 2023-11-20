@@ -43,7 +43,8 @@
 					  kLoadMatrixWidth, kLoadMatrixHeight, kLoadMatrixData, kLoadMatrixLocked,
 					  kLoadDeadPixelData,
 					  kLoadLayoutName, kLoadLayoutWidth, kLoadLayoutHeight, kLoadLayoutLocked,
-					  kLoadColoursCustom, kLoadColoursDraw0, kLoadColoursDraw1, kLoadColoursDraw2, kLoadColoursPaletteHistory };
+					  kLoadColoursCustom, kLoadColoursDraw0, kLoadColoursDraw1, kLoadColoursDraw2, kLoadColoursPaletteHistory,
+					  kLoadHeaderBinaryData };
 
 	enum class HexFormat { kEnabled = 0, kDisabled };
 	enum class HexPrefix { kNone = 0, kDollar, kZeroX, kAmpersand };
@@ -152,9 +153,9 @@
 
 
 	// 14..21
-	static const int DefaultPatternParameter[] = { 4,  0,  3,  8,  4,  1,  1,  1 };
-	static const int DefaultPatternParameterMin[] = { 1,  0,  1,  1,  2,  1,  1,  1 };
-	static const int DefaultPatternParameterMax[] = {64,  0, 64, 64, 64, 64, 64, 64 };
+	static const int DefaultPatternParameter[]    = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  4,  0,  3,  8,  4,  1,  1,  1 };
+	static const int DefaultPatternParameterMin[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0,  1,  1,  2,  1,  1,  1 };
+	static const int DefaultPatternParameterMax[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64,  0, 64, 64, 64, 64, 64, 64 };
 
 	static const int CDisplayClear  = 0;
 
