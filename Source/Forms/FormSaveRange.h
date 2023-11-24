@@ -50,6 +50,8 @@ private:	// User declarations
 
 public:		// User declarations
 	__fastcall TForm20(TComponent* Owner);
+
+    int MatrixFrameCount = 0;
 };
 
 //---------------------------------------------------------------------------

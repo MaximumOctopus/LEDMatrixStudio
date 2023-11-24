@@ -64,11 +64,17 @@ ExportGIFSettings OpenExportGIF(ExportGIFSettings oldgif)
 		oldgif.AnimationSpeed = Form10->seAnimationSpeed->Value;
 
 		if (Form10->rbSquare->Checked)
-		  oldgif.PixelShape = 0;
+		{
+		  	oldgif.PixelShape = 0;
+		}
 		else if (Form10->rbCircle->Checked)
-		  oldgif.PixelShape = 1;
+		{
+			oldgif.PixelShape = 1;
+		}
 		else
-		  oldgif.PixelShape = 2;
+		{
+			oldgif.PixelShape = 2;
+		}
 	}
 
 	delete Form10;
@@ -90,7 +96,9 @@ void __fastcall TForm10::ShapeNorfolkDigitalMouseDown(TObject *Sender, TMouseBut
 		  TShiftState Shift, int X, int Y)
 {
 	if (cdExportGIF->Execute())
+	{
 		ShapeNorfolkDigital->Brush->Color = cdExportGIF->Color;
+	}
 }
 
 

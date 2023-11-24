@@ -69,18 +69,26 @@ __fastcall TForm13::TForm13(TComponent* Owner)
 void __fastcall TForm13::eFileNameChange(TObject *Sender)
 {
 	if (eFileName->Text != L"")
+	{
 		bOk->Enabled = true;
+	}
 	else
+	{
 		bOk->Enabled = false;
+	}
 }
 
 
 void __fastcall TForm13::eStartFrameChange(TObject *Sender)
 {
 	if (eStartFrame->Text.ToIntDef(-1) == -1)
+	{
 		bOk->Enabled = false;
+	}
 	else
+	{
 		bOk->Enabled = true;
+    }
 }
 
 

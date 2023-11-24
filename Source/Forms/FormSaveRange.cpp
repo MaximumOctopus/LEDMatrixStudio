@@ -33,11 +33,13 @@ SaveFrameRangeObject OpenFrameRange(int frame_count)
 
 	SaveFrameRangeObject sfto;
 
+	Form20->MatrixFrameCount = frame_count;
+
 	if (Form20->ShowModal() == mrOk)
 	{
 		sfto.Process = true;
-		sfto.StartFrame = Form20->eStartFrame->Text.ToInt();
-        sfto.EndFrame = Form20->eEndFrame->Text.ToInt();
+		sfto.StartFrame = Form20->eStartFrame->Text.ToInt() - 1;
+		sfto.EndFrame = Form20->eEndFrame->Text.ToInt() - 1;
 	}
 
 	delete Form20;
@@ -79,5 +81,5 @@ bool TForm20::ValidateInputs()
 	int sf = eStartFrame->Text.ToIntDef(-1);
 	int ef = eEndFrame->Text.ToIntDef(-1);
 
-	return (sf != -1 && ef != -1 && sf <= ef);
+	return (sf >= 1 && ef >= 1 && sf <= ef && sf <= MatrixFrameCount && ef <= MatrixFrameCount);
 }

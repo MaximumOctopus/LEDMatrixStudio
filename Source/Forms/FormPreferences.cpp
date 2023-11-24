@@ -134,7 +134,7 @@ void __fastcall TfrmPreferences::bResetToDefaultsClick(TObject *Sender)
 		sBi4->Brush->Color           = clYellow;
 
 		ShapeSelection->Brush->Color = clBlue;
-		ShapeLightBox->Brush->Color  = TColor(0x00DDDDDD);
+		ShapeLightBox->Brush->Color  = TColor(0x00AAAAAA);
 
 		eMaxPixels->Text = L"100000";
 		eExportPreview->Text = L"256";
