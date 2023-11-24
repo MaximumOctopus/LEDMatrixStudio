@@ -1086,8 +1086,6 @@ void __fastcall TfrmMain::MatrixOnColourChange(TheMatrix *Sender)
 
 void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 {
-return;
-
 	OldMouseX = x;
 	OldMouseY = y;
 
@@ -1585,9 +1583,9 @@ void TfrmMain::PlaybackPreviousFrame()
 		i--;
 	}
 
-	SetFrameCaption(i);
+	thematrix->SetCurrentFrame(i - 1);
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+	SetFrameCaption(i - 1);
 }
 
 
@@ -1604,19 +1602,17 @@ void TfrmMain::PlaybackNextFrame()
 		i++;
 	}
 
-	SetFrameCaption(i);
+	thematrix->SetCurrentFrame(i - 1);
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+	SetFrameCaption(i - 1);
 }
 
 
 void TfrmMain::PlaybackLastFrame()
 {
-	tbFrames->Position = tbFrames->Max;
+	thematrix->SetCurrentFrame(tbFrames->Max - 1);
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
-
-	SetFrameCaption(tbFrames->Max);
+	SetFrameCaption(tbFrames->Max - 1);
 }
 #pragma end_region
 
@@ -2693,13 +2689,13 @@ void __fastcall TfrmMain::miFadeFirstLastClick(TObject *Sender)
 
 void __fastcall TfrmMain::miUnlockAllClick(TObject *Sender)
 {
-	thematrix->LockUnLockRange(1, thematrix->GetFrameCount(), false);
+	thematrix->LockUnLockRange(0, thematrix->GetFrameCount(), false);
 }
 
 
 void __fastcall TfrmMain::miLockAllClick(TObject *Sender)
 {
-	thematrix->LockUnLockRange(1, thematrix->GetFrameCount(), true);
+	thematrix->LockUnLockRange(0, thematrix->GetFrameCount(), true);
 }
 
 
@@ -3978,13 +3974,13 @@ void __fastcall TfrmMain::bLightboxClick(TObject *Sender)
 	if (bLightbox->Tag == 0)
 	{
 		bLightbox->Tag = 1;
+		bLightbox->ImageIndex = 38;
 	}
 	else
 	{
 		bLightbox->Tag = 0;
+		bLightbox->ImageIndex = 76;
 	}
-
-	SetButtonImage(bLightbox, bLightbox->Tag);
 
 	thematrix->SetLightBox(bLightbox->Tag);
 }
@@ -5953,14 +5949,9 @@ void __fastcall TfrmMain::SelectPreset(TObject *Sender)
 	{
 		TMenuItem *mi = (TMenuItem*)Sender;
 
-		std::wstring name = mi->Caption.c_str();
-		name += L".ledspreset";
+		std::wstring name = GPresetHandler->Presets[mi->Tag] + L".ledspreset";
 
 		std::wstring path = GSystemSettings->App.LMSFilePath + L"presets\\" + name;
-
-//		for t = 1 to length(temp) do
-//		if temp[t] <> '&' then
-//		s = s + temp[t];
 
 		if (FileExists(path.c_str()))
 		{
@@ -6001,7 +5992,7 @@ void TfrmMain::LoadPreset(const std::wstring file_name)
 		break;
 	case 4:
 		miPixelTinyClick(miPixelVeryLarge);
-        break;
+		break;
 	}
 
 	mode = mpp.Mode;

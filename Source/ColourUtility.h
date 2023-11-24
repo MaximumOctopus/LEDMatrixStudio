@@ -31,7 +31,7 @@ namespace ColourUtility
 	std::wstring RGB3BPPFormatOutput(int, int, int, RGBMode, NumberFormat, NumberSize, int, const std::wstring, const std::wstring);
 
 	int HexToInt(const std::wstring);
-	int BrightenRGB(int);
+	int DarkenRGB(int);
 
 	int RandomColour(int, int);
 }

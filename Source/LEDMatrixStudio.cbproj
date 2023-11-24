@@ -653,19 +653,19 @@
         </None>
         <FormResources Include="Frames\FrameUndoPanel.dfm"/>
         <FormResources Include="main.dfm"/>
+        <FormResources Include="Frames\FrameQuickData.dfm"/>
+        <FormResources Include="Forms\FormPreferences.dfm"/>
         <FormResources Include="Forms\FormPreviewPopout.dfm"/>
         <FormResources Include="Forms\FormSaveRange.dfm"/>
-        <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
+        <FormResources Include="Forms\FormNewProject.dfm"/>
         <FormResources Include="Forms\FormOptimise.dfm"/>
         <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
-        <FormResources Include="Forms\FormPreferences.dfm"/>
+        <FormResources Include="Frames\FrameGradientPanel.dfm"/>
         <FormResources Include="Frames\FrameLayerPanel.dfm"/>
         <FormResources Include="Frames\FramePalettePanel.dfm"/>
-        <FormResources Include="Frames\FrameQuickData.dfm"/>
+        <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
         <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
         <FormResources Include="Frames\FrameFontPanel.dfm"/>
-        <FormResources Include="Frames\FrameGradientPanel.dfm"/>
-        <FormResources Include="Forms\FormNewProject.dfm"/>
         <FormResources Include="Forms\FormCopyMultiple.dfm"/>
         <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
         <FormResources Include="Forms\FormExport.dfm"/>

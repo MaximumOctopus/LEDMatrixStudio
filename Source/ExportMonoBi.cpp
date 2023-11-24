@@ -959,21 +959,29 @@ namespace ExportMonoBi
 		{
 			mydata = 0;
 
-			for (int x = 0; y < matrix->Details.Width; x++)
+			for (int x = 0; x < matrix->Details.Width; x++)
 			{
 				if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
 				{
 					if (sourceLSB == 0)
+					{
 						mydata = mydata + (powers[x]);
+					}
 					else
+					{
 						mydata = mydata + (powers[matrix->Details.Width - x - 1]);
+                    }
 				}
 			}
 
 			if (hexformat)
+			{
 				s = IntToHex(mydata, GSystemSettings->App.PadModeHexRow);
+			}
 			else
+			{
 				s = std::to_wstring(mydata);
+			}
 
 			dod.RowData[y] = s;
 		}
@@ -987,16 +995,24 @@ namespace ExportMonoBi
 				if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
 				{
 					if (sourceLSB == 0)
+					{
 						mydata = mydata + (powers[y]);
+					}
 					else
+					{
 						mydata = mydata + (powers[matrix->Details.Height - y - 1]);
+					}
 				}
 			}
 
 			if (hexformat)
+			{
 				s = IntToHex(mydata, GSystemSettings->App.PadModeHexCol);
+			}
 			else
+			{
 				s = std::to_wstring(mydata);
+			}
 
 			dod.ColumnData[x] = s;
 		}

@@ -77,6 +77,8 @@ MatrixPreset PresetHandler::Load(const std::wstring file_name)
 				}
 				else
 				{
+					if (s == L"}") continue;
+
 					std::wstring v = s.substr(2);
 
 					switch (GetMatrixPresetParameterType(s))
@@ -94,14 +96,13 @@ MatrixPreset PresetHandler::Load(const std::wstring file_name)
 						break;
 					case MatrixPresetParameter::kMatrixType:
 						mp.SetMatrixModeFromInt(stoi(v));
-
 						break;
 					}
 				}
 			}
 		}
 
-		mp.Configured = false;
+		mp.Configured = true;
 
 		file.close();
 	}

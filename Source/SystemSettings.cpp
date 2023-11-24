@@ -65,14 +65,14 @@ bool SystemSettings::LoadSettings()
 	LEDColoursSingle[2]         = Registry::ReadInteger(hKey, L"oncolour2", clBlack);
 	LEDColoursSingle[3]         = Registry::ReadInteger(hKey, L"oncolour3", clBlack);
 	LEDColoursSingle[4]         = Registry::ReadInteger(hKey, L"selectcolour", clBlue);
-	LEDColoursSingle[5]         = Registry::ReadInteger(hKey, L"lightboxcolour", 0x00DDDDDD);
+	LEDColoursSingle[5]         = Registry::ReadInteger(hKey, L"lightboxcolour", 0x00AAAAAA);
 
 	LEDColoursBi[0]             = Registry::ReadInteger(hKey, L"offcolourbi", clBlack);
 	LEDColoursBi[1]             = Registry::ReadInteger(hKey, L"oncolourbi", clRed);
 	LEDColoursBi[2]             = Registry::ReadInteger(hKey, L"oncolour2bi", clGreen);
 	LEDColoursBi[3]             = Registry::ReadInteger(hKey, L"oncolour3bi", clYellow);
 	LEDColoursBi[4]             = Registry::ReadInteger(hKey, L"selectcolourbi", clBlue);
-	LEDColoursBi[5]             = Registry::ReadInteger(hKey, L"lightboxcolourbi", 0x0DDDDDD);
+	LEDColoursBi[5]             = Registry::ReadInteger(hKey, L"lightboxcolourbi", 0x00AAAAAA);
 
 	RGBBackground               = Registry::ReadInteger(hKey, L"rgbbackground", clBlack);
 	LEDRGBColours[1]            = Registry::ReadInteger(hKey, L"LEDRGBColoursLMB", clRed);
