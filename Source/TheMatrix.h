@@ -438,7 +438,8 @@ public:
 	int GetLayerCount();
 	std::wstring GetLayerName(int);
 	void SetLayerName(const std::wstring, int);
-	bool AddLayer(std::wstring);
+	bool AddLayer(const std::wstring);
+	bool AddLayerSilent(const std::wstring);
 	bool AddLayerAsCopy(std::wstring, int);
 	bool DeleteLayer(int);
 	void ClearCurrentLayerAllFrames();

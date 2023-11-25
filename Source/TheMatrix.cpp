@@ -4347,6 +4347,30 @@ void TheMatrix::CopyAllLayersFromTo(int frame_from, int frame_to)
 
 
 #pragma region Layers
+// used by file io to create a layer without triggering rerendering etc.
+// this may fail as the layer/frame structure likely not fully configured
+bool TheMatrix::AddLayerSilent(const std::wstring name)
+{
+	if (Software == SoftwareMode::kAnimation && Details.Width > 0 && Details.Height > 0)
+	{
+		Layer *layer = new Layer(name);
+
+		MatrixLayers.push_back(layer);
+
+		for (int t = 0; t < MatrixLayers[CPermanentLayer]->Cells.size(); t++)
+		{
+			Matrix *m = new Matrix(Details.Width, Details.Height, Details.Mode, RGBBackground);
+
+			MatrixLayers.back()->Cells.push_back(m);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+
 bool TheMatrix::AddLayer(const std::wstring name)
 {
 	if (Software == SoftwareMode::kAnimation && Details.Width > 0 && Details.Height > 0)
@@ -5668,6 +5692,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
         return true;
 	};
 
+    Busy = true;
 
 	int importLayer = CurrentLayer;
 	int importFrame = CurrentFrame;
@@ -5679,7 +5704,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 		ClearAllMatrixData(false);
 
 		importFrame = 0;
-		importLayer = 0;
+		importLayer = -1;
 		break;
 	case LoadMode::kMergeBottomPriority:
 	case LoadMode::kMergeTopPriority:
@@ -5694,7 +5719,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		std::wstring name = ExtractFileName(file_name.c_str()).c_str();
 
-		AddLayer(L"Merge from " + name);
+		AddLayerSilent(L"Merge from " + name);
 
 		importLayer = MatrixLayers.size() - 1;
 		break;
@@ -5728,29 +5753,31 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 	if (file)
 	{
-		bool headermode           = false;
-		bool fontmode           = false;
-		bool deadpixelmode          = false;
-		bool matrixdatamode     = false;
-		bool layermode          = false;
-		bool coloursmode        = false;
+		std::wstring LayerName = L"";
+
+		bool headermode = false;
+		bool fontmode = false;
+		bool deadpixelmode = false;
+		bool matrixdatamode = false;
+		bool layermode = false;
+		bool coloursmode = false;
 		int layercount = 0;
 
-		int row                   = 0;
-		MatrixMode mode        = MatrixMode::kMono;
-		int background         = -1; // was -1 !!!!
-		int colour                = 0;
-		int palette               = 0;
+		int row = 0;
+		MatrixMode mode = MatrixMode::kMono;
+		int background = -1; // was -1 !!!!
+		int colour = 0;
+		int palette = 0;
 		int importRGBbackground = 0;
 
-		int tempMaxWidth           = -1;
-		int tempMaxHeight          = -1;
+		int tempMaxWidth = -1;
+		int tempMaxHeight = -1;
 		int newwidth = 0;
 		int newheight = 0;
 
 		if (loadmode == LoadMode::kNew)
 		{
-		  SetDeadPixels(PixelAlive);
+			SetDeadPixels(PixelAlive);
 		}
 
 		if (loadmode == LoadMode::kAppend)
@@ -5841,17 +5868,17 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						 }
 						 break;
 					case LoadData::kLoadBlockBeginLayout:
-						coloursmode    = False;
-						layermode      = True;
-						matrixdatamode = False;
-						headermode     = False;
+						coloursmode    = false;
+						layermode      = true;
+						matrixdatamode = false;
+						headermode     = false;
 
 						importLayer++;
 
 						importFrame = initialframe;
 						break;
 					case LoadData::kLoadBlockEndLayout:
-						layermode = False;
+						layermode = false;
 
 						switch (loadmode)
 						{
@@ -5861,12 +5888,9 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 							break;
 						}
 
-						if (layercount > 0)
+						if (importLayer + 1 > MatrixLayers.size())
 						{
-							for (int i = 1; i < layercount; i++)
-							{
-								AddLayer(L"");
-							}
+							AddLayerSilent(LayerName);
 						}
 
 						layercount = -1;
@@ -6000,6 +6024,11 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						break;
 					case LoadData::kLoadMatrixData:
 					{
+						if (importLayer == -1)
+						{
+							importLayer = 0;
+                        }
+
 						if (row == 0 && MatrixLayers[importLayer]->Cells.size() < importFrame + 1)
 						{
 							switch (loadmode)
@@ -6128,7 +6157,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 					 // ====================================================================
 
 					case LoadData::kLoadLayoutName:
-						MatrixLayers[importLayer]->Name = v;
+						LayerName = v;
 						break;
 					case LoadData::kLoadLayoutWidth:
 						tempMaxWidth  = stoi(v);
