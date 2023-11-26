@@ -109,9 +109,10 @@ int TframeSimpleExport::GetDirection()
 }
 
 
+// output always hex
 bool TframeSimpleExport::GetHex()
 {
-	return true; //cbHex->Checked;      // to do, this was fixed to TRUE in original code?!
+	return true;
 }
 
 

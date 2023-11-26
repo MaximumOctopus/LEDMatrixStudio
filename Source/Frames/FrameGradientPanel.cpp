@@ -201,13 +201,21 @@ bool TframeGradient::LoadGradient(const std::wstring file_name)
 	auto ParameterType = [](const std::wstring s) -> enum LoadGradient
 	{
 		if (s[0] == kDataBlockStart)
+		{
 			return LoadGradient::kLoadBegin;
+		}
 		else if (s[0] == kDataBlockEnd)
+		{
 			return LoadGradient::kLoadEnd;
+		}
 		else if (s[0] == kGradientColour[0])
+		{
 			return LoadGradient::kLoadData;
+		}
 		else
+		{
 			return LoadGradient::kUnknown;
+        }
 	};
 
 	std::wifstream file(file_name);
