@@ -215,7 +215,7 @@ struct ExportOptions
 
 	void SaveToFile(std::ofstream& ofile)
 	{
-		if (ExportMode != ExportSource::kNone)	// export options haven't been modified TO DO
+		if (ExportMode != ExportSource::kNone)
 		{
 			ofile << Formatting::to_utf8(kAnimSourceF +           std::to_wstring(SourceToInt()) + L"\n");
 			ofile << Formatting::to_utf8(kAnimOrientationF +      std::to_wstring(OrientationToInt()) + L"\n");
@@ -238,7 +238,11 @@ struct ExportOptions
 			binary += std::to_wstring(BinaryLSBToInt()) + L" " + std::to_wstring(BinaryFileContentsToInt()) + L" ";
 			binary += std::to_wstring(BinaryRGBFormatToInt()) + L" " + std::to_wstring(Binary.RGBChangePixels) + L" " + std::to_wstring(Binary.RGBChangeColour) + L" " + std::to_wstring(Binary.RGBBrightness);
 
-            ofile << Formatting::to_utf8(kAnimBinaryF + binary + L"\n");
+			ofile << Formatting::to_utf8(kAnimBinaryF + binary + L"\n");
+		}
+		else
+		{
+			ofile << Formatting::to_utf8(kAnimExportOptionsNotSet + L"\n");
 		}
 	}
 

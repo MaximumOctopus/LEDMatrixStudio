@@ -17,6 +17,24 @@
 #include "FileUtility.h"
 
 
+MatrixMode FileUtility::GetMatrixModeFromFileChunk(const wchar_t c)
+{
+	switch (c)
+	{
+	case L'2':
+		return MatrixMode::kBiSequential;
+	case L'3':
+		return MatrixMode::kBiBitplanes;
+	case L'4':
+		return MatrixMode::kRGB;
+	case L'5':
+		return MatrixMode::kRGB3BPP;
+	}
+
+	return MatrixMode::kMono;
+}
+
+
 bool FileUtility::SaveVector(const std::wstring file_name, const std::vector<std::wstring> &v)
 {
 	std::ofstream file(file_name);

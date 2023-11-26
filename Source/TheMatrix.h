@@ -204,7 +204,8 @@ public:
 	std::function<void(TheMatrix*)> OnColourChange;
 	std::function<void(int, int)> OnMouseOver;
 	std::function<void(int, int)> OnPreviewMouseDown;
-	std::function<void(TheMatrix*)> OnDebugEvent;
+	// use this to send debug data from the component to screen of file based on your needs
+	std::function<void(TheMatrix*, const std::wstring)> OnDebugEvent;
 
 	//
 
@@ -307,7 +308,7 @@ public:
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
 	void ClearFrame(int);
-	void ClearAllMatrixData(bool);
+	void ClearAllMatrixData(bool, int, int);
 	void WipeAllFramesCurrentLayer();
 	void WipeAllFramesAllLayers();
 

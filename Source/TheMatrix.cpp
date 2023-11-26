@@ -19,6 +19,7 @@
 #include "CalcUtility.h"
 #include "ColourUtility.h"
 #include "Convert.h"
+#include "FileUtility.h"
 #include "Formatting.h"
 #include "LanguageConstants.h"
 #include "LanguageHandler.h"
@@ -96,7 +97,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 	CurrentFrame = 0;
 	CurrentLayer = 0;
 
-	ClearAllMatrixData(false);
+	ClearAllMatrixData(false, 0, 0);
 }
 
 
@@ -208,7 +209,7 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 
 	if (clearall)
 	{
-		ClearAllMatrixData(true);
+		ClearAllMatrixData(true, width, height);
 
 		Details.Comment = L"";
 	}
@@ -426,7 +427,7 @@ void TheMatrix::ClearFrame(int frame)
 }
 
 
-void TheMatrix::ClearAllMatrixData(bool addfirstframe)
+void TheMatrix::ClearAllMatrixData(bool addfirstframe, int width, int height)
 {
 	DisplayBuffer->Clear(Details.Mode, RGBBackground);
 
@@ -440,7 +441,7 @@ void TheMatrix::ClearAllMatrixData(bool addfirstframe)
 
 	if (addfirstframe)
 	{
-    	Matrix *m1 = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);
+		Matrix *m1 = new Matrix(width, height, Details.Mode, RGBBackground);
 		MatrixLayers[CPermanentLayer]->Cells.push_back(m1);
 	}
 
@@ -4351,23 +4352,18 @@ void TheMatrix::CopyAllLayersFromTo(int frame_from, int frame_to)
 // this may fail as the layer/frame structure likely not fully configured
 bool TheMatrix::AddLayerSilent(const std::wstring name)
 {
-	if (Software == SoftwareMode::kAnimation && Details.Width > 0 && Details.Height > 0)
+	Layer *layer = new Layer(name);
+
+	MatrixLayers.push_back(layer);
+
+	for (int t = 0; t < MatrixLayers[CPermanentLayer]->Cells.size(); t++)
 	{
-		Layer *layer = new Layer(name);
+		Matrix *m = new Matrix(Details.Width, Details.Height, Details.Mode, RGBBackground);
 
-		MatrixLayers.push_back(layer);
-
-		for (int t = 0; t < MatrixLayers[CPermanentLayer]->Cells.size(); t++)
-		{
-			Matrix *m = new Matrix(Details.Width, Details.Height, Details.Mode, RGBBackground);
-
-			MatrixLayers.back()->Cells.push_back(m);
-		}
-
-		return true;
+		MatrixLayers.back()->Cells.push_back(m);
 	}
 
-	return false;
+	return true;
 }
 
 
@@ -5444,7 +5440,7 @@ bool TheMatrix::ExportAnimationToBitmap(const std::wstring file_name)
 // https://stackoverflow.com/questions/36444024/how-to-extract-frames-from-this-gif-image-access-violation-in-tgifrenderer-dra
 ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 {
-	ClearAllMatrixData(false);
+	ClearAllMatrixData(false, 0, 0);
 
 	// ===========================================================================
 
@@ -5701,7 +5697,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 	switch (loadmode)
 	{
 	case LoadMode::kNew:
-		ClearAllMatrixData(false);
+		ClearAllMatrixData(false, 0, 0);
 
 		importFrame = 0;
 		importLayer = -1;
@@ -5726,7 +5722,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 	}
 	case LoadMode::kMergeCurrentLayer:
 		importLayer = CurrentLayer;
-		importFrame = 1;
+		importFrame = 0;
 		break;
 	}
 
@@ -5793,6 +5789,8 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 		// ===========================================================================
 		// ===========================================================================
 
+		int line = 1;
+
 		std::wstring s(L"");
 
 		while (std::getline(file, s))
@@ -5834,24 +5832,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 					case LoadData::kLoadBlockBegin:
 						row = 0;
 
-						switch (v[v.length() - 1])
-						{
-						case L'2':
-							mode = MatrixMode::kBiSequential;
-							break;
-						case L'3':
-							mode = MatrixMode::kBiBitplanes;
-							break;
-						case L'4':
-							mode = MatrixMode::kRGB;
-							break;
-						case L'5':
-							mode = MatrixMode::kRGB3BPP;
-							break;
-
-						default:
-							mode = MatrixMode::kMono;
-						}
+						mode = FileUtility::GetMatrixModeFromFileChunk(v[v.length() - 1]);
 
 						if (loadmode == LoadMode::kNew)
 						{
@@ -5891,6 +5872,8 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						if (importLayer + 1 > MatrixLayers.size())
 						{
 							AddLayerSilent(LayerName);
+
+							ShowMessage(MatrixLayers.size());
 						}
 
 						layercount = -1;
@@ -6114,6 +6097,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						}
 
 						row++;
+
 						break;
 					}
 					case LoadData::kLoadMatrixLocked:
@@ -6197,42 +6181,38 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		file.close();
 
-	//for i = 0 to MatrixLayers.Count - 1 do {
-//      MatrixLayers[i]->Frames.Delete(MatrixLayers[0]->Frames.Count - 1); // do all
-//    }
+		EnsureLayerCoherence();
 
-	EnsureLayerCoherence();
+		if (loadmode == LoadMode::kNew)
+		{
+			Details.Height = tempMaxHeight;       // to do, maybe a problem if append a larger matrix?! no idea!
+			Details.Width  = tempMaxWidth;
 
-	Details.Height = tempMaxHeight;       // to do, maybe a problem if append a larger matrix?! no idea!
-	Details.Width  = tempMaxWidth;
+			import.Mode = mode;
+			import.NewWidth         = tempMaxWidth;
+			import.NewHeight        = tempMaxHeight;
+			import.BackgroundColour = importRGBbackground;
+		}
 
-	Details.Available   = true;
+		Details.Available   = true;
 
-	CurrentFrame = 0;
+		CurrentFrame = 0;
 
-	Busy = false;
+		Busy = false;
 
-	CopyCurrentFrameToDrawBuffer();
+		CopyCurrentFrameToDrawBuffer();
 
-	if (loadmode == LoadMode::kNew)
-	{
-		import.Mode = mode;
-		import.NewWidth         = tempMaxWidth;
-		import.NewHeight        = tempMaxHeight;
-		import.BackgroundColour = importRGBbackground;
-	}
+		import.MaxFrames        = MatrixLayers[0]->Cells.size() - 1;
+		import.FontMode         = fontmode;
 
-	import.MaxFrames        = MatrixLayers[0]->Cells.size() - 1;
-	import.FontMode         = fontmode;
+		eeo.ExportMode = ExportSource::kAnimation;
+	//  except
+	//	on E: Exception do {
+	//	  Matrix.Available         = False;
 
-	eeo.ExportMode = ExportSource::kAnimation;
-//  except
-//	on E: Exception do {
-//	  Matrix.Available         = False;
-
-//	  Result.ImportOk    = False;
-//	  Result.ErrorString = GLanguageHandler.Text[kErrorLoadingProject] + ': "' + E.Message + '"';
-//	}
+	//	  Result.ImportOk    = False;
+	//	  Result.ErrorString = GLanguageHandler.Text[kErrorLoadingProject] + ': "' + E.Message + '"';
+	//	}
 	}
 
 	if (OnLayerChange) OnLayerChange(this);
@@ -6243,28 +6223,28 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 }
 
 
-ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_name) // to do or cull ;)
+ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_name)
 {
 	BackupMatrix(CurrentLayer, CurrentFrame);
 
-	bool addedSingleFrame       = false;
-	MatrixMode lMatrixMode      = MatrixMode::kMono;
-	bool headermode             = false;
-	bool deadpixelmode          = false;
-	bool fontmode               = false;
-	bool lMatrixDataMode        = false;
-	bool lLayerMode             = false;
-	bool lColoursMode           = false;
-	int lRGBBackground         = -1;
+	bool addedSingleFrame = false;
+	MatrixMode lMatrixMode = MatrixMode::kMono;
+	bool headermode = false;
+	bool deadpixelmode = false;
+	bool fontmode = false;
+	bool lMatrixDataMode = false;
+	bool lLayerMode = false;
+	bool lColoursMode = false;
+	int lRGBBackground = -1;
 
-	int lCurrentLayer          = 0;
+	int lCurrentLayer = 0;
 
 	ImportData import;
-	import.Source          = -1;
-	import.SourceLSB       = -1;
+	import.Source = -1;
+	import.SourceLSB = -1;
 	//  Result.SourceDirection = -1;
-	import.Mode      = MatrixMode::kMono;
-	import.RGBImport       = False;
+	import.Mode = MatrixMode::kMono;
+	import.RGBImport = False;
 
 	// ===========================================================================
 	// ===========================================================================
@@ -6288,7 +6268,9 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 				}
 				else
 				{
-					std::wstring v = s.substr(2);
+					std::wstring v = L"";
+
+					if (s.length() >= 3) v = s.substr(2);
 
 					switch (LoadDataParameterType(s, headermode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode))  // TO DO layermode
 					{
@@ -6315,24 +6297,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 					case LoadData::kLoadBlockBegin:
 						Row = 0;
 
-						switch (v.length() - 1)
-						{
-						case L'2':
-							lMatrixMode = MatrixMode::kBiSequential;
-							break;
-						case L'3':
-							lMatrixMode = MatrixMode::kBiBitplanes;
-							break;
-						case L'4':
-							lMatrixMode = MatrixMode::kRGB;
-							break;
-						case L'5':
-							lMatrixMode = MatrixMode::kRGB3BPP;
-							break;
-
-						default:
-							lMatrixMode = MatrixMode::kMono;
-						}
+						lMatrixMode = FileUtility::GetMatrixModeFromFileChunk(v[v.length() - 1]);
 
 						headermode = false;
 						lMatrixDataMode = true;
@@ -6351,7 +6316,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						lLayerMode = False;
 						break;
 
-					   // ======================================================================
+					// =======================================================
 
 					case LoadData::kLoadHeaderSource:
 						import.Source          = stoi(v);
@@ -6375,10 +6340,8 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						import.BracketsFromInt(stoi(v));
 						break;
 
-					   // ======================================================================
+					// =======================================================
 
-					//       50 : tempMaxWidth  = stoi(v);
-					//       51 : tempMaxHeight = stoi(v);
 					case LoadData::kLoadMatrixData:
 					{
 						int	x = 0;
@@ -6417,7 +6380,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						break;
 					}
 
-					   // ======================================================================
+					// =======================================================
 
 					case LoadData::kLoadDeadPixelData:
 					{
@@ -6980,7 +6943,7 @@ LoadData TheMatrix::LoadDataParameterType(const std::wstring s, bool headermode,
 	{
 		switch (s[0])
 		{
-		casekAnimDeadPixelData:
+		case kAnimDeadPixelData:
 			return LoadData::kLoadDeadPixelData;
 		}
 	}
@@ -8301,7 +8264,7 @@ void TheMatrix::ChangeMatrixMode(MatrixMode newmatrixnode)       // to do
 				{
 					for (int y = 0; y < Details.Height; y++)
 					{
-						if (MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] > 0) // TO DO
+						if (MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] > 0)
 						{
 							MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = 1;
 						}
@@ -8334,12 +8297,12 @@ void TheMatrix::SetSoftwareMode(SoftwareMode softwaremode)
 	{
 	case SoftwareMode::kAnimation:
 	{
-		ClearAllMatrixData(false);
+		ClearAllMatrixData(false, 0, 0);
 		break;
 	}
 	case SoftwareMode::kFont:
 	{
-		ClearAllMatrixData(false);
+		ClearAllMatrixData(false, 0, 0);
 
 		for (int t = 0; t < 96; t++)
 		{

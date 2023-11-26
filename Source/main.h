@@ -989,7 +989,7 @@ private:
 	void __fastcall MatrixOnColourChange(TheMatrix*);
 	void __fastcall MatrixOnMouseOver(int, int);
 	void __fastcall MatrixOnPreviewMouseDown(int, int);
-	void __fastcall MatrixOnDebug(const std::wstring);
+	void __fastcall MatrixOnDebug(TheMatrix*, const std::wstring s);
 
 public:
 	__fastcall TfrmMain(TComponent* Owner);

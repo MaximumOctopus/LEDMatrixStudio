@@ -72,26 +72,6 @@ bool MatrixGradient::Load(const std::wstring file_name)
 
 		file.close();
 
-		// ===================================================================
-
-	   /*	for (int slot = 1; slot < MatrixLayers[0].Frames.size(); slot++)     TO DO, why does it draw to all frames?! move to thematrix, add option for frame/layer/etc.
-		{
-			for (int x = 0; x < Matrix.Width; x++)
-			{
-				for (int y = 0; y < Matrix.Height; y++)
-				{
-					if (MatrixLayers[0].Frames[slot].Grid[y * Details.Width + x] <> FRGBBackground)
-					{
-						MatrixLayers[0].Frames[slot].Grid[y * Matrix.Width + x] = Render.Gradient.IY[y];
-					}
-				}
-			}
-		}*/
-
-		// ===================================================================
-
-		//PaintBox->Invalidate();
-
 		return true;
 	}
 

@@ -23,8 +23,10 @@ ProfileHandler *GProfileHandler;
 
 ProfileHandler::ProfileHandler(const std::wstring path)
 {
-	PopulateList(Profiles, path + L"ledsexport");
-	PopulateList(ProfilesRGB, path + L"ledsexportrgb");
+	Path = path;
+
+	PopulateList(Profiles, Path + L"ledsexport");
+	PopulateList(ProfilesRGB, Path + L"ledsexportrgb");
 }
 
 
@@ -320,4 +322,11 @@ ProfileHandler::LoadProfile ProfileHandler::GetParameterType(const std::wstring 
 		return LoadProfile::kBinaryFileContents;
 
 	return LoadProfile::kUnknown;
+}
+
+
+void ProfileHandler::UpdateAll()
+{
+	PopulateList(Profiles, Path + L"ledsexport");
+	PopulateList(ProfilesRGB, Path + L"ledsexportrgb");
 }

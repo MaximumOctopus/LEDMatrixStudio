@@ -47,6 +47,8 @@
 	static const std::wstring kFramePrefixRGB = L"frame4";
 	static const std::wstring kFramePrefixRGB3BPP = L"frame5";
 
+	static const std::wstring kAnimExportOptionsNotSet = L"-:()";
+
 	static const wchar_t kAnimPadMode = L'1';
 	static const wchar_t kAnimHexFormat = L'2';
 	static const wchar_t kAnimHexOutput = L'3';

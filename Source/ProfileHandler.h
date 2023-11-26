@@ -30,6 +30,8 @@ class ProfileHandler
 							 kBinaryRGBMode, kBinaryRGBChangePixels, kBinaryRGBChangeColour, kBinaryRGBBrightness,
 							 kBinaryFileContents };
 
+	std::wstring Path = L"";
+
 	bool PopulateList(std::vector<std::wstring>&, const std::wstring);
 
     LoadProfile GetParameterType(const std::wstring);
@@ -45,4 +47,6 @@ public:
 	bool Save(const std::wstring, bool, ExportOptions&);
 
 	bool DeleteExportProfile(const std::wstring);
+
+    void UpdateAll();
 };

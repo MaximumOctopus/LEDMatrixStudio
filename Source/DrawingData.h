@@ -139,4 +139,57 @@ struct DrawData
 			break;
 		}
 	}
+
+	int DrawModeToInt(DrawMode dm)
+		{
+		switch (dm)
+		{
+		case DrawMode::kNone:
+			return 0;
+		case DrawMode::kFilledBox:
+			return 1;
+		case DrawMode::kEmptyBox:
+			return 2;
+		case DrawMode::kLine:
+			return 3;
+		case DrawMode::kFont:
+			return 4;
+		case DrawMode::kEmptyCircle:
+			return 5;
+		case DrawMode::kFilledCircle:
+			return 6;
+		case DrawMode::kRandom:
+			return 7;
+		case DrawMode::kMulti:
+			return 8;
+		case DrawMode::kPicker:
+			return 9;
+		case DrawMode::kCopy:
+			return 10;
+		case DrawMode::kPaste:
+			return 11;
+		case DrawMode::kGradientBrush:
+			return 12;
+		case DrawMode::kFloodFill:
+			return 13;
+		case DrawMode::kSpiral:
+			return 14;
+		case DrawMode::kRing:
+			return 15;
+		case DrawMode::kSplitRing:
+			return 16;
+		case DrawMode::kPetals:
+			return 17;
+		case DrawMode::kGrid:
+			return 18;
+		case DrawMode::kPyramid:
+			return 19;
+		case DrawMode::kLeftTriangle:
+			return 20;
+		case DrawMode::kRightTriangle:
+			return 21;
+		}
+
+		return 0;
+	}
 };

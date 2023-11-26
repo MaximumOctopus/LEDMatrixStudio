@@ -73,19 +73,19 @@ __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 
 void __fastcall TfrmMain::WmDropFiles(TWMDropFiles& Message)
 {
-  wchar_t buff[MAX_PATH];
-  volatile int x = -1;
-  HDROP hDrop = (HDROP)Message.Drop;
-  int count = DragQueryFile(hDrop, -1, NULL, NULL);
+	wchar_t buff[MAX_PATH];
+	volatile int x = -1;
+	HDROP hDrop = (HDROP)Message.Drop;
+	int count = DragQueryFile(hDrop, -1, NULL, NULL);
 
-  if (count != 0)
-  {
-	DragQueryFileW(hDrop, 0, buff, sizeof(buff));
+	if (count != 0)
+	{
+		DragQueryFileW(hDrop, 0, buff, sizeof(buff));
 
-//	  ShowMessage(buff); // TO DO
-    }
+        LoadWithWarnings(buff);
+	}
 
-  DragFinish(hDrop);
+	 DragFinish(hDrop);
 }
 
 
@@ -104,7 +104,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	thematrix->OnColourChange        = std::bind(MatrixOnColourChange, std::placeholders::_1);
 	thematrix->OnMouseOver           = std::bind(MatrixOnMouseOver, std::placeholders::_1, std::placeholders::_2);
 	thematrix->OnPreviewMouseDown    = std::bind(MatrixOnPreviewMouseDown, std::placeholders::_1, std::placeholders::_2);
-	//thematrix->OnDebugEvent              = std::bind(MatrixOnDebug, std::placeholders::_1);
+	thematrix->OnDebugEvent          = std::bind(MatrixOnDebug, std::placeholders::_1, std::placeholders::_2);
 
 	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
 
@@ -461,18 +461,20 @@ void TfrmMain::ConfigureControls()
 
 	pRGB_3BPP->Left = 0;
 
-	sbCopy->Tag                       = 10; // to do, get rid of magic numbers here!
-	sbFilledRectangle->Tag            = 1;
-	sbFrame->Tag                      = 2;
-	sbEmptyCircle->Tag                = 5;
-	sbFilledCircle->Tag               = 6;
-	sbLine->Tag                       = 3;
-	sbFont->Tag                       = 4;
-	sbGradientBrush->Tag              = 12;
-	sbMultiDraw->Tag                  = 8;
-	sbFloodFill->Tag                  = 13;
-	sbRandomDraw->Tag                 = 7;
-	sbPicker->Tag                     = 9;
+	DrawData dd;
+
+	sbCopy->Tag                       = dd.DrawModeToInt(DrawMode::kCopy);
+	sbFilledRectangle->Tag            = dd.DrawModeToInt(DrawMode::kFilledBox);
+	sbFrame->Tag                      = dd.DrawModeToInt(DrawMode::kEmptyBox);
+	sbEmptyCircle->Tag                = dd.DrawModeToInt(DrawMode::kEmptyCircle);
+	sbFilledCircle->Tag               = dd.DrawModeToInt(DrawMode::kFilledCircle);
+	sbLine->Tag                       = dd.DrawModeToInt(DrawMode::kLine);
+	sbFont->Tag                       = dd.DrawModeToInt(DrawMode::kFont);
+	sbGradientBrush->Tag              = dd.DrawModeToInt(DrawMode::kGradientBrush);
+	sbMultiDraw->Tag                  = dd.DrawModeToInt(DrawMode::kMulti);
+	sbFloodFill->Tag                  = dd.DrawModeToInt(DrawMode::kFloodFill);
+	sbRandomDraw->Tag                 = dd.DrawModeToInt(DrawMode::kRandom);
+	sbPicker->Tag                     = dd.DrawModeToInt(DrawMode::kPicker);
 }
 
 
@@ -1148,7 +1150,7 @@ void __fastcall TfrmMain::MatrixOnPreviewMouseDown(int x, int y)
 }
 
 
-void __fastcall TfrmMain::MatrixOnDebug(const std::wstring s)
+void __fastcall TfrmMain::MatrixOnDebug(TheMatrix *sender, const std::wstring s)
 {
 	Caption = s.c_str();
 }
@@ -1955,16 +1957,16 @@ void __fastcall TfrmMain::miMergeClick(TObject *Sender)
 		switch (merge.Mode)
 		{
 		case MergeMode::kAnimationBottom:
-			MergeFromFileName(merge.FileName, merge.StartFrame, LoadMode::kMergeBottomPriority);
+			MergeFromFileName(merge.FileName, merge.StartFrame - 1, LoadMode::kMergeBottomPriority);
 			break;
 		case MergeMode::kAnimationTop:
-			MergeFromFileName(merge.FileName, merge.StartFrame, LoadMode::kMergeTopPriority);
+			MergeFromFileName(merge.FileName, merge.StartFrame - 1, LoadMode::kMergeTopPriority);
 			break;
 		case MergeMode::kNewLayer:
-			MergeFromFileName(merge.FileName, merge.StartFrame, LoadMode::kMergeNewLayer);
+			MergeFromFileName(merge.FileName, merge.StartFrame - 1, LoadMode::kMergeNewLayer);
 			break;
 		case MergeMode::kCurrentFrame:
-			MergeFromFileName(merge.FileName, merge.StartFrame, LoadMode::kMergeCurrentLayer);
+			MergeFromFileName(merge.FileName, merge.StartFrame - 1, LoadMode::kMergeCurrentLayer);
 			break;
 		}
 
@@ -2105,8 +2107,6 @@ void __fastcall TfrmMain::Preferences1Click(TObject *Sender)
 
 	if (OpenPreferences(pmc))
 	{
-		//thematrix->CurrentFrame = thematrix->CurrentFrame; // ??? TO DO? ERM WHAT IS THIS
-
 		thematrix->LEDColoursSingle[0] = pmc.Mono[0];
 		thematrix->LEDColoursSingle[1] = pmc.Mono[1];
 
@@ -4980,7 +4980,7 @@ void __fastcall TfrmMain::miGradientColour0Click(TObject *Sender)
 	{
 		if (thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
 		{
-			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag; // to do, no idea what this does
+			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
 		}
 	}
 
@@ -5113,7 +5113,6 @@ void __fastcall TfrmMain::miPixelShapeSquareClick(TObject *Sender)
 
 
 #pragma region PopupMenu_PixelSize
-// this should all be handled by the matrix component // to do
 void __fastcall TfrmMain::miPixelTinyClick(TObject *Sender)
 {
 	Screen->Cursor = crHourGlass;
@@ -5592,11 +5591,11 @@ void TfrmMain::SystemSetBackgroundColour(int new_colour)
 	frmMain->Color = TColor(new_colour);
 	pCanvas->Color = TColor(new_colour);
 
-//	if Assigned(frmPreviewPopout)
-//	{
-//		frmPreviewPopout.Panel1.Color = new_colour;
-//		frmPreviewPopout.Color        = new_colour;
-//	} TO DO
+	if (frmPreviewPopout != nullptr)
+	{
+		frmPreviewPopout->Panel1->Color = TColor(new_colour);
+		frmPreviewPopout->Color = TColor(new_colour);
+	}
 
 	thematrix->SetBackgroundColour(new_colour);
 
@@ -5722,7 +5721,7 @@ void __fastcall TfrmMain::miGradientRGB3BPP1Click(TObject *Sender)
 	{
 		if (thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
 		{
-			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag; // to do no idea what this does
+			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
 		}
 	}
 

@@ -15,10 +15,12 @@
 
 #include <vector>
 
+#include "MatrixConstants.h"
+
 
 namespace FileUtility
 {
-	// to do, move all stuff from other utils to here...
+	MatrixMode GetMatrixModeFromFileChunk(const wchar_t);
 
 	bool SaveVector(const std::wstring, const std::vector<std::wstring>&);
 }
