@@ -3,8 +3,8 @@ object Form7: TForm7
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Form7'
-  ClientHeight = 176
-  ClientWidth = 379
+  ClientHeight = 170
+  ClientWidth = 373
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

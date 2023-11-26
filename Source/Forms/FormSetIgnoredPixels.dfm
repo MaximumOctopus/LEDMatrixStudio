@@ -3,8 +3,8 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmSetIgnoredPixels'
-  ClientHeight = 223
-  ClientWidth = 422
+  ClientHeight = 217
+  ClientWidth = 416
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

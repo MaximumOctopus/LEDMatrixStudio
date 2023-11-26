@@ -3,8 +3,8 @@ object frmColourChange: TfrmColourChange
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmColourChange'
-  ClientHeight = 350
-  ClientWidth = 549
+  ClientHeight = 344
+  ClientWidth = 543
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

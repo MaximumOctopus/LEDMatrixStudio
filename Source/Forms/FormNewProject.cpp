@@ -170,7 +170,21 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 
 	rbCommonClick(nullptr);
 
-//	BuildPresetList();  // to do
+	BuildPresetList();
+}
+
+
+void TForm16::BuildPresetList()
+{
+	if (GPresetHandler->Presets.size() != 0)
+	{
+		for (int t = 0; t < GPresetHandler->Presets.size(); t++)
+		{
+			cbPresets->Items->Add(GPresetHandler->Presets[t].c_str());
+		}
+
+        cbPresets->ItemIndex = 0;
+	}
 }
 
 
@@ -305,15 +319,18 @@ void __fastcall TForm16::cbMatrixTypeChange(TObject *Sender)
 
 void __fastcall TForm16::cbPresetsChange(TObject *Sender)
 {
-	std::wstring name = cbPresets->Text.c_str();
+	if (cbPresets->ItemIndex != -1)
+	{
+		std::wstring name = GPresetHandler->Presets[cbPresets->ItemIndex];
 
-	MatrixPreset mp = GPresetHandler->Load(GSystemSettings->App.LMSFilePath + L"presets\\" + name + L".ledspreset");
+		MatrixPreset mp = GPresetHandler->Load(GSystemSettings->App.LMSFilePath + L"presets\\" + name + L".ledspreset");
 
-	lPresetWidth->Caption  = mp.Width;
-	lPresetHeight->Caption = mp.Height;
+		lPresetWidth->Caption  = mp.Width;
+		lPresetHeight->Caption = mp.Height;
 
-	lPresetType->Caption   = mp.MatrixModeText.c_str();
-	lPresetType->Tag       = mp.MatrixModeTag;
+		lPresetType->Caption   = mp.MatrixModeText.c_str();
+		lPresetType->Tag       = mp.MatrixModeTag;
+	}
 }
 
 

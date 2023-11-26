@@ -42,13 +42,21 @@ MergeObject OpenMerge()
 		mo.StartFrame = Form13->eStartFrame->Text.ToIntDef(1);
 
 		if (Form13->rbMergeBottom->Checked)
+		{
 			mo.Mode = MergeMode::kAnimationBottom;
+		}
 		else if (Form13->rbMergeTop->Checked)
+		{
 			mo.Mode = MergeMode::kAnimationTop;
+		}
 		else if (Form13->rbMergeNewLayer->Checked)
+		{
 			mo.Mode = MergeMode::kNewLayer;
+		}
 		else
+		{
 			mo.Mode = MergeMode::kCurrentFrame;
+        }
 	}
 
 	delete Form13;

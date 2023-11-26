@@ -1380,7 +1380,7 @@ void __fastcall TfrmExport::sbSaveClick(TObject *Sender)
 							  gbRGB->Visible,
 							  InternalEO);
 
-		PopulateProfileList(); // TO DO make sure profile handler refreshes file list
+		PopulateProfileList();
 	}
 }
 
@@ -1768,7 +1768,7 @@ void TfrmExport::PopulateProfileList()
 {
 	if (GProfileHandler->Profiles.size() != 0)
 	{
-        // to do, refresh profile handler lst
+        GProfileHandler->UpdateAll();
 
 		cbProfileList->Items->Clear();
 

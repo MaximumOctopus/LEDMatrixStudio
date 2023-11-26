@@ -105,6 +105,8 @@ private:
 
 	void UpdateHelp(MatrixMode);
 
+    void BuildPresetList();
+
 public:
 
 	void BuildFrom(ProjectSettings&);

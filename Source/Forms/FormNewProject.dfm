@@ -408,18 +408,30 @@ object Form16: TForm16
         Caption = '.'
       end
       object lPresetWidth: TLabel
-        Left = 224
+        Left = 230
         Top = 56
         Width = 3
         Height = 15
         Caption = '.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object lPresetHeight: TLabel
-        Left = 224
+        Left = 230
         Top = 75
         Width = 3
         Height = 15
         Caption = '.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object cbPresets: TComboBox
         Left = 15

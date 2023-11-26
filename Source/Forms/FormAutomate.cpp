@@ -539,10 +539,10 @@ void __fastcall TfrmAutomate::bCopyBrush1ColoursSourceClick(TObject *Sender)
 		{
 			if (CustomBrush[brushindex][row][i] == L' ' || i == CustomBrush[brushindex][row].length())
 			{
-//				if (colourlist->IndexOf(lColour) == -1) // TO DO INDEXPF
-//				{
-//					colourlist.push_back(lColour);
-//				}
+				if (std::find(colourlist.begin(), colourlist.end(), colour) == colourlist.end())
+				{
+					colourlist.push_back(colour);
+				}
 
 				colour = L"";
 			}

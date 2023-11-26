@@ -959,8 +959,6 @@ object frmExport: TfrmExport
           ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 0
-          ExplicitWidth = 660
-          ExplicitHeight = 545
         end
         object pPreviewStatus: TPanel
           Left = 1
