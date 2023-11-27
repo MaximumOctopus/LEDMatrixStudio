@@ -624,7 +624,7 @@ __published:	// IDE-managed Components
 	TMenuItem *White2;
 	TBitBtn *bAddFrameMultiple;
 	TBitBtn *bDeleteMultipleFrames;
-	TMenuItem *Debug1;
+	TMenuItem *miDebug;
 	TMenuItem *RenderMode1;
 	TMenuItem *MonoColours1;
 	TMenuItem *CurrentLayerFrame1;

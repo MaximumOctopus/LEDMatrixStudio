@@ -354,7 +354,7 @@ namespace ExportRGB
 			}
 			else
 			{
-				matrix->BuildMergedFrame(frame, 0);
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
@@ -532,7 +532,7 @@ namespace ExportRGB
 			}
 			else
 			{
-				matrix->BuildMergedFrame(frame, 0);
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
 			}

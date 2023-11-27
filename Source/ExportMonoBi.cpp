@@ -531,7 +531,7 @@ namespace ExportMonoBi
 			}
 			else
 			{
-				matrix->BuildMergedFrame(frame, 0);
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
@@ -767,7 +767,7 @@ namespace ExportMonoBi
 			}
 			else
 			{
-				matrix->BuildMergedFrame(frame, 0);
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
@@ -1407,9 +1407,13 @@ namespace ExportMonoBi
 			}
 
 			if (hexformat)
+			{
 				s = IntToHex(bitplane, GSystemSettings->App.PadModeHexCol);
+			}
 			else
-			  	s = std::to_wstring(bitplane);
+			{
+				s = std::to_wstring(bitplane);
+            }
 
 			dod.ColumnData[x] = s;
 		}

@@ -75,8 +75,8 @@
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
-        <IncludePath>Frames\;Forms\;LEDMatrixStudio\;$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>Frames\;Forms\;LEDMatrixStudio\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+        <IncludePath>Examples\;Frames\;Forms\;LEDMatrixStudio\;$(IncludePath)</IncludePath>
+        <ILINK_LibraryPath>Examples\;Frames\;Forms\;LEDMatrixStudio\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <SanitizedProjectName>LEDMatrixStudio</SanitizedProjectName>
         <Custom_Styles>Carbon|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Carbon.vsf</Custom_Styles>
         <VerInfo_Locale>2057</VerInfo_Locale>
@@ -226,6 +226,26 @@
         <None Include="DrawingData.h">
             <VirtualFolder>{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}</VirtualFolder>
             <BuildOrder>60</BuildOrder>
+        </None>
+        <None Include="Examples\Example_Cpp.h">
+            <VirtualFolder>{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}</VirtualFolder>
+            <BuildOrder>103</BuildOrder>
+        </None>
+        <None Include="Examples\Example_FastLED.h">
+            <VirtualFolder>{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}</VirtualFolder>
+            <BuildOrder>104</BuildOrder>
+        </None>
+        <None Include="Examples\Example_Microchip.h">
+            <VirtualFolder>{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}</VirtualFolder>
+            <BuildOrder>102</BuildOrder>
+        </None>
+        <None Include="Examples\Example_Picaxe.h">
+            <VirtualFolder>{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}</VirtualFolder>
+            <BuildOrder>101</BuildOrder>
+        </None>
+        <None Include="Examples\Example_Python.h">
+            <VirtualFolder>{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}</VirtualFolder>
+            <BuildOrder>100</BuildOrder>
         </None>
         <None Include="ExportGIFSettings.h">
             <VirtualFolder>{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}</VirtualFolder>
@@ -651,34 +671,34 @@
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>62</BuildOrder>
         </None>
+        <FormResources Include="Frames\FramePalettePanel.dfm"/>
+        <FormResources Include="Frames\FrameQuickData.dfm"/>
         <FormResources Include="Frames\FrameUndoPanel.dfm"/>
         <FormResources Include="main.dfm"/>
-        <FormResources Include="Frames\FrameQuickData.dfm"/>
-        <FormResources Include="Forms\FormPreferences.dfm"/>
-        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
-        <FormResources Include="Forms\FormSaveRange.dfm"/>
-        <FormResources Include="Forms\FormNewProject.dfm"/>
         <FormResources Include="Forms\FormOptimise.dfm"/>
         <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
+        <FormResources Include="Forms\FormPreferences.dfm"/>
+        <FormResources Include="Forms\FormMerge.dfm"/>
+        <FormResources Include="Forms\FormNewBrush.dfm"/>
+        <FormResources Include="Forms\FormNewProject.dfm"/>
+        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
+        <FormResources Include="Frames\FrameFontPanel.dfm"/>
         <FormResources Include="Frames\FrameGradientPanel.dfm"/>
         <FormResources Include="Frames\FrameLayerPanel.dfm"/>
-        <FormResources Include="Frames\FramePalettePanel.dfm"/>
+        <FormResources Include="Forms\FormSaveRange.dfm"/>
         <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
         <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
-        <FormResources Include="Frames\FrameFontPanel.dfm"/>
-        <FormResources Include="Forms\FormCopyMultiple.dfm"/>
-        <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
-        <FormResources Include="Forms\FormExport.dfm"/>
+        <FormResources Include="Forms\FormImportBitmap.dfm"/>
+        <FormResources Include="Forms\FormAbout.dfm"/>
         <FormResources Include="Forms\FormAddLayer.dfm"/>
         <FormResources Include="Forms\FormAutomate.dfm"/>
         <FormResources Include="Forms\FormColourChange.dfm"/>
-        <FormResources Include="Forms\FormImportBitmap.dfm"/>
-        <FormResources Include="Forms\FormMerge.dfm"/>
-        <FormResources Include="Forms\FormNewBrush.dfm"/>
         <FormResources Include="Forms\FormExportCode.dfm"/>
         <FormResources Include="Forms\FormExportGIF.dfm"/>
         <FormResources Include="Forms\FormFontViewer.dfm"/>
-        <FormResources Include="Forms\FormAbout.dfm"/>
+        <FormResources Include="Forms\FormCopyMultiple.dfm"/>
+        <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
+        <FormResources Include="Forms\FormExport.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -709,6 +729,7 @@
                     <VFOLDER ID="{D1988BB8-F7C7-4466-8A82-9E9D26688C0C}" name="Configuration"/>
                     <VFOLDER ID="{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}" name="Constants"/>
                     <VFOLDER ID="{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}" name="DataStructures"/>
+                    <VFOLDER ID="{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}" name="Examples"/>
                     <VFOLDER ID="{409CBED6-32FE-4D4D-AE8B-02842212B4C4}" name="Export"/>
                     <VFOLDER ID="{B4A7D0C6-E424-4C17-BAA9-C8DE4630B7DE}" name="Fonts"/>
                     <VFOLDER ID="{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}" name="Forms"/>

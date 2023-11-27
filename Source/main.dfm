@@ -45,8 +45,8 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    ExplicitTop = 858
-    ExplicitWidth = 1520
+    ExplicitTop = 840
+    ExplicitWidth = 1502
     DesignSize = (
       1508
       30)
@@ -224,7 +224,7 @@ object frmMain: TfrmMain
       TickStyle = tsNone
       OnChange = tbFramesChange
       OnTracking = tbFramesTracking
-      ExplicitWidth = 893
+      ExplicitWidth = 875
     end
     object bStartFrame: TBitBtn
       Tag = 2
@@ -304,8 +304,8 @@ object frmMain: TfrmMain
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 888
-    ExplicitWidth = 1520
+    ExplicitTop = 870
+    ExplicitWidth = 1502
   end
   object pbFont: TPanel
     Left = 1204
@@ -317,16 +317,17 @@ object frmMain: TfrmMain
     ParentBackground = False
     TabOrder = 2
     Visible = False
-    ExplicitLeft = 1216
-    ExplicitHeight = 715
+    ExplicitLeft = 1198
+    ExplicitHeight = 697
     object pASCIICode: TPanel
       Left = 1
-      Top = 689
+      Top = 677
       Width = 98
       Height = 25
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
+      ExplicitTop = 671
     end
   end
   object pRGBPalette: TPanel
@@ -339,16 +340,17 @@ object frmMain: TfrmMain
     ParentBackground = False
     TabOrder = 3
     Visible = False
-    ExplicitLeft = 1316
-    ExplicitHeight = 715
+    ExplicitLeft = 1298
+    ExplicitHeight = 697
     object PageControl1: TPageControl
       Left = 1
       Top = 1
       Width = 202
-      Height = 713
+      Height = 701
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
+      ExplicitHeight = 695
       object tsPalette: TTabSheet
         Caption = '.'
       end
@@ -372,7 +374,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 4
-    ExplicitWidth = 1520
+    ExplicitWidth = 1502
     object sbBuild: TSpeedButton
       Left = 5
       Top = 1
@@ -526,7 +528,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 5
-    ExplicitWidth = 1520
+    ExplicitWidth = 1502
     object sbClear: TSpeedButton
       Left = 4
       Top = 2
@@ -737,7 +739,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 6
-    ExplicitWidth = 1520
+    ExplicitWidth = 1502
     object sbMouseMode: TSpeedButton
       Left = 4
       Top = 2
@@ -1185,8 +1187,8 @@ object frmMain: TfrmMain
     StyleElements = [seFont, seBorder]
     OnMouseDown = pCanvasMouseDown
     OnMouseMove = pCanvasMouseMove
-    ExplicitWidth = 767
-    ExplicitHeight = 715
+    ExplicitWidth = 749
+    ExplicitHeight = 697
   end
   object pLayers: TPanel
     Left = 755
@@ -1196,8 +1198,8 @@ object frmMain: TfrmMain
     Align = alRight
     TabOrder = 8
     Visible = False
-    ExplicitLeft = 767
-    ExplicitHeight = 715
+    ExplicitLeft = 749
+    ExplicitHeight = 697
   end
   object pCurrentColours: TPanel
     Left = 0
@@ -1213,7 +1215,7 @@ object frmMain: TfrmMain
     ShowHint = True
     TabOrder = 9
     Visible = False
-    ExplicitWidth = 1520
+    ExplicitWidth = 1502
     object sSelectionMMB: TShape
       Tag = 2
       Left = 213
@@ -1495,7 +1497,7 @@ object frmMain: TfrmMain
     ShowCaption = False
     ShowHint = True
     TabOrder = 10
-    ExplicitWidth = 1520
+    ExplicitWidth = 1502
     object sRGBPalette1: TShape
       Left = 4
       Top = 14
@@ -2350,8 +2352,8 @@ object frmMain: TfrmMain
     Align = alRight
     TabOrder = 12
     Visible = False
-    ExplicitLeft = 999
-    ExplicitHeight = 715
+    ExplicitLeft = 981
+    ExplicitHeight = 697
   end
   object miMain: TMainMenu
     AutoLineReduction = maManual
@@ -3766,8 +3768,9 @@ object frmMain: TfrmMain
         OnClick = miAboutClick
       end
     end
-    object Debug1: TMenuItem
+    object miDebug: TMenuItem
       Caption = 'Debug'
+      Visible = False
       object RenderMode1: TMenuItem
         Caption = 'Render Mode...'
         OnClick = RenderMode1Click

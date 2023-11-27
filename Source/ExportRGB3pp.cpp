@@ -352,7 +352,16 @@ namespace ExportRGB3BPP
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
-			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+            }
 		}
 		else
 		{
@@ -487,10 +496,10 @@ namespace ExportRGB3BPP
 			}
 			else
 			{
-				matrix->BuildMergedFrame(frame, 0);
-			}
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
-			selectedmatrix = matrix->MatrixMerge;
+				selectedmatrix = matrix->MatrixMerge;
+            }
 		}
 		else
 		{

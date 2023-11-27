@@ -38,6 +38,7 @@ extern LanguageHandler *GLanguageHandler;
 typedef void __fastcall (__closure *MouseOverEvent)(int, int);
 typedef void __fastcall (__closure *DebugEvent)(std::wstring);
 
+enum class MergeFrameMode { kRetainGridValue = 0, kConvertForRender, kConvertForFileOutput };
 
 struct MatrixDetails
 {
@@ -460,7 +461,7 @@ public:
 	int CountColoursAnimation();
 	void GetFirst32Colours(std::vector<int> &);
 
-	void BuildMergedFrame(int, int);
+	void BuildMergedFrame(int, MergeFrameMode);
 
 	void ClearGradient();
 	void AddGradient(int);

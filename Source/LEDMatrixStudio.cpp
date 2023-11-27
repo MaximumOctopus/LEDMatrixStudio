@@ -8,19 +8,19 @@
 #include <Vcl.Themes.hpp>
 USEFORM("Frames\FrameUndoPanel.cpp", frameUndos); /* TFrame: File Type */
 USEFORM("main.cpp", frmMain);
+USEFORM("Frames\FrameQuickData.cpp", Frame5); /* TFrame: File Type */
+USEFORM("Forms\FormPreferences.cpp", frmPreferences);
 USEFORM("Forms\FormPreviewPopout.cpp", frmPreviewPopout);
 USEFORM("Forms\FormSaveRange.cpp", Form20);
-USEFORM("Forms\FormSetIgnoredPixels.cpp", frmSetIgnoredPixels);
+USEFORM("Forms\FormNewProject.cpp", Form16);
 USEFORM("Forms\FormOptimise.cpp", frmOptimise);
 USEFORM("Forms\FormPlaybackSpeed.cpp", Form18);
-USEFORM("Forms\FormPreferences.cpp", frmPreferences);
+USEFORM("Frames\FrameGradientPanel.cpp", frameGradient); /* TFrame: File Type */
 USEFORM("Frames\FrameLayerPanel.cpp", frameLayers); /* TFrame: File Type */
 USEFORM("Frames\FramePalettePanel.cpp", framePalette); /* TFrame: File Type */
-USEFORM("Frames\FrameQuickData.cpp", Frame5); /* TFrame: File Type */
+USEFORM("Forms\FormSetIgnoredPixels.cpp", frmSetIgnoredPixels);
 USEFORM("Forms\FormToggleLockStatus.cpp", frmToggleLockStatus);
 USEFORM("Frames\FrameFontPanel.cpp", frameFont); /* TFrame: File Type */
-USEFORM("Frames\FrameGradientPanel.cpp", frameGradient); /* TFrame: File Type */
-USEFORM("Forms\FormNewProject.cpp", Form16);
 USEFORM("Forms\FormCopyMultiple.cpp", frmCopyMultiple);
 USEFORM("Forms\FormDeleteMultiple.cpp", Form7);
 USEFORM("Forms\FormExport.cpp", frmExport);

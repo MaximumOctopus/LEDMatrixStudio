@@ -89,7 +89,7 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 		// =========================================================================
 
 		teo.Code.CleanMode = false;
-		//teo.NumberSize := lIndexDataSize; // this was causing issues, but no idea what it was meant to do... !
+		//teo.NumberSize := lIndexDataSize; // this was causing issues, but no idea what it does
 
         int i = 0;
 

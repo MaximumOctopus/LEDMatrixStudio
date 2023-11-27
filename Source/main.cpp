@@ -67,14 +67,15 @@ extern SystemSettings *GSystemSettings;
 __fastcall TfrmMain::TfrmMain(TComponent* Owner)
 	: TForm(Owner)
 {
-
+	#if _DEBUG
+	miDebug->Visible = true;
+	#endif
 }
 
 
 void __fastcall TfrmMain::WmDropFiles(TWMDropFiles& Message)
 {
 	wchar_t buff[MAX_PATH];
-	volatile int x = -1;
 	HDROP hDrop = (HDROP)Message.Drop;
 	int count = DragQueryFile(hDrop, -1, NULL, NULL);
 
@@ -4250,7 +4251,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 #pragma region Export_Import
 void TfrmMain::SetSimpleExport(ExportOptions teo)
 { /* disabled in orginal source
-	cbSource.ItemIndex          := Ord(aTEO.Source); //TO DO
+	cbSource.ItemIndex          := Ord(aTEO.Source);
 
 	cbSourceChange(Nil);
 

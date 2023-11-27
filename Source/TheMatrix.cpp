@@ -236,12 +236,9 @@ void TheMatrix::Refresh()
 #pragma region Rendering
 // merges all layers to a single layer. pixels "rain" down from top (highest index)
 // to bottom (lowest index)
-// colours = 0 ; retain grid value
-// colours = 1 ; convert to colour for render
-// colours = 2 ; convert for file output
-void TheMatrix::BuildMergedFrame(int frame, int colours)
+void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 {
-	MatrixMerge->ClearColour(RGBBackground); // to do check that works for single colour
+	MatrixMerge->Clear(Details.Mode, RGBBackground);
 
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
 	{
@@ -264,15 +261,15 @@ void TheMatrix::BuildMergedFrame(int frame, int colours)
 						case 1:
 						case 2:
 						case 3:
-							switch (colours)
+							switch (merge)
 							{
-							case 0:
+							case MergeFrameMode::kRetainGridValue:
 								MatrixMerge->Grid[y * Details.Width + x] = MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
 								break;
-							case 1:
+							case MergeFrameMode::kConvertForRender:
 								MatrixMerge->Grid[y * Details.Width + x] = LEDColours[MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x]];
 								break;
-							case 2:
+							case MergeFrameMode::kConvertForFileOutput:
 								switch (MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x])
 								{
 								case 0:
@@ -303,13 +300,13 @@ void TheMatrix::BuildMergedFrame(int frame, int colours)
 					{
 						if (MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] != RGBBackground)
 						{
-							switch (colours)
+							switch (merge)
 							{
-							case 0:
+							case MergeFrameMode::kRetainGridValue:
 								MatrixMerge->Grid[y * Details.Width + x] = MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
 								break;
-							case 1:
-							case 2:
+							case MergeFrameMode::kConvertForRender:
+							case MergeFrameMode::kConvertForFileOutput:
 								MatrixMerge->Grid[y * Details.Width + x] = LEDRGB3BPPColours[MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x]];
 								break;
 							}
@@ -4489,7 +4486,7 @@ void TheMatrix::FlattenAllLayers()
 
 	for (int f = 0; f < MatrixLayers[CPermanentLayer]->Cells.size(); f++)
 	{
-		BuildMergedFrame(f, 0);
+		BuildMergedFrame(f, MergeFrameMode::kRetainGridValue);
 
 		for (int x = 0; x < Details.Width; x++)
 		{
@@ -5350,7 +5347,7 @@ bool TheMatrix::ExportToBitmap(const std::wstring file_name)
 
 		for (int frame = 0; frame < GetFrameCount(); frame++)
 		{
-			BuildMergedFrame(frame, 2);
+			BuildMergedFrame(frame, MergeFrameMode::kConvertForFileOutput);
 
 			for (int y = 0; y < Details.Height; y++)
 			{
@@ -5399,7 +5396,7 @@ bool TheMatrix::ExportAnimationToBitmap(const std::wstring file_name)
 
 		for (int frame = 0; frame < GetFrameCount(); frame++)
 		{
-			BuildMergedFrame(frame, 2);
+			BuildMergedFrame(frame, MergeFrameMode::kConvertForFileOutput);
 
 			for (int y = 0; y < Details.Height; y++)
 			{
@@ -5592,7 +5589,7 @@ void TheMatrix::ExportToGIF(const std::wstring file_name, int background, int pi
 			lTempFrame->Canvas->Brush->Color = TColor(background);
 			lTempFrame->Canvas->FillRect(Rect(0, 0, lTempFrame->Width, lTempFrame->Height));
 
-			BuildMergedFrame(frame, 2);
+			BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 			if (pixelsize == 1)
 			{
@@ -6185,7 +6182,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		if (loadmode == LoadMode::kNew)
 		{
-			Details.Height = tempMaxHeight;       // to do, maybe a problem if append a larger matrix?! no idea!
+			Details.Height = tempMaxHeight;
 			Details.Width  = tempMaxWidth;
 
 			import.Mode = mode;
@@ -6310,10 +6307,10 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						}
 						break;
 					case LoadData::kLoadBlockBeginLayout:
-						lLayerMode = True;
+						lLayerMode = true;
 						break;
 					case LoadData::kLoadBlockEndLayout:
-						lLayerMode = False;
+						lLayerMode = false;
 						break;
 
 					// =======================================================
@@ -6580,7 +6577,7 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 
 	if (file)
 	{
-		file << Formatting::to_utf8(L"{" + kFileHeaderFontHeader);
+		file << Formatting::to_utf8(L"{" + kFileHeaderFontHeader + L"\n");
 
 		file << Formatting::to_utf8(kAnimPreviewEnabledF +     std::to_wstring(tid.Preview.Enabled) + L"\n");
 		file << Formatting::to_utf8(kAnimPreviewSizeF +        std::to_wstring(tid.Preview.Size) + L"\n");
@@ -6603,12 +6600,12 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 
 		for (int layer = 0; layer < MatrixLayers.size(); layer++)
 		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderLayer);
+			file << Formatting::to_utf8(L"[" + kFileHeaderLayer + L"\n");
 			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
 			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
 			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
 			file << Formatting::to_utf8(kAnimLayerLockedF + std::to_wstring(MatrixLayers[layer]->Locked) + L"\n");
-			file << Formatting::to_utf8(L"]");
+			file << Formatting::to_utf8(L"]\n");
 
 			for (int i = 1; i <= FontCharacterCount; i++)
 			{
@@ -6640,7 +6637,7 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 
 					for (int x = 0; x < Details.Width; x++)
 					{
-						s += IntToHex(MatrixLayers[layer]->Cells[i]->Grid[y * Details.Width + x], 6) + L" ";    // 6 was 4, to do check!
+						s += IntToHex(MatrixLayers[layer]->Cells[i]->Grid[y * Details.Width + x], 6) + L" ";
 					}
 
 					file << Formatting::to_utf8(kAnimRowDataF + s + L"\n");
@@ -6684,40 +6681,40 @@ void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, in
 		switch (tid.Mode)
 		{
 		case MatrixMode::kMono:
-			file << Formatting::to_utf8(L"{" + kFramePrefixMono);
+			file << Formatting::to_utf8(L"{" + kFramePrefixMono + L"\n");
 			break;
 		case MatrixMode::kBiSequential:
-			file << Formatting::to_utf8(L"{" + kFramePrefixBiSequential);
+			file << Formatting::to_utf8(L"{" + kFramePrefixBiSequential + L"\n");
 			break;
 		case MatrixMode::kBiBitplanes:
-			file << Formatting::to_utf8(L"{" + kFramePrefixBiBitPlanes);
+			file << Formatting::to_utf8(L"{" + kFramePrefixBiBitPlanes + L"\n");
 			break;
 		case MatrixMode::kRGB:
-			file << Formatting::to_utf8(L"{" + kFramePrefixRGB);
+			file << Formatting::to_utf8(L"{" + kFramePrefixRGB + L"\n");
 			break;
 		case MatrixMode::kRGB3BPP:
-			file << Formatting::to_utf8(L"{" + kFramePrefixRGB3BPP);
+			file << Formatting::to_utf8(L"{" + kFramePrefixRGB3BPP + L"\n");
 			break;
 		}
 
-		file << Formatting::to_utf8(kAnimWidthF + std::to_wstring(Details.Width));
-		file << Formatting::to_utf8(kAnimHeightF + std::to_wstring(Details.Height));
-		file << Formatting::to_utf8(kAnimCommentF + Details.Comment);
-		file << Formatting::to_utf8(kAnimRGBBackgroundF + std::to_wstring(RGBBackground));
+		file << Formatting::to_utf8(kAnimWidthF + std::to_wstring(Details.Width) + L"\n");
+		file << Formatting::to_utf8(kAnimHeightF + std::to_wstring(Details.Height) + L"\n");
+		file << Formatting::to_utf8(kAnimCommentF + Details.Comment + L"\n");
+		file << Formatting::to_utf8(kAnimRGBBackgroundF + std::to_wstring(RGBBackground) + L"\n");
 
-		file << Formatting::to_utf8(kDataBlockEndS);
+		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
 
 		// ===========================================================================
 
 		for (int layer = 0; layer < MatrixLayers.size(); layer++)
 		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderLayer);
-			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name);
-			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width));
-			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height));
-			file << Formatting::to_utf8(L"]");
+			file << Formatting::to_utf8(L"[" + kFileHeaderLayer + L"\n");
+			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
+			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
+			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
+			file << Formatting::to_utf8(L"]\n");
 
-			file << Formatting::to_utf8(kDataBlockStartS);
+			file << Formatting::to_utf8(kDataBlockStartS + L"\n");
 
 			for (int y = 0; y < Details.Height; y++)
 			{
@@ -6728,15 +6725,15 @@ void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, in
 					s += IntToHex(MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x], 6) + L" ";
 				}
 
-				file << Formatting::to_utf8(kAnimRowDataF + s);
+				file << Formatting::to_utf8(kAnimRowDataF + s + L"\n");
 			}
 
-			file << Formatting::to_utf8(kDataBlockEndS);
+			file << Formatting::to_utf8(kDataBlockEndS + L"\n");
 		}
 
 		// ===========================================================================
 
-		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel);
+		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel + L"\n");
 
 		for (int y = 0; y < Details.Height; y++)
 		{
@@ -6747,10 +6744,10 @@ void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, in
 				s += std::to_wstring(MatrixDeadLayout->Grid[y * Details.Width + x]) + L" ";
 			}
 
-			file << Formatting::to_utf8(kAnimDeadPixelDataF + s);
+			file << Formatting::to_utf8(kAnimDeadPixelDataF + s + L"\n");
 		}
 
-		file << Formatting::to_utf8(kDataBlockEndS);
+		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
 
 		// ===================================================================
 
@@ -8242,7 +8239,7 @@ void TheMatrix::ChangePixelShape(PixelShape newpixelshape)
 }
 
 
-void TheMatrix::ChangeMatrixMode(MatrixMode newmatrixnode)       // to do
+void TheMatrix::ChangeMatrixMode(MatrixMode newmatrixnode)
 {
 	if (Details.Width != -1)
 	{
@@ -8306,7 +8303,7 @@ void TheMatrix::SetSoftwareMode(SoftwareMode softwaremode)
 
 		for (int t = 0; t < 96; t++)
 		{
-			Matrix *m = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground); // TO DO
+			Matrix *m = new Matrix(Details.Width, Details.Height, Details.Mode, RGBBackground);
 
 			MatrixLayers[CPermanentLayer]->Cells.push_back(m);
 		}
