@@ -33,6 +33,8 @@
 #include "ExportRGB3pp.h"
 #include "ExportUtility.h"
 
+#include "Example_FastLED.h"
+
 extern LanguageHandler *GLanguageHandler;
 extern PresetHandler *GPresetHandler;
 extern ProfileHandler *GProfileHandler;
@@ -43,7 +45,7 @@ extern SystemSettings *GSystemSettings;
 #pragma resource "*.dfm"
 TfrmExport *frmExport;
 
-void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, ExportSource source, MatrixMode mode) // mode = 0 (animation), 1 = (user memories) TO DO (now .exportopions
+void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, ExportSource source, MatrixMode mode) // mode = 0 (animation), 1 = (user memories)
 {
 	TfrmExport *frmExport = new TfrmExport(Application);
 
@@ -1659,7 +1661,9 @@ bool TfrmExport::SaveBinaryData(const std::wstring file_name)
 		outputfilename = path + fileprefix + L"_" + std::to_wstring(animframe) + ext;
 	}
 
-	std::ofstream file(outputfilename);
+	std::ofstream file;
+
+	file.open(file_name);
 
 	MatrixPreset mp;
 
@@ -1700,7 +1704,7 @@ bool TfrmExport::SaveBinaryData(const std::wstring file_name)
 
 					outputfilename = path + fileprefix + L"_" + std::to_wstring(animframe) + ext;
 
-					// TO DO , need to change output file namefile(outputfilename);
+					file.open(outputfilename);
 				}
 			}
 		}
@@ -1820,7 +1824,7 @@ void TfrmExport::AddExampleCode()
 	case ExportLanguage::kC2Dim:
 		break;
 	case ExportLanguage::kCFastLED:
-		// TO DO s = ExampleFastLED::GetExample(InternalEO.StartFrame, InternalEO.EndFrame, PixelCountFrame);
+		s += ExampleFastLED::Get(InternalEO.Code.StartFrame, InternalEO.Code.EndFrame, PixelCountFrame);
 		break;
 	case ExportLanguage::kPython1Dim:
 	case ExportLanguage::kPython2Dim:
