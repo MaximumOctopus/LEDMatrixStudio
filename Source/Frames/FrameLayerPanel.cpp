@@ -35,7 +35,7 @@ __fastcall TframeLayers::TframeLayers(TComponent* Owner)
 
 void __fastcall TframeLayers::sbLayerUpClick(TObject *Sender)
 {
-	ParentMatrix->MoveUp(ParentMatrix->GetCurrentLayer()); // TO DO
+	ParentMatrix->MoveUp(ParentMatrix->GetCurrentLayer());
 }
 
 
