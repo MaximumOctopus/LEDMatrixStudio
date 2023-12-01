@@ -214,7 +214,7 @@ public:		// User declarations
 	RGBPaletteColours RGPC;
 
 	void SetFromAutomationInput(AutomationInput &, std::vector<std::wstring> &, std::vector<int> &, ActionObject ao);
-	void SetAutomationInputFromGui(AutomationInput &, ActionObject ao);
+	void SetAutomationInputFromGui(AutomationInput &, ActionObject &ao);
 
 	void SetCaption(const std::wstring);
 };

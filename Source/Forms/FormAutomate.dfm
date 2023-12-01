@@ -176,7 +176,7 @@ object frmAutomate: TfrmAutomate
         Caption = '.'
       end
       object gbActions: TGroupBox
-        Left = 8
+        Left = 3
         Top = 8
         Width = 529
         Height = 417
@@ -197,6 +197,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Flip pixels in the x-axis'
+          OnClick = sbMirrorClick
         end
         object sbInvert: TSpeedButton
           Tag = 2
@@ -204,6 +205,7 @@ object frmAutomate: TfrmAutomate
           Top = 102
           Width = 97
           Height = 22
+          OnClick = sbMirrorClick
         end
         object sbScrollLeft: TSpeedButton
           Tag = 3
@@ -253,6 +255,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbScrollRight: TSpeedButton
           Tag = 4
@@ -302,6 +305,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbScrollUp: TSpeedButton
           Tag = 5
@@ -351,6 +355,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbScrollDown: TSpeedButton
           Tag = 6
@@ -400,6 +405,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbRotateL: TSpeedButton
           Tag = 7
@@ -409,6 +415,7 @@ object frmAutomate: TfrmAutomate
           Height = 22
           Hint = 'Rotate pixels anti-clockwise 90 degrees'
           Caption = '90'#176' anti-clockwise'
+          OnClick = sbMirrorClick
         end
         object sbRotateR: TSpeedButton
           Tag = 8
@@ -418,6 +425,7 @@ object frmAutomate: TfrmAutomate
           Height = 22
           Hint = 'Rotate pixels clockwise 90 degrees'
           Caption = '90'#176' clockwise'
+          OnClick = sbMirrorClick
         end
         object Label6: TLabel
           Left = 20
@@ -519,6 +527,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object SpeedButton2: TSpeedButton
           Tag = 14
@@ -568,6 +577,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object SpeedButton3: TSpeedButton
           Tag = 15
@@ -617,6 +627,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object SpeedButton4: TSpeedButton
           Tag = 16
@@ -666,6 +677,7 @@ object frmAutomate: TfrmAutomate
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object Label10: TLabel
           Left = 20
@@ -778,6 +790,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object SpeedButton6: TSpeedButton
           Tag = 18
@@ -864,6 +877,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object lBrush: TLabel
           Left = 20
@@ -885,6 +899,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Pastes brush #1 in to each frame.'
+          OnClick = sbMirrorClick
         end
         object SpeedButton8: TSpeedButton
           Tag = 20
@@ -893,6 +908,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Pastes brush #1 only in to the first frame.'
+          OnClick = sbMirrorClick
         end
         object Label12: TLabel
           Left = 20
@@ -923,6 +939,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Cycles the Target List colours up/down/up/down...'
+          OnClick = sbCyclingLinearClick
         end
         object sbLeftRight: TSpeedButton
           Tag = 23
@@ -1009,6 +1026,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbRightLeft: TSpeedButton
           Tag = 24
@@ -1095,6 +1113,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbUpDown: TSpeedButton
           Tag = 25
@@ -1181,6 +1200,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object sbDownUp: TSpeedButton
           Tag = 26
@@ -1267,6 +1287,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object Label16: TLabel
           Left = 20
@@ -1288,6 +1309,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Pastes brush #2 in to each frame.'
+          OnClick = sbMirrorClick
         end
         object SpeedButton13: TSpeedButton
           Tag = 22
@@ -1296,6 +1318,7 @@ object frmAutomate: TfrmAutomate
           Width = 97
           Height = 22
           Hint = 'Pastes brush #2 only in to the first frame.'
+          OnClick = sbMirrorClick
         end
         object Label19: TLabel
           Left = 20
@@ -1395,6 +1418,7 @@ object frmAutomate: TfrmAutomate
             FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
             FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
+          OnClick = sbMirrorClick
         end
         object Label20: TLabel
           Left = 20

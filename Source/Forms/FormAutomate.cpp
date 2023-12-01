@@ -14,6 +14,7 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#include <algorithm>
 #include <fstream>
 #include <vector>
 
@@ -208,7 +209,7 @@ void TfrmAutomate::SetFromAutomationInput(AutomationInput &ai, std::vector<std::
 }
 
 
-void TfrmAutomate::SetAutomationInputFromGui(AutomationInput &ai, ActionObject ao)
+void TfrmAutomate::SetAutomationInputFromGui(AutomationInput &ai, ActionObject &ao)
 {
 	if (!LastFileName.empty())
 	{
@@ -230,8 +231,8 @@ void TfrmAutomate::SetAutomationInputFromGui(AutomationInput &ai, ActionObject a
 		ao.Source = AutomateSource::kEachFrameInc;
 	}
 
-	ao.FrameStart = StrToIntDef(eFrameStart->Text, -1);
-	ao.FrameEnd   = StrToIntDef(eFrameEnd->Text, -1);
+	ao.FrameStart = StrToIntDef(eFrameStart->Text, 0) - 1;  // matrix frames indexed from zero
+	ao.FrameEnd   = StrToIntDef(eFrameEnd->Text, 0) - 1;    // matrix frames indexed from zero
 
 	ao.ActionList.clear();
 
@@ -299,6 +300,7 @@ void TfrmAutomate::SetAutomationInputFromGui(AutomationInput &ai, ActionObject a
 
 	ao.TargetSkip = cbTargetSkip->ItemIndex;
 }
+
 
 void __fastcall TfrmAutomate::SpeedButton15Click(TObject *Sender)
 {
@@ -1038,9 +1040,14 @@ void TfrmAutomate::LoadAutomation(const std::wstring file_name)
 				}
 				else
 				{
-					std::wstring input = s.substr(2);
+					std::wstring input = L"";
 
-					//lowercase s to do
+					if (input.length() > 2)
+					{
+					    input =	s.substr(2);
+					}
+
+					std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
 					switch (LoadDataParameterType(s))
 					{
