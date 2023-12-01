@@ -499,6 +499,8 @@ void TheMatrix::WipeAllFramesAllLayers()
 
 void TheMatrix::ClearAllFramesGradient(int mode)
 {
+	if (!Details.Available) return;
+
 	for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
 	{
 		if (!IsThisFrameLocked(CurrentLayer, frame))
@@ -554,28 +556,22 @@ int TheMatrix::GetPreviewPixelSize(int ROffset)
 
 	int pixel_size = 1;
 
-	double c = (2 * 3.1415926535 * ROffset);
+	double c = (2 * 3.1415926535 * (double)ROffset);
 
 	switch (Preview.View)
 	{
 	case ViewShape::kSquare:
-		pixel_size = std::round(c / Details.Width);
-		break;
 	case ViewShape::kRadial:
-		pixel_size = std::round(c / Details.Width);
-		break;
 	case ViewShape::kRadial3Q:
 		pixel_size = std::round(c / Details.Width);
 		break;
 	case ViewShape::kSemiCircle:
-		pixel_size = std::round(c / (2 * Details.Width));
-		break;
 	case ViewShape::kSemiCircleInverted:
 		pixel_size = std::round(c / (2 * Details.Width));
 		break;
 	}
 
-	if (pixel_size == 0)
+	if (pixel_size <= 0)
 	{
 		pixel_size = 1;
     }
@@ -915,8 +911,10 @@ void __fastcall TheMatrix::pbPreviewPaintRadial(TObject *Sender)
 
 			PreviewBox->Canvas->Pen->Color = PreviewBox->Canvas->Brush->Color;
 
-			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + ((Details.Width - 1 - x) / Details.Width - 1) * 360));
-			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + ((Details.Width - 1 - x) / Details.Width - 1) * 360));
+			double dwx = (double)Details.Width - 1 - (double)x;
+
+			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + (dwx / (double)Details.Width - 1) * 360));
+			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + (dwx / (double)Details.Width - 1) * 360));
 
 			double d = (cx - Preview.ROffset) / Details.Height;
 
@@ -970,8 +968,8 @@ void __fastcall TheMatrix::pbPreviewPaintRadialThreeQuarters(TObject *Sender)
 
 			PreviewBox->Canvas->Pen->Color = PreviewBox->Canvas->Brush->Color;
 
-			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + 225 - (x / (Details.Width - 1)) * 270));
-			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + 225 - (x / (Details.Width - 1)) * 270));
+			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + 225 - ((double)x / ((double)Details.Width - 1)) * 270));
+			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + 225 - ((double)x / ((double)Details.Width - 1)) * 270));
 
 			double d =  (cx - Preview.ROffset) / Details.Height;
 
@@ -1025,10 +1023,10 @@ void __fastcall TheMatrix::pbPreviewPaintSemiCircle(TObject *Sender)
 
 			PreviewBox->Canvas->Pen->Color = PreviewBox->Canvas->Brush->Color;
 
-			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + 180 - (x / (Details.Width - 1)) * 180));
-			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + 180 - (x / (Details.Width - 1)) * 180));
+			double ac = std::cos(CalcUtility::DegToRadians((double)RadialOffsetDegrees + 180 - ((double)x / ((double)Details.Width - 1)) * 180));
+			double as = std::sin(CalcUtility::DegToRadians((double)RadialOffsetDegrees + 180 - ((double)x / ((double)Details.Width - 1)) * 180));
 
-			double d =  (cx - Preview.ROffset) / Details.Height;
+			double d =  ((double)cx - (double)Preview.ROffset) / (double)Details.Height;
 
 			int xp = cx + std::round((Preview.ROffset + (d * (Details.Height - 1 - y))) * ac);
 			int yp = cy - std::round((Preview.ROffset + (d * (Details.Height - 1 - y))) * as);
@@ -1036,16 +1034,16 @@ void __fastcall TheMatrix::pbPreviewPaintSemiCircle(TObject *Sender)
 			if (Preview.IncrementRadially)
 			{
 				PreviewBox->Canvas->Ellipse(xp,
-										   yp,
-										   xp + Preview.RPixel + (Details.Height - 1 - y),
-										   yp + Preview.RPixel + (Details.Height - 1 - y));
+											yp,
+											xp + Preview.RPixel + (Details.Height - 1 - y),
+											yp + Preview.RPixel + (Details.Height - 1 - y));
 			}
 			else
 			{
 				PreviewBox->Canvas->Ellipse(xp,
-										   yp,
-										   xp + Preview.RPixel,
-										   yp + Preview.RPixel);
+											yp,
+											xp + Preview.RPixel,
+											yp + Preview.RPixel);
 			}
 		}
 	}
@@ -1080,27 +1078,27 @@ void __fastcall TheMatrix::pbPreviewPaintSemiCircleInverted(TObject *Sender)
 
 			PreviewBox->Canvas->Pen->Color = PreviewBox->Canvas->Brush->Color;
 
-			double ac = std::cos(CalcUtility::DegToRadians(RadialOffsetDegrees + 180 + (x / (Details.Width - 1)) * 180));
-			double as = std::sin(CalcUtility::DegToRadians(RadialOffsetDegrees + 180 + (x / (Details.Width - 1)) * 180));
+			double ac = std::cos(CalcUtility::DegToRadians((double)RadialOffsetDegrees + 180 + ((double)x / ((double)Details.Width - 1)) * 180));
+			double as = std::sin(CalcUtility::DegToRadians((double)RadialOffsetDegrees + 180 + ((double)x / ((double)Details.Width - 1)) * 180));
 
-			double d = (cx - Preview.ROffset) / Details.Height;
+			double d = ((double)cx - (double)Preview.ROffset) / (double)Details.Height;
 
-			int xp = cx + std::round((Preview.ROffset + (d * (y))) * ac);
-			int yp = cy - std::round((Preview.ROffset + (d * (y))) * as);
+			int xp = cx + std::round(((double)Preview.ROffset + (d * (double)y)) * ac);
+			int yp = cy - std::round(((double)Preview.ROffset + (d * (double)y)) * as);
 
 			if (Preview.IncrementRadially)
 			{
 				PreviewBox->Canvas->Ellipse(xp,
-										   yp,
-										   xp + Preview.RPixel + y,
-										   yp + Preview.RPixel + y);
+											yp,
+											xp + Preview.RPixel + y,
+											yp + Preview.RPixel + y);
 			}
 			else
 			{
 				PreviewBox->Canvas->Ellipse(xp,
-										   yp,
-										   xp + Preview.RPixel,
-										   yp + Preview.RPixel);
+											yp,
+											xp + Preview.RPixel,
+											yp + Preview.RPixel);
 			}
 		}
     }
@@ -4152,7 +4150,6 @@ void TheMatrix::InsertBlankFrameAt(int insertat)
 {
 	if (!AutomateMode) Busy = True;
 
-
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
 	{
 		Matrix *m = new Matrix(Details.Width, Details.Height, Details.Mode, RGBBackground);
@@ -4723,6 +4720,8 @@ void TheMatrix::ChangeSelectionColour(int LMB, int MMB, int RMB)
 
 void TheMatrix::GradientFillFrame()
 {
+    if (!Details.Available) return;
+
 	if (IsThisFrameLocked(CurrentLayer, CurrentFrame)) return;
 
 	for (int x = 0; x < Details.Width; x++)
@@ -8867,7 +8866,7 @@ void TheMatrix::Automate(ActionObject &ao)
 		for (int frame = ao.FrameStart + 1; frame <= ao.FrameEnd; frame++)
 		{
 
-			if (frame > GetFrameCount())
+			if (frame >= GetFrameCount())
 			{
 				InsertBlankFrameAt(frame);
 			}
@@ -9414,12 +9413,13 @@ void TheMatrix::AddGradient(int colour)
 }
 
 
-void TheMatrix::CreateMatrixMerge()
+#if _DEBUG
+std::wstring TheMatrix::GetPreviewDebug()
 {
-	// not sure if this is necessary
-}
+	std::wstring s = std::to_wstring(PreviewBox->Left) + L", " + std::to_wstring(PreviewBox->Top) + L"; " +
+					 std::to_wstring(PreviewBox->Width) + L" x " + std::to_wstring(PreviewBox->Height) + L". " +
+					 std::to_wstring(Preview.Size);
 
-void TheMatrix::FreeMatrixMerge()
-{
-	// not sure if this is necessary
+    return s;
 }
+#endif

@@ -16,8 +16,8 @@
 
 struct Toolbars
 {
-	bool ColumnRow;
-	bool RGBPalette;
-	bool Pattern;
-	bool Animation;
+	bool ColumnRow = true;
+	bool RGBPalette = true;
+	bool Pattern = true;
+	bool Animation = true;
 };

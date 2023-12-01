@@ -12,7 +12,7 @@ object frmMain: TfrmMain
   Font.Style = []
   KeyPreview = True
   Menu = miMain
-  Position = poDesktopCenter
+  Position = poScreenCenter
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnConstrainedResize = FormConstrainedResize
@@ -377,7 +377,7 @@ object frmMain: TfrmMain
     ExplicitWidth = 1502
     object sbBuild: TSpeedButton
       Left = 5
-      Top = 1
+      Top = 2
       Width = 58
       Height = 24
       Hint = 'Create new matrix'
@@ -387,14 +387,14 @@ object frmMain: TfrmMain
       OnClick = sbBuildClick
     end
     object Bevel3: TBevel
-      Left = 459
+      Left = 469
       Top = 12
       Width = 5
       Height = 10
       Shape = bsLeftLine
     end
     object sbPreset: TSpeedButton
-      Left = 548
+      Left = 568
       Top = 2
       Width = 50
       Height = 24
@@ -406,10 +406,18 @@ object frmMain: TfrmMain
       Tag = 2
       Left = 402
       Top = 2
-      Width = 50
+      Width = 60
       Height = 24
       Hint = 'Select pixel size'
-      Caption = ' '
+      Glyph.Data = {
+        F6000000424DF600000000000000360000002800000008000000080000000100
+        180000000000C0000000232E0000232E00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFFFFFFFFFF
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF
+        00FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF00FFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
       OnClick = sbPixelSizeClick
     end
     object Bevel17: TBevel
@@ -420,7 +428,7 @@ object frmMain: TfrmMain
       Shape = bsLeftLine
     end
     object lMemoryUsage: TLabel
-      Left = 620
+      Left = 640
       Top = 9
       Width = 24
       Height = 13
@@ -428,16 +436,24 @@ object frmMain: TfrmMain
     end
     object sbPixelShape: TSpeedButton
       Tag = 2
-      Left = 468
+      Left = 478
       Top = 2
-      Width = 63
+      Width = 73
       Height = 24
       Hint = 'Select pixel shape'
-      Caption = ' '
+      Glyph.Data = {
+        F6000000424DF600000000000000360000002800000008000000080000000100
+        180000000000C0000000232E0000232E00000000000000000000FF00FFFF00FF
+        FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFFFFFFFFFF
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF
+        00FFFF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF00FFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+        FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+        00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
       OnClick = sbPixelShapeClick
     end
     object Bevel19: TBevel
-      Left = 539
+      Left = 559
       Top = 12
       Width = 5
       Height = 10
@@ -458,7 +474,7 @@ object frmMain: TfrmMain
       OnClick = sbSaveClick
     end
     object Bevel10: TBevel
-      Left = 611
+      Left = 631
       Top = 11
       Width = 5
       Height = 10
@@ -586,8 +602,8 @@ object frmMain: TfrmMain
     end
     object sbScrollRight: TSpeedButton
       Tag = 1
-      Left = 278
-      Top = 1
+      Left = 272
+      Top = 2
       Width = 40
       Height = 24
       Hint = 'Shift the pixels right'
@@ -600,7 +616,7 @@ object frmMain: TfrmMain
     end
     object sbScrollUp: TSpeedButton
       Tag = 2
-      Left = 310
+      Left = 312
       Top = 2
       Width = 40
       Height = 24
@@ -719,7 +735,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 24
-      Hint = 'Toggle lightbox'
+      Hint = 'Toggle frame lock/unlock'
       Enabled = False
       Images = ilActive
       TabOrder = 2
@@ -2337,8 +2353,8 @@ object frmMain: TfrmMain
     end
   end
   object pUndoToolbar: TPanel
-    Left = 1085
-    Top = 269
+    Left = 1125
+    Top = 168
     Width = 161
     Height = 619
     TabOrder = 11
@@ -2358,7 +2374,7 @@ object frmMain: TfrmMain
   object miMain: TMainMenu
     AutoLineReduction = maManual
     Images = ilMenu
-    Left = 704
+    Left = 712
     object File1: TMenuItem
       Caption = 'File'
       object New1: TMenuItem
@@ -3497,6 +3513,7 @@ object frmMain: TfrmMain
       end
       object miGradientFillFrame: TMenuItem
         Caption = '.'
+        Enabled = False
         OnClick = miGradientFillFrameClick
       end
       object N62: TMenuItem
@@ -3704,9 +3721,10 @@ object frmMain: TfrmMain
       object N27: TMenuItem
         Caption = '-'
       end
-      object Optimisedata1: TMenuItem
+      object miOptimiseData: TMenuItem
         Caption = '.'
-        OnClick = Optimisedata1Click
+        Enabled = False
+        OnClick = miOptimiseDataClick
       end
       object N52: TMenuItem
         Caption = '-'
@@ -3745,6 +3763,7 @@ object frmMain: TfrmMain
       end
       object Checkforupdates1: TMenuItem
         Caption = '.'
+        OnClick = Checkforupdates1Click
       end
       object N19: TMenuItem
         Caption = '-'
@@ -3786,6 +3805,10 @@ object frmMain: TfrmMain
       object Controls1: TMenuItem
         Caption = 'Controls'
         OnClick = Controls1Click
+      end
+      object Preview2: TMenuItem
+        Caption = 'Preview'
+        OnClick = Preview2Click
       end
     end
   end
@@ -4973,7 +4996,7 @@ object frmMain: TfrmMain
   end
   object puGradientRGB: TPopupMenu
     OnPopup = puGradientRGBPopup
-    Left = 984
+    Left = 1008
     Top = 56
     object miGradientSelectRGB: TMenuItem
       Caption = '.'

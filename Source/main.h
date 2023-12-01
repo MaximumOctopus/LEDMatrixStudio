@@ -464,7 +464,7 @@ __published:	// IDE-managed Components
 	TMenuItem *N38;
 	TMenuItem *miAutomate;
 	TMenuItem *N27;
-	TMenuItem *Optimisedata1;
+	TMenuItem *miOptimiseData;
 	TMenuItem *N52;
 	TMenuItem *miFontViewer;
 	TMenuItem *About1;
@@ -641,6 +641,7 @@ __published:	// IDE-managed Components
 	TMenuItem *N62;
 	TMenuItem *miGradientLoad;
 	TMenuItem *miGradientSave;
+	TMenuItem *Preview2;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -697,7 +698,7 @@ __published:	// IDE-managed Components
 	void __fastcall miAutosave2Click(TObject *Sender);
 	void __fastcall Openautosavefolder1Click(TObject *Sender);
 	void __fastcall miAutomateClick(TObject *Sender);
-	void __fastcall Optimisedata1Click(TObject *Sender);
+	void __fastcall miOptimiseDataClick(TObject *Sender);
 	void __fastcall miFontViewerClick(TObject *Sender);
 	void __fastcall New1Click(TObject *Sender);
 	void __fastcall miImportFromBitmapClick(TObject *Sender);
@@ -807,6 +808,8 @@ __published:	// IDE-managed Components
 	void __fastcall tbFramesTracking(TObject *Sender);
 	void __fastcall bTimerClick(TObject *Sender);
 	void __fastcall miGradientFillFrameClick(TObject *Sender);
+	void __fastcall Checkforupdates1Click(TObject *Sender);
+	void __fastcall Preview2Click(TObject *Sender);
 
 private:
 
@@ -928,7 +931,6 @@ private:
 	void RecalculatePadding();
 	void ClearCurrentProjectFileName();
 	void SetupMatrixColours();
-	void SetButtonImage(TBitBtn*, int);
 	void ToggleGradient(GradientOption, bool);
 	void SetPreview(int, ViewShape, int, int, bool, bool);
 	void SetFromSettings();

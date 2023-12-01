@@ -342,8 +342,6 @@ namespace ExportRGB
 
 		Matrix *selectedmatrix;
 
-		matrix->CreateMatrixMerge();
-
 		// ===========================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
@@ -501,10 +499,6 @@ namespace ExportRGB
 
 		// ===========================================================================
 
-		matrix->FreeMatrixMerge();
-
-		// ===========================================================================
-
 		dataout.Data[0] = output;
 
 		return dataout;
@@ -519,8 +513,6 @@ namespace ExportRGB
 		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
-
-		matrix->CreateMatrixMerge();
 
 		// ===========================================================================
 
@@ -691,10 +683,6 @@ namespace ExportRGB
 				}
 			}
 		}
-
-		// ===========================================================================
-
-		matrix->FreeMatrixMerge();
 
 		// ===========================================================================
 

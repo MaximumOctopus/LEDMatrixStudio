@@ -32,7 +32,7 @@ struct AppSettings
 	int PadModeHexRow = 0;
 	int PadModeDecCol = 0;
 	int PadModeDecRow = 0;
-	std::wstring HexPrefix = L"";
+	std::wstring HexPrefix = L"0x";
 	std::wstring BinaryPrefix = L"";
 	std::wstring OpenBracket = L"(";
 	std::wstring CloseBracket = L")";
@@ -42,19 +42,20 @@ struct AppSettings
 	std::wstring LastLoadLocation = L"";
 	std::wstring LastAutomationFileName = L"";
 
-	bool AutoSaveEnabled;
-	AutoSaveInterval AutoSave;
+	bool AutoSaveEnabled = false;
+	AutoSaveInterval AutoSave = AutoSaveInterval::kTenMinutes;
 
-	int CustomSpeed = 100;
+    int AnimSpeed = 1000;
+	int CustomSpeed = 1000;
 
-	int BackgroundColour = 0x000000;
+	int BackgroundColour = 0x333333;
 
 	int ExportUpdateMaxPixels = 100000;
-	int ExportPreviewSize = 0;
+	int ExportPreviewSize = 512;
 
     bool IgnoreWarnings = false;
 
-	std::wstring Language = L"";
+	std::wstring Language = L"English";
 
 	void SetPadModeHexColRow(int value)
 	{

@@ -69,7 +69,7 @@
         <ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\release\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
         <ProjectType>CppVCLApplication</ProjectType>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-        <AllPackageLibs>rtl.lib;vcl.lib;vclimg.lib;VclSmp.lib;vclx.lib</AllPackageLibs>
+        <AllPackageLibs>rtl.lib;vcl.lib;vclimg.lib;VclSmp.lib;vclx.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</AllPackageLibs>
         <_TCHARMapping>wchar_t</_TCHARMapping>
         <Multithreaded>true</Multithreaded>
         <Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
@@ -137,7 +137,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <LinkPackageImports>rtl.bpi;vcl.bpi;vclimg.bpi;VclSmp.bpi;vclx.bpi</LinkPackageImports>
+        <LinkPackageImports>rtl.bpi;vcl.bpi;vclimg.bpi;VclSmp.bpi;vclx.bpi;IndySystem.bpi;IndyProtocols.bpi;IndyCore.bpi</LinkPackageImports>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>LEDMatrixStudio_Icon.ico</Icon_MainIcon>
@@ -145,6 +145,8 @@
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>
         <TASM_Debugging>None</TASM_Debugging>
+        <DynamicRTL>false</DynamicRTL>
+        <UsePackages>false</UsePackages>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -157,10 +159,10 @@
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <BCC_PCHName_Clang>LEDMatrixStudioPCH1.h</BCC_PCHName_Clang>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <LinkPackageImports>rtl.bpi;vcl.bpi;vclimg.bpi;VclSmp.bpi;vclx.bpi</LinkPackageImports>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>LEDMatrixStudio_Icon.ico</Icon_MainIcon>
+        <LinkPackageStatics>rtl.lib;vcl.lib;vclimg.lib;VclSmp.lib;vclx.lib;IndySystem.lib;IndyProtocols.lib;IndyCore.lib</LinkPackageStatics>
     </PropertyGroup>
     <ItemGroup>
         <None Include="ActionObject.h">
@@ -351,6 +353,13 @@
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormAutomate.h</DependentOn>
             <BuildOrder>40</BuildOrder>
+        </CppCompile>
+        <CppCompile Include="Forms\FormCheckVersion.cpp">
+            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <Form>frmCheckVersion</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>Forms\FormCheckVersion.h</DependentOn>
+            <BuildOrder>105</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormColourChange.cpp">
             <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
@@ -671,27 +680,28 @@
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>62</BuildOrder>
         </None>
+        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
+        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
         <FormResources Include="Frames\FramePalettePanel.dfm"/>
         <FormResources Include="Frames\FrameQuickData.dfm"/>
-        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
-        <FormResources Include="main.dfm"/>
+        <FormResources Include="Forms\FormNewProject.dfm"/>
         <FormResources Include="Forms\FormOptimise.dfm"/>
         <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
-        <FormResources Include="Forms\FormPreferences.dfm"/>
+        <FormResources Include="Forms\FormImportBitmap.dfm"/>
         <FormResources Include="Forms\FormMerge.dfm"/>
         <FormResources Include="Forms\FormNewBrush.dfm"/>
-        <FormResources Include="Forms\FormNewProject.dfm"/>
-        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
+        <FormResources Include="Forms\FormPreferences.dfm"/>
+        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
         <FormResources Include="Frames\FrameFontPanel.dfm"/>
         <FormResources Include="Frames\FrameGradientPanel.dfm"/>
-        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
+        <FormResources Include="Forms\FormPreviewPopout.dfm"/>
         <FormResources Include="Forms\FormSaveRange.dfm"/>
         <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
-        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
-        <FormResources Include="Forms\FormImportBitmap.dfm"/>
-        <FormResources Include="Forms\FormAbout.dfm"/>
+        <FormResources Include="main.dfm"/>
         <FormResources Include="Forms\FormAddLayer.dfm"/>
         <FormResources Include="Forms\FormAutomate.dfm"/>
+        <FormResources Include="Forms\FormCheckVersion.dfm"/>
+        <FormResources Include="Forms\FormAbout.dfm"/>
         <FormResources Include="Forms\FormColourChange.dfm"/>
         <FormResources Include="Forms\FormExportCode.dfm"/>
         <FormResources Include="Forms\FormExportGIF.dfm"/>

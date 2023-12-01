@@ -47,6 +47,18 @@ bool SystemSettings::LoadSettings()
 
 	if (dwRet != ERROR_SUCCESS)
 	{
+		DWORD dummy;
+
+		RegCreateKeyEx(HKEY_CURRENT_USER,
+					   L"SOFTWARE\\freshney.org\\MatrixBuilder",
+					   0,
+					   NULL,
+					   0,
+					   KEY_ALL_ACCESS,
+					   NULL,
+					   &hKey,
+					   &dummy);
+
 		return false;
 	}
 
@@ -55,8 +67,8 @@ bool SystemSettings::LoadSettings()
 	Project.MatrixModeFromInt(Registry::ReadInteger(hKey, L"matrixtype", 0));
 	Project.Width       = Registry::ReadInteger(hKey, L"gridwidth", 7);
 	Project.Height      = Registry::ReadInteger(hKey, L"gridheight", 7);
-	Project.PixelShapeFromInt(Registry::ReadInteger(hKey, L"pixelshape", 0));
 	Project.PixelSize   = Registry::ReadInteger(hKey, L"pixelsize", CPixelSize20);
+	Project.PixelShapeFromInt(Registry::ReadInteger(hKey, L"pixelshape", 0));
 
 	// ===========================================================================
 
@@ -128,14 +140,8 @@ bool SystemSettings::LoadSettings()
 
 	App.ExportUpdateMaxPixels = Registry::ReadInteger(hKey, L"exportupdatemaxpixels", 100000);
 	App.ExportPreviewSize     = Registry::ReadInteger(hKey, L"exportpreviewsize", 512);
-
-	// ===========================================================================
-
 	App.HexPrefix             = Registry::ReadString(hKey, L"hexprefix2", L"0x");
-
-	// ===========================================================================
-
-	AnimSpeed           = Registry::ReadInteger(hKey, L"animspeed", 1000);
+	App.AnimSpeed           = Registry::ReadInteger(hKey, L"animspeed", 1000);
 
 	// ===========================================================================
 
@@ -298,7 +304,7 @@ bool SystemSettings::SaveSettings()
 	Registry::WriteInteger(hKey, L"patterntoolbar", Bars.Pattern);
 	Registry::WriteInteger(hKey, L"rgbpalettetoolbar", Bars.RGBPalette);
 
-	Registry::WriteInteger(hKey, L"animspeed",  AnimSpeed);
+	Registry::WriteInteger(hKey, L"animspeed",  App.AnimSpeed);
 
 	// =======================================================================
 

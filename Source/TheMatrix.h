@@ -250,9 +250,6 @@ public:
 	TheMatrix(TComponent*, TWinControl*);
     ~TheMatrix();
 
-	void CreateMatrixMerge();
-	void FreeMatrixMerge();
-
    	void SetMatrixReadOnly(bool);
 
 	void NewMatrix(MatrixMode,
@@ -484,4 +481,8 @@ public:
 	int GetRadialOffset();
 	int GetRadialOffsetDirection();
 	bool GetAutomateMode();
+
+	#if _DEBUG
+	std::wstring GetPreviewDebug();
+	#endif
 };

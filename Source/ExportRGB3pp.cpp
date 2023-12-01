@@ -151,7 +151,9 @@ namespace ExportRGB3BPP
 			// =========================================================================
 
 			for (int i = 0; i < __MaxHeight; i++)
+			{
 				MatrixData[i] = L"";
+			}
 
 			if (teo.Code.Source == ReadSource::kRows)
 			{
@@ -346,8 +348,6 @@ namespace ExportRGB3BPP
 
 		Matrix *selectedmatrix;
 
-		matrix->CreateMatrixMerge();
-
 		// ===========================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
@@ -465,10 +465,6 @@ namespace ExportRGB3BPP
 
 		// ===========================================================================
 
-		matrix->FreeMatrixMerge();
-
-		// ===========================================================================
-
 		dataout.Data[0] = output;
 
 		return dataout;
@@ -483,8 +479,6 @@ namespace ExportRGB3BPP
 		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
-
-		matrix->CreateMatrixMerge();
 
 		// ===========================================================================
 
@@ -553,7 +547,7 @@ namespace ExportRGB3BPP
 
 		// ===========================================================================
 
-		if (direction == ScanDirection::kRowLeftToRight)        // left to right
+		if (direction == ScanDirection::kRowLeftToRight)
 		{
 			for (int pixel = 0; pixel < matrix->Details.Width; pixel++)
 			{
@@ -576,7 +570,7 @@ namespace ExportRGB3BPP
 				}
 			}
 		}
-		else if (direction == ScanDirection::kRowRightToLeft)        // right to left
+		else if (direction == ScanDirection::kRowRightToLeft)
 		{
 			for (int pixel = matrix->Details.Width - 1; pixel >= 0; pixel--)
 			{
@@ -603,10 +597,6 @@ namespace ExportRGB3BPP
 		output += output + ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.Code.RGBFormat, teo.Code.Format, teo.Code.Size, teo.Code.RGBBrightness, prefix, spacingchar);
 
 		dataout.Count += 3;
-
-		// ===========================================================================
-
-		matrix->FreeMatrixMerge();
 
 		// ===========================================================================
 

@@ -22,7 +22,7 @@ struct PreviewOptions
 	int Size = 1;
 	ViewShape View = ViewShape::kSquare;
 
-	int Void = 0;
+	int Void = 15;
 	int Offset = 0;
     int Direction = 0;
 

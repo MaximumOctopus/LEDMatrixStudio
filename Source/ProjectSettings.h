@@ -20,20 +20,20 @@ struct ProjectSettings
 {
 	bool Valid;
 
-	MatrixMode Mode;
-	int Width;
-	int Height;
+	MatrixMode Mode = MatrixMode::kMono;
+	int Width = 0;
+	int Height = 0;
 	bool Clear = false;
-	int Special;
-	bool SizeType;
-	int PixelSize;
-	PixelShape Pixel;
-	PixelShape Shape;
+	int Special = 0;
+	bool SizeType = false;
+	int PixelSize = 20;
+	PixelShape Pixel = PixelShape::kSquare;
+	PixelShape Shape = PixelShape::kSquare;
 
-	CustomShape ShapeCustom;
-	int CustomShapeParam;
+	CustomShape ShapeCustom = CustomShape::kNone;
+	int CustomShapeParam = 0;
 
-	int Background;
+	int Background = 0;
 
 	void CustomShapeFromInt(int i)
 	{

@@ -51,17 +51,17 @@ public:
 	AppSettings App;
 	ProjectSettings Project;
 
-	int LEDColoursSingle[6];
-	int LEDColoursBi[6];
-	int RGBBackground;
-	int LEDRGBColours[6];
-	int SelectionColours[3];
+	int LEDColoursSingle[6] = { clBlack, clWhite, clBlack, clBlack, clBlue, 0x00AAAAAA };
+	int LEDColoursBi[6] = { clBlack, clRed, clGreen, clYellow, clBlue, 0x00AAAAAA };
+	int RGBBackground = clBlack;
+	int LEDRGBColours[6] = { clRed, clBlue, clYellow, clBlack, clBlack, clBlack };
+	int SelectionColours[3] = { 2, 1, 0 };
 	Toolbars Bars;
-	RowColumnData RowColumn;
-	int AnimSpeed;
-	bool UseFormatData;
+	RowColumnData RowColumn = RowColumnData::kOff;
+	bool UseFormatData = false;
 	PreviewOptions Preview;
-	int RGBPalette[16];
+	int RGBPalette[16] = { 0x000000, 0xFFFFFF, 0x0000FF, 0x0088FF, 0x0044FF, 0x00FFFF, 0x88FFFF, 0x44FFFF,
+						   0x00FF00, 0x88FF88, 0x44FF44, 0xFF0000, 0xFF8800, 0xFF00FF, 0xFF44FF, 0xFF88FF };
 
 	ExportGIFSettings ExportGIF;
 

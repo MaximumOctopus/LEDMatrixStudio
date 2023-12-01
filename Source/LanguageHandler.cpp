@@ -34,7 +34,9 @@ bool LanguageHandler::IsLoaded()
 
 bool LanguageHandler::LoadLanguage(const std::wstring LanguageId)
 {
-	std::wifstream file(L"language\\" + LanguageId + L".txt");
+	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
+
+	std::wifstream file(path + L"language\\" + LanguageId + L".txt");
 
 	if (file)
 	{

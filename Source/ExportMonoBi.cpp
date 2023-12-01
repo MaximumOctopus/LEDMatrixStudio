@@ -511,8 +511,6 @@ namespace ExportMonoBi
 		int dataindex = 0;
 		ia.Data[dataindex] = 0;
 
-		matrix->CreateMatrixMerge();
-
 		for (int y = 0; y < DataOutDataMax; y++)
 		{
 			dataout.Data[y] = L"";
@@ -726,8 +724,6 @@ namespace ExportMonoBi
 
 		// ===========================================================================
 
-		matrix->FreeMatrixMerge();
-
 		return dataout;
 	}
 
@@ -740,8 +736,6 @@ namespace ExportMonoBi
 		DataOut dataout;
 
 		Matrix *selectedmatrix;
-
-		matrix->CreateMatrixMerge();
 
 		for (int x = 0; x < DataOutDataMax; x++)
 		{
@@ -941,8 +935,6 @@ namespace ExportMonoBi
 		}
 
 		// ===========================================================================
-
-		matrix->FreeMatrixMerge();
 
 		return dataout;
 	}

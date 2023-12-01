@@ -34,6 +34,7 @@
 
 #include "FormAbout.h"
 #include "FormAutomate.h"
+#include "FormCheckVersion.h"
 #include "FormColourChange.h"
 #include "FormCopyMultiple.h"
 #include "FormDeleteMultiple.h"
@@ -181,7 +182,7 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 	GSystemSettings->Bars.Animation  = miShowAnimationToolbar->Checked;
 	GSystemSettings->Bars.RGBPalette = miPaletteGradientToolbar->Checked;
 
-	GSystemSettings->AnimSpeed = timerAnimate->Interval;
+	GSystemSettings->App.AnimSpeed = timerAnimate->Interval;
 
 	// =======================================================================
 
@@ -763,6 +764,7 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	miClearAllFramesLayer->Enabled     = normal_true;
 
 	miAutomate->Enabled                = normal_true;
+	miOptimiseData->Enabled            = normal_true;
 
 	miChangeColoursFrame->Enabled      = normal_true;
 	miChangeColoursLayer->Enabled      = normal_true;
@@ -779,6 +781,7 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	{
 		sbGradient->Enabled               = normal_false;
 		miClearAllFramesGradient->Enabled = normal_false;
+		miGradientFillFrame->Enabled      = normal_false;
 		sbRandomDraw->Enabled             = normal_false;
 		miGradientAllFrames->Enabled      = normal_false;
 		sbPicker->Enabled                 = normal_false;
@@ -793,6 +796,7 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	{
 		sbGradient->Enabled               = normal_true;
 		miClearAllFramesGradient->Enabled = normal_true;
+		miGradientFillFrame->Enabled      = normal_true;
 		sbRandomDraw->Enabled             = normal_true;
 		miGradientAllFrames->Enabled      = normal_true;
 		sbGradientBrush->Enabled          = normal_true;
@@ -1449,7 +1453,7 @@ void TfrmMain::SetGuiLanguageText()
 	miAutosave10->Caption = Utility::WS2US(L"10 " + GLanguageHandler->Text[kMinutes]);
 	Openautosavefolder1->Caption = GLanguageHandler->Text[kOpenAutosaveFolder].c_str();
 	miAutomate->Caption = GLanguageHandler->Text[kAutomate].c_str();
-	Optimisedata1->Caption = GLanguageHandler->Text[kOptimiseData].c_str();
+	miOptimiseData->Caption = GLanguageHandler->Text[kOptimiseData].c_str();
 	miFontViewer->Caption = Utility::WS2US(GLanguageHandler->Text[kFontViewer] + L"...");
 	//
 	About1->Caption = GLanguageHandler->Text[kAbout].c_str();
@@ -2566,7 +2570,7 @@ void __fastcall TfrmMain::miClearAllFramesLayerClick(TObject *Sender)
 		ClearCurrentProjectFileName();
 	}
 }
-//---------------------------------------------------------------------------
+
 
 void __fastcall TfrmMain::miClearAllFramesClick(TObject *Sender)
 {
@@ -2583,7 +2587,7 @@ void __fastcall TfrmMain::miClearAllFramesClick(TObject *Sender)
 		ClearCurrentProjectFileName();
 	}
 }
-//---------------------------------------------------------------------------
+
 
 void __fastcall TfrmMain::miClearAllFramesGradientClick(TObject *Sender)
 {
@@ -2598,7 +2602,7 @@ void __fastcall TfrmMain::miClearAllFramesGradientClick(TObject *Sender)
 		ClearCurrentProjectFileName();
 	}
 }
-//---------------------------------------------------------------------------
+
 
 void __fastcall TfrmMain::miFlipAllFramesClick(TObject *Sender)
 {
@@ -2905,6 +2909,12 @@ void __fastcall TfrmMain::Examples1Click(TObject *Sender)
 }
 
 
+void __fastcall TfrmMain::Checkforupdates1Click(TObject *Sender)
+{
+    OpenCheckForNewVersion(__LEDStudioDate, __LEDStudioVersion, false);
+}
+
+
 void __fastcall TfrmMain::Website1Click(TObject *Sender)
 {
 	Utility::ExecuteFile(L"https://github.com/MaximumOctopus/LEDMatrixStudio");
@@ -2927,29 +2937,43 @@ void __fastcall TfrmMain::witter1Click(TObject *Sender)
 #pragma region Menu_Debug
 void __fastcall TfrmMain::RenderMode1Click(TObject *Sender)
 {
+	#if _DEBUG
 	ShowMessage(Utility::MatrixModeAsString(thematrix->Details.Mode).c_str());
+	#endif
 }
 
 
 void __fastcall TfrmMain::MonoColours1Click(TObject *Sender)
 {
+	#if _DEBUG
 	ShowMessage(IntToHex(thematrix->LEDColoursSingle[0]) + L" / " + IntToHex(thematrix->LEDColoursSingle[1]));
+	#endif
 }
 
 
 void __fastcall TfrmMain::CurrentLayerFrame1Click(TObject *Sender)
 {
+	#if _DEBUG
 	ShowMessage(IntToStr(thematrix->GetCurrentLayer()) + L" / " + IntToStr(thematrix->GetCurrentFrame()) + L" (" +
 				IntToStr(thematrix->GetLayerCount()) + L" / " + IntToStr(thematrix->GetFrameCount()) + L")");
+	#endif
 }
 
 
 void __fastcall TfrmMain::Controls1Click(TObject *Sender)
 {
+	#if _DEBUG
 	ShowMessage(IntToStr(tbFrames->Max));
+	#endif
 }
-//---------------------------------------------------------------------------
 
+
+void __fastcall TfrmMain::Preview2Click(TObject *Sender)
+{
+	#if _DEBUG
+	ShowMessage(thematrix->GetPreviewDebug().c_str());
+	#endif
+}
 #pragma end_region
 
 
@@ -3007,7 +3031,7 @@ void __fastcall TfrmMain::miAutomateClick(TObject *Sender)
 
 	AutomationInput ai;
 
-	ai.FrameCurrent = GetSelectedFrame();
+	ai.FrameCurrent = tbFrames->Position;
 	ai.FrameMax     = tbFrames->Max;
 	ai.Width        = thematrix->Details.Width;
 	ai.Height       = thematrix->Details.Height;
@@ -3044,13 +3068,15 @@ void __fastcall TfrmMain::miAutomateClick(TObject *Sender)
 
 			tbFramesChange(nullptr);
 
+            UpdateDisplay(-1);
+
 			GSystemSettings->App.LastAutomationFileName = Automation.LastFileName;
 		}
 	}
 }
 
 
-void __fastcall TfrmMain::Optimisedata1Click(TObject *Sender)
+void __fastcall TfrmMain::miOptimiseDataClick(TObject *Sender)
 {
 	OpenOptimise(thematrix);
 }
@@ -3060,9 +3086,8 @@ void __fastcall TfrmMain::miFontViewerClick(TObject *Sender)
 {
 	OpenFontViewer();
 }
-//---------------------------------------------------------------------------
-
 #pragma end_region
+
 
 #pragma region Toolbar_Top
 void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
@@ -3304,6 +3329,7 @@ void __fastcall TfrmMain::sbPresetClick(TObject *Sender)
 
 #pragma end_region
 
+
 #pragma region Toolbar_Middle
 void __fastcall TfrmMain::sbClearClick(TObject *Sender)
 {
@@ -3470,6 +3496,7 @@ void __fastcall TfrmMain::bLockFrameClick(TObject *Sender)
 	//}
 }
 #pragma end_region
+
 
 #pragma region Toolbar_Drawing_Tools
 void TfrmMain::SetDrawingMode(int drawingmode)
@@ -5089,7 +5116,6 @@ void __fastcall TfrmMain::puGradientRGBPopup(TObject *Sender)
 #pragma end_region
 
 
-
 #pragma region PopupMenu_PixelShape
 void __fastcall TfrmMain::miPixelShapeSquareClick(TObject *Sender)
 {
@@ -5172,21 +5198,6 @@ void __fastcall TfrmMain::miRandomnessTinyClick(TObject *Sender)
 #pragma end_region
 
 
-
-void TfrmMain::SetButtonImage(TBitBtn *button, int index)
-{
-	Vcl::Graphics::TBitmap *bmp = new TBitmap();
-	bmp->Width  = 16;
-	bmp->Height = 16;
-
-	ilMain->GetBitmap(index, bmp);
-
-	button->Glyph->Assign(bmp);
-
-	delete bmp;
-}
-
-
 void __fastcall TfrmMain::OnGradientClick(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
 	TShape *shape = (TShape*)Sender;
@@ -5210,7 +5221,6 @@ void __fastcall TfrmMain::OnGradientClick(TObject *Sender, TMouseButton Button, 
 		puGradient->Popup(Left + shape->Left + 10, Top + pCanvas->Top + shape->Top + 20);
 	}
 }
-
 
 
 void TfrmMain::SetPreview(int size, ViewShape view, int voidsize, int offset, bool direction, bool popout)
@@ -5485,7 +5495,7 @@ void TfrmMain::SetFromSettings()
 
 	miShowAnimationToolbar->Checked = GSystemSettings->Bars.Animation;
 
-	switch (GSystemSettings->AnimSpeed)
+	switch (GSystemSettings->App.AnimSpeed)
 	{
 	case   10:
 		miPlaybackSpeed3Click(miPlaybackSpeed11);
@@ -5522,9 +5532,9 @@ void TfrmMain::SetFromSettings()
 		break;
 
 	default:
-		if (GSystemSettings->AnimSpeed > 0)
+		if (GSystemSettings->App.AnimSpeed > 0)
 		{
-			SetPlaybackCustom(GSystemSettings->AnimSpeed);
+			SetPlaybackCustom(GSystemSettings->App.AnimSpeed);
 		}
 		else
 		{
@@ -5582,8 +5592,6 @@ void TfrmMain::SetFromSettings()
 	{
 		_RGBPalette[t]->Brush->Color = TColor(GSystemSettings->RGBPalette[t]);
 	}
-
-	// =======================================================================
 }
 
 
@@ -5884,6 +5892,7 @@ void __fastcall TfrmMain::miGradientBottomTopClick(TObject *Sender)
 }
 #pragma end_region
 
+
 void __fastcall TfrmMain::pCanvasMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y)
 {
@@ -5921,14 +5930,9 @@ void __fastcall TfrmMain::SelectFont(TObject *Sender)
 {
 	TMenuItem *mi = (TMenuItem*)Sender;
 
-	std::wstring name = mi->Caption.c_str();
-	name += L".ledsfont";
+	std::wstring name = GFontHandler->Fonts[mi->Tag] + L".ledsfont";
 
 	std::wstring path = GSystemSettings->App.LMSFilePath + L"fonts\\" + name;
-
-//  for t = 1 to length(temp) do
-//    if temp[t] <> '&' then
-//      s = s + temp[t];
 
 	if (FileExists(path.c_str()))
 	{
@@ -5938,7 +5942,7 @@ void __fastcall TfrmMain::SelectFont(TObject *Sender)
 	}
 	else
 	{
-		MessageDlg(Utility::WS2US(GLanguageHandler->Text[kCannotFindFont] + L"\n\n" + name + L"\""), mtError, TMsgDlgButtons() << mbOK, 0);
+		MessageDlg(Utility::WS2US(GLanguageHandler->Text[kCannotFindFont] + L"\n\n\"" + name + L"\""), mtError, TMsgDlgButtons() << mbOK, 0);
 	}
 }
 
@@ -6030,3 +6034,4 @@ void TfrmMain::LoadWithWarnings(const std::wstring file_name)
 
 	FormResize(nullptr);
 }
+

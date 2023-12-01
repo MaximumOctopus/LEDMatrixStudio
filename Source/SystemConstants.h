@@ -14,7 +14,7 @@
 #pragma once
 
 
-static const std::wstring __LEDStudioDate = L"November 15th 2023";
+static const std::wstring __LEDStudioDate = L"December 1st 2023";
 
 #if _WIN64
 static const std::wstring __LEDStudioVersion = L"0.20.0 (x64)";
@@ -25,3 +25,7 @@ static const std::wstring __LEDStudioVersion = L"0.20.0 (x32)";
 static const std::wstring __SimpleTextFull = L"(c) Paul Alan Freshney :: " + __LEDStudioDate + L" :: www.MaximumOctopus.com";
 
 static const std::wstring __Caption = __LEDStudioVersion + L" :: " + __LEDStudioDate;
+
+// used by checkversion
+static const UnicodeString __ApplicationVersionFileUrl = L"http://www.maximumoctopus.com/versions/dled2.html";
+static const UnicodeString __ApplicationHistoryFileUrl = L"http://www.maximumoctopus.com/versions/hled2.html";
