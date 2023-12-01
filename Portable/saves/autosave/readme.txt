@@ -1,1 +1,0 @@
-This is the default folder for all autosave files.
