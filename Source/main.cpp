@@ -3455,11 +3455,12 @@ void __fastcall TfrmMain::sbRotateAnyClick(TObject *Sender)
 	std::wstring angle = cbRotateAngle->Text.c_str();
 
 	double byangle = stod(angle.substr(0, angle.length() - 1));
+
 	int origframe = GetSelectedFrame();
 
-	for (int t = 1; t <= cbRotateCount->ItemIndex + 1; t++)
+	for (int t = 0; t <= cbRotateCount->ItemIndex + 1; t++)
 	{
-		if (t + origframe > thematrix->GetFrameCount())
+		if (t + origframe + 1 > thematrix->GetFrameCount())
 		{
 			thematrix->InsertBlankFrameAt(thematrix->GetFrameCount());
 		}

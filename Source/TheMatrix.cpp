@@ -7922,7 +7922,7 @@ void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)   // to do for mu
 
 	MatrixLayers[CurrentLayer]->Cells[toframe]->Clear(Details.Mode, RGBBackground);
 
-	double myangle = (3.1415926535 * angle) / 180;
+	double aradians = (3.1415926535 * angle) / 180;
 	int hx = std::round(((double)Details.Width - 1) / 2);
 	int hy = std::round(((double)Details.Height - 1) / 2);
 
@@ -7933,14 +7933,14 @@ void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)   // to do for mu
 			int ox = x - hx;
 			int oy = y - hy;
 
-			int newx = hx + std::round((ox * std::cos(angle)) - (oy * std::sin(angle)));
-			int newy = hy + std::round((ox * std::sin(angle)) + (oy * std::cos(angle)));
+			int newx = hx + std::round((ox * std::cos(aradians)) - (oy * std::sin(aradians)));
+			int newy = hy + std::round((ox * std::sin(aradians)) + (oy * std::cos(aradians)));
 
 			switch (Details.Mode)
 			{
 			case MatrixMode::kRGB:
 			case MatrixMode::kRGB3BPP:
-				if (newx >= 0 && newx <= Details.Width - 1 && newy >= 0 && newy <= Details.Height - 1)
+				if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
 				{
 					MatrixLayers[CurrentLayer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
 				}
@@ -7948,7 +7948,7 @@ void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)   // to do for mu
 			default:
 				if (MatrixBackup->Grid[y * Details.Width + x] > 0)
 				{
-					if ((newx >= 0) and (newx <= Details.Width - 1) and (newy >= 0) and (newy <= Details.Height - 1))
+					if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
 					{
 						MatrixLayers[CurrentLayer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
 					}
