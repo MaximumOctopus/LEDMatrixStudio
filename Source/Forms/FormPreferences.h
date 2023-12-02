@@ -67,6 +67,8 @@ __published:	// IDE-managed Components
 	TEdit *eMaxPixels;
 	TEdit *eExportPreview;
 	TColorDialog *colorDialogPrefs;
+	TGroupBox *GroupBox1;
+	TCheckBox *cbDisableWarnings;
 	void __fastcall sMono1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
 	void __fastcall sbClearRecentFileListClick(TObject *Sender);

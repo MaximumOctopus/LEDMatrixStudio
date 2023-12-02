@@ -3,7 +3,7 @@ object frmPreferences: TfrmPreferences
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmPreferences'
-  ClientHeight = 531
+  ClientHeight = 588
   ClientWidth = 527
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -417,15 +417,15 @@ object frmPreferences: TfrmPreferences
     Transparent = True
   end
   object bResetToDefaults: TSpeedButton
-    Left = 8
-    Top = 500
+    Left = 9
+    Top = 556
     Width = 121
     Height = 25
     OnClick = bResetToDefaultsClick
   end
   object bOK: TBitBtn
-    Left = 361
-    Top = 500
+    Left = 362
+    Top = 556
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -473,8 +473,8 @@ object frmPreferences: TfrmPreferences
     TabOrder = 0
   end
   object bCancel: TBitBtn
-    Left = 442
-    Top = 500
+    Left = 443
+    Top = 556
     Width = 75
     Height = 25
     Cancel = True
@@ -730,7 +730,7 @@ object frmPreferences: TfrmPreferences
   end
   object gbMisc: TGroupBox
     Left = 86
-    Top = 421
+    Top = 479
     Width = 427
     Height = 63
     Caption = '.'
@@ -744,7 +744,7 @@ object frmPreferences: TfrmPreferences
     end
     object lHexFormat: TLabel
       Left = 208
-      Top = 32
+      Top = 29
       Width = 3
       Height = 15
       Caption = '.'
@@ -786,33 +786,52 @@ object frmPreferences: TfrmPreferences
       Caption = '.'
     end
     object Label18: TLabel
-      Left = 343
+      Left = 351
       Top = 26
       Width = 3
       Height = 15
       Caption = '.'
     end
     object eMaxPixels: TEdit
-      Left = 89
+      Left = 96
       Top = 24
       Width = 50
       Height = 23
       Hint = 
         'Export will auto-generate on open if there are this many or few ' +
         'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
       TabOrder = 0
       Text = '100000'
     end
     object eExportPreview: TEdit
-      Left = 298
+      Left = 306
       Top = 24
       Width = 39
       Height = 23
       Hint = 
         'Export will auto-generate on open if there are this many or few ' +
         'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
       TabOrder = 1
       Text = '512'
+    end
+  end
+  object GroupBox1: TGroupBox
+    Left = 86
+    Top = 421
+    Width = 427
+    Height = 44
+    TabOrder = 5
+    object cbDisableWarnings: TCheckBox
+      Left = 17
+      Top = 16
+      Width = 97
+      Height = 17
+      Caption = '.'
+      TabOrder = 0
     end
   end
   object colorDialogPrefs: TColorDialog

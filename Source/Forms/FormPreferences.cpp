@@ -58,6 +58,7 @@ bool OpenPreferences(PrefsMatrixColours &colours)
 		frmPreferences->cbHexFormat->Text = GSystemSettings->App.HexPrefix.c_str();
 	}
 
+	frmPreferences->cbDisableWarnings->Checked = GSystemSettings->App.IgnoreWarnings;
 
 	if (frmPreferences->ShowModal() == mrOk)
 	{
@@ -74,6 +75,8 @@ bool OpenPreferences(PrefsMatrixColours &colours)
 
 		GSystemSettings->App.ExportUpdateMaxPixels = frmPreferences->eMaxPixels->Text.ToIntDef(100000);
 		GSystemSettings->App.ExportPreviewSize = frmPreferences->eExportPreview->Text.ToIntDef(512);
+
+	    GSystemSettings->App.IgnoreWarnings = frmPreferences->cbDisableWarnings->Checked;
 
 		if (frmPreferences->cbHexFormat->ItemIndex == 0)
 		{
@@ -92,7 +95,7 @@ bool OpenPreferences(PrefsMatrixColours &colours)
 	return accept;
 }
 
-//---------------------------------------------------------------------------
+
 __fastcall TfrmPreferences::TfrmPreferences(TComponent* Owner)
 	: TForm(Owner)
 {
@@ -138,6 +141,8 @@ void __fastcall TfrmPreferences::bResetToDefaultsClick(TObject *Sender)
 
 		eMaxPixels->Text = L"100000";
 		eExportPreview->Text = L"256";
+
+        cbDisableWarnings->Checked = false;
 	}
 }
 
@@ -165,6 +170,8 @@ void TfrmPreferences::SetGUILanguageText()
 	sbClearRecentFileList->Caption = GLanguageHandler->Text[kClearRecentFilesList].c_str();
 
 	lHexFormat->Caption = GLanguageHandler->Text[kHexFormat].c_str();
+
+    cbDisableWarnings->Caption = GLanguageHandler->Text[kDisableWarnings].c_str();
 
 	sbClearRecentFileList->Caption = GLanguageHandler->Text[kClearRecentFilesList].c_str();
 
