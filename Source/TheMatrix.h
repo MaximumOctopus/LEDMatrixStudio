@@ -483,6 +483,7 @@ public:
 	bool GetAutomateMode();
 
 	#if _DEBUG
+	std::wstring GetPaintBoxDebug();
 	std::wstring GetPreviewDebug();
 	#endif
 };

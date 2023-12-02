@@ -65,7 +65,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 	ScrollHorizontal->Name     = "FSH";
 	ScrollHorizontal->Min      = 0;
 	ScrollHorizontal->OnChange = ScrollBarHorizontalChange;
-	ScrollHorizontal->Visible  = False;
+	ScrollHorizontal->Visible  = false;
 
 	ScrollVertical = new TScrollBar(Owner);
 	ScrollVertical->Parent   = Canvas;
@@ -74,7 +74,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 	ScrollVertical->Name     = "FSV";
 	ScrollVertical->Min      = 0;
 	ScrollVertical->OnChange = ScrollBarVerticalChange;
-	ScrollVertical->Visible  = False;
+	ScrollVertical->Visible  = false;
 
 	// ===========================================================================
 
@@ -8052,7 +8052,14 @@ int TheMatrix::GetAutoPixelSize(int canvas_width, int canvas_height, int gradien
 {
 	if (Details.Available)
 	{
-		int xc = canvas_width - 70;
+		int preview_width = 0;
+
+		if (Preview.Active && !Preview.Popout)
+		{
+			preview_width = PreviewBox->Width;
+		}
+
+		int xc = canvas_width - preview_width - 30;
 		int yc = canvas_height - 14;
 
 		int pxc = 10;
@@ -9151,6 +9158,8 @@ void TheMatrix::ChangeZoomUI(int pixelsize)
 		{
 			ScrollHorizontal->Visible = false;
 		}
+
+		Render.ViewWindow.X = Details.Width - 1;
 	}
 
 	if (pixelsize * Details.Height > containerheight)
@@ -9174,6 +9183,8 @@ void TheMatrix::ChangeZoomUI(int pixelsize)
 		{
 			ScrollVertical->Visible = false;
 		}
+
+        Render.ViewWindow.Y = Details.Height - 1;
 	}
 }
 
@@ -9414,12 +9425,22 @@ void TheMatrix::AddGradient(int colour)
 
 
 #if _DEBUG
+std::wstring TheMatrix::GetPaintBoxDebug()
+{
+	std::wstring s = std::to_wstring(PaintBox->Left) + L", " + std::to_wstring(PaintBox->Top) + L"; " +
+					 std::to_wstring(PaintBox->Width) + L" x " + std::to_wstring(PaintBox->Height) + L" (view: " +
+					 std::to_wstring(Render.ViewWindow.X) + L" x " + std::to_wstring(Render.ViewWindow.Y) + L")";
+
+	return s;
+}
+
+
 std::wstring TheMatrix::GetPreviewDebug()
 {
 	std::wstring s = std::to_wstring(PreviewBox->Left) + L", " + std::to_wstring(PreviewBox->Top) + L"; " +
 					 std::to_wstring(PreviewBox->Width) + L" x " + std::to_wstring(PreviewBox->Height) + L". " +
 					 std::to_wstring(Preview.Size);
 
-    return s;
+	return s;
 }
 #endif

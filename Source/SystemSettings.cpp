@@ -139,9 +139,11 @@ bool SystemSettings::LoadSettings()
 	// ===========================================================================
 
 	App.ExportUpdateMaxPixels = Registry::ReadInteger(hKey, L"exportupdatemaxpixels", 100000);
-	App.ExportPreviewSize     = Registry::ReadInteger(hKey, L"exportpreviewsize", 512);
-	App.HexPrefix             = Registry::ReadString(hKey, L"hexprefix2", L"0x");
-	App.AnimSpeed           = Registry::ReadInteger(hKey, L"animspeed", 1000);
+	App.ExportPreviewSize = Registry::ReadInteger(hKey, L"exportpreviewsize", 512);
+	App.HexPrefix = Registry::ReadString(hKey, L"hexprefix2", L"0x");
+	App.AnimSpeed = Registry::ReadInteger(hKey, L"animspeed", 1000);
+
+	App.IgnoreWarnings = Registry::ReadBool(hKey, L"ignorewarnings", false);
 
 	// ===========================================================================
 
@@ -305,6 +307,8 @@ bool SystemSettings::SaveSettings()
 	Registry::WriteInteger(hKey, L"rgbpalettetoolbar", Bars.RGBPalette);
 
 	Registry::WriteInteger(hKey, L"animspeed",  App.AnimSpeed);
+
+    Registry::WriteInteger(hKey, L"ignorewarnings", App.IgnoreWarnings);
 
 	// =======================================================================
 

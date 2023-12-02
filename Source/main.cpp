@@ -1760,7 +1760,7 @@ void __fastcall TfrmMain::ReopenClick(TObject *Sender)
 
 	// =======================================================================
 
-	if (sbClear->Enabled)
+	if (sbClear->Enabled && !GSystemSettings->App.IgnoreWarnings)
 	{
 		if (MessageDlg(Utility::WS2US(GLanguageHandler->Text[kOpeningNewMatrixWillClearCurrentProject] +
 					   L"\n\n" +
@@ -1882,7 +1882,7 @@ void __fastcall TfrmMain::miImportFromGIFClick(TObject *Sender)
 
 	// =======================================================================
 
-	if (sbClear->Enabled)
+	if (sbClear->Enabled && !GSystemSettings->App.IgnoreWarnings)
 	{
 		if (MessageDlg(Utility::WS2US(GLanguageHandler->Text[kOpeningNewMatrixWillClearCurrentProject] +
 									 L"\n\n" +
@@ -2964,6 +2964,14 @@ void __fastcall TfrmMain::Controls1Click(TObject *Sender)
 {
 	#if _DEBUG
 	ShowMessage(IntToStr(tbFrames->Max));
+	#endif
+}
+
+
+void __fastcall TfrmMain::PaintBox1Click(TObject *Sender)
+{
+	#if _DEBUG
+	ShowMessage(thematrix->GetPaintBoxDebug().c_str());
 	#endif
 }
 
@@ -5147,7 +5155,7 @@ void __fastcall TfrmMain::miPixelTinyClick(TObject *Sender)
 
 	TMenuItem *mi = (TMenuItem*)Sender;
 
-	mi->Checked = True;
+	mi->Checked = true;
 
 	switch (mi->Tag)
 	{
@@ -6035,4 +6043,3 @@ void TfrmMain::LoadWithWarnings(const std::wstring file_name)
 
 	FormResize(nullptr);
 }
-

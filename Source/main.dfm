@@ -3806,6 +3806,13 @@ object frmMain: TfrmMain
         Caption = 'Controls'
         OnClick = Controls1Click
       end
+      object N63: TMenuItem
+        Caption = '-'
+      end
+      object PaintBox1: TMenuItem
+        Caption = 'PaintBox'
+        OnClick = PaintBox1Click
+      end
       object Preview2: TMenuItem
         Caption = 'Preview'
         OnClick = Preview2Click

@@ -564,7 +564,7 @@
     static const int kGradientFlip = 548;
     static const int kAnimationSpeed = 549;
 	static const int kAnimationSpeedHelp = 550;
-	static const int kIgnoreWarnings = 551;
+	static const int kDisableWarnings = 551;
 	static const int kFillFrame = 552;
 	static const int kFontWrap = 553;
 	static const int kLanguageConstantCount = 554;

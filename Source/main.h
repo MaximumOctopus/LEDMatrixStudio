@@ -642,6 +642,8 @@ __published:	// IDE-managed Components
 	TMenuItem *miGradientLoad;
 	TMenuItem *miGradientSave;
 	TMenuItem *Preview2;
+	TMenuItem *N63;
+	TMenuItem *PaintBox1;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -810,6 +812,7 @@ __published:	// IDE-managed Components
 	void __fastcall miGradientFillFrameClick(TObject *Sender);
 	void __fastcall Checkforupdates1Click(TObject *Sender);
 	void __fastcall Preview2Click(TObject *Sender);
+	void __fastcall PaintBox1Click(TObject *Sender);
 
 private:
 
