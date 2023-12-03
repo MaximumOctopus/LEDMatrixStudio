@@ -43,6 +43,8 @@ private:	// User declarations
 
 public:		// User declarations
 	__fastcall TForm7(TComponent* Owner);
+
+	int FrameCount = 0;
 };
 
 struct DeleteMultipleObject
@@ -54,7 +56,7 @@ struct DeleteMultipleObject
 
 //---------------------------------------------------------------------------
 
-DeleteMultipleObject OpenDeleteMultiple();
+DeleteMultipleObject OpenDeleteMultiple(int);
 
 //---------------------------------------------------------------------------
 extern PACKAGE TForm7 *Form7;

@@ -435,7 +435,7 @@ object frmExport: TfrmExport
     Top = 0
     Width = 1085
     Height = 606
-    ActivePage = tsCode
+    ActivePage = tsBinary
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
@@ -959,6 +959,8 @@ object frmExport: TfrmExport
           ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 0
+          ExplicitWidth = 660
+          ExplicitHeight = 545
         end
         object pPreviewStatus: TPanel
           Left = 1
@@ -1130,7 +1132,7 @@ object frmExport: TfrmExport
           Left = 210
           Top = 8
           Width = 185
-          Height = 63
+          Height = 60
           Caption = '.'
           TabOrder = 2
           object sbBinaryNumberSize8bit: TSpeedButton
@@ -1282,7 +1284,7 @@ object frmExport: TfrmExport
           object rbSaveAnimation: TRadioButton
             Left = 24
             Top = 26
-            Width = 113
+            Width = 145
             Height = 17
             Caption = '.'
             Checked = True
@@ -1293,7 +1295,7 @@ object frmExport: TfrmExport
           object rbSaveFrame: TRadioButton
             Left = 24
             Top = 50
-            Width = 113
+            Width = 145
             Height = 17
             Caption = '.'
             TabOrder = 1

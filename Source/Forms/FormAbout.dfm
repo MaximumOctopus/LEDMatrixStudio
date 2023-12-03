@@ -967,8 +967,8 @@ object frmAbout: TfrmAbout
       38AA4E0000000049454E44AE426082}
   end
   object Label5: TLabel
-    Left = 287
-    Top = 562
+    Left = 286
+    Top = 545
     Width = 104
     Height = 13
     Cursor = crHandPoint

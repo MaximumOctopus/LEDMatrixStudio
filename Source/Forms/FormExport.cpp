@@ -135,6 +135,7 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 		break;
 	case MatrixMode::kRGB:
 		gbNumberGrouping->Visible = false;
+		gbNumberGroupingBinary->Visible = false;
 
 		gbRGB->Visible = true;
 		gbBinaryRGB->Visible = true;
@@ -152,6 +153,7 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 		break;
 	case MatrixMode::kRGB3BPP:
 		gbNumberGrouping->Visible = false;
+		gbNumberGroupingBinary->Visible = false;
 
 		gbRGB->Visible = true;
 		gbRGB->Height = 65;                    		// hides background change option
@@ -434,6 +436,17 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 	else
 	{
 		sbBCSRGB565->Down = true;
+	}
+
+	// =======================================================================
+
+	if (eeo.Binary.Content == BinaryFileContents::kEntireAnimation)
+	{
+		rbSaveAnimation->Checked = true;
+	}
+	else
+	{
+        rbSaveFrame->Checked = true;
 	}
 
 	// =======================================================================
@@ -727,17 +740,6 @@ void TfrmExport::CreateExportOptions()
 			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB565;
 		}
 	}
-
-	// =======================================================================
-
-	if (rbSaveAnimation->Checked)
-	{
-		InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;
-	}
-	else
-	{
-		InternalEO.Binary.Content = BinaryFileContents::kSingleFrame;
-	}
 }
 
 
@@ -839,6 +841,11 @@ void TfrmExport::CreateBinaryExportOptions()
 		}
 	}
 
+	if (gbNumberGroupingBinaryRGB->Visible)
+	{
+        InternalEO.Binary.Size = NumberSize::kRGB8bit;
+	}
+
 	// =========================================================================
 
 	if (gbBinaryRGB->Visible)
@@ -879,6 +886,17 @@ void TfrmExport::CreateBinaryExportOptions()
 	else
 	{
 		InternalEO.Code.RGBEnabled = false;
+	}
+
+	// =======================================================================
+
+	if (rbSaveAnimation->Checked)
+	{
+		InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;
+	}
+	else
+	{
+		InternalEO.Binary.Content = BinaryFileContents::kSingleFrame;
 	}
 }
 
@@ -1092,6 +1110,7 @@ void TfrmExport::PreviewBinary()
 {
 	if (!ValidateNumberEdit(eBinaryFrameStart) || !ValidateNumberEdit(eBinaryFrameEnd)) return;
 
+	ShowMessage(L"x1");
 
 	CreateBinaryExportOptions();
 
@@ -1146,6 +1165,8 @@ void TfrmExport::PreviewBinary()
 			}
 			else
 			{
+				ShowMessage(L"x2");
+
 				ExportOutputBinary::BinaryCreateExportAnimationRGB(matrix, InternalEO, IOutput, entrycount, Unique);
 			}
 		}
@@ -1169,6 +1190,8 @@ void TfrmExport::PreviewBinary()
 		}
 
 		// ===================================================================
+
+						ShowMessage(IOutput.size());
 
 		mBinary->Lines->Clear();
 

@@ -3,7 +3,7 @@ object Form7: TForm7
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Form7'
-  ClientHeight = 170
+  ClientHeight = 200
   ClientWidth = 373
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -14,15 +14,15 @@ object Form7: TForm7
   Position = poMainFormCenter
   TextHeight = 15
   object Bevel1: TBevel
-    Left = 5
-    Top = 134
+    Left = 8
+    Top = 158
     Width = 365
     Height = 4
     Shape = bsTopLine
   end
   object lWarning: TLabel
     Left = 8
-    Top = 140
+    Top = 132
     Width = 3
     Height = 15
     Caption = '.'
@@ -425,7 +425,7 @@ object Form7: TForm7
   end
   object bOk: TBitBtn
     Left = 214
-    Top = 144
+    Top = 168
     Width = 75
     Height = 25
     Enabled = False
@@ -513,7 +513,7 @@ object Form7: TForm7
   end
   object bCancel: TBitBtn
     Left = 295
-    Top = 144
+    Top = 168
     Width = 75
     Height = 25
     Cancel = True
@@ -601,6 +601,7 @@ object Form7: TForm7
       Height = 23
       TabOrder = 1
       Text = '2'
+      OnChange = eStartFrameChange
     end
   end
 end

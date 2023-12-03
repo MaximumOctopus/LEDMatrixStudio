@@ -27,17 +27,19 @@ extern LanguageHandler *GLanguageHandler;
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-DeleteMultipleObject OpenDeleteMultiple()
+DeleteMultipleObject OpenDeleteMultiple(int maxframecount)
 {
 	TForm7 *Form7 = new TForm7(Application);
+
+    Form7->FrameCount = maxframecount;
 
 	DeleteMultipleObject dmo;
 
 	if (Form7->ShowModal() == mrOk)
 	{
 		dmo.Process = true;
-		dmo.StartFrame = Form7->eStartFrame->Text.ToIntDef(0);
-		dmo.EndFrame = Form7->eEndFrame->Text.ToIntDef(0);
+		dmo.StartFrame = Form7->eStartFrame->Text.ToIntDef(0) - 1;
+		dmo.EndFrame = Form7->eEndFrame->Text.ToIntDef(0) - 1;
 	}
 
 	delete Form7;
@@ -80,5 +82,5 @@ bool TForm7::ValidateInputs()
 	int sf = eStartFrame->Text.ToIntDef(-1);
 	int ef = eEndFrame->Text.ToIntDef(-1);
 
-	return (sf != -1 && ef != -1 && sf <= ef);
+	return (sf != -1 && ef != -1 && sf <= ef && sf >=1 && ef >=1 && ef <= FrameCount);
 }
