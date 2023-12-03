@@ -4226,6 +4226,8 @@ void TheMatrix::AddFrameMultiple(int count, int current)
 
 void TheMatrix::DeleteFrame(int frame)
 {
+    if (frame == 0 && GetFrameCount() == 1) return;
+
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
 	{
 		MatrixLayers[layer]->Cells.erase(MatrixLayers[layer]->Cells.begin() + frame);
@@ -4239,6 +4241,8 @@ void TheMatrix::DeleteFrame(int frame)
 	if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);
 
 	if (OnSizeChange) OnSizeChange(this);
+
+    CopyCurrentFrameToDrawBuffer();
 
 	PaintBox->Invalidate();
 }
@@ -5868,8 +5872,6 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						if (importLayer + 1 > MatrixLayers.size())
 						{
 							AddLayerSilent(LayerName);
-
-							ShowMessage(MatrixLayers.size());
 						}
 
 						layercount = -1;
@@ -5991,6 +5993,12 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 						// layers have been saved in the file, so we know the first will be 0
 						// set this to -1 so that when the [layer data is reached we increment from -1 to 0 ;)
 						importLayer = -1;
+						break;
+
+					 // ======================================================================
+
+					case LoadData::kLoadHeaderBinaryData:
+                        eeo.SetBinaryFromFile(v);
 						break;
 
 					 // ======================================================================
@@ -6929,7 +6937,7 @@ LoadData TheMatrix::LoadDataParameterType(const std::wstring s, bool headermode,
 		case kAnimLayerCount:
 			return LoadData::kLoadHeaderLayerCount;
 		case kAnimBinary:
-            return LoadData::kLoadHeaderBinaryData;
+			return LoadData::kLoadHeaderBinaryData;
 
 		case kAnimBlockEnd:
 			return LoadData::kLoadHeaderEnd;

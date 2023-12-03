@@ -77,4 +77,6 @@ public:
 
 	void BuildLanguageList(const std::wstring);
 	void BuildGradientList(const std::wstring);
+
+    void RecalculatePadding(MatrixMode, int, int);
 };

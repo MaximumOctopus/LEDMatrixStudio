@@ -931,7 +931,6 @@ private:
 	ProjectColours GetColours();
 	void ChangeMatrixType();
 	void SetCurrentProjectFileName(const std::wstring);
-	void RecalculatePadding();
 	void ClearCurrentProjectFileName();
 	void SetupMatrixColours();
 	void ToggleGradient(GradientOption, bool);

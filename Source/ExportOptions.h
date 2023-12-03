@@ -236,7 +236,8 @@ struct ExportOptions
 
 			std::wstring binary = std::to_wstring(BinarySourceToInt()) + L" " + std::to_wstring(BinaryOrientationToInt()) + L" " + std::to_wstring(BinaryScanDirectionToInt()) + L" ";
 			binary += std::to_wstring(BinaryLSBToInt()) + L" " + std::to_wstring(BinaryFileContentsToInt()) + L" ";
-			binary += std::to_wstring(BinaryRGBFormatToInt()) + L" " + std::to_wstring(Binary.RGBChangePixels) + L" " + std::to_wstring(Binary.RGBChangeColour) + L" " + std::to_wstring(Binary.RGBBrightness);
+			binary += std::to_wstring(BinaryRGBFormatToInt()) + L" " + std::to_wstring(Binary.RGBChangePixels) + L" " + std::to_wstring(Binary.RGBChangeColour) + L" " + std::to_wstring(Binary.RGBBrightness) + L" ";
+			binary += std::to_wstring(BinaryNumberSizeToInt());
 
 			ofile << Formatting::to_utf8(kAnimBinaryF + binary + L"\n");
 		}
@@ -260,7 +261,7 @@ struct ExportOptions
 			data.push_back(stoi(token));
 		}
 
-		if (data.size() != 9)
+		if (data.size() == 10)
 		{
 			BinarySourceFromInt(data[0]);
 			BinaryOrientationFromInt(data[1]);
@@ -271,6 +272,7 @@ struct ExportOptions
 			Binary.RGBChangePixels = data[6];
 			Binary.RGBChangeColour = data[7];
 			Binary.RGBBrightness = data[8];
+			BinaryNumberSizeFromInt(data[9]);
 		}
 	}
 
@@ -578,6 +580,34 @@ struct ExportOptions
 
 		return 0;
 	}
+
+	int BinaryNumberSizeToInt()
+	{
+		switch (Binary.Size)
+		{
+		case NumberSize::k8Bit:
+			return 0;
+		case NumberSize::k16bit:
+			return 1;
+		case NumberSize::k32bit:
+			return 2;
+		case NumberSize::k8bitSwap:
+			return 3;
+		case NumberSize::k16bitSwap:
+			return 4;
+		case NumberSize::k64bit:
+			return 5;
+		case NumberSize::kRGB8bit:
+			return 6;
+		case NumberSize::kRGB16bit:
+			return 7;
+		case NumberSize::kRGB32bit:
+			return 8;
+		}
+
+		return 0;
+	}
+
 
 	int BinaryRGBFormatToInt()
 	{
@@ -933,6 +963,41 @@ struct ExportOptions
 			break;
 		case 1:
 			Binary.Content = BinaryFileContents::kSingleFrame;
+			break;
+		}
+	}
+
+
+	void BinaryNumberSizeFromInt(int i)
+	{
+		switch (i)
+		{
+		case 0:
+			Binary.Size = NumberSize::k8Bit;
+			break;
+		case 1:
+			Binary.Size = NumberSize::k16bit;
+			break;
+		case 2:
+			Binary.Size = NumberSize::k32bit;
+			break;
+		case 3:
+			Binary.Size = NumberSize::k8bitSwap;
+			break;
+		case 4:
+			Binary.Size = NumberSize::k16bitSwap;
+			break;
+		case 5:
+			Binary.Size = NumberSize::k64bit;
+			break;
+		case 6:
+			Binary.Size = NumberSize::kRGB8bit;
+			break;
+		case 7:
+			Binary.Size = NumberSize::kRGB16bit;
+			break;
+		case 8:
+			Binary.Size = NumberSize::kRGB32bit;
 			break;
 		}
 	}

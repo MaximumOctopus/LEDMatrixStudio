@@ -284,6 +284,8 @@ namespace ExportOutputBinary
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
+					ShowMessage(MatrixData[y].c_str());
+
 					entrycount += dataout.Count;
 				}
 			}
@@ -581,14 +583,18 @@ namespace ExportOutputBinary
 
 		Matrix *selectedmatrix;
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
+		{
 			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+		}
 		else
+		{
 			selectedmatrix = matrix->MatrixUser[frame];
+		}
 
-	  // ===========================================================================
+		// ===================================================================
 
 		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
@@ -596,15 +602,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
-				 else
+				}
+				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
-				 break;
+				}
+				break;
 			case ScanDirection::kRowAltRightLeft:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}
@@ -614,15 +628,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}
@@ -633,8 +655,10 @@ namespace ExportOutputBinary
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				 if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
-				 {
+				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				{
+                    ShowMessage(L"alive");
+
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
 						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + row] == matrix->RGBBackground)
@@ -666,6 +690,7 @@ namespace ExportOutputBinary
 					}
 				}
 			}
+
 		}
 		else if (direction == ScanDirection::kRowRightToLeft)        // right to left
 		{

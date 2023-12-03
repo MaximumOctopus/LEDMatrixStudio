@@ -453,3 +453,48 @@ void SystemSettings::BuildLanguageList(const std::wstring path)
 		FindClose(search_handle);
 	}
 }
+
+
+void SystemSettings::RecalculatePadding(MatrixMode mm, int width, int height)
+{
+	switch (App.PadMode)
+	{
+	case PadFormat::kAuto:
+	{
+		App.SetPadModeHexRowFromWidth(width);
+
+		App.SetPadModeHexColFromHeight(height);
+
+		if (mm != MatrixMode::kNone && mm != MatrixMode::kMono)
+		{
+			App.PadModeHexRow = App.PadModeHexRow * 2;
+			App.PadModeHexCol = App.PadModeHexCol * 2;
+		}
+		break;
+	}
+	case PadFormat::k8Bits:
+		App.SetPadModeHexColRow(2);
+		break;
+	case PadFormat::k16Bits:
+		App.SetPadModeHexColRow(4);
+		break;
+	case PadFormat::k24Bits:
+		App.SetPadModeHexColRow(6);
+		break;
+	case PadFormat::k32Bits:
+		App.SetPadModeHexColRow(8);
+		break;
+	case PadFormat::k40Bits:
+		App.SetPadModeHexColRow(10);
+		break;
+	case PadFormat::k48Bits:
+		App.SetPadModeHexColRow(12);
+		break;
+	case PadFormat::k56Bits:
+		App.SetPadModeHexColRow(14);
+		break;
+	case PadFormat::k64Bits:
+		App.SetPadModeHexColRow(16);
+		break;
+	}
+}

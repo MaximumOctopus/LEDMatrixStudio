@@ -3224,7 +3224,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	Screen->Cursor = crDefault;
 
-	RecalculatePadding();
+	GSystemSettings->RecalculatePadding(thematrix->Details.Mode, thematrix->Details.Width, thematrix->Details.Height);
 	MatrixOnChange(nullptr);
 	MatrixOnLayerChange(nullptr);
 
@@ -3981,7 +3981,7 @@ void __fastcall TfrmMain::bDeleteFrameClick(TObject *Sender)
 
 void __fastcall TfrmMain::bDeleteMultipleFramesClick(TObject *Sender)
 {
-	DeleteMultipleObject dmo = OpenDeleteMultiple();
+	DeleteMultipleObject dmo = OpenDeleteMultiple(thematrix->GetFrameCount());
 
 	if (dmo.Process)
 	{
@@ -3989,7 +3989,7 @@ void __fastcall TfrmMain::bDeleteMultipleFramesClick(TObject *Sender)
 
 		for (int t = dmo.StartFrame; t <= dmo.EndFrame; t++)
 		{
-			thematrix->DeleteFrame(t);
+			thematrix->DeleteFrame(dmo.StartFrame);
 		}
 
 		if (tbFrames->Position > thematrix->GetFrameCount())
@@ -4429,7 +4429,7 @@ void TfrmMain::ChangeMatrixType()
 
 	SetupMatrixColours();
 
-	RecalculatePadding();
+	GSystemSettings->RecalculatePadding(thematrix->Details.Mode, thematrix->Details.Width, thematrix->Details.Height);
 
 	// ===========================================================================
 
@@ -4489,7 +4489,7 @@ void TfrmMain::SetCurrentProjectFileName(const std::wstring file_name)
 
 	auto it = std::find(GSystemSettings->FileHistory.begin(), GSystemSettings->FileHistory.end(), file_name);
 
-	if (it != GSystemSettings->FileHistory.end())
+	if (it == GSystemSettings->FileHistory.end())
 	{
 		GSystemSettings->FileHistory.insert(GSystemSettings->FileHistory.begin(), file_name);
 
@@ -4619,7 +4619,10 @@ void TfrmMain::UpdateDisplay(int new_frame_position)
 	tbFrames->Max = thematrix->GetFrameCount();
 
 	bDeleteFrame->Enabled          = (thematrix->GetFrameCount() > 1);
-	bDeleteMultipleFrames->Enabled = (thematrix->GetFrameCount() > 1);
+	bDeleteMultipleFrames->Enabled = bDeleteFrame->Enabled;
+
+	miDeleteFrame->Enabled          = bDeleteFrame->Enabled;
+	miDeleteMultipleFrames->Enabled = bDeleteFrame->Enabled;
 
 	if (new_frame_position > 0)
 	{
@@ -4711,52 +4714,6 @@ void TfrmMain::SetupMatrixColours()
 	sColour1->Brush->Color = TColor(thematrix->LEDColours[CMouseLeft]);
 	sColour2->Brush->Color = TColor(thematrix->LEDColours[CMouseMiddle]);
 	sColour3->Brush->Color = TColor(thematrix->LEDColours[CMouseRight]);
-}
-
-
-void TfrmMain::RecalculatePadding()
-{
-	switch (GSystemSettings->App.PadMode)
-	{
-	case PadFormat::kAuto:
-	{
-		GSystemSettings->App.SetPadModeHexRowFromWidth(thematrix->Details.Width);
-
-		GSystemSettings->App.SetPadModeHexColFromHeight(thematrix->Details.Height);
-
-		if (thematrix->Details.Mode != MatrixMode::kNone &&
-			thematrix->Details.Mode != MatrixMode::kMono)
-		{
-			GSystemSettings->App.PadModeHexRow = GSystemSettings->App.PadModeHexRow * 2;
-			GSystemSettings->App.PadModeHexCol = GSystemSettings->App.PadModeHexCol * 2;
-		}
-		break;
-	}
-	case PadFormat::k8Bits:
-		GSystemSettings->App.SetPadModeHexColRow(2);
-		break;
-	case PadFormat::k16Bits:
-		GSystemSettings->App.SetPadModeHexColRow(4);
-		break;
-	case PadFormat::k24Bits:
-		GSystemSettings->App.SetPadModeHexColRow(6);
-		break;
-	case PadFormat::k32Bits:
-		GSystemSettings->App.SetPadModeHexColRow(8);
-		break;
-	case PadFormat::k40Bits:
-		GSystemSettings->App.SetPadModeHexColRow(10);
-		break;
-	case PadFormat::k48Bits:
-		GSystemSettings->App.SetPadModeHexColRow(12);
-		break;
-	case PadFormat::k56Bits:
-		GSystemSettings->App.SetPadModeHexColRow(14);
-		break;
-	case PadFormat::k64Bits:
-		GSystemSettings->App.SetPadModeHexColRow(16);
-		break;
-	}
 }
 
 
