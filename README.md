@@ -1,4 +1,4 @@
-The C++ Builder rewrite has officially started. I'll post code in here as it gets converted, the first beta version is likely at the beginning of December (with the first official stable release due January 2024).
+The C++ Builder rewrite has almost reached its first major milestone: a public beta release. I'm hoping to have this uploaded on the 9th or 10th of December. 
 
 If you would like to beta test the new version then **please** email me :)
 
