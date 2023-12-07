@@ -65,7 +65,7 @@ namespace ColourUtility
 			  xT = 0;
 			}
 
-			if (lsblocation == LeastSignificantBit::kTopLeft) // flip bit order
+			if (lsblocation == LeastSignificantBit::kTopLeft) // flip bit order: 1111000011001100 -> 0011001100001111
 			{
 				int total = 0;
 
@@ -73,7 +73,7 @@ namespace ColourUtility
 				{
 					if ((xT & powers[t]) == powers[t])
 					{
-						total += powers[31 - t];
+						total += powers[15 - t];
 					}
 				}
 

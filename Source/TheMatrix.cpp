@@ -448,7 +448,7 @@ void TheMatrix::ClearAllMatrixData(bool addfirstframe, int width, int height)
    //	MatrixLayers[CPermanentLayer]->Cells[1]->History.clear();
 	//MatrixLayers[CPermanentLayer]->Cells[1]->AddToHistory();
 
-   //	MatrixLayers[CPermanentLayer]->Cells[1]->Locked = False;
+   //	MatrixLayers[CPermanentLayer]->Cells[1]->Locked = false;
 
 	if (OnChange) OnChange(this);
 
@@ -1587,7 +1587,7 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 			break;
         }
 		default:
-			UpdateDrawTool(x1, y1, SelectionLMB, False);
+			UpdateDrawTool(x1, y1, SelectionLMB, false);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -1615,7 +1615,7 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 			if (OnChange) OnChange(this);
 			break;
 		default:
-			UpdateDrawTool(x1, y1, SelectionMMB, True);
+			UpdateDrawTool(x1, y1, SelectionMMB, true);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -1644,7 +1644,7 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 			break;
 
 		default:
-			UpdateDrawTool(x1, y1, SelectionRMB, False);
+			UpdateDrawTool(x1, y1, SelectionRMB, false);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -1875,7 +1875,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
 			PaintBox->Canvas->Brush->Color = TColor(Render.Draw.Colour);
-			DrawShape(True, Render.Draw.Colour, false);
+			DrawShape(true, Render.Draw.Colour, false);
 
 			// =======================================================================
 
@@ -2026,7 +2026,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			if (OnChange) OnChange(this);
 			break;
 		default:
-			UpdateDrawTool(x1, y1, SelectionLMB, False);
+			UpdateDrawTool(x1, y1, SelectionLMB, false);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -2083,7 +2083,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			break;
 
 		default:
-			UpdateDrawTool(x1, y1, SelectionMMB, True);
+			UpdateDrawTool(x1, y1, SelectionMMB, true);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -2119,7 +2119,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			break;
 
 		default:
-			UpdateDrawTool(x1, y1, SelectionRMB, False);
+			UpdateDrawTool(x1, y1, SelectionRMB, false);
 		}
 
 		CopyDrawBufferToCurrentFrame();
@@ -2384,7 +2384,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
 			PaintBox->Canvas->Brush->Color = TColor(Render.Draw.Colour);
-			DrawShape(True, Render.Draw.Colour, False);
+			DrawShape(true, Render.Draw.Colour, false);
 
 			// =======================================================================
 
@@ -2837,7 +2837,7 @@ void TheMatrix::UpdateDrawTool(int setx, int sety, int setcolour, bool isgradien
 	case DrawMode::kPyramid:
 	case DrawMode::kLeftTriangle:
 	case DrawMode::kRightTriangle:
-		DrawShape(False, Render.Draw.Colour, isgradient);
+		DrawShape(false, Render.Draw.Colour, isgradient);
 
 		CopyDrawBufferToCurrentFrame();
 		break;
@@ -2866,9 +2866,14 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 		break;
 	case BrushSize::kLarge:
-		for (int a = 0; a < 3; a++)
+	case BrushSize::kBigLarge:
+	case BrushSize::kSuperLarge:
+	{
+		int p = ConstantsHelper::PixelsFromBrushSize(Render.Brush);
+
+		for (int a = 0; a < p; a++)
 		{
-			for (int b = 0; b < 3; b++)
+			for (int b = 0; b < p; b++)
 			{
 				PlotPixelMatrix(x + a, y + b, index);
 			}
@@ -2876,6 +2881,7 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 
 		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 		break;
+	}
 
 	default:
         ShowMessage(L"error brush size");
@@ -4085,8 +4091,8 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 						break;
 					}
 				}
-			   else
-			   {
+				else
+				{
 					switch (TextFont->Mode)
 					{
 					case MatrixMode::kMono:
@@ -4101,7 +4107,7 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Draw.Colour;
 						}
 					}
-			   }
+				}
 			}
 		}
 
@@ -4148,7 +4154,7 @@ void TheMatrix::LoadTextToolFont(const std::wstring file_name)
 #pragma region Frame
 void TheMatrix::InsertBlankFrameAt(int insertat)
 {
-	if (!AutomateMode) Busy = True;
+	if (!AutomateMode) Busy = true;
 
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
 	{
@@ -4314,7 +4320,7 @@ void TheMatrix::CopyAllLayersFromTo(int frame_from, int frame_to)
 			CopyDrawBufferToCurrentFrame();
 		}
 
-		Busy = True;
+		Busy = true;
 	}
 
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
@@ -4948,7 +4954,7 @@ void TheMatrix::ImportRowData(bool hex, int sourcedirection, int sourcelsb, cons
 	  temp = temp + s[t];
 	end
 	else if (s[t] = '$') then {
-	  aHex = True;
+	  aHex = true;
 	}
 
 	if (OnChange) OnChange();
@@ -5033,7 +5039,7 @@ void TheMatrix::ImportColumnData(bool hex, int sourcedirection, int sourcelsb, c
 	  temp = temp + s[t];
 	end
 	else if (s[t] = '$') then {
-	  aHex = True;
+	  aHex = true;
 	}
 
 	if (OnChange) OnChange();
@@ -5041,12 +5047,6 @@ void TheMatrix::ImportColumnData(bool hex, int sourcedirection, int sourcelsb, c
 
   PaintBox->Invalidate(); */
 }
-
-
-
-
-
-
 
 
 std::wstring TheMatrix::RowToString(int frame, int row)
@@ -5446,12 +5446,12 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 
 	ImportData import;
 
-	import.ImportOk        = True;
+	import.ImportOk        = true;
 	import.Source          = -1;
 	import.SourceLSB       = -1;
 	//  Result.SourceDirection = -1;
 	import.Mode      = MatrixMode::kMono;
-	import.RGBImport       = False;
+	import.RGBImport       = false;
 	import.Preview.Enabled = Preview.Active;
 
   // ===========================================================================
@@ -5467,7 +5467,7 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 		}
 		catch(...)
 		{
-			import.ImportOk    = False;
+			import.ImportOk    = false;
 			import.ErrorString = GLanguageHandler->Text[kErrorWhileLoadingThisGIF];
 
 			return import;
@@ -5553,7 +5553,7 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 	import.BackgroundColour = RGBBackground;
 
 	import.MaxFrames        = MatrixLayers[CPermanentLayer]->Cells.size();
-	import.FontMode         = False;
+	import.FontMode         = false;
 
 	Details.Available = true;
 
@@ -6212,9 +6212,9 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 		eeo.ExportMode = ExportSource::kAnimation;
 	//  except
 	//	on E: Exception do {
-	//	  Matrix.Available         = False;
+	//	  Matrix.Available         = false;
 
-	//	  Result.ImportOk    = False;
+	//	  Result.ImportOk    = false;
 	//	  Result.ErrorString = GLanguageHandler.Text[kErrorLoadingProject] + ': "' + E.Message + '"';
 	//	}
 	}
@@ -6248,7 +6248,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 	import.SourceLSB = -1;
 	//  Result.SourceDirection = -1;
 	import.Mode = MatrixMode::kMono;
-	import.RGBImport = False;
+	import.RGBImport = false;
 
 	// ===========================================================================
 	// ===========================================================================
@@ -7852,7 +7852,7 @@ void TheMatrix::RotateFrameController(int mode, int multipleoptionmode)
 {
 	CopyDrawBufferToCurrentFrame();
 
-	Busy = True;
+	Busy = true;
 
 	switch (multipleoptionmode)
 	{
@@ -7882,7 +7882,7 @@ void TheMatrix::RotateFrameController(int mode, int multipleoptionmode)
 		break;
 	}
 
-	Busy = False;
+	Busy = false;
 
 	CopyCurrentFrameToDrawBuffer();
 
@@ -7924,7 +7924,53 @@ void TheMatrix::RotateFrame(int mode, int layer, int frame)
 }
 
 
-void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)   // to do for multilayer
+void TheMatrix::RotateFrameAllLayersAnyAngle(double angle, int toframe)
+{
+	if (IsThisFrameLocked(CurrentLayer, toframe) || !MatrixLayers[CurrentLayer]->Visible) return;
+
+	double aradians = (3.1415926535 * angle) / 180;
+	int hx = std::round(((double)Details.Width - 1) / 2);
+	int hy = std::round(((double)Details.Height - 1) / 2);
+
+	for (int layer = 0; layer < MatrixLayers.size(); layer++)
+	{
+		MatrixLayers[layer]->Cells[toframe]->Clear(Details.Mode, RGBBackground);
+
+		for (int x = 0; x < Details.Width; x++)
+		{
+			for (int y = 0; y < Details.Height; y++)
+			{
+				int ox = x - hx;
+				int oy = y - hy;
+
+				int newx = hx + std::round((ox * std::cos(aradians)) - (oy * std::sin(aradians)));
+				int newy = hy + std::round((ox * std::sin(aradians)) + (oy * std::cos(aradians)));
+
+				switch (Details.Mode)
+				{
+				case MatrixMode::kRGB:
+				case MatrixMode::kRGB3BPP:
+					if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
+					{
+						MatrixLayers[layer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
+					}
+
+				default:
+					if (MatrixBackup->Grid[y * Details.Width + x] > 0)
+					{
+						if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
+						{
+							MatrixLayers[layer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)
 {
 	if (IsThisFrameLocked(CurrentLayer, toframe) || !MatrixLayers[CurrentLayer]->Visible) return;
 
@@ -8755,7 +8801,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	 case 19:
 		for (int x = 0; x < ao.Brushes[0].BrushData.size(); x++)
 		{
-			StringToRow(False, ao.Brushes[0].BrushData[x], CurrentFrame, x,
+			StringToRow(false, ao.Brushes[0].BrushData[x], CurrentFrame, x,
 						  ao.Brushes[0].TransparentColour,
 						  ao.Brushes[0].Transparent);
 		}
@@ -8766,7 +8812,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		{
 			for (int x = 0; x < ao.Brushes[0].BrushData.size(); x++)
 			{
-				StringToRow(False, ao.Brushes[0].BrushData[x], CurrentFrame, x,
+				StringToRow(false, ao.Brushes[0].BrushData[x], CurrentFrame, x,
 							 ao.Brushes[0].TransparentColour,
 							 ao.Brushes[0].Transparent);
 			}
@@ -8776,7 +8822,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	case 21:
 		for (int x = 0; x < ao.Brushes[1].BrushData.size(); x++)
 		{
-			StringToRow(False, ao.Brushes[1].BrushData[x], CurrentFrame, x,
+			StringToRow(false, ao.Brushes[1].BrushData[x], CurrentFrame, x,
 						  ao.Brushes[1].TransparentColour,
 						  ao.Brushes[1].Transparent);
 		}
@@ -8787,7 +8833,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		{
 			for (int x = 0; x < ao.Brushes[1].BrushData.size(); x++)
 			{
-				StringToRow(False, ao.Brushes[1].BrushData[x], CurrentFrame, x,
+				StringToRow(false, ao.Brushes[1].BrushData[x], CurrentFrame, x,
 					 ao.Brushes[1].TransparentColour,
 					 ao.Brushes[1].Transparent);
 			}

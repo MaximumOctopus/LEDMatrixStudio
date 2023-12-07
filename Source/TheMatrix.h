@@ -333,6 +333,7 @@ public:
 	void PerformScrollOnCopyFrame(int );
 	void PerformColumnScrollOnCurrentFrame(int , int , bool);
 	void PerformRowScrollOnCurrentFrame(int , int , bool);
+    void RotateFrameAllLayersAnyAngle(double, int);
 	void RotateFrameAnyAngle(double, int);
 
 	// =========================================================================

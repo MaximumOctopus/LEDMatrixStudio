@@ -567,5 +567,6 @@
 	static const int kDisableWarnings = 551;
 	static const int kFillFrame = 552;
 	static const int kFontWrap = 553;
-	static const int kLanguageConstantCount = 554;
+	static const int kMirrorDraw = 554;
+	static const int kLanguageConstantCount = 555;
 

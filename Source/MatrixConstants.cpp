@@ -26,8 +26,31 @@ namespace ConstantsHelper
 			return BrushSize::kMedium;
 		case 2:
 			return BrushSize::kLarge;
+		case 3:
+			return BrushSize::kBigLarge;
+		case 4:
+			return BrushSize::kSuperLarge;
 		}
 
 		return BrushSize::kSmall;
+	}
+
+	int PixelsFromBrushSize(BrushSize bs)
+	{
+		switch (bs)
+		{
+		case BrushSize::kSmall:
+			return BrushSizePixels[0];
+		case BrushSize::kMedium:
+			return BrushSizePixels[1];
+		case BrushSize::kLarge:
+			return BrushSizePixels[2];
+		case BrushSize::kBigLarge:
+			return BrushSizePixels[3];
+		case BrushSize::kSuperLarge:
+			return BrushSizePixels[4];
+		}
+
+        return 1;
 	}
 }

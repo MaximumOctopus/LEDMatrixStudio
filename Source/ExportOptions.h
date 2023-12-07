@@ -122,7 +122,7 @@ struct CodeOptions
 	int LineCount = 10;
 
 	bool IncludePreamble = true;
-	bool CleanMode = false; // True = exclude everything from data output except the data!
+	bool CleanMode = false; // true = exclude everything from data output except the data!
 
 	bool RGBEnabled = false;
 	RGBMode RGBFormat = RGBMode::kRGB;

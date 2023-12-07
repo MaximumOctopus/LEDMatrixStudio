@@ -237,7 +237,7 @@ void __fastcall TfrmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
 
 		thematrix->DrawFontCharacter(Key - 32, GetSelectedFrame());
 	}
-	else if (Key == VK_RETURN)
+	else if (Key == VK_RETURN || Key == VK_ESCAPE)
 	{
 		thematrix->CancelDrawMode();
 
@@ -966,8 +966,6 @@ void __fastcall TfrmMain::PaletteColourSelected(int button, int colour)
 										 thematrix->LEDRGBColours[CMouseMiddle],
 										 thematrix->LEDRGBColours[CMouseRight]);
 
-		FramePalettePanel->AddToHistory(colour); // to do, palette clicks only
-
 		GenerateShades(colour);
 	}
 }
@@ -1280,6 +1278,7 @@ void TfrmMain::SetGuiLanguageText()
 	tsPalette->Caption = GLanguageHandler->Text[kPalette].c_str();
 	tsGradients->Caption = GLanguageHandler->Text[kGradients].c_str();
 
+	lMirror->Caption = GLanguageHandler->Text[kMirrorDraw].c_str();
 
 	// main menu
 	File1->Caption = GLanguageHandler->Text[kFile].c_str();
@@ -1649,6 +1648,7 @@ void TfrmMain::BuildFontMenu()
 	else
 	{
 		sbFont->Visible = false;
+        miFont->Visible = false;
 	}
 }
 
@@ -3524,11 +3524,11 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 
 		if (thematrix->Details.Mode == MatrixMode::kRGB || thematrix->Details.Mode == MatrixMode::kRGB3BPP)
 		{
-		 thematrix->Render.Draw.Colour = 0xFF8822;  // ensures something is drawn as we move before clicking
+			thematrix->Render.Draw.Colour = 0xFF8822;  // ensures something is drawn as we move before clicking
 		}
 		else
 		{
-		  thematrix->Render.Draw.Colour = 1;        // ensures something is drawn as we move before clicking
+			thematrix->Render.Draw.Colour = 1;        // ensures something is drawn as we move before clicking
 		}
 	}
 	else
@@ -3553,6 +3553,7 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 	thematrix->Render.Draw.Special   = tbFrames->Max;
 
 	lSelectedTool->Caption           = DrawModes[drawingmode].c_str();
+    lSelectedTool->Refresh();
 
 	DisplayFrame(GetSelectedFrame());
 }
@@ -4054,8 +4055,8 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 		GSystemSettings->Project.Mode    = ted.Mode;
 		ChangeMatrixType();
 
-		GSystemSettings->Project.Width         = ted.NewWidth;
-		GSystemSettings->Project.Height        = ted.NewHeight;
+		GSystemSettings->Project.Width = ted.NewWidth;
+		GSystemSettings->Project.Height = ted.NewHeight;
 
 		tbFrames->Max                  = thematrix->GetFrameCount();
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
@@ -4299,7 +4300,6 @@ void TfrmMain::SetSimpleExport(ExportOptions teo)
 #pragma end_region
 
 
-
 void TfrmMain::BuildImportData(ImportData &id, int start_frame, int end_frame)
 {
 	id.PadMode                   = GSystemSettings->App.PadMode;
@@ -4438,7 +4438,7 @@ void TfrmMain::ChangeMatrixType()
 	case MatrixMode::kMono:
 		if (sbGradient->Tag == 1)
 		{
-			ToggleGradient(GradientOption::kOff, True);
+			ToggleGradient(GradientOption::kOff, true);
 		}
 
 		sbGradient->Enabled               = false;
@@ -4452,7 +4452,7 @@ void TfrmMain::ChangeMatrixType()
 	case MatrixMode::kRGB3BPP:
 		if (sbGradient->Tag == 1)
 		{
-			ToggleGradient(GradientOption::kVertical, False);
+			ToggleGradient(GradientOption::kVertical, false);
 		}
 
 		sbGradient->Enabled              = true;
@@ -4464,7 +4464,7 @@ void TfrmMain::ChangeMatrixType()
 	case MatrixMode::kRGB:
 		if (sbGradient->Tag == 1)
 		{
-			ToggleGradient(GradientOption::kVertical, True);
+			ToggleGradient(GradientOption::kVertical, true);
 		}
 
 		sbPicker->Enabled = true;
@@ -4776,7 +4776,7 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 				if (MatrixGradient[t]->Height != GSystemSettings->Project.PixelSize + 1)
 				{
 					MatrixGradient[t]->Height = GSystemSettings->Project.PixelSize + 1;
-                }
+				}
 
 				MatrixGradient[t]->Brush->Color = TColor(thematrix->Render.Gradient.IY[t]);
 
@@ -4809,7 +4809,7 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 				}
 
 				MatrixGradient[t]->Parent      = pCanvas;
-				MatrixGradient[t]->Visible     = True;
+				MatrixGradient[t]->Visible     = true;
 				MatrixGradient[t]->Tag         = t;
 				MatrixGradient[t]->OnMouseDown = OnGradientClick;
 
@@ -4868,57 +4868,57 @@ void __fastcall TfrmMain::miPlaybackSpeed3Click(TObject *Sender)
 
 	mi->Checked = true;
 
-	std::wstring hint = L"";
+	std::wstring hint = GLanguageHandler->Text[kPlayAnimation] + L" ";
 
 	switch (mi->Tag)
 	{
 	case 0:
 		timerAnimate->Interval = 2000;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (2 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(2 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 1:
 		timerAnimate->Interval = 1500;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (1.5 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(1.5 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 2:
-		  timerAnimate->Interval = 1000;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (1 " + GLanguageHandler->Text[kSecond] + L")";
+		timerAnimate->Interval = 1000;
+		hint += L"(1 " + GLanguageHandler->Text[kSecond] + L")";
 		break;
 	case 3:
 		timerAnimate->Interval = 500;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.5 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.5 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 4:
 		timerAnimate->Interval = 250;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.25 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.25 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 5:
 		timerAnimate->Interval = 200;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.20 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.20 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 6:
 		timerAnimate->Interval = 100;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.1 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.1 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 7:
 		timerAnimate->Interval = 50;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.05 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.05 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 8:
 		timerAnimate->Interval = 25;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.025 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.025 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 9:
 		timerAnimate->Interval = 20;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.020 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.020 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 10:
 		timerAnimate->Interval = 10;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (0.01 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.01 " + GLanguageHandler->Text[kSeconds] + L")";
 		break;
 	case 20:
 		timerAnimate->Interval = GSystemSettings->App.CustomSpeed;
-		hint = GLanguageHandler->Text[kPlayAnimation] + L" (" + std::to_wstring(GSystemSettings->App.CustomSpeed) + L" ms";
+		hint += L"(" + std::to_wstring(GSystemSettings->App.CustomSpeed) + L" ms";
 		break;
 	}
 
@@ -5601,11 +5601,11 @@ void TfrmMain::GenerateShades(int colour)
 	int xB = (colour & 0xff0000) >> 16;
 	int xG = (colour & 0x00ff00) >> 8;
 
-	int xMaxRPos = std::round(std::max(xR, std::max(xG, xB)) / 255);
+	double xMaxRPos = std::round((double)std::max(xR, std::max(xG, xB)) / 255);
 
-	int dR = std::round((xR * xMaxRPos) / 16);
-	int dG = std::round((xG * xMaxRPos) / 16);
-	int dB = std::round((xB * xMaxRPos) / 16);
+	double dR = std::round((double)(xR * xMaxRPos) / 16);
+	double dG = std::round((double)(xG * xMaxRPos) / 16);
+	double dB = std::round((double)(xB * xMaxRPos) / 16);
 
 	for (int t = 0; t < 16; t++)
 	{

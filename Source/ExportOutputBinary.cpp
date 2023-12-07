@@ -284,8 +284,6 @@ namespace ExportOutputBinary
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
-					ShowMessage(MatrixData[y].c_str());
-
 					entrycount += dataout.Count;
 				}
 			}
@@ -657,8 +655,6 @@ namespace ExportOutputBinary
 			{
 				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
-                    ShowMessage(L"alive");
-
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
 						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + row] == matrix->RGBBackground)

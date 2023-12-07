@@ -21,7 +21,7 @@
 bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vector<std::wstring> &data)
 {
 	std::vector<std::wstring> unique_items;
-	//lUniqueItems.Sorted := True;
+	//lUniqueItems.Sorted := true;
 
 	std::vector<std::wstring> output;
 
@@ -132,7 +132,7 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std::vector<std::wstring> &data, std::vector<std::wstring> &output)
 {
 	std::vector<std::wstring> unique_items;
-	//  lUniqueItems.Sorted := True;
+	//  lUniqueItems.Sorted := true;
 
 	int indexdatasize = 0;
 

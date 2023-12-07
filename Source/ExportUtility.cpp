@@ -574,21 +574,21 @@ namespace ExportUtility
 		output.push_back(cc);
 
 		output.push_back(GetSource(teo.Code.Language, teo.Code.Source));
-		output.push_back(GetLineContent(teo, True));
-		output.push_back(GetLSB(teo, True));
-		output.push_back(GetOrientation(teo, True));
-		output.push_back(GetScanDirection(teo, True));
+		output.push_back(GetLineContent(teo, true));
+		output.push_back(GetLSB(teo, true));
+		output.push_back(GetOrientation(teo, true));
+		output.push_back(GetScanDirection(teo, true));
 
 		if (teo.Code.RGBEnabled)
 		{
 			output.push_back(cc);
-			output.push_back(GetRGBMode(teo, True));
-			output.push_back(GetRGBBrightness(teo, True));
-			output.push_back(GetColourSpace(teo, True));
+			output.push_back(GetRGBMode(teo, true));
+			output.push_back(GetRGBBrightness(teo, true));
+			output.push_back(GetColourSpace(teo, true));
 		}
 		else
 		{
-			output.push_back(GetNumberSize(teo.Code.Language, teo.Code.Size, True));
+			output.push_back(GetNumberSize(teo.Code.Language, teo.Code.Size, true));
 		}
 	}
 

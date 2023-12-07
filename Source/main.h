@@ -644,6 +644,10 @@ __published:	// IDE-managed Components
 	TMenuItem *Preview2;
 	TMenuItem *N63;
 	TMenuItem *PaintBox1;
+	TLabel *lMirror;
+	TBevel *Bevel21;
+	TMenuItem *N4x41;
+	TMenuItem *N5x51;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);

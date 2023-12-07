@@ -23,7 +23,7 @@
 	enum class MatrixMode { kNone = 0, kMono, kBiSequential, kBiBitplanes, kRGB, kRGB3BPP };
 
 	enum class PixelShape { kSquare = 0, kCircle, kRoundRect };
-	enum class BrushSize  { kSmall = 0, kMedium, kLarge };
+	enum class BrushSize  { kSmall = 0, kMedium, kLarge, kBigLarge, kSuperLarge };
 
 	enum class CustomShape { kNone = 0, kCircle, kBorders, kTriangle };
 
@@ -52,6 +52,7 @@
 	enum class PadFormat { kAuto = 0, k8Bits, k16Bits, k24Bits, k32Bits, k40Bits, k48Bits, k56Bits, k64Bits };
 	enum class BracketStyle { kNone = 0, kNormal, kCurly, kSquare };
 
+	static const int BrushSizePixels[] = { 1, 2, 3, 4, 5 };
 
 	static const int __MaxWidth                = 256;
 	static const int __MaxHeight               = 256;
@@ -178,4 +179,6 @@
 namespace ConstantsHelper
 {
 	BrushSize BrushFromInt(int);
+
+    int PixelsFromBrushSize(BrushSize);
 }
