@@ -435,7 +435,7 @@ object frmExport: TfrmExport
     Top = 0
     Width = 1085
     Height = 606
-    ActivePage = tsBinary
+    ActivePage = tsCode
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
@@ -461,7 +461,7 @@ object frmExport: TfrmExport
           Caption = '.'
           TabOrder = 0
           object sbDataRows: TSpeedButton
-            Left = 16
+            Left = 12
             Top = 24
             Width = 75
             Height = 25
@@ -1045,6 +1045,7 @@ object frmExport: TfrmExport
             Height = 23
             Style = csDropDownList
             TabOrder = 0
+            OnChange = sbBinaryDataRowsClick
           end
           object cbBinaryScanDirection: TComboBox
             Left = 16
@@ -1053,6 +1054,7 @@ object frmExport: TfrmExport
             Height = 23
             Style = csDropDownList
             TabOrder = 1
+            OnChange = sbBinaryDataRowsClick
           end
           object eBinaryFrameStart: TEdit
             Left = 16

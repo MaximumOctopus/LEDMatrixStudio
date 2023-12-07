@@ -342,7 +342,7 @@ void __fastcall TfrmAutomate::bLoadAutomationClick(TObject *Sender)
 
 		if (lbActions->Count != 0)
 		{
-			bOK->Enabled = True;
+			bOK->Enabled = true;
 		}
 
 		bCopyBrush1ColoursSource->Enabled = (CustomBrush[0].size() != 0);
@@ -531,7 +531,7 @@ void __fastcall TfrmAutomate::bCopyBrush1ColoursSourceClick(TObject *Sender)
 	int brushindex = bb->Tag;
 
 	std::vector<std::wstring> colourlist;
-	//  lColourList->Sorted = True;
+	//  lColourList->Sorted = true;
 
 	std::wstring colour = L"";
 

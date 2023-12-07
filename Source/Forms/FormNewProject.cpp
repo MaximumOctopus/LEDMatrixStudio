@@ -31,7 +31,7 @@ ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstat
 
 	ProjectSettings NewProjectSettings;
 
-	NewProjectSettings.Valid = False;
+	NewProjectSettings.Valid = false;
 	NewProjectSettings.Mode = MatrixMode::kMono;
 	NewProjectSettings.Width = -1;
 	NewProjectSettings.Height = -1;

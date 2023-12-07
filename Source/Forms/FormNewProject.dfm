@@ -3,8 +3,8 @@ object Form16: TForm16
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Form16'
-  ClientHeight = 376
-  ClientWidth = 720
+  ClientHeight = 379
+  ClientWidth = 727
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET

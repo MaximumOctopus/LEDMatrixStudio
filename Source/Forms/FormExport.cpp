@@ -1110,8 +1110,6 @@ void TfrmExport::PreviewBinary()
 {
 	if (!ValidateNumberEdit(eBinaryFrameStart) || !ValidateNumberEdit(eBinaryFrameEnd)) return;
 
-	ShowMessage(L"x1");
-
 	CreateBinaryExportOptions();
 
 	int endframelimit = 0;
@@ -1165,8 +1163,6 @@ void TfrmExport::PreviewBinary()
 			}
 			else
 			{
-				ShowMessage(L"x2");
-
 				ExportOutputBinary::BinaryCreateExportAnimationRGB(matrix, InternalEO, IOutput, entrycount, Unique);
 			}
 		}
@@ -1190,8 +1186,6 @@ void TfrmExport::PreviewBinary()
 		}
 
 		// ===================================================================
-
-						ShowMessage(IOutput.size());
 
 		mBinary->Lines->Clear();
 

@@ -144,8 +144,8 @@ void __fastcall TfrmNewBrush::FormShow(TObject *Sender)
 {
 	if (MatrixAutomate->Details.Mode != MatrixMode::kRGB)
 	{
-		clbMain->Enabled    = False;
-		bAddColour->Enabled = False;
+		clbMain->Enabled    = false;
+		bAddColour->Enabled = false;
 	}
 }
 
