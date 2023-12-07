@@ -18,6 +18,7 @@ object framePalette: TframePalette
     Top = 9
     Width = 65
     Height = 65
+    OnMouseDown = sRGBP1MouseDown
   end
   object sRGBP7: TShape
     Tag = 6

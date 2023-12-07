@@ -206,7 +206,7 @@ void TframeLayers::UpdateLayerTable()
 		{
 			if (count == 1)
 			{
-				ParentMatrix->SetVisibility(t, True);
+				ParentMatrix->SetVisibility(t, true);
 
 				sgLayers->Cells[CCellVisible][1 + count - 1 - t] = L"x";
 			}
@@ -292,7 +292,7 @@ void TframeLayers::UpdateExisting()
 		{
 			if (count == 1)
 			{
-				ParentMatrix->SetVisibility(t, True);
+				ParentMatrix->SetVisibility(t, true);
 
 				sgLayers->Cells[CCellVisible][1 + count - 1 - t] = L"x";
 			}

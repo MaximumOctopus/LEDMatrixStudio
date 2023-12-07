@@ -48,6 +48,12 @@ void TframePalette::Init()
 }
 
 
+void TframePalette::DeInit()
+{
+	SavePaletteHistory();
+}
+
+
 void __fastcall TframePalette::eRedKeyPress(TObject *Sender, System::WideChar &Key)
 {
 	if (Key == 13)
@@ -97,6 +103,11 @@ void __fastcall TframePalette::sRGBP1MouseDown(TObject *Sender, TMouseButton But
 	{
 		mouse = 2;
 	}
+
+	if (Sender == sRGBPaletteColour)
+	{
+		AddToHistory(colour);
+    }
 
 	if (OnColourClick) OnColourClick(mouse, colour);
 }
@@ -246,3 +257,4 @@ bool TframePalette::SavePaletteHistory()
 
     return true;
 }
+
