@@ -1,4 +1,4 @@
-The C++ Builder rewrite has almost reached its first major milestone: a public beta release. I'm hoping to have this uploaded on the 9th or 10th of December. 
+The first public beta of the C++ rewrite is now available in the \portable folder.
 
 If you would like to beta test the new version then **please** email me :)
 
