@@ -1680,29 +1680,33 @@ bool TfrmExport::SaveBinaryData(const std::wstring file_name)
 
 	std::ofstream file;
 
-	file.open(file_name);
+	file.open(file_name, ios::binary);
 
 	MatrixPreset mp;
 
 	if (file)
 	{
+		char byte;
+
 		for (int t = 0; t < mBinary->Lines->Count; t++)
 		{
 			if (mBinary->Lines->Strings[t] != L"")
 			{
 				std::wstring temp = L"";
 
-				for (int z = 0; z < mBinary->Lines->Strings[t].Length(); z++)
+				std::wstring line = mBinary->Lines->Strings[t].c_str();
+
+				for (int z = 0; z < line.length(); z++)
 				{
-					if (mBinary->Lines->Strings[t][z] != L' ')
+					if (line[z] != L' ')
 					{
-						temp += mBinary->Lines->Strings[t][z];
+						temp += line[z];
 					}
 					else
 					{
-						int byte = Convert::HexToByte(temp);
+						byte = Convert::HexToByte(temp);
 
-						file << byte;
+						file.write((char*)&byte, 1);
 
 						temp = L"";
 					}
@@ -1721,7 +1725,7 @@ bool TfrmExport::SaveBinaryData(const std::wstring file_name)
 
 					outputfilename = path + fileprefix + L"_" + std::to_wstring(animframe) + ext;
 
-					file.open(outputfilename);
+					file.open(outputfilename, ios::binary);
 				}
 			}
 		}

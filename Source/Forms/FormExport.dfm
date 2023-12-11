@@ -439,8 +439,6 @@ object frmExport: TfrmExport
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
-    ExplicitWidth = 1079
-    ExplicitHeight = 600
     object tsCode: TTabSheet
       Caption = '.'
       object Panel2: TPanel
@@ -452,7 +450,6 @@ object frmExport: TfrmExport
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
-        ExplicitHeight = 570
         object gbSource: TGroupBox
           Left = 15
           Top = 8
@@ -514,7 +511,7 @@ object frmExport: TfrmExport
             Height = 23
             Style = csDropDownList
             TabOrder = 0
-            OnChange = cbDirectionChange
+            OnChange = cbOptimiseClick
           end
           object cbScanDirection: TComboBox
             Left = 16
@@ -523,7 +520,7 @@ object frmExport: TfrmExport
             Height = 23
             Style = csDropDownList
             TabOrder = 1
-            OnChange = cbDirectionChange
+            OnChange = cbOptimiseClick
           end
           object eFrameStart: TEdit
             Left = 16
@@ -1045,16 +1042,16 @@ object frmExport: TfrmExport
             Height = 23
             Style = csDropDownList
             TabOrder = 0
-            OnChange = sbBinaryDataRowsClick
+            OnChange = cbOptimiseClick
           end
           object cbBinaryScanDirection: TComboBox
             Left = 16
-            Top = 82
+            Top = 84
             Width = 152
             Height = 23
             Style = csDropDownList
             TabOrder = 1
-            OnChange = sbBinaryDataRowsClick
+            OnChange = cbOptimiseClick
           end
           object eBinaryFrameStart: TEdit
             Left = 16
