@@ -52,26 +52,31 @@ namespace Convert
 	}
 
 
-	int HexToByte(const std::wstring s)
+	char HexToByte(const std::wstring s)
 	{
 		int total = 0;
 		int digit = 0;
+		int multiplier = 1;
 
 		for (int i = 0; i < s.length(); i++)
 		{
+			int c = (unsigned char)s[i];
+
 			if (isdigit(s[i]))
 			{
-				digit = s[i] - 48;
+				digit = c - 48;
 			}
-			else if (s[i] >= 65 && s[i] < 70)   // A..F
+			else if (c >= 65 && c <= 70)   // A..F
 			{
-				digit = s[i] - 55;
+				digit = c - 55;
 			}
 
-			total += digit * powers16[s.length() - i + 1];
+			total += digit * multiplier;
+
+			multiplier *= 16;
 		}
 
-		return total;
+		return total & 0xff;
 	}
 
 

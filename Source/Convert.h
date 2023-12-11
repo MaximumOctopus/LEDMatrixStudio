@@ -19,7 +19,7 @@ namespace Convert
     unsigned __int64 BinToInt(const std::wstring s);
 
 	__int64 HexToInt(const std::wstring);
-	int HexToByte(const std::wstring);
+	char HexToByte(const std::wstring);
 
 	std::wstring IntegerToBinary(int, __int64);
 }

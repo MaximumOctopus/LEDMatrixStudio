@@ -416,15 +416,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}
@@ -434,15 +442,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}
@@ -458,9 +474,13 @@ namespace ExportOutputBinary
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
+						{
 							ia.Data[dataindex] += powers[bitcounter];
+						}
 						else
+						{
 							ia.Data[dataindex] += powers[bits - bitcounter];
+                        }
 					}
 
 					if (bitcounter == bits)
@@ -491,9 +511,13 @@ namespace ExportOutputBinary
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
+						{
 							ia.Data[dataindex] += powers[bitcounter];
-						  else
+						}
+						else
+						{
 							ia.Data[dataindex] += powers[bits - bitcounter];
+                        }
 					}
 
 					if (bitcounter == bits)
@@ -663,7 +687,7 @@ namespace ExportOutputBinary
 						}
 						else
 						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + row], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
 						}
 
 						dataout.Count += 3;
