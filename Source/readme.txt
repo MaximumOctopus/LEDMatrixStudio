@@ -6,12 +6,12 @@ Written with C++ Builder 11.3 Community Edition
 
 FOR THE FORSEEABLE FUTURE:
 
-If it's in this folder then it compiles and will be mostly functional, but use at your own risk. It's not finished and there are major bugs just waiting to be found.
+If it's in this folder then it compiles and will be mostly functional, but use at your own risk. It's not finished and there maybe bugs just waiting to be found.
 
 For rewrite progress and other cool stuff (maybe even cat pictures), follow my new blog:
 
   https://maximumoctopus.hashnode.dev/
 
+You will have to copy the LEDMatrixStudio folder structure to your build environment, otherwise some parts (like language selection) won't work. 
 
-Paul, November 25th 2023
-
+Paul, December 16th 2023
