@@ -1,12 +1,15 @@
+// ===================================================================
 //
-// PrettyChaos 1.0
+//   (c) Paul Alan Freshney 2012-2023
+//   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
-// (c) Paul Alan Freshney 2023
+//   https://github.com/MaximumOctopus/LEDMatrixStudio
 //
-// paul@freshney.org
+//   https://maximumoctopus.hashnode.dev/
 //
-// https://github.com/MaximumOctopus/PrettyChaos
+//   C++ Rewrite October 11th 2023
 //
+// ===================================================================
 
 #pragma once
 

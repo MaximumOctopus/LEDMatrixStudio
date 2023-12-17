@@ -2,8 +2,8 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'frmMain'
-  ClientHeight = 895
-  ClientWidth = 1508
+  ClientHeight = 889
+  ClientWidth = 1502
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,7 +27,7 @@ object frmMain: TfrmMain
   object Bevel20: TBevel
     Left = 0
     Top = 139
-    Width = 1508
+    Width = 1502
     Height = 4
     Align = alTop
     Shape = bsTopLine
@@ -36,8 +36,8 @@ object frmMain: TfrmMain
   end
   object pAnimationToolbar: TPanel
     Left = 0
-    Top = 846
-    Width = 1508
+    Top = 840
+    Width = 1502
     Height = 30
     Align = alBottom
     Color = clWhite
@@ -45,10 +45,10 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    ExplicitTop = 840
-    ExplicitWidth = 1502
+    ExplicitTop = 834
+    ExplicitWidth = 1496
     DesignSize = (
-      1508
+      1502
       30)
     object lFrame: TLabel
       Left = 204
@@ -211,7 +211,7 @@ object frmMain: TfrmMain
     object tbFrames: TTrackBar
       Left = 622
       Top = 1
-      Width = 881
+      Width = 875
       Height = 28
       Anchors = [akLeft, akTop, akRight]
       Enabled = False
@@ -224,7 +224,7 @@ object frmMain: TfrmMain
       TickStyle = tsNone
       OnChange = tbFramesChange
       OnTracking = tbFramesTracking
-      ExplicitWidth = 875
+      ExplicitWidth = 869
     end
     object bStartFrame: TBitBtn
       Tag = 2
@@ -299,58 +299,58 @@ object frmMain: TfrmMain
   end
   object statusMain: TStatusBar
     Left = 0
-    Top = 876
-    Width = 1508
+    Top = 870
+    Width = 1502
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 870
-    ExplicitWidth = 1502
+    ExplicitTop = 864
+    ExplicitWidth = 1496
   end
   object pbFont: TPanel
-    Left = 1204
+    Left = 1198
     Top = 143
     Width = 100
-    Height = 703
+    Height = 697
     Align = alRight
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
     Visible = False
-    ExplicitLeft = 1198
-    ExplicitHeight = 697
+    ExplicitLeft = 1192
+    ExplicitHeight = 691
     object pASCIICode: TPanel
       Left = 1
-      Top = 677
+      Top = 671
       Width = 98
       Height = 25
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitTop = 671
+      ExplicitTop = 665
     end
   end
   object pRGBPalette: TPanel
-    Left = 1304
+    Left = 1298
     Top = 143
     Width = 204
-    Height = 703
+    Height = 697
     Align = alRight
     Color = clWhite
     ParentBackground = False
     TabOrder = 3
     Visible = False
-    ExplicitLeft = 1298
-    ExplicitHeight = 697
+    ExplicitLeft = 1292
+    ExplicitHeight = 691
     object PageControl1: TPageControl
       Left = 1
       Top = 1
       Width = 202
-      Height = 701
+      Height = 695
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
-      ExplicitHeight = 695
+      ExplicitHeight = 689
       object tsPalette: TTabSheet
         Caption = '.'
       end
@@ -363,7 +363,7 @@ object frmMain: TfrmMain
   object panelTop: TPanel
     Left = 0
     Top = 0
-    Width = 1508
+    Width = 1502
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -374,7 +374,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 4
-    ExplicitWidth = 1502
+    ExplicitWidth = 1496
     object sbBuild: TSpeedButton
       Left = 5
       Top = 2
@@ -543,7 +543,7 @@ object frmMain: TfrmMain
   object panelMiddle: TPanel
     Left = 0
     Top = 27
-    Width = 1508
+    Width = 1502
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -553,7 +553,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 5
-    ExplicitWidth = 1502
+    ExplicitWidth = 1496
     object sbClear: TSpeedButton
       Left = 4
       Top = 2
@@ -754,7 +754,7 @@ object frmMain: TfrmMain
   object paneTools: TPanel
     Left = 0
     Top = 54
-    Width = 1508
+    Width = 1502
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -764,7 +764,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 6
-    ExplicitWidth = 1502
+    ExplicitWidth = 1496
     object sbMouseMode: TSpeedButton
       Left = 4
       Top = 2
@@ -1212,8 +1212,8 @@ object frmMain: TfrmMain
   object pCanvas: TPanel
     Left = 0
     Top = 143
-    Width = 755
-    Height = 703
+    Width = 749
+    Height = 697
     Align = alClient
     BevelOuter = bvNone
     Color = 3355443
@@ -1225,24 +1225,24 @@ object frmMain: TfrmMain
     StyleElements = [seFont, seBorder]
     OnMouseDown = pCanvasMouseDown
     OnMouseMove = pCanvasMouseMove
-    ExplicitWidth = 749
-    ExplicitHeight = 697
+    ExplicitWidth = 743
+    ExplicitHeight = 691
   end
   object pLayers: TPanel
-    Left = 755
+    Left = 749
     Top = 143
     Width = 232
-    Height = 703
+    Height = 697
     Align = alRight
     TabOrder = 8
     Visible = False
-    ExplicitLeft = 749
-    ExplicitHeight = 697
+    ExplicitLeft = 743
+    ExplicitHeight = 691
   end
   object pCurrentColours: TPanel
     Left = 0
     Top = 81
-    Width = 1508
+    Width = 1502
     Height = 24
     Align = alTop
     BevelOuter = bvNone
@@ -1253,7 +1253,7 @@ object frmMain: TfrmMain
     ShowHint = True
     TabOrder = 9
     Visible = False
-    ExplicitWidth = 1502
+    ExplicitWidth = 1496
     object sSelectionMMB: TShape
       Tag = 2
       Left = 213
@@ -1523,7 +1523,7 @@ object frmMain: TfrmMain
   object panelRGBPalette: TPanel
     Left = 0
     Top = 105
-    Width = 1508
+    Width = 1502
     Height = 34
     Align = alTop
     BevelOuter = bvNone
@@ -1535,7 +1535,7 @@ object frmMain: TfrmMain
     ShowCaption = False
     ShowHint = True
     TabOrder = 10
-    ExplicitWidth = 1502
+    ExplicitWidth = 1496
     object sRGBPalette1: TShape
       Left = 4
       Top = 14
@@ -2383,15 +2383,15 @@ object frmMain: TfrmMain
     Visible = False
   end
   object pQuickData: TPanel
-    Left = 987
+    Left = 981
     Top = 143
     Width = 217
-    Height = 703
+    Height = 697
     Align = alRight
     TabOrder = 12
     Visible = False
-    ExplicitLeft = 981
-    ExplicitHeight = 697
+    ExplicitLeft = 975
+    ExplicitHeight = 691
   end
   object miMain: TMainMenu
     AutoLineReduction = maManual

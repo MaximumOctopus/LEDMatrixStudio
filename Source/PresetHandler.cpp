@@ -122,7 +122,7 @@ bool PresetHandler::Save(const std::wstring file_name, MatrixPreset& preset)
 		file << Formatting::to_utf8(kMatrixPresetWidth +      L":" + std::to_wstring(preset.Width) + L"\n");
 		file << Formatting::to_utf8(kMatrixPresetHeight +     L":" + std::to_wstring(preset.Height) + L"\n");
 		file << Formatting::to_utf8(kMatrixPresetPixelSize +  L":" + std::to_wstring(preset.PixelSize) + L"\n");
-		file << Formatting::to_utf8(kMatrixPresetMatrixMode + L":" + std::to_wstring(Utility::MatrixModeAsInt(preset.Mode)) + L"\n");
+		file << Formatting::to_utf8(kMatrixPresetMatrixMode + L":" + std::to_wstring(ConstantsHelper::MatrixModeAsInt(preset.Mode)) + L"\n");
 		file << Formatting::to_utf8(kMatrixPresetPixelShape + L":" + std::to_wstring(preset.PixelShape) + L"\n");
 		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
 

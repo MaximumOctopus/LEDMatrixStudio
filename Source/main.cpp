@@ -133,15 +133,6 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	//
 
 	SetFromSettings();
-
-	// ===========================================================================
-
-	//if (FileExists(GSystemSettings->App.LMSFilePath + L"fonts\\5x7.ledsfont")))
-   //	{
-   //		thematrix->LoadFont(GSystemSettings->App.LMSFilePath + L"fonts\\5x7.ledsfont");
-   //	}
-
-	// ===========================================================================
 }
 
 
@@ -1774,6 +1765,9 @@ void __fastcall TfrmMain::ReopenClick(TObject *Sender)
 	LoadFromFileName(GSystemSettings->FileHistory[mi->Tag]);
 
 	FormResize(nullptr);
+
+	Application->ProcessMessages();
+	thematrix->SetMatrixReadOnly(false);
 }
 
 
@@ -2938,7 +2932,7 @@ void __fastcall TfrmMain::witter1Click(TObject *Sender)
 void __fastcall TfrmMain::RenderMode1Click(TObject *Sender)
 {
 	#if _DEBUG
-	ShowMessage(Utility::MatrixModeAsString(thematrix->Details.Mode).c_str());
+	ShowMessage(ConstantsHelper::MatrixModeAsString(thematrix->Details.Mode).c_str());
 	#endif
 }
 
@@ -3253,10 +3247,15 @@ void __fastcall TfrmMain::sbOpenClick(TObject *Sender)
 
 	if (odMain->Execute())
 	{
+        Application->ProcessMessages();
+
 		LoadFromFileName(odMain->FileName.c_str());
 
 		FormResize(nullptr);
 	}
+
+	Application->ProcessMessages();
+	thematrix->SetMatrixReadOnly(false);
 }
 
 
@@ -4560,7 +4559,7 @@ void TfrmMain::UpdateMemoryUsage()
 		caption = dimensions + L", " + GLanguageHandler->Text[kBytes] + L" " + FloatToStrF((size / 1048576), ffFixed, 7, 3).c_str() + L" MB";
 	}
 
-	caption += L" (" + Utility::MatrixModeAsString(thematrix->Details.Mode) + L")";
+	caption += L" (" + ConstantsHelper::MatrixModeAsString(thematrix->Details.Mode) + L")";
 
 	lMemoryUsage->Caption = caption.c_str();
 
@@ -5093,7 +5092,7 @@ void __fastcall TfrmMain::miPixelShapeSquareClick(TObject *Sender)
 
 	sbPixelShape->Caption          = mi->Caption;
 	sbPixelShape->Tag              = mi->Tag;
-	GSystemSettings->Project.Shape = Utility::PixelShapeFromInt(mi->Tag);
+	GSystemSettings->Project.Shape = ConstantsHelper::PixelShapeFromInt(mi->Tag);
 
 	if (sbClear->Enabled)
 	{
@@ -5999,4 +5998,7 @@ void TfrmMain::LoadWithWarnings(const std::wstring file_name)
 	LoadFromFileName(file_name);
 
 	FormResize(nullptr);
+
+	Application->ProcessMessages();
+	thematrix->SetMatrixReadOnly(false);
 }

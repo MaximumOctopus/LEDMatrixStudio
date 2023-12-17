@@ -2850,6 +2850,8 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
 		!MatrixLayers[CurrentLayer]->Visible) return;
 
+    if (x >= Details.Width || y >= Details.Height) return;
+
 	switch (Render.Brush)
 	{
 	case BrushSize::kSmall:
@@ -2892,6 +2894,8 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 // draws identical pixels on every frame
 void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 {
+    if (x >= Details.Width || y >= Details.Height) return;
+
 	for (int frame = 0; frame < Render.Draw.Special; frame++)
 	{
 		if (!IsThisFrameLocked(CurrentLayer, frame) &&
@@ -2935,6 +2939,8 @@ void TheMatrix::DrawWithGradientBrush(int x, int y)
 		!MatrixLayers[CurrentLayer]->Visible ||
 		Gradient.size() == 0) return;
 
+    if (x >= Details.Width || y >= Details.Height) return;
+
 	PlotPixelMatrixFrame(CurrentFrame, x, y, Gradient[Render.Draw.Parameter]);
 
 	if (Render.Draw.Parameter == Gradient.size() - 1)
@@ -2954,6 +2960,8 @@ void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 {
 	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
 		!MatrixLayers[CurrentLayer]->Visible) return;
+
+	if (x1 >= Details.Width || y1 >= Details.Height) return;
 
 	switch (Details.Mode)
 	{
@@ -3011,6 +3019,8 @@ void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 
 void TheMatrix::DrawWithBrushPasteEveryFrame(int x1, int y1, bool transparent)
 {
+    if (x1 >= Details.Width || y1 >= Details.Height) return;
+
 	switch (Details.Mode)
 	{
 	case MatrixMode::kRGB:
@@ -5687,6 +5697,8 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
         return true;
 	};
+
+	MatrixReadOnly = true;
 
     Busy = true;
 

@@ -36,13 +36,5 @@ namespace Utility
 
 	std::wstring ReplaceString(const std::wstring, const std::wstring&, const std::wstring&);
 
-	std::wstring MatrixModeAsString(MatrixMode);
-	int MatrixModeAsInt(MatrixMode);
-	MatrixMode MatrixModeFromInt(int);
-	int MatrixModeAsInt(MatrixMode);
-	std::wstring MatrixModeAsStringFromInt(int);
-
-    PixelShape PixelShapeFromInt(int);
-
 	System::UnicodeString WS2US(const std::wstring);
 }

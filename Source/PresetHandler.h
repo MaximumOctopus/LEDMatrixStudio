@@ -37,9 +37,9 @@ struct MatrixPreset
 	{
 		MatrixModeTag = mm;
 
-		Mode = Utility::MatrixModeFromInt(mm);
+		Mode = ConstantsHelper::MatrixModeFromInt(mm);
 
-		MatrixModeText = Utility::MatrixModeAsString(Mode);
+		MatrixModeText = ConstantsHelper::MatrixModeAsString(Mode);
     }
 };
 

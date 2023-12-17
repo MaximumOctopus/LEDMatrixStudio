@@ -23,5 +23,6 @@ namespace Optimiser
 {
 	bool OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vector<std::wstring> &data);
 	bool OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std::vector<std::wstring> &data, std::vector<std::wstring> &output);
+
 	void ProcessUnique(std::vector<std::wstring> &data, std::vector<std::wstring> &unique_items);
 }

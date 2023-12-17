@@ -180,5 +180,12 @@ namespace ConstantsHelper
 {
 	BrushSize BrushFromInt(int);
 
-    int PixelsFromBrushSize(BrushSize);
+	int PixelsFromBrushSize(BrushSize);
+
+	PixelShape PixelShapeFromInt(int ps);
+
+	std::wstring MatrixModeAsString(MatrixMode mode);
+	int MatrixModeAsInt(MatrixMode mode);
+	MatrixMode MatrixModeFromInt(int mm);
+	std::wstring MatrixModeAsStringFromInt(int mm);
 }
