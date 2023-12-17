@@ -88,7 +88,7 @@ void TForm16::SetGUILanguageText()
 
 	for (int t = 0; t < 5; t++)
 	{
-		cbMatrixType->Items->Add(Utility::MatrixModeAsStringFromInt(t).c_str());
+		cbMatrixType->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(t).c_str());
 	}
 
 	cbMatrixType->ItemIndex = 0;
@@ -313,7 +313,7 @@ void __fastcall TForm16::cbMatrixTypeChange(TObject *Sender)
 	lBackground->Visible = status;
 	sBackground->Visible = status;
 
-	UpdateHelp(Utility::MatrixModeFromInt(cbMatrixType->ItemIndex));
+	UpdateHelp(ConstantsHelper::MatrixModeFromInt(cbMatrixType->ItemIndex));
 }
 
 
