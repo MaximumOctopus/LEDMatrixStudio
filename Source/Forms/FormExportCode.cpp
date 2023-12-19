@@ -59,6 +59,17 @@ int OpenExportCode(TheMatrix *thematrix)
 __fastcall TfrmExportCode::TfrmExportCode(TComponent* Owner)
 	: TForm(Owner)
 {
+	SetGuiLanguageText();
+
+	UpdatePlatformList();
+}
+
+
+void __fastcall TfrmExportCode::FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
+		  int &MaxWidth, int &MaxHeight)
+{
+	MinHeight = 490;
+	MinWidth  = 490;
 }
 
 
@@ -93,14 +104,6 @@ void __fastcall TfrmExportCode::sbCopyToClipboardClick(TObject *Sender)
 {
 	Memo1->SelectAll();
 	Memo1->CopyToClipboard();
-}
-
-
-void __fastcall TfrmExportCode::FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
-		  int &MaxWidth, int &MaxHeight)
-{
-	MinHeight = 490;
-	MinWidth  = 490;
 }
 
 
@@ -189,13 +192,16 @@ void TfrmExportCode::UpdateCodeList()
 	{
 		do
 		{
-			if (file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			if (!(file.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				std::wstring s = file.cFileName;
 
 				if (s[0] != L'.')
 				{
-					cbCode->Items->Add(s.c_str());
+					if (s.find(L".template") == std::wstring::npos)
+					{
+						cbCode->Items->Add(s.c_str());
+                    }
 				}
 			}
 
@@ -223,125 +229,123 @@ void TfrmExportCode::UpdateCodeList()
 
 void TfrmExportCode::LoadCode()
 {
-	if (!cbCode->Enabled)
+	if (!cbCode->Enabled || matrix == nullptr) return;
+
+	std::wstring path = GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str() + L".template";
+
+	eeo = GProfileHandler->Load(path.c_str());
+
+	eeo.Code.RGBBrightness = 100;
+
+	if (eeo.Valid)
 	{
-		std::wstring path = GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str() + L".template";
+		lDescription->Caption = eeo.Information.c_str();
 
-		eeo = GProfileHandler->Load(path.c_str());
+		int totalentrycount = 0;
 
-		eeo.Code.RGBBrightness = 100;
+		eeo.Code.StartFrame     = 1;
+		eeo.Code.EndFrame       = matrix->GetFrameCount();
 
-		if (eeo.Valid)
+		if (eeo.Code.Source == ReadSource::kRows)
 		{
-			lDescription->Caption = eeo.Information.c_str();
-
-			int totalentrycount = 0;
-
-			eeo.Code.StartFrame     = 1;
-			eeo.Code.EndFrame       = matrix->GetFrameCount();
-
-			if (eeo.Code.Source == ReadSource::kRows)
-			{
-				eeo.Code.SelectiveStart = 0;
-				eeo.Code.SelectiveEnd = matrix->Details.Height - 1;
-			}
-			else
-			{
-				eeo.Code.SelectiveStart = 0;
-				eeo.Code.SelectiveEnd = matrix->Details.Width - 1;
-			}
-
-			UpdateSettingsDisplay();
-
-			std::vector<std::wstring> Output;
-			std::vector<std::wstring> Unique;
-
-			if (eeo.Code.RGBEnabled)
-			{
-				ExportRGB::CreateExportAnimationRGB(matrix, eeo, Output, totalentrycount, Unique);
-			}
-			else
-			{
-				ExportMonoBi::CreateExportAnimation(matrix, eeo, Output, totalentrycount, Unique);
-			}
-
-			// ===============================================================
-
-			std::wstring filepath = GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str();
-
-			Memo1->Lines->LoadFromFile(filepath.c_str());
-
-			if (Output.size() != 0)
-			{
-				Memo1->Lines->BeginUpdate();
-
-				// == first lets process the data token ======================
-
-				if (Pos(L"{$LMS_MATRIX_DATA$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_DATA$}", Formatting::VectorToString(Output).c_str(), TReplaceFlags() << rfReplaceAll);
-				}
-
-				// == Now the rest of the tokens =============================
-
-				if (Pos(L"{$LMS_FRAMES$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES$}", IntToStr(matrix->GetFrameCount()), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_FRAMES_MINUS_ONE$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES_MINUS_ONE$}", IntToStr(matrix->GetFrameCount() - 1), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_BYTES$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_BYTES$}", IntToStr(totalentrycount), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_COUNT$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_COUNT$}", IntToStr(totalentrycount), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_MATRIX_WIDTH$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_WIDTH$}", IntToStr(matrix->Details.Width), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_MATRIX_HEIGHT$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_HEIGHT$}", IntToStr(matrix->Details.Height), TReplaceFlags() << rfReplaceAll);
-				}
-
-				// == Misc tokens ============================================
-
-				if (Pos(L"{$LMS_DATE$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_DATE$}", DateUtility::GetDate().c_str(), TReplaceFlags() << rfReplaceAll);
-				}
-
-				if (Pos(L"{$LMS_TIME$}", Memo1->Text) != 0)
-				{
-					Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_TIME$}", DateUtility::GetTime().c_str(), TReplaceFlags() << rfReplaceAll);
-				}
-
-				// ===========================================================
-
-				Memo1->Lines->EndUpdate();
-			}
+			eeo.Code.SelectiveStart = 0;
+			eeo.Code.SelectiveEnd = matrix->Details.Height - 1;
 		}
 		else
 		{
-			std::wstring caption = GLanguageHandler->Text[kErrorLoadingTemplate] +
-								   L"\n\n\"" +
-								   GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str() + L".template\"";
+			eeo.Code.SelectiveStart = 0;
+			eeo.Code.SelectiveEnd = matrix->Details.Width - 1;
+		}
 
-			MessageDlg(caption.c_str(), mtError, TMsgDlgButtons() << mbOK, 0);
+		UpdateSettingsDisplay();
+
+		std::vector<std::wstring> Output;
+		std::vector<std::wstring> Unique;
+
+		if (eeo.Code.RGBEnabled)
+		{
+			ExportRGB::CreateExportAnimationRGB(matrix, eeo, Output, totalentrycount, Unique);
+		}
+		else
+		{
+			ExportMonoBi::CreateExportAnimation(matrix, eeo, Output, totalentrycount, Unique);
+		}
+
+		// ===============================================================
+
+		std::wstring filepath = GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str();
+
+		Memo1->Lines->LoadFromFile(filepath.c_str());
+
+		if (Output.size() != 0)
+		{
+			Memo1->Lines->BeginUpdate();
+
+			// == first lets process the data token ======================
+
+			if (Pos(L"{$LMS_MATRIX_DATA$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_DATA$}", Formatting::VectorToString(Output).c_str(), TReplaceFlags() << rfReplaceAll);
+			}
+
+			// == Now the rest of the tokens =============================
+
+			if (Pos(L"{$LMS_FRAMES$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES$}", IntToStr(matrix->GetFrameCount()), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_FRAMES_MINUS_ONE$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES_MINUS_ONE$}", IntToStr(matrix->GetFrameCount() - 1), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_BYTES$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_BYTES$}", IntToStr(totalentrycount), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_COUNT$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_COUNT$}", IntToStr(totalentrycount), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_MATRIX_WIDTH$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_WIDTH$}", IntToStr(matrix->Details.Width), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_MATRIX_HEIGHT$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_MATRIX_HEIGHT$}", IntToStr(matrix->Details.Height), TReplaceFlags() << rfReplaceAll);
+			}
+
+			// == Misc tokens ============================================
+
+			if (Pos(L"{$LMS_DATE$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_DATE$}", DateUtility::GetDate().c_str(), TReplaceFlags() << rfReplaceAll);
+			}
+
+			if (Pos(L"{$LMS_TIME$}", Memo1->Text) != 0)
+			{
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_TIME$}", DateUtility::GetTime().c_str(), TReplaceFlags() << rfReplaceAll);
+			}
+
+			// ===========================================================
+
+			Memo1->Lines->EndUpdate();
 		}
 	}
-}
+	else
+	{
+		std::wstring caption = GLanguageHandler->Text[kErrorLoadingTemplate] +
+							   L"\n\n\"" +
+							   GSystemSettings->App.LMSFilePath + L"codetemplates\\" + cbPlatforms->Text.c_str() + L"\\" + cbCode->Text.c_str() + L".template\"";
 
+		MessageDlg(caption.c_str(), mtError, TMsgDlgButtons() << mbOK, 0);
+	}
+}
 
 
 std::wstring TfrmExportCode::GetDimensionConstraint(TLabel *label, int limit, int dim, int mode, TImage *image)

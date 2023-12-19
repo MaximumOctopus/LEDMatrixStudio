@@ -93,7 +93,7 @@ private:
 public:		// User declarations
 	__fastcall TfrmExportCode(TComponent* Owner);
 
-    TheMatrix *matrix;
+    TheMatrix *matrix = nullptr;
 };
 
 //---------------------------------------------------------------------------

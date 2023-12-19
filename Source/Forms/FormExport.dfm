@@ -201,14 +201,14 @@ object frmExport: TfrmExport
       end
     end
     object GroupBox6: TGroupBox
-      Left = 755
+      Left = 749
       Top = 2
       Width = 314
       Height = 55
       Anchors = [akRight, akBottom]
       Caption = '.'
       TabOrder = 1
-      ExplicitLeft = 749
+      ExplicitLeft = 743
       object bCancel: TBitBtn
         Left = 228
         Top = 21

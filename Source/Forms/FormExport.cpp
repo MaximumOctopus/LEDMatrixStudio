@@ -656,7 +656,7 @@ void TfrmExport::CreateExportOptions()
 		if (sbCSRGB32->Down)
 		{
 			InternalEO.Code.ColourSpaceRGB = ColourSpace::kRGB32;
-			InternalEO.Code.Size     = NumberSize::kRGB32bit;
+			//InternalEO.Code.Size     = NumberSize::kRGB32bit;
 		}
 		else
 		{
@@ -746,8 +746,8 @@ void TfrmExport::CreateExportOptions()
 void TfrmExport::CreateBinaryExportOptions()
 {
 	//  eeo.Language     := -1; // none
-	InternalEO.Code.Content  = LineContent::kFrame;  // process in frames
-	InternalEO.Code.Format = NumberFormat::kHex;   // always in hex format
+	InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;  // process in frames
+	InternalEO.Binary.Format = NumberFormat::kHex;   // always in hex format
 
 	// =========================================================================
 
@@ -885,7 +885,7 @@ void TfrmExport::CreateBinaryExportOptions()
 	}
 	else
 	{
-		InternalEO.Code.RGBEnabled = false;
+		InternalEO.Binary.RGBEnabled = false;
 	}
 
 	// =======================================================================
@@ -1602,6 +1602,7 @@ void TfrmExport::SetGuiLanguageText()
 	sbNumberSize8bitSwap->Caption = GLanguageHandler->Text[k8BitSwapNybbles].c_str();
 	sbNumberSize16bitSwap->Caption = GLanguageHandler->Text[k16BitSwapBytes].c_str();
 
+    cbLanguageFormat->Items->Clear();
 	cbLanguageFormat->Items->Add(GLanguageHandler->Text[kExportCommaSeparated].c_str());
 	cbLanguageFormat->Items->Add(GLanguageHandler->Text[kExportPICAXEEEPROM].c_str());
 	cbLanguageFormat->Items->Add(GLanguageHandler->Text[kExportCCpp1Dimensional].c_str());
@@ -1791,16 +1792,29 @@ void __fastcall TfrmExport::sbBinaryDataRowsClick(TObject *Sender)
 #pragma region Profiles
 void TfrmExport::PopulateProfileList()
 {
-	if (GProfileHandler->Profiles.size() != 0)
+	GProfileHandler->UpdateAll();
+
+	cbProfileList->Items->Clear();
+
+	switch (Mode)
 	{
-        GProfileHandler->UpdateAll();
-
-		cbProfileList->Items->Clear();
-
+	case MatrixMode::kMono:
+	case MatrixMode::kBiSequential:
+	case MatrixMode::kBiBitplanes:
 		for (int t = 0; t < GProfileHandler->Profiles.size(); t++)
 		{
 			cbProfileList->Items->Add(GProfileHandler->Profiles[t].c_str());
 		}
+		break;
+	case MatrixMode::kRGB:
+		for (int t = 0; t < GProfileHandler->ProfilesRGB.size(); t++)
+		{
+			cbProfileList->Items->Add(GProfileHandler->ProfilesRGB[t].c_str());
+		}
+		break;
+	case MatrixMode::kRGB3BPP:
+        cbProfileList->Items->Clear();
+		break;
 	}
 
 	if (cbProfileList->Items->Count == 0)
