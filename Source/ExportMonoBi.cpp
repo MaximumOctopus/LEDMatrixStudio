@@ -64,9 +64,13 @@ namespace ExportMonoBi
 				return teo.DataPadding + s;
 			case ExportLanguage::kC2Dim:
 				if (rowcount == 0)
+				{
 					return teo.DataPadding + L"{" + m + L",  // " + cdescription + L" " + std::to_wstring(frame);
+				}
 				else if (rowcount == -1)
+				{
 					return teo.DataPadding + L" " + m + L"},";
+				}
 
 				return teo.DataPadding + L" " + s;
 			case ExportLanguage::kCFastLED:
@@ -821,9 +825,13 @@ namespace ExportMonoBi
 					if (selectedmatrix->Grid[row * matrix->Details.Height + x] == 1)
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+						{
 							ia.Data[dataindex] += powers[bitcounter];
+						}
 						else
+						{
 							ia.Data[dataindex] += powers[bits - bitcounter];
+						}
 					}
 
 					if (bitcounter == bits)

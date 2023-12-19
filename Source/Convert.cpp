@@ -94,16 +94,16 @@ namespace Convert
 	{
 		std::wstring s = L"";
 
-		for (int i = 0; i < ns; i++)
+		for (int i = 0; i <= ns; i++)
 		{
 			s += L'0';
 		}
 
-		for (int i = 0; i < ns; i++)
+		for (int i = 0; i <= ns; i++)
 		{
-			if ((number && powers[i]) == powers[i])
+			if ((number & powers[i]) == powers[i])
 			{
-				s[(ns - i) + 1] = L'1';
+				s[ns - i] = L'1';
 			}
 		}
 

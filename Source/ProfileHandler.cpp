@@ -57,7 +57,7 @@ ExportOptions ProfileHandler::Load(const std::wstring file_name)
 						v = s.substr(2);
                     }
 
-					switch (GetParameterType(v))
+					switch (GetParameterType(s))
 					{
 					case LoadProfile::kDataBegin:
 						if (s.find(L"RGB") != std::wstring::npos)
@@ -329,4 +329,5 @@ void ProfileHandler::UpdateAll()
 {
 	PopulateList(Profiles, Path + L"ledsexport");
 	PopulateList(ProfilesRGB, Path + L"ledsexportrgb");
+//    PopulateList(ProfilesRGB3BPP, Path + L"ledsexportrgb3bpp"); // ledsexportrgb3bpp missing to do
 }

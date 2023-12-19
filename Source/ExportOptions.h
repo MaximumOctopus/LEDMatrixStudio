@@ -421,10 +421,8 @@ struct ExportOptions
 			return 6;
 		case ExportLanguage::kMicrochip:
 			return 7;
-			break;
 		case ExportLanguage::kPascal:
 			return 8;
-			break;
 		case ExportLanguage::kSpecial:
 			return 9;
 		}
@@ -759,6 +757,9 @@ struct ExportOptions
 		case 9:
 			Code.Language = ExportLanguage::kSpecial;
 			break;
+
+		default:
+			Code.Language = ExportLanguage::kC1Dim;
 		}
 	}
 

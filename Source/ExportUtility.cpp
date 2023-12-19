@@ -94,7 +94,7 @@ namespace ExportUtility
 				output.push_back(teo.DataPadding + m + L"  // " + teo.Description + L" " + std::to_wstring(frame));
 				break;
 			case ExportLanguage::kC2Dim:
-				output.push_back(teo.DataPadding + L"{' + m + '},  // " + teo.Description + L" " + std::to_wstring(frame));
+				output.push_back(teo.DataPadding + L"{" + m + L"},  // " + teo.Description + L" " + std::to_wstring(frame));
 				break;
 			case ExportLanguage::kCFastLED:
 				output.push_back(teo.DataPadding + m + L"  // " + teo.Description + L" " + std::to_wstring(frame));
@@ -581,6 +581,7 @@ namespace ExportUtility
 
 		if (teo.Code.RGBEnabled)
 		{
+	        output.push_back(GetNumberSize(teo.Code.Language, teo.Code.Size, true));
 			output.push_back(cc);
 			output.push_back(GetRGBMode(teo, true));
 			output.push_back(GetRGBBrightness(teo, true));
@@ -644,7 +645,7 @@ namespace ExportUtility
 	{
 		if (teo.Code.ColourSpaceRGB == ColourSpace::kRGB32)
 		{
-			return TitleWithComments(L"Colour Space : 8 bits", teo.Code.Language, includecomment);
+			return TitleWithComments(L"Colour Space : 32 bits", teo.Code.Language, includecomment);
 		}
 
 		return TitleWithComments(L"Colour Space : 5/6/5", teo.Code.Language, includecomment);
