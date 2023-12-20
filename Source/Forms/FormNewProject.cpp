@@ -140,6 +140,7 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 		break;
 	case PixelShape::kRoundRect:
 		shapeRoundRect->Brush->Color = clLime;
+        break;
 	}
 
 	sBackground->Brush->Color = TColor(ps.Background);

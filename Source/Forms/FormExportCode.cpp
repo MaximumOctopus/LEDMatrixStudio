@@ -248,12 +248,12 @@ void TfrmExportCode::LoadCode()
 
 		if (eeo.Code.Source == ReadSource::kRows)
 		{
-			eeo.Code.SelectiveStart = 0;
+			eeo.Code.SelectiveStart = 1;
 			eeo.Code.SelectiveEnd = matrix->Details.Height - 1;
 		}
 		else
 		{
-			eeo.Code.SelectiveStart = 0;
+			eeo.Code.SelectiveStart = 1;
 			eeo.Code.SelectiveEnd = matrix->Details.Width - 1;
 		}
 

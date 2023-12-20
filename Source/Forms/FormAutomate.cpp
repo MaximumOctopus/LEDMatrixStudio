@@ -803,6 +803,7 @@ void __fastcall TfrmAutomate::sbCyclingLinearClick(TObject *Sender)
 		{
 			MessageDlg(GLanguageHandler->Text[kNoSourcTargetColoursSelected].c_str(), mtWarning, TMsgDlgButtons() << mbOK, 0);
 		}
+		break;
 
 	default:
 		canadd = true;

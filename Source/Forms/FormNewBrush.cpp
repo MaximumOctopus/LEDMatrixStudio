@@ -1041,7 +1041,7 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 					//30 : MatrixComment           = v;
 					//31 : lRGBBackground          = stoi(v);
 					case LoadData::kLoadHeaderEnd:
-						{};
+                        break;
 
 					// ======================================================================
 

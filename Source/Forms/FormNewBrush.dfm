@@ -2,8 +2,8 @@ object frmNewBrush: TfrmNewBrush
   Left = 0
   Top = 0
   Caption = 'frmNewBrush'
-  ClientHeight = 646
-  ClientWidth = 941
+  ClientHeight = 640
+  ClientWidth = 935
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,21 +15,20 @@ object frmNewBrush: TfrmNewBrush
   OnResize = FormResize
   OnShow = FormShow
   DesignSize = (
-    941
-    646)
+    935
+    640)
   TextHeight = 15
   object pMain: TPanel
     Left = 0
     Top = 0
-    Width = 941
+    Width = 935
     Height = 65
     Align = alTop
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 935
     DesignSize = (
-      941
+      935
       65)
     object Label1: TLabel
       Left = 8
@@ -62,7 +61,7 @@ object frmNewBrush: TfrmNewBrush
       OnClick = bCreateClick
     end
     object sbSave: TBitBtn
-      Left = 787
+      Left = 775
       Top = 25
       Width = 65
       Height = 25
@@ -179,7 +178,7 @@ object frmNewBrush: TfrmNewBrush
     Left = 0
     Top = 65
     Width = 129
-    Height = 581
+    Height = 575
     Align = alLeft
     Color = clWhite
     Font.Charset = DEFAULT_CHARSET
@@ -190,7 +189,6 @@ object frmNewBrush: TfrmNewBrush
     ParentBackground = False
     ParentFont = False
     TabOrder = 1
-    ExplicitHeight = 575
     object lColours: TLabel
       Left = 8
       Top = 6
@@ -542,7 +540,7 @@ object frmNewBrush: TfrmNewBrush
     end
   end
   object sbCancel: TBitBtn
-    Left = 858
+    Left = 846
     Top = 25
     Width = 65
     Height = 25
@@ -604,16 +602,14 @@ object frmNewBrush: TfrmNewBrush
     ExplicitLeft = 852
   end
   object pRGBPalette: TPanel
-    Left = 748
+    Left = 742
     Top = 65
     Width = 193
-    Height = 581
+    Height = 575
     Align = alRight
     Color = clWhite
     ParentBackground = False
     TabOrder = 3
-    ExplicitLeft = 742
-    ExplicitHeight = 575
     object sRGBPaletteColour: TShape
       Left = 14
       Top = 57
@@ -1104,8 +1100,8 @@ object frmNewBrush: TfrmNewBrush
   object pCanvas: TPanel
     Left = 129
     Top = 65
-    Width = 619
-    Height = 581
+    Width = 613
+    Height = 575
     Align = alClient
     BevelOuter = bvNone
     Color = 3355443
@@ -1115,8 +1111,6 @@ object frmNewBrush: TfrmNewBrush
     ParentDoubleBuffered = False
     TabOrder = 4
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 613
-    ExplicitHeight = 575
   end
   object cdNewBrush: TColorDialog
     Options = [cdFullOpen]
