@@ -316,7 +316,6 @@ namespace ExportRGB
 			output.push_back(teo.DataPadding + L"};");
 			break;
 		case ExportLanguage::kCFastLED:
-			{};
 			break;
 		case ExportLanguage::kPython1Dim:
 		case ExportLanguage::kPython2Dim:
@@ -370,15 +369,23 @@ namespace ExportRGB
 			{
 			case  ScanDirection::kColAltDownUp:
 				if (col % 2 == 0)
+				{
 				   direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 				   direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if (col % 2 == 0)
+				{
 				   direction = ScanDirection::kColBottomToTop;
+				}
 				else
+				{
 				   direction = ScanDirection::kColTopToBottom;
+				}
 				break;
 			}
 		}
@@ -388,17 +395,24 @@ namespace ExportRGB
 			{
 			case ScanDirection::kColAltDownUp:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 					direction = ScanDirection::kColBottomToTop;
-
+                }
 				break;
 			case ScanDirection::kColAltUpDown:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
+				{
 				   direction = ScanDirection::kColBottomToTop;
-				 else
+				}
+				else
+				{
 				   direction = ScanDirection::kColTopToBottom;
-				 break;
+				}
+				break;
 			}
 		}
 
@@ -542,15 +556,23 @@ namespace ExportRGB
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+                }
 				break;
 			}
 		}
@@ -560,15 +582,23 @@ namespace ExportRGB
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+                }
 				break;
 			}
 		}

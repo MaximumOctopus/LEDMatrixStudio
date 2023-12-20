@@ -783,9 +783,13 @@ namespace ExportOutputBinary
 		// ===========================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
+		{
 			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+		}
 		else
+		{
 			selectedmatrix = matrix->MatrixUser[frame];
+        }
 
 		// ===========================================================================
 
@@ -795,15 +799,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kColAltDownUp:
 				if (col % 2 == 0)
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if (col % 2 == 0)
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				else
+				{
 					direction = ScanDirection::kColTopToBottom;
+                }
 				break;
 			}
 		}
@@ -813,15 +825,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kColAltDownUp:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				   direction = ScanDirection::kColTopToBottom;
+				{
+					direction = ScanDirection::kColTopToBottom;
+				}
 				else
-				   direction = ScanDirection::kColBottomToTop;
+				{
+					direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				   direction = ScanDirection::kColBottomToTop;
+				{
+					direction = ScanDirection::kColBottomToTop;
+				}
 				else
-				   direction = ScanDirection::kColTopToBottom;
+				{
+					direction = ScanDirection::kColTopToBottom;
+                }
 				break;
 			}
 		}
@@ -979,15 +999,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kColAltDownUp:
 				if (col % 2 == 0)
+				{
 				   direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 				   direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if (col % 2 == 0)
+				{
 				   direction = ScanDirection::kColBottomToTop;
+				}
 				else
+				{
 				   direction = ScanDirection::kColTopToBottom;
+                }
 				break;
 			}
 		}
@@ -997,15 +1025,23 @@ namespace ExportOutputBinary
 			{
 			case ScanDirection::kColAltDownUp:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				   direction = ScanDirection::kColTopToBottom;
+				{
+					direction = ScanDirection::kColTopToBottom;
+				}
 				else
-				   direction = ScanDirection::kColBottomToTop;
+				{
+					direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				   direction = ScanDirection::kColBottomToTop;
+				{
+					direction = ScanDirection::kColBottomToTop;
+				}
 				else
-				   direction = ScanDirection::kColTopToBottom;
+				{
+					direction = ScanDirection::kColTopToBottom;
+				}
 				break;
 			}
 		}

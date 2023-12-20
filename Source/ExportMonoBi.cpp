@@ -79,9 +79,13 @@ namespace ExportMonoBi
 				return teo.DataPadding + s + L"";
 			case ExportLanguage::kPython2Dim:
 				if (rowcount == 0)
+				{
 					return teo.DataPadding + L"[" + s + L"  # " + cdescription + L" " + std::to_wstring(frame);
+				}
 				else if (rowcount == -1)
+				{
 					return teo.DataPadding + L" " + m + L"],";
+                }
 
 			   	return L" " + s;
 			case ExportLanguage::kMicrochip:
@@ -305,7 +309,7 @@ namespace ExportMonoBi
 				{
 				case LineContent::kFrame:
 					ExportUtility::AddContentByFrame(teo, op, t, output);
-
+                    break;
 				case LineContent::kBytes:
 
 					switch (teo.Code.Language)
@@ -321,6 +325,7 @@ namespace ExportMonoBi
 						lc = 0;
 						rc = 0;
 					}
+					break;
 				}
 			}
 
@@ -402,6 +407,7 @@ namespace ExportMonoBi
 							if (y < end || y < 0) y = 999;
 						}
 					}
+                    break;
 				}
 				case InputOrientation::kSure24x16:
 					for (int y = 7; y >= 0; y--)
@@ -449,6 +455,7 @@ namespace ExportMonoBi
 						lc = 0;
 						rc = 0;
 					}
+                    break;
 				}
 			}
 
@@ -783,15 +790,23 @@ namespace ExportMonoBi
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+                }
 				break;
 			}
 		}
@@ -801,15 +816,23 @@ namespace ExportMonoBi
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+                }
 				break;
 			}
 		}

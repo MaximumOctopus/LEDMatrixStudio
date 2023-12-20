@@ -248,7 +248,7 @@ void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 			{
 				for (int y = 0; y < Details.Height; y++)
 				{
-					switch(Details.Mode)
+					switch (Details.Mode)
 					{
 					case MatrixMode::kMono:
 					case MatrixMode::kBiSequential:
@@ -1585,7 +1585,8 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 
 			if (OnChange) OnChange(this);
 			break;
-        }
+		}
+
 		default:
 			UpdateDrawTool(x1, y1, SelectionLMB, false);
 		}
@@ -1614,6 +1615,7 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 
 			if (OnChange) OnChange(this);
 			break;
+
 		default:
 			UpdateDrawTool(x1, y1, SelectionMMB, true);
 		}
@@ -2025,6 +2027,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 
 			if (OnChange) OnChange(this);
 			break;
+
 		default:
 			UpdateDrawTool(x1, y1, SelectionLMB, false);
 		}
@@ -2367,6 +2370,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 											Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
 											Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
 				break;
+
 			default:
 				PaintBox->Canvas->FillRect(Rect(x * Render.PixelSize,
 										 y * Render.PixelSize,
@@ -2437,7 +2441,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 						PaintBox->Canvas->Brush->Color = TColor(CanvasBackground);
 					}
 
-					switch(Render.Shape)
+					switch (Render.Shape)
 					{
 					case PixelShape::kSquare:
 						PaintBox->Canvas->FillRect(Rect((x + LastX) * Render.PixelSize,
@@ -2691,6 +2695,7 @@ int TheMatrix::GetPixelFrom(MatrixMode matrixformat, MatrixMode importformat, in
 			{
 				return 0xffffff;
 			}
+			break;
 		case MatrixMode::kRGB:
 			for (int t = 0; t < 8; t++)
 			{
@@ -2989,6 +2994,7 @@ void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 			}
         }
 		break;
+
 	default:
 		for (int x2 = 0; x2 < Render.Draw.CopyPos.X; x2++)
 		{
@@ -3053,6 +3059,7 @@ void TheMatrix::DrawWithBrushPasteEveryFrame(int x1, int y1, bool transparent)
 			}
 		}
 		break;
+
 	default:
 		for (int x2 = 0; x2 < Render.Draw.CopyPos.X; x2++)
 		{
@@ -3127,6 +3134,7 @@ void TheMatrix::PlotPixelMatrix(int x, int y, int defaultcolour)
 	case MirrorMode::kVertical:
 		newcoord = Details.Width - x - 1;
 		break;
+
 	default:
 		newcoord = Details.Height - y - 1;
 	}
@@ -3171,6 +3179,7 @@ void TheMatrix::PlotPixelMatrixFrame(int frame, int x, int y, int defaultcolour)
 	case MirrorMode::kVertical:
 		newcoord = Details.Width - x - 1;
 		break;
+
 	default:
 		newcoord = Details.Height - y - 1;
 	}
@@ -4116,6 +4125,7 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 						{
 							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Draw.Colour;
 						}
+						break;
 					}
 				}
 			}
@@ -7668,8 +7678,8 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 			parameter--;
 		}
 		break;
-	modeRevealCentreIn:
-	modeRevealCentreOut:
+	case modeRevealCentreIn:
+	case modeRevealCentreOut:
 		break;
 	}
 
@@ -7966,6 +7976,7 @@ void TheMatrix::RotateFrameAllLayersAnyAngle(double angle, int toframe)
 					{
 						MatrixLayers[layer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
 					}
+                    break;
 
 				default:
 					if (MatrixBackup->Grid[y * Details.Width + x] > 0)
@@ -8010,6 +8021,7 @@ void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)
 				{
 					MatrixLayers[CurrentLayer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
 				}
+                break;
 
 			default:
 				if (MatrixBackup->Grid[y * Details.Width + x] > 0)
@@ -8365,10 +8377,8 @@ void TheMatrix::SetSoftwareMode(SoftwareMode softwaremode)
 	switch (softwaremode)
 	{
 	case SoftwareMode::kAnimation:
-	{
 		ClearAllMatrixData(false, 0, 0);
 		break;
-	}
 	case SoftwareMode::kFont:
 	{
 		ClearAllMatrixData(false, 0, 0);
@@ -8542,7 +8552,7 @@ void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 			}
 		}
 		break;
-	 }
+	}
 
 	case 28:	// bounceybouncey
 	{
@@ -8877,10 +8887,8 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	case 31:
 		PerformRevealOnCurrentFrame(modeRevealRightLeft, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-		break;
 	case 32:
 		PerformRevealOnCurrentFrame(modeRevealTopBottom, ao.ParameterRevealColour, ao.ParameterReveal);
-		break;
 		break;
 	case 33:
 		PerformRevealOnCurrentFrame(modeRevealBottomTop, ao.ParameterRevealColour, ao.ParameterReveal);
@@ -9001,6 +9009,7 @@ void TheMatrix::Automate(ActionObject &ao)
 			ao.ProcesingStage++;
 			lIterationCount++;
 		}
+        break;
 	}
 
 	// ===========================================================================

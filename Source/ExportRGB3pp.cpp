@@ -254,18 +254,18 @@ namespace ExportRGB3BPP
 
 						for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd ; x++)
 						{
-							 switch (teo.Code.Content)
-							 {
-							 case LineContent::kRowCol:
+							switch (teo.Code.Content)
+							{
+							case LineContent::kRowCol:
 								if (!MatrixData[x].empty())
 								{
 									output.push_back(baaAddContentByRowCol(MatrixData[x]));
 								}
 								break;
-							 case LineContent::kFrame:
+							case LineContent::kFrame:
 								s += MatrixData[x];
 								break;
-							 }
+							}
 						}
 
 						if (teo.Code.Content == LineContent::kFrame)
@@ -376,15 +376,23 @@ namespace ExportRGB3BPP
 			{
 			case ScanDirection::kColAltDownUp:
 				if (col % 2 == 0)
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if (col % 2 == 0)
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				else
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
 				break;
 			}
 		}
@@ -394,15 +402,24 @@ namespace ExportRGB3BPP
 			{
 			case ScanDirection::kColAltDownUp:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
 				else
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if ((matrix->Details.Width - col - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kColBottomToTop;
+				}
 				else
+				{
 					direction = ScanDirection::kColTopToBottom;
+				}
+                break;
 			}
 		}
 
@@ -512,15 +529,23 @@ namespace ExportRGB3BPP
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if (row % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}
@@ -530,15 +555,23 @@ namespace ExportRGB3BPP
 			{
 			case ScanDirection::kRowAltLeftRight:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				else
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				break;
 			case ScanDirection::kRowAltRightLeft:
 				if ((matrix->Details.Height - row - 1) % 2 == 0)
+				{
 					direction = ScanDirection::kRowRightToLeft;
+				}
 				else
+				{
 					direction = ScanDirection::kRowLeftToRight;
+				}
 				break;
 			}
 		}

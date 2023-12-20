@@ -481,7 +481,8 @@ namespace ExportUtility
 
 			default:
 				return L"";
-            }
+			}
+			break;
 		}
 		case ReadSource::kRows:
 		{
@@ -494,7 +495,8 @@ namespace ExportUtility
 
 			default:
 				return L"";
-            }
+			}
+            break;
 		}
 		}
 	}
@@ -709,6 +711,8 @@ namespace ExportUtility
 		case ReadSource::kRows:
 			return cc + GLanguageHandler->Text[kRows];
 		}
+
+        return cc + L"unknown";
 	}
 
 
@@ -816,6 +820,8 @@ namespace ExportUtility
 				return L"uint64_t ";
 			case NumberSize::kRGB8bit:
 				return L"byte ";
+			case NumberSize::kRGB16bit:
+				return L"word ";
 			case NumberSize::kRGB32bit:
 				return L"long ";
 			}

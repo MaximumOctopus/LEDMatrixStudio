@@ -337,11 +337,10 @@ object frmMain: TfrmMain
       Left = 1
       Top = 1
       Width = 202
-      Height = 695
+      Height = 689
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
-      ExplicitHeight = 689
       object tsPalette: TTabSheet
         Caption = '.'
       end

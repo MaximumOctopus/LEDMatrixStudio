@@ -106,7 +106,7 @@ namespace Formatting
 
 			for (int i = 0; i < input.size(); i++)
 			{
-				s += input[i] + L"\x0d\x0a";        // adds a line feed that TMemo recognises to add a new line per line in our vector
+				s += input[i] + L"\x0d\x0a";        // adds a linefeed that TMemo recognises to add a new line per line in our vector
 			}
 
 			return s;

@@ -914,6 +914,8 @@ void __fastcall TfrmMain::OnLayerMenuItem(int item)
 					   L"\"?\n\n" +
 					   GLanguageHandler->Text[kThisCannotBeUndone]), mtWarning, mbYesNo, 0) == mrYes)
 			thematrix->ClearCurrentLayer();
+
+        break;
 	}
 }
 #pragma end_region
@@ -4103,6 +4105,7 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 		case MatrixMode::kRGB:
 		case MatrixMode::kRGB3BPP:
 			sColour0->Brush->Color = TColor(ted.BackgroundColour);
+            break;
 		}
 
 		// ===========================================================================

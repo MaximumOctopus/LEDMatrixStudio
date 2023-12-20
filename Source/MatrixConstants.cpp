@@ -92,7 +92,8 @@ namespace ConstantsHelper
 		case MatrixMode::kRGB:
 			return 3;
 		case MatrixMode::kRGB3BPP:
-		    return 4;
+			return 4;
+
 		default:
 			return 0;
 		}

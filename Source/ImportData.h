@@ -138,7 +138,7 @@ struct ImportData
 			break;
 		case 1:
 			FormatHex = HexFormat::kDisabled;
-			break;			
+			break;
 		}
 	}
 

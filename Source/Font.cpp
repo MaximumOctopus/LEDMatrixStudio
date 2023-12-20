@@ -177,6 +177,7 @@ bool Font::Load(const std::wstring file_name)
 							{
 								height = stoi(s.substr(2));
 							}
+                            break;
 						}
 					}
 				}
