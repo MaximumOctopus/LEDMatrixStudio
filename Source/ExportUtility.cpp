@@ -772,7 +772,7 @@ namespace ExportUtility
 		{
 		case ExportLanguage::kC1Dim:
 		case ExportLanguage::kCFastLED:
-			return L"const long ledarray"  + std::to_wstring(frame - 1) + L"[] PROGMEM = {";
+			return L"const uint32_t ledarray"  + std::to_wstring(frame) + L"[] PROGMEM = {";
 
 		default:
 			return L"";

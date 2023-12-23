@@ -121,9 +121,9 @@ namespace ExportRGB
 			output.push_back(L"");
 		}
 
-		// =========================================================================
-		// =========================================================================
-		// =========================================================================
+		// ===================================================================
+		// ===================================================================
+		// ===================================================================
 
 		vartype = ExportUtility::GetSingleVariableStatement(teo.Code.Language, teo.Code.Size);
 
@@ -134,8 +134,8 @@ namespace ExportRGB
 
 		teo.DataPadding = ExportUtility::GetPadding(teo.Code.Language, vartype.length());
 
-		// ===========================================================================
-		// ===========================================================================
+		// ===================================================================
+		// ===================================================================
 
 		for (int t = teo.Code.StartFrame; t <= teo.Code.EndFrame; t++)
 		{
@@ -147,7 +147,9 @@ namespace ExportRGB
 			// =========================================================================
 
 			for (int i = 0; i < std::max(matrix->Details.Height, matrix->Details.Width); i++)
+			{
 				MatrixData[i] = L"";
+			}
 
 			if (teo.Code.Source == ReadSource::kRows)
 			{
@@ -298,16 +300,16 @@ namespace ExportRGB
 					break;
 				}
 			}
+
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
+			{
+				output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Code.Language));
+
+				output.push_back(L"");
+			}
 		}
 
 		// =========================================================================
-
-		if (teo.Code.Language == ExportLanguage::kCFastLED)
-		{
-			output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Code.Language));
-
-			output.push_back(L"");
-		}
 
 		switch (teo.Code.Language)
 		{
