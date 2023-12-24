@@ -2978,6 +2978,14 @@ void __fastcall TfrmMain::Preview2Click(TObject *Sender)
 	ShowMessage(thematrix->GetPreviewDebug().c_str());
 	#endif
 }
+
+
+void __fastcall TfrmMain::miDrawTestPatternClick(TObject *Sender)
+{
+	#if _DEBUG
+    thematrix->TestSignal();
+	#endif
+}
 #pragma end_region
 
 
@@ -6005,3 +6013,4 @@ void TfrmMain::LoadWithWarnings(const std::wstring file_name)
 	Application->ProcessMessages();
 	thematrix->SetMatrixReadOnly(false);
 }
+

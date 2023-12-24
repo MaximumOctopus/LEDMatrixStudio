@@ -486,5 +486,6 @@ public:
 	#if _DEBUG
 	std::wstring GetPaintBoxDebug();
 	std::wstring GetPreviewDebug();
+    void TheMatrix::TestSignal();
 	#endif
 };

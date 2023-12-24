@@ -8137,8 +8137,8 @@ int TheMatrix::GetAutoPixelSize(int canvas_width, int canvas_height, int gradien
 			preview_width = PreviewBox->Width;
 		}
 
-		int xc = canvas_width - preview_width - 30;
-		int yc = canvas_height - 14;
+		int xc = canvas_width - preview_width - 100;
+		int yc = canvas_height - 20;
 
 		int pxc = 10;
 		int pyc = 10;
@@ -9209,7 +9209,7 @@ void TheMatrix::ChangeZoomUI(int pixelsize)
 {
 	TPanel *panel = (TPanel*)Canvas;
 
-	int containerwidth  = panel->Width - 95 - 25;
+	int containerwidth  = panel->Width - 75 - 25;
 	int containerheight = panel->Height - 40;
 
 	if (pixelsize * Details.Width > containerwidth)
@@ -9517,5 +9517,57 @@ std::wstring TheMatrix::GetPreviewDebug()
 					 std::to_wstring(Preview.Size);
 
 	return s;
+}
+
+
+void TheMatrix::TestSignal()
+{
+	int y = 0;
+
+	for (int x = 0; x < Details.Width; x++)
+	{
+		switch (Details.Mode)
+		{
+		case MatrixMode::kMono:
+		case MatrixMode::kBiSequential:
+		case MatrixMode::kBiBitplanes:
+			MatrixLayers[CurrentLayer]->Cells[0]->Grid[y * Details.Width + x] = 1;
+			break;
+		case MatrixMode::kRGB:
+			MatrixLayers[CurrentLayer]->Cells[0]->Grid[y * Details.Width + x] = 0x0044ff;
+			break;
+		}
+
+		if (y < Details.Height - 1)
+		{
+			y++;
+		}
+		else
+		{
+			y = 0;
+		}
+	}
+
+	switch (Details.Mode)
+	{
+	case MatrixMode::kMono:
+	case MatrixMode::kBiSequential:
+	case MatrixMode::kBiBitplanes:
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[0] = 1;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[Details.Width - 1] = 1;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width] = 1;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width + (Details.Width - 1)] = 1;
+		break;
+	case MatrixMode::kRGB:
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[0] = 0x00ff44;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[Details.Width - 1] = 0x00ff44;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width] = 0x00ff44;
+		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width + (Details.Width - 1)] = 0x00ff44;
+		break;
+	}
+
+	CopyCurrentFrameToDrawBuffer();
+
+	PaintBox->Invalidate();
 }
 #endif

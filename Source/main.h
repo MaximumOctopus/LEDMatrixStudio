@@ -648,6 +648,8 @@ __published:	// IDE-managed Components
 	TBevel *Bevel21;
 	TMenuItem *N4x41;
 	TMenuItem *N5x51;
+	TMenuItem *N64;
+	TMenuItem *miDrawTestPattern;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -817,6 +819,7 @@ __published:	// IDE-managed Components
 	void __fastcall Checkforupdates1Click(TObject *Sender);
 	void __fastcall Preview2Click(TObject *Sender);
 	void __fastcall PaintBox1Click(TObject *Sender);
+	void __fastcall miDrawTestPatternClick(TObject *Sender);
 
 private:
 
