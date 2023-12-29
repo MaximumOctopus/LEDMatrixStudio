@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -8938,7 +8938,7 @@ void TheMatrix::Automate(ActionObject &ao)
 		{
 			action = ao.ActionList[a];
 
-			if (action >= 19 || action <= 22)
+			if (action >= 19 && action <= 22)           // paste brush
 			{
 				AutomationActionExecute(ao, action);
 			}
@@ -8946,7 +8946,6 @@ void TheMatrix::Automate(ActionObject &ao)
 
 		for (int frame = ao.FrameStart + 1; frame <= ao.FrameEnd; frame++)
 		{
-
 			if (frame >= GetFrameCount())
 			{
 				InsertBlankFrameAt(frame);
