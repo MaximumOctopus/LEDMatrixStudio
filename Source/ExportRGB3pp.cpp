@@ -1,6 +1,6 @@
  // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -433,19 +433,19 @@ namespace ExportRGB3BPP
 		{
 			for (int pixel = 0; pixel < matrix->Details.Height; pixel++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Height + col] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 4) == 4)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 4) == 4)
 					{
 						r += powers[pixel];
 					}
 
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 2) == 2)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 2) == 2)
 					{
 						g += powers[pixel];
 					}
 
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 1) == 1)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 1) == 1)
 					{
 						b += powers[pixel];
 					}
@@ -456,19 +456,19 @@ namespace ExportRGB3BPP
 		{
 			for (int pixel = matrix->Details.Height - 1; pixel >= 0; pixel--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Height + col] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 4) == 4)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 4) == 4)
 					{
 						r += powers[matrix->Details.Height - 1 - pixel];
 					}
 
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 2) == 2)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 2) == 2)
 					{
 						g += powers[matrix->Details.Height - 1 - pixel];
 					}
 
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Height + col] & 1) == 1)
+					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 1) == 1)
 					{
 						b += powers[matrix->Details.Height - 1 - pixel];
 					}

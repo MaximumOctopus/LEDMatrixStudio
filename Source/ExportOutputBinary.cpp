@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -127,12 +127,12 @@ namespace ExportOutputBinary
 				if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
 					start = 0;
-					delta   = 1;
+					delta = 1;
 				}
 				else
 				{
 					start = matrix->Details.Height - 1;
-					delta   = -1;
+					delta = -1;
 				}
 
 				int y = start;
@@ -171,13 +171,13 @@ namespace ExportOutputBinary
 
 					if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
-						  start= 0;
-						  delta  = 1;
+						  start = 0;
+						  delta = 1;
 					}
 					else
 					{
 						  start = matrix->Details.Width - 1;
-						  delta   = -1;
+						  delta = -1;
 					}
 
 					int y = start;
@@ -987,9 +987,13 @@ namespace ExportOutputBinary
 		// ===========================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
+		{
 			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+		}
 		else
+		{
 			selectedmatrix = matrix->MatrixUser[frame];
+        }
 
 		// ===========================================================================
 
@@ -1000,22 +1004,22 @@ namespace ExportOutputBinary
 			case ScanDirection::kColAltDownUp:
 				if (col % 2 == 0)
 				{
-				   direction = ScanDirection::kColTopToBottom;
+					direction = ScanDirection::kColTopToBottom;
 				}
 				else
 				{
-				   direction = ScanDirection::kColBottomToTop;
+					direction = ScanDirection::kColBottomToTop;
 				}
 				break;
 			case ScanDirection::kColAltUpDown:
 				if (col % 2 == 0)
 				{
-				   direction = ScanDirection::kColBottomToTop;
+					direction = ScanDirection::kColBottomToTop;
 				}
 				else
 				{
-				   direction = ScanDirection::kColTopToBottom;
-                }
+					direction = ScanDirection::kColTopToBottom;
+				}
 				break;
 			}
 		}
@@ -1052,11 +1056,11 @@ namespace ExportOutputBinary
 		{
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Height + col] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
 							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
 						}
@@ -1069,14 +1073,14 @@ namespace ExportOutputBinary
 					}
 					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
 							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
 						}
 						else
 						{
 							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
-                        }
+						}
 
 						output += spacingchar;
 
@@ -1089,30 +1093,30 @@ namespace ExportOutputBinary
 		{
 			for (int y = matrix->Details.Height - 1; y >= 0; y--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Height + col] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
 							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
 						}
 						else
 						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
                         }
 
 						dataout.Count += 3;
 					}
 					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Height + col] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
 							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
 						}
 						else
 						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Height + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
 						}
 
 						output += spacingchar;
