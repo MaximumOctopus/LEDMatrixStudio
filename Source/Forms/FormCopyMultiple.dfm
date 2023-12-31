@@ -3,8 +3,8 @@ object frmCopyMultiple: TfrmCopyMultiple
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmCopyMultiple'
-  ClientHeight = 293
-  ClientWidth = 421
+  ClientHeight = 287
+  ClientWidth = 415
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

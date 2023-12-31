@@ -2,8 +2,8 @@ object Form13: TForm13
   Left = 0
   Top = 0
   Caption = 'Form13'
-  ClientHeight = 278
-  ClientWidth = 649
+  ClientHeight = 272
+  ClientWidth = 643
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

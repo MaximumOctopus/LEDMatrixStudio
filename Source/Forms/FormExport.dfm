@@ -1003,7 +1003,7 @@ object frmExport: TfrmExport
             OnClick = sbBinaryDataRowsClick
           end
           object sbBinaryDataColumns: TSpeedButton
-            Left = 93
+            Left = 97
             Top = 24
             Width = 75
             Height = 25

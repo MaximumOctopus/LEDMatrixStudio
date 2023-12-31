@@ -3,8 +3,8 @@ object frmFontViewer: TfrmFontViewer
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmFontViewer'
-  ClientHeight = 350
-  ClientWidth = 489
+  ClientHeight = 344
+  ClientWidth = 483
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -20,12 +20,11 @@ object frmFontViewer: TfrmFontViewer
     Left = 0
     Top = 0
     Width = 145
-    Height = 298
+    Height = 292
     Align = alLeft
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 292
     object bSelectFont: TLabel
       Left = 8
       Top = 15
@@ -54,14 +53,13 @@ object frmFontViewer: TfrmFontViewer
   end
   object Panel2: TPanel
     Left = 0
-    Top = 298
-    Width = 489
+    Top = 292
+    Width = 483
     Height = 52
     Align = alBottom
     Color = clWhite
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 292
     ExplicitWidth = 889
     object lCharacterValue: TLabel
       Left = 8
@@ -107,8 +105,8 @@ object frmFontViewer: TfrmFontViewer
   object pFont: TPanel
     Left = 145
     Top = 0
-    Width = 344
-    Height = 298
+    Width = 338
+    Height = 292
     Align = alClient
     TabOrder = 2
     ExplicitLeft = 248

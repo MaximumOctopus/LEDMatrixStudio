@@ -3,8 +3,8 @@ object frmCheckVersion: TfrmCheckVersion
   Top = 0
   BorderStyle = bsDialog
   Caption = 'LED Matrix Builder'
-  ClientHeight = 271
-  ClientWidth = 496
+  ClientHeight = 265
+  ClientWidth = 490
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,10 +17,11 @@ object frmCheckVersion: TfrmCheckVersion
   object Shape1: TShape
     Left = 0
     Top = 0
-    Width = 496
+    Width = 490
     Height = 38
     Align = alTop
     Pen.Color = clWhite
+    ExplicitWidth = 496
   end
   object Label5: TLabel
     Left = 8

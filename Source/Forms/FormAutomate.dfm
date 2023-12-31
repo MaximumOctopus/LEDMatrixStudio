@@ -3,8 +3,8 @@ object frmAutomate: TfrmAutomate
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmAutomate'
-  ClientHeight = 665
-  ClientWidth = 908
+  ClientHeight = 660
+  ClientWidth = 896
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -1434,7 +1434,7 @@ object frmAutomate: TfrmAutomate
           ParentFont = False
         end
         object sRevealColour: TShape
-          Left = 351
+          Left = 366
           Top = 67
           Width = 28
           Height = 22
@@ -1628,7 +1628,7 @@ object frmAutomate: TfrmAutomate
         object rbProcessMode2: TRadioButton
           Left = 16
           Top = 55
-          Width = 184
+          Width = 289
           Height = 17
           Caption = '.'
           TabOrder = 2
@@ -1636,7 +1636,7 @@ object frmAutomate: TfrmAutomate
         object rbProcessMode1: TRadioButton
           Left = 16
           Top = 32
-          Width = 184
+          Width = 289
           Height = 17
           Caption = '.'
           Checked = True
@@ -1645,8 +1645,8 @@ object frmAutomate: TfrmAutomate
         end
         object cbErase: TCheckBox
           Left = 16
-          Top = 102
-          Width = 184
+          Top = 101
+          Width = 289
           Height = 17
           Caption = '.'
           TabOrder = 4
@@ -1654,7 +1654,7 @@ object frmAutomate: TfrmAutomate
         object rbProcessMode3: TRadioButton
           Left = 16
           Top = 78
-          Width = 241
+          Width = 289
           Height = 17
           Hint = 
             '(eg a scroll up will scroll once on frame 1, twice on frame 2, 1' +

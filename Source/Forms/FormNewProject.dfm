@@ -3,7 +3,7 @@ object Form16: TForm16
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Form16'
-  ClientHeight = 378
+  ClientHeight = 382
   ClientWidth = 729
   Color = clBtnFace
   DoubleBuffered = True
@@ -18,12 +18,12 @@ object Form16: TForm16
   object Bevel19: TBevel
     Left = 7
     Top = 343
-    Width = 711
+    Width = 714
     Height = 4
     Shape = bsTopLine
   end
   object bOK: TBitBtn
-    Left = 561
+    Left = 565
     Top = 350
     Width = 75
     Height = 25
@@ -72,7 +72,7 @@ object Form16: TForm16
     OnClick = bOKClick
   end
   object bCancel: TBitBtn
-    Left = 642
+    Left = 646
     Top = 350
     Width = 75
     Height = 25
@@ -330,7 +330,7 @@ object Form16: TForm16
           end
         end
         object rbCommon: TRadioButton
-          Left = 179
+          Left = 174
           Top = 55
           Width = 66
           Height = 17
@@ -343,7 +343,7 @@ object Form16: TForm16
         object rbAll: TRadioButton
           Left = 246
           Top = 55
-          Width = 30
+          Width = 43
           Height = 17
           Caption = '.'
           TabOrder = 5

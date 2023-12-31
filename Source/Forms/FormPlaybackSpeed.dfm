@@ -3,8 +3,8 @@ object Form18: TForm18
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Form18'
-  ClientHeight = 198
-  ClientWidth = 329
+  ClientHeight = 192
+  ClientWidth = 323
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

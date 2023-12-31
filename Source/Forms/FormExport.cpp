@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -1813,7 +1813,10 @@ void TfrmExport::PopulateProfileList()
 		}
 		break;
 	case MatrixMode::kRGB3BPP:
-        cbProfileList->Items->Clear();
+		for (int t = 0; t < GProfileHandler->ProfilesRGB3BPP.size(); t++)
+		{
+			cbProfileList->Items->Add(GProfileHandler->ProfilesRGB3BPP[t].c_str());
+		}
 		break;
 	}
 
