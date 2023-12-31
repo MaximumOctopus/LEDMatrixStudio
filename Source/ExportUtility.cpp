@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -349,6 +349,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"%";
 			case NumberFormat::kHex:
@@ -360,6 +362,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"%";
 			case NumberFormat::kHex:
@@ -372,6 +376,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"0B";
 			case NumberFormat::kHex:
@@ -383,6 +389,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"0B";
 			case NumberFormat::kHex:
@@ -395,6 +403,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"0B";
 			case NumberFormat::kHex:
@@ -406,6 +416,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"%";
 			case NumberFormat::kHex:
@@ -417,6 +429,8 @@ namespace ExportUtility
 		{
 			switch (format)
 			{
+			case NumberFormat::kDecimal:
+				break;
 			case NumberFormat::kBinary:
 				return L"%";
 			case NumberFormat::kHex:
@@ -507,7 +521,7 @@ namespace ExportUtility
 		std::wstring cc = GetCommentCharacter(teo.Code.Language);
 
 		output.push_back(cc + L"=================================================================");
-		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2023");
+		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2024");
 		output.push_back(cc);
 		output.push_back(cc + L"https://github.com/MaximumOctopus/LEDMatrixStudio");
 		output.push_back(cc);

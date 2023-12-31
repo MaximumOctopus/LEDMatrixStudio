@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -3980,9 +3980,6 @@ void __fastcall TfrmMain::bDeleteFrameClick(TObject *Sender)
 	else
 	{
 		thematrix->DeleteFrame(GetSelectedFrame());
-
-		// if tbFrames.Position >= tbFrames.Max then // to do disabled in original code
-		// tbFrames.Position = tbFrames.Max - 1;
 
 		UpdateDisplay(-1);
 	}

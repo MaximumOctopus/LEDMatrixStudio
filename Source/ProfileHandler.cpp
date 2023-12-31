@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -25,8 +25,7 @@ ProfileHandler::ProfileHandler(const std::wstring path)
 {
 	Path = path;
 
-	PopulateList(Profiles, Path + L"ledsexport");
-	PopulateList(ProfilesRGB, Path + L"ledsexportrgb");
+	UpdateAll();
 }
 
 
@@ -329,5 +328,5 @@ void ProfileHandler::UpdateAll()
 {
 	PopulateList(Profiles, Path + L"ledsexport");
 	PopulateList(ProfilesRGB, Path + L"ledsexportrgb");
-//    PopulateList(ProfilesRGB3BPP, Path + L"ledsexportrgb3bpp"); // ledsexportrgb3bpp missing to do
+	PopulateList(ProfilesRGB3BPP, Path + L"ledsexportrgb3bpp");
 }

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -19,8 +19,6 @@
 #include "MatrixConstants.h"
 
 
-enum class DataParameter { kUnknown = 0, kDeadPixelBegin, kDeadPixelEnd, kRowData };
-
 static const int PixelAlive = 0;
 static const int PixelDead = 1;
 
@@ -29,6 +27,8 @@ class MatrixDead
 {
 
 private:
+
+	enum class DataParameter { kUnknown = 0, kDeadPixelBegin, kDeadPixelEnd, kRowData };
 
 	DataParameter LoadDataParameterType(std::wstring, bool);
 

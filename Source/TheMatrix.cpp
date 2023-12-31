@@ -5673,8 +5673,8 @@ void TheMatrix::ExportToGIF(const std::wstring file_name, int background, int pi
 
 			lGIF->Add(lTGI);
 
-			//      lTGI.Free;         to do
-			//      lTempFrame.Free;
+			delete lTGI;
+			delete lTempFrame;
 		}
 
 		TGIFAppExtNSLoop *aeloop = new TGIFAppExtNSLoop(lGIF->Images->Frames[0]);
@@ -6279,8 +6279,8 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 
 	if (file)
 	{
-		int MemSlot    = CurrentFrame;
-		int Row        = 0;
+		int MemSlot = CurrentFrame;
+		int Row     = 0;
 
 		std::wstring s(L"");
 

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -81,21 +81,21 @@ private:
 
 	bool Busy = false;
 
-	Matrix *DisplayBuffer;
+	Matrix *DisplayBuffer = nullptr;
 
-	TPaintBox *PaintBox;
-	TPaintBox *PreviewBox;
+	TPaintBox *PaintBox = nullptr;
+	TPaintBox *PreviewBox = nullptr;
 
 	Font *TextFont = nullptr;
+
+	TComponent *Owner = nullptr;
+	TWinControl *Canvas = nullptr;
 
 	int CanvasBackground;
 
 	int LastMouseButton = 0;
 
 	bool PreviewPopout = false;
-
-	TComponent *Owner;
-	TWinControl *Canvas;
 
 	bool AutomateMode = false;
 
@@ -120,7 +120,7 @@ private:
 	TScrollBar *ScrollHorizontal;
 	TScrollBar *ScrollVertical;
 
-	bool FontWrap;
+	bool FontWrap = false;
 
 	void InitPreviewBox(TComponent*, TWinControl*, bool);
 
@@ -205,7 +205,7 @@ public:
 	std::function<void(TheMatrix*)> OnColourChange;
 	std::function<void(int, int)> OnMouseOver;
 	std::function<void(int, int)> OnPreviewMouseDown;
-	// use this to send debug data from the component to screen of file based on your needs
+	// use this to send debug data from the component to screen or file based on your needs
 	std::function<void(TheMatrix*, const std::wstring)> OnDebugEvent;
 
 	//
@@ -213,14 +213,14 @@ public:
 	MatrixDetails Details;
 	MatrixRendering Render;
 
-	int LastX;
-	int LastY;
+	int LastX = -1;
+	int LastY = -1;
 
 	bool AnimPlaying = false;
 
-	int SelectionLMB;
-	int SelectionMMB;
-	int SelectionRMB;
+	int SelectionLMB = 0;
+	int SelectionMMB = 1;
+	int SelectionRMB = 2;
 
 	int LEDColoursSingle[6]; 	// used as backups only
 	int LEDColoursBi[6];	 	// used as backups only

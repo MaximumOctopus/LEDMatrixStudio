@@ -64,7 +64,7 @@ namespace ExportOutputBinary
 
 		std::wstring op = L"";
 
-		teo.DataPadding = L"" ;//PadString(' ', length(vartype));
+		teo.DataPadding = L"";
 
 		entrycount = 0; // total of all entries added to data variable in output
 
@@ -857,9 +857,13 @@ namespace ExportOutputBinary
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
+						{
 							ia.Data[dataindex] += powers[bitcounter];
+						}
 						else
+						{
 							ia.Data[dataindex] += powers[bits - bitcounter];
+                        }
 					}
 
 					if (bitcounter == bits)
@@ -1145,14 +1149,20 @@ namespace ExportOutputBinary
 			if (matrix->MatrixLayers[0]->Cells[frame]->Grid[row * matrix->Details.Width + x] == 1)
 			{
 				if (direction == 0)
+				{
 					total += powers[x];
+				}
 				else
+				{
 					total += powers[matrix->Details.Width - x];
+                }
 			}
 		}
 
 		if (hexmode)
+		{
 			return IntToHex(total, GSystemSettings->App.PadModeHexRow).c_str();
+        }
 
 		return std::to_wstring(total);
 	}
@@ -1168,14 +1178,20 @@ namespace ExportOutputBinary
 			if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + col] == 1)
 			{
 				if (direction == 0)
+				{
 					total += powers[y];
+				}
 				else
+				{
 					total += powers[matrix->Details.Height - y];
+                }
 			}
 		}
 
 		if (hexmode)
+		{
 			return IntToHex(total, GSystemSettings->App.PadModeHexCol).c_str();
+		}
 
 		return std::to_wstring(total);
 	}

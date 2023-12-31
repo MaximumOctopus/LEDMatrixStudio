@@ -197,6 +197,8 @@ namespace ExportRGB
 						case LineContent::kFrame:
 							s += MatrixData[y];
 							break;
+						case LineContent::kBytes:
+							break;
 						}
 					}
 
@@ -221,6 +223,8 @@ namespace ExportRGB
 							break;
 						case LineContent::kFrame:
 							s += MatrixData[y];
+							break;
+                        case LineContent::kBytes:
 							break;
 						}
 					}
@@ -260,6 +264,8 @@ namespace ExportRGB
 							case LineContent::kFrame:
 								s += MatrixData[x];
 								break;
+							case LineContent::kBytes:
+								break;
 							}
 						}
 
@@ -284,6 +290,8 @@ namespace ExportRGB
 								break;
 							case LineContent::kFrame:
 								s += MatrixData[x];
+								break;
+                            case LineContent::kBytes:
 								break;
 							}
 						}

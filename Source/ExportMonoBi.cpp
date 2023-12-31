@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -248,13 +248,13 @@ namespace ExportMonoBi
 				{
 					start = teo.Code.SelectiveStart - 1;
 					end   = teo.Code.SelectiveEnd - 1;
-					delta   = 1;
+					delta = 1;
 				}
 				else
 				{
 					start = teo.Code.SelectiveEnd - 1;
 					end   = teo.Code.SelectiveStart - 1;
-					delta   = -1;
+					delta = -1;
 				}
 
 			    int	y = start;
@@ -495,8 +495,6 @@ namespace ExportMonoBi
 		{
 			delete MatrixData[t];
 		}
-
-		//delete[] MatrixData;
 
 		if (teo.Code.IncludePreamble)
         {
@@ -843,9 +841,9 @@ namespace ExportMonoBi
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Height + x] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
-					if (selectedmatrix->Grid[row * matrix->Details.Height + x] == 1)
+					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
@@ -878,9 +876,9 @@ namespace ExportMonoBi
 		{
 			for (int x = matrix->Details.Width - 1; x >= 0; x--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Height + x] == PixelAlive)
+				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
-					if (selectedmatrix->Grid[row * matrix->Details.Height + x] == 1)
+					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -40,6 +40,7 @@ public:
 
 	std::vector<std::wstring> Profiles;
 	std::vector<std::wstring> ProfilesRGB;
+	std::vector<std::wstring> ProfilesRGB3BPP;
 
 	ProfileHandler(const std::wstring);
 

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -18,15 +18,15 @@
 #include "ActionObjectBrush.h"
 
 
-	enum class AutomateSource { kFirstFrame = 0, kEachFrame, kEachFrameInc };
-	enum class CyclingDirection { kForwards = 0, kBackwards };
+enum class AutomateSource { kFirstFrame = 0, kEachFrame, kEachFrameInc };
+enum class CyclingDirection { kForwards = 0, kBackwards };
 
-	static const int actionTypeRevealLeftRight = 30;
-	static const int actionTypeRevealRightLeft = 31;
-	static const int actionTypeRevealTopBottom = 32;
-	static const int actionTypeRevealBottomTop = 33;
-	static const int actionTypeRevealCentreOut = 34;
-	static const int actionTypeRevealCentreIn  = 35;
+static const int actionTypeRevealLeftRight = 30;
+static const int actionTypeRevealRightLeft = 31;
+static const int actionTypeRevealTopBottom = 32;
+static const int actionTypeRevealBottomTop = 33;
+static const int actionTypeRevealCentreOut = 34;
+static const int actionTypeRevealCentreIn  = 35;
 
 
 class ActionObject
@@ -38,14 +38,14 @@ public:
 
 	int ProcesingStage = 0;
 
-	int FrameStart;
-	int FrameEnd;
+	int FrameStart = 0;
+	int FrameEnd = 0;
 
-	int Layer;
+	int Layer = 0;
 
 	AutomateSource Source = AutomateSource::kFirstFrame;
 
-	bool EraseBehind;
+	bool EraseBehind = false;
 
 	std::vector<int> ActionList;
 	std::vector<int> PostProcessList;
@@ -57,11 +57,11 @@ public:
 
 	std::vector<int> SourceColours;
 	std::vector<int> TargetColours;
-	int TargetSkip;
-	int TargetSkipIndex;
+	int TargetSkip = 0;
+	int TargetSkipIndex = 0;
 
-	int CCSourceIndex;
-	int CCTargetIndex;
+	int CCSourceIndex = 0;
+	int CCTargetIndex = 0;
 	CyclingDirection CCDirection;
 
 	ActionObjectBrush Brushes[2];

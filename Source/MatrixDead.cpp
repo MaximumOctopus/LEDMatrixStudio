@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -32,7 +32,7 @@ MatrixDead::~MatrixDead()
 }
 
 
-DataParameter MatrixDead::LoadDataParameterType(const std::wstring data, bool IgnorePixelMode)
+MatrixDead::DataParameter MatrixDead::LoadDataParameterType(const std::wstring data, bool IgnorePixelMode)
 {
 	if (data.find(L"deadpixel") != std::wstring::npos)
 	{

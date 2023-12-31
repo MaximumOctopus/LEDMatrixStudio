@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -25,6 +25,7 @@ void CalcUtility::IncWithRollOver(int &value, const int max)
 	if (max == value)
 	{
 		value = 0;
+
 		return;
 	}
 

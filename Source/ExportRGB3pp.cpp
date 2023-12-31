@@ -202,6 +202,8 @@ namespace ExportRGB3BPP
 						case LineContent::kFrame:
 							s += MatrixData[y];
 							break;
+                        case LineContent::kBytes:
+							break;
 						}
 					}
 
@@ -226,6 +228,8 @@ namespace ExportRGB3BPP
 							break;
 						case LineContent::kFrame:
 							s += MatrixData[y];
+							break;
+                        case LineContent::kBytes:
 							break;
 						}
 					}
@@ -265,6 +269,8 @@ namespace ExportRGB3BPP
 							case LineContent::kFrame:
 								s += MatrixData[x];
 								break;
+                            case LineContent::kBytes:
+								break;
 							}
 						}
 
@@ -289,6 +295,8 @@ namespace ExportRGB3BPP
 								break;
 							case LineContent::kFrame:
 								s += MatrixData[x];
+								break;
+                            case LineContent::kBytes:
 								break;
 							}
 						}
