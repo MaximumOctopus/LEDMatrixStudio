@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2023
+//   (c) Paul Alan Freshney 2012-2024
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -79,20 +79,20 @@ void __fastcall TframeGradient::eRedKeyPress(TObject *Sender, System::WideChar &
 
 		if (value >= 0 && value <= 255)
 		{
-		  switch (edit->Tag)
-		  {
-		  case CRed:
-			tbRed->Position   = value;
-			break;
-		  case CGreen:
-			tbGreen->Position = value;
-			break;
-		  case CBlue:
-			tbBlue->Position  = value;
-            break;
-		  }
+			switch (edit->Tag)
+			{
+			case CRed:
+				tbRed->Position   = value;
+				break;
+			case CGreen:
+				tbGreen->Position = value;
+				break;
+			case CBlue:
+				tbBlue->Position  = value;
+				break;
+			}
 
-		  tbRedChange(nullptr);
+		  	tbRedChange(nullptr);
 		}
 	}
 }
