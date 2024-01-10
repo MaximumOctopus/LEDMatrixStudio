@@ -364,7 +364,7 @@ namespace ExportOutputBinary
 					{
 						s = L"";
 
-						for (int x = matrix->Details.Width - 1; x >= 0; x++)
+						for (int x = matrix->Details.Width - 1; x >= 0; x--)
 						{
 							s += MatrixData[x];
 						}
