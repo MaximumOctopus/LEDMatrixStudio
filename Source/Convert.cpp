@@ -25,11 +25,11 @@ namespace Convert
 
 		int i = 0;
 
-		for (int t = s.length() - 1; t >= 0; t++)
+		for (int t = s.length() - 1; t >= 0; t--)
 		{
 			if (s[t] == L'1')
 			{
-				value = value + powers[i];
+				value += powers[i];
 			}
 
 			i++;
