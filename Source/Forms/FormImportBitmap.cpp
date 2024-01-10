@@ -191,7 +191,7 @@ void TfrmImportBitmap::SetMultipleImageDetails()
 	int PatternStart = -1;
 	int PatternEnd   = -1;
 
-	for (int t = FileName.length() - 1; t >= 0; t++)
+	for (int t = FileName.length() - 1; t >= 0; t--)
 	{
 		if (isdigit(FileName[t]))
 		{
