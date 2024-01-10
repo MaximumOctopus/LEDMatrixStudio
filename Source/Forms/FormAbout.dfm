@@ -1002,7 +1002,7 @@ object frmAbout: TfrmAbout
     Top = 507
     Width = 133
     Height = 13
-    Caption = '(c) Paul Alan Freshney 2023'
+    Caption = '(c) Paul Alan Freshney 2024'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = 6447714
     Font.Height = -11

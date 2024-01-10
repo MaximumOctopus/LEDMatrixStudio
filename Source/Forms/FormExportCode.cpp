@@ -153,7 +153,7 @@ void TfrmExportCode::UpdatePlatformList()
 			{
 				std::wstring s = file.cFileName;
 
-				if (s[0] != L'.')
+				if (s[0] != L'.' && s[0] != L'_')
 				{
 					cbPlatforms->Items->Add(s.c_str());
 				}

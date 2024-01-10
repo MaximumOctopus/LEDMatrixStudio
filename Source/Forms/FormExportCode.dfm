@@ -23,6 +23,7 @@ object frmExportCode: TfrmExportCode
     BevelInner = bvRaised
     BevelOuter = bvLowered
     TabOrder = 0
+    ExplicitHeight = 606
     DesignSize = (
       262
       612)
@@ -628,6 +629,7 @@ object frmExportCode: TfrmExportCode
         FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
         FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
       TabOrder = 5
+      ExplicitTop = 575
     end
   end
   object Memo1: TMemo
@@ -644,6 +646,8 @@ object frmExportCode: TfrmExportCode
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
+    ExplicitWidth = 636
+    ExplicitHeight = 606
   end
   object sdExportCode: TSaveDialog
     Left = 304

@@ -113,7 +113,6 @@ void TForm16::SetGUILanguageText()
 	Label9->Caption = GLanguageHandler->Text[kHeight].c_str();
 
 
-
 	gbPixelShape->Caption = GLanguageHandler->Text[kPixelShape].c_str();
 
 	gbAnimation->Caption = GLanguageHandler->Text[kAnimation].c_str();
@@ -130,6 +129,10 @@ void TForm16::SetGUILanguageText()
 
 void TForm16::BuildFrom(ProjectSettings &ps)
 {
+	shapeSquare->Brush->Color = clWhite;
+	shapeCircle->Brush->Color = clWhite;
+	shapeRoundRect->Brush->Color = clWhite;
+
 	switch (ps.Pixel)
 	{
 	case PixelShape::kSquare:
