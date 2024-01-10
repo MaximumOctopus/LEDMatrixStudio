@@ -33,9 +33,9 @@ namespace ColourUtility
 
 		if (brightness != 100)
 		{
-			r = std::round((brightness / 100) * r);
-			g = std::round((brightness / 100) * g);
-			b = std::round((brightness / 100) * b);
+			r = std::round(((double)brightness / 100) * (double)r);
+			g = std::round(((double)brightness / 100) * (double)g);
+			b = std::round(((double)brightness / 100) * (double)b);
 		}
 
 		if (colourspace == ColourSpace::kRGB565)
@@ -99,9 +99,9 @@ namespace ColourUtility
 
 		if (brightness != 100)
 		{
-			r = std::round((brightness / 100) * r);
-			g = std::round((brightness / 100) * g);
-			b = std::round((brightness / 100) * b);
+			r = std::round(((double)brightness / 100) * (double)r);
+			g = std::round(((double)brightness / 100) * (double)g);
+			b = std::round(((double)brightness / 100) * (double)b);
 		}
 
 		switch (convertmode)
