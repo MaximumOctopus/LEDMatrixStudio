@@ -109,31 +109,31 @@ struct AppSettings
 		{
 			PadModeHexCol = 2;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 9 && height <= 16)
 		{
 			PadModeHexCol = 4;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 17 && height <= 24)
 		{
 			PadModeHexCol = 6;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 25 && height <= 32)
 		{
 			PadModeHexCol = 8;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 33 && height <= 40)
 		{
 			PadModeHexCol = 10;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 41 && height <= 48)
 		{
 			PadModeHexCol = 12;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 49 && height <= 56)
 		{
 			PadModeHexCol = 14;
 		}
-		else if (height >= 1 && height <= 8)
+		else if (height >= 57 && height <= 64)
 		{
 			PadModeHexCol = 16;
 		}

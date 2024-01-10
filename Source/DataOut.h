@@ -18,16 +18,16 @@
 #include "MatrixConstants.h"
 
 
-static const int DataOutDataMax = 32;
+static const int _DataOutDataMax = 32;
 
 
 struct InternalArray
 {
-	unsigned __int64 Data[DataOutDataMax];
+	unsigned __int64 Data[_DataOutDataMax];
 
 	void Clear()
 	{
-		for (int t = 0; t < DataOutDataMax; t++)
+		for (int t = 0; t < _DataOutDataMax; t++)
 		{
 			Data[t] = -1;
 		}
@@ -38,11 +38,11 @@ struct InternalArray
  struct DataOut
  {
 	int Count = 0;
-	std::wstring Data[DataOutDataMax];
+	std::wstring Data[_DataOutDataMax];
 
 	void Clear()
 	{
-		for (int t = 0; t < DataOutDataMax; t++)
+		for (int t = 0; t < _DataOutDataMax; t++)
 		{
 			Data[t] = L"";
         }

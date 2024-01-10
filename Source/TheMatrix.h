@@ -154,8 +154,6 @@ private:
 
 	int GetPreviewPixelSize(int);
 
-	//function  GetColourFromXY(x, y : integer): integer;
-
 	void __fastcall pbPreviewPaint(TObject *Sender);
 	void __fastcall pbPreviewPaintRadial(TObject *Sender);
 	void __fastcall pbPreviewPaintRadialThreeQuarters(TObject *Sender);
@@ -289,19 +287,19 @@ public:
 
 	void SetMouseButtonColours(int, int, int);
 
-	void PlotPixelMatrix(int, int, int); // use only this function (or PlotPixelMatrixFrame) to draw on the matrix outside of this class
-	void PlotPixelMatrixFrame(int, int, int, int);
+	void PlotPixelMatrix(int, int, int); 			// use only this function (or PlotPixelMatrixFrame) to draw on the matrix outside of this class
+	void PlotPixelMatrixFrame(int, int, int, int);  //
 
 	std::wstring RowToString(int, int);
 	void StringToRow(bool, std::wstring, int, int, int, bool);
 
 	void BackupMatrix(int, int);
-	void BackupMatrix();            // backs up current frame, current layer
+	void BackupMatrix();            				// backs up current frame, current layer
 
 	void SetDeadPixels(int);
 	void SetDeadPixelsFromCustomShape(CustomShape, int);
-	void SetDeadPixelsFromFileName(std::wstring);
-	void SaveDeadPixels(std::wstring);
+	void SetDeadPixelsFromFileName(const std::wstring);
+	void SaveDeadPixels(const std::wstring);
 
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
@@ -329,7 +327,7 @@ public:
 	void RotateFrame(int, int, int);
 
 	void PerformWipeOnCurrentFrame(int, bool );
-	void PerformRevealOnCurrentFrame(int, int , int &);
+	void PerformRevealOnCurrentFrame(int, int, int &);
 	void PerformScrollOnCopyFrame(int );
 	void PerformColumnScrollOnCurrentFrame(int , int , bool);
 	void PerformRowScrollOnCurrentFrame(int , int , bool);
@@ -378,7 +376,7 @@ public:
 
 	void DrawFontCharacter(int, int);
 	void DeleteFontCharacter(int);
-	void LoadTextToolFont(std::wstring);
+	void LoadTextToolFont(const std::wstring);
 
 	void ImportRowData(bool, int, int, const std::wstring);
 	void ImportColumnData(bool, int, int, const std::wstring);
@@ -389,10 +387,10 @@ public:
 	bool ExportAnimationToBitmap(const std::wstring);
 
 	bool SaveAnimation(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
-	void SaveFont(std::wstring, ImportData&, ExportOptions&);
-	void SaveAsTextToolFont(std::wstring);
-	void SaveAsRGBFont(std::wstring);
-	void SaveSingleFrame(std::wstring, ImportData, int);
+	void SaveFont(const std::wstring, ImportData&, ExportOptions&);
+	void SaveAsTextToolFont(const std::wstring);
+	void SaveAsRGBFont(const std::wstring);
+	void SaveSingleFrame(const std::wstring, ImportData, int);
 
 	ImportData LoadLEDMatrixData(const std::wstring, ExportOptions&, LoadMode, int);
 
@@ -440,7 +438,7 @@ public:
 	void SetLayerName(const std::wstring, int);
 	bool AddLayer(const std::wstring);
 	bool AddLayerSilent(const std::wstring);
-	bool AddLayerAsCopy(std::wstring, int);
+	bool AddLayerAsCopy(const std::wstring, int);
 	bool DeleteLayer(int);
 	void ClearCurrentLayerAllFrames();
 	void FlattenAllLayers();
@@ -486,6 +484,6 @@ public:
 	#if _DEBUG
 	std::wstring GetPaintBoxDebug();
 	std::wstring GetPreviewDebug();
-    void TheMatrix::TestSignal();
+	void TestSignal();
 	#endif
 };

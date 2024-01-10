@@ -198,7 +198,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 	output.push_back(s);
 	output.push_back(L"};");
 
-	// ==========================================================================
+	// =======================================================================
 
 	output.push_back(L"");
 
@@ -242,7 +242,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 		output.push_back(L"};");
 	}
 
-	// ===========================================================================
+	// =======================================================================
 
 	return true;
 }

@@ -19,18 +19,18 @@
 
 struct ImportDataPreview
 {
-	bool Enabled;
+	bool Enabled = false;
 
-	int Size;
-	ViewShape View;
-	int Void;
+	int Size = 1;
+	ViewShape View = ViewShape::kSquare;
+	int Void = 1;
 
-	bool IncrementRadially;
+	bool IncrementRadially = false;
 
-	bool Popout;
+	bool Popout = false;
 
-	int Offset;
-	bool OffsetDirection;
+	int Offset = 0;
+	bool OffsetDirection = false;
 
 	int ViewToInt()
 	{
@@ -80,28 +80,28 @@ struct ImportData
 	bool ImportOk = false;
 	std::wstring ErrorString = L"";
 
-	int Source;
-	int SourceLSB;
-	int SourceDirection;
-	PadFormat PadMode;
-	HexFormat FormatHex;
-	HexPrefix OutputHex;
-	BracketStyle Brackets;
-	MatrixMode Mode;
-	int NewWidth;
-	int NewHeight;
-	int NewFrames;
-	int MaxFrames;
-	int ASCIIIndex;
-	bool FontMode;
+	int Source = 0;
+	int SourceLSB = 0;
+	int SourceDirection = 0;
+	PadFormat PadMode = PadFormat::kAuto;
+	HexFormat FormatHex = HexFormat::kDisabled;
+	HexPrefix OutputHex = HexPrefix::kNone;
+	BracketStyle Brackets = BracketStyle::kNone;
+	MatrixMode Mode = MatrixMode::kNone;
+	int NewWidth = 8;
+	int NewHeight = 8;
+	int NewFrames = 1;
+	int MaxFrames = 1;
+	int ASCIIIndex = 32;
+	bool FontMode = false;
 
-	bool RGBImport;
-	int BackgroundColour;
+	bool RGBImport = false;
+	int BackgroundColour = 0;
 
-	int RGBBrightness;
+	int RGBBrightness = 100;
 
-	int StartFrame;
-	int EndFrame;
+	int StartFrame = 0;
+	int EndFrame = 0;
 
 	ImportDataPreview Preview;
 

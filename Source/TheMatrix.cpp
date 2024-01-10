@@ -2599,7 +2599,6 @@ void __fastcall TheMatrix::Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState
 	if (OnMouseOver) OnMouseOver(x1, y1);
 
 	// ===========================================================================
-	// ===========================================================================
 
 	if (Shift.Contains(ssLeft))
 	{
@@ -3116,7 +3115,6 @@ void TheMatrix::PlotPixelMatrix(int x, int y, int defaultcolour)
 	{
 		switch (Render.Gradient.Option)
 		{
-		// goOff        : lColour = aDefaultColour;
 		case GradientOption::kVertical:
 			colour = Render.Gradient.IY[y];
 			break;
@@ -3263,13 +3261,13 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 	int x2 = Render.Draw.Coords[1].X;
 	int y2 = Render.Draw.Coords[1].Y;
 
-  	// ===========================================================================
+	// =======================================================================
 
 	switch (Render.Draw.Mode)
 	{
-	// =========================================================================
-	// == Filled Box ===========================================================
-	// =========================================================================
+	// =======================================================================
+	// == Filled Box =========================================================
+	// =======================================================================
 	case DrawMode::kFilledBox:
 	{
 		if (x1 > x2)
@@ -3292,9 +3290,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-	// =========================================================================
-	// == Empty Box ============================================================
-	// =========================================================================
+	// =======================================================================
+	// == Empty Box ==========================================================
+	// =======================================================================
 	case DrawMode::kEmptyBox:
 	{
 		if (x1 > x2)
@@ -3320,10 +3318,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
-	// =========================================================================
-	// == Straight Line ========================================================
-	// =========================================================================
+	// =======================================================================
+	// == Straight Line ======================================================
+	// =======================================================================
 	case DrawMode::kLine:
 	{
 		int x = x1;             // line starting point
@@ -3404,10 +3401,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
-    // =========================================================================
-    // == Empty Circle =========================================================
-	// =========================================================================
+	// =======================================================================
+	// == Empty Circle =======================================================
+	// =======================================================================
 	case DrawMode::kEmptyCircle:
 	{
 		// c^2 = a^2 + b^2
@@ -3444,10 +3440,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
-    // =========================================================================
-    // == Filled Circle ========================================================
-    // =========================================================================
+	// =======================================================================
+	// == Filled Circle ======================================================
+	// =======================================================================
 	case DrawMode::kFilledCircle:
 	{
 		// c^2 = a^2 + b^2
@@ -3490,10 +3485,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
-	 // =========================================================================
-	 // == Copy Lasso thing =====================================================
-	 // =========================================================================
+	// =======================================================================
+	// == Copy Lasso thing ===================================================
+	// =======================================================================
 	case DrawMode::kCopy:
 	{
 		if (!realtime) return;
@@ -3523,10 +3517,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
         break;
 	}
-
-	// =========================================================================
-	// == Patterns: Spiral =====================================================
-	// =========================================================================
+	// =======================================================================
+	// == Patterns: Spiral ===================================================
+	// =======================================================================
 	case DrawMode::kSpiral:
 	{
 		int a = LastX;
@@ -3550,7 +3543,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kRing:
 	{
 		int y = LastY;
@@ -3562,7 +3554,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kSplitRing:
 	{
 		int x = LastX;
@@ -3607,7 +3598,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kPetals:
 	{
 		int x = LastX;
@@ -3676,7 +3666,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kGrid:
 	{
 		int x = LastX;
@@ -3761,7 +3750,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kPyramid:
 	{
 		int i = 1;
@@ -3782,7 +3770,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kLeftTriangle:
 	{
 		int i = 1;
@@ -3802,7 +3789,6 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
-
 	case DrawMode::kRightTriangle:
 	{
 		int i = 1;
@@ -4134,7 +4120,7 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 		Render.Draw.Coords[0].X++;
 	}
 
-	Render.Draw.Coords[0].X++; // adds single column spacing between chars
+	Render.Draw.Coords[0].X++; 		// adds single column spacing between chars
 
 	if (OnChange) OnChange(this);
 
@@ -4808,6 +4794,8 @@ void TheMatrix::ChangePixels(int colour_from, int colour_to)
 
 void TheMatrix::FadeFirstToLast()
 {
+	if (GetFrameCount() == 1) return;
+
 	for (int y = 0; y < Details.Height; y++)
 	{
 		for (int x = 0; x < Details.Width; x++)
@@ -4825,11 +4813,11 @@ void TheMatrix::FadeFirstToLast()
 			double newg = (colstart & 0x00FF00) >> 8;
 			double newb = (colstart & 0xFF0000) >> 16;
 
-			double rdx  = rdy / gradheight;
-			double gdx  = gdy / gradheight;
-			double bdx  = bdy / gradheight;
+			double rdx  = (double)rdy / ((double)gradheight - 1);
+			double gdx  = (double)gdy / ((double)gradheight - 1);
+			double bdx  = (double)bdy / ((double)gradheight - 1);
 
-			for (int frame = 1; frame < GetFrameCount(); frame++)
+			for (int frame = 1; frame < GetFrameCount() - 1; frame++)
 			{
 				newr  = newr + rdx;
 				newg  = newg + gdx;
@@ -5253,10 +5241,10 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 		// ===========================================================================
 
         import.ImportOk = true;
-		import.NewWidth    = width;
-		import.NewHeight   = height;
+		import.NewWidth = width;
+		import.NewHeight = height;
 		//import.NewFrames   = FrameCount;
-		import.RGBImport   = rgbimport;
+		import.RGBImport = rgbimport;
 
 		PaintBox->Invalidate();
 
@@ -5340,10 +5328,10 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 
 	// =======================================================================
 
-	import.NewWidth    = fwidth;
-	import.NewHeight   = fheight;
-	import.NewFrames   = count;
-	import.RGBImport   = RGBimport;
+	import.NewWidth = fwidth;
+	import.NewHeight = fheight;
+	import.NewFrames = count;
+	import.RGBImport = RGBimport;
 
 	PaintBox->Invalidate();
 
@@ -5490,6 +5478,8 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 			import.ImportOk    = false;
 			import.ErrorString = GLanguageHandler->Text[kErrorWhileLoadingThisGIF];
 
+            delete lGIF;
+
 			return import;
 		}
 
@@ -5567,13 +5557,13 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 
 	CopyCurrentFrameToDrawBuffer();
 
-	import.Mode       = MatrixMode::kRGB;
-	import.NewWidth         = Details.Width;
-	import.NewHeight        = Details.Height;
+	import.Mode = MatrixMode::kRGB;
+	import.NewWidth = Details.Width;
+	import.NewHeight = Details.Height;
 	import.BackgroundColour = RGBBackground;
 
-	import.MaxFrames        = MatrixLayers[CPermanentLayer]->Cells.size();
-	import.FontMode         = false;
+	import.MaxFrames = MatrixLayers[CPermanentLayer]->Cells.size();
+	import.FontMode = false;
 
 	Details.Available = true;
 
@@ -5588,17 +5578,11 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 // if you decide to tweak the export yourself then don't bother with the Embarcadero docs, they are worse
 // than useless. open Vcl.Imaging.GIFImg and examine the code to see how things are done!
 void TheMatrix::ExportToGIF(const std::wstring file_name, int background, int pixelsize, int pixelshape, int animationspeed)
-//var
-//  lGIF, lTGI : TGIFImage;
-//  lTempFrame : TBitmap;
-//  lFrame, lColumn, lRow : integer;
 {
 	TGIFImage *lGIF = new TGIFImage();
 
 	lGIF->Animate     = true;
 	lGIF->AnimateLoop = glContinously;
-
-	//FMatrixMerge = TMatrix.Create(Details.Width, Details.Height, Details.Mode, RGBBackground);
 
 	try
 	{
@@ -5754,15 +5738,15 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 	// =======================================================================
 
 	ImportData import;
-	import.ImportOk        = true;
-	import.Mode      = MatrixMode::kMono;
-	import.RGBImport       = false;
-	import.RGBBrightness   = 100;
+	import.ImportOk = true;
+	import.Mode = MatrixMode::kMono;
+	import.RGBImport = false;
+	import.RGBBrightness = 100;
 
 	import.Colours.HasData = false;
 
 	// clear rest of preview data?
-	import.Preview.Enabled           = Preview.Active;
+	import.Preview.Enabled = Preview.Active;
 	import.Preview.IncrementRadially = false;
 
 	// =======================================================================
@@ -5783,7 +5767,6 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		int row = 0;
 		MatrixMode mode = MatrixMode::kMono;
-		int background = -1; // was -1 !!!!
 		int colour = 0;
 		int palette = 0;
 		int importRGBbackground = 0;
@@ -5845,7 +5828,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 						headermode = true;
 						break;
-					case LoadData::kLoadBlockStartDeadPixel:// dead pixel mode
+					case LoadData::kLoadBlockStartDeadPixel:
 						deadpixelmode  = true;
 						matrixdatamode = false;
 
@@ -6313,7 +6296,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						headermode = true;
 						break;
 
-					case LoadData::kLoadBlockStartDeadPixel:	// dead pixel mode
+					case LoadData::kLoadBlockStartDeadPixel:
 						deadpixelmode   = true;
 						lMatrixDataMode = false;
 

@@ -141,7 +141,7 @@ namespace ExportOutputBinary
 				{
 					for (int z = 0; z < MatrixData[y]->size(); z++)
 					{
-					  op += (*MatrixData[y])[z];
+						op += (*MatrixData[y])[z];
 					}
 
 					y += delta;
@@ -204,19 +204,25 @@ namespace ExportOutputBinary
 					for (int y = 7; y >= 0; y--)
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
+						{
 							op += (*MatrixData[y])[z] + spacingstring;
+						}
 					}
 
 					for (int y = 15; y >= 8; y--)
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
+						{
 							op += (*MatrixData[y])[z] + spacingstring;
+						}
 					}
 
 					for (int y = 23; y >= 16; y--)
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
+						{
 							op += (*MatrixData[y])[z] + spacingstring;
+                        }
 					}
 
 					break;
@@ -391,6 +397,8 @@ namespace ExportOutputBinary
 		int bitcounter = 0;
 		int dataindex  = 0;
 
+		ia.Data[dataindex] = 0;
+
         std::wstring s = L"";
 
 		ScanDirection direction = teo.Binary.Direction;
@@ -465,7 +473,7 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		if (direction == ScanDirection::kRowLeftToRight) // left to right
+		if (direction == ScanDirection::kRowLeftToRight)
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
@@ -502,7 +510,7 @@ namespace ExportOutputBinary
 				}
 			}
 		}
-		else if (direction == ScanDirection::kRowRightToLeft)                  // right to left
+		else if (direction == ScanDirection::kRowRightToLeft)
 		{
 			for (int x = matrix->Details.Width - 1; x >= 0; x--)
 			{
@@ -772,15 +780,17 @@ namespace ExportOutputBinary
 		int bitcounter = 0;
 		int dataindex  = 0;
 
+        ia.Data[dataindex] = 0;
+
 		int bits = teo.GetNumberSizeLength(teo.Binary.Size);
 		int pads = teo.GetNumberSizePadLength(teo.Binary.Size);
 
-		for (int y = 0; y < DataOutDataMax; y++)
+		for (int y = 0; y < _DataOutDataMax; y++)
 		{
 			dataout.Data[y] = L"";
 		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
@@ -789,9 +799,9 @@ namespace ExportOutputBinary
 		else
 		{
 			selectedmatrix = matrix->MatrixUser[frame];
-        }
+		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
@@ -846,7 +856,7 @@ namespace ExportOutputBinary
 			}
 		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (direction == ScanDirection::kColTopToBottom)
 		{
@@ -887,7 +897,7 @@ namespace ExportOutputBinary
 		}
 		else if (direction == ScanDirection::kColBottomToTop)
 		{
-			for (int y = matrix->Details.Height - 1; y >= 0; y++)
+			for (int y = matrix->Details.Height - 1; y >= 0; y--)
 			{
 				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
@@ -925,7 +935,7 @@ namespace ExportOutputBinary
 
 		dataout.Count = dataindex;
 
-		// ===========================================================================
+		// ===================================================================
 
 		for (int y = 0; y < dataout.Count; y++)
 		{
@@ -988,7 +998,7 @@ namespace ExportOutputBinary
 		std::wstring output = L"";
 		ScanDirection direction = teo.Binary.Direction;
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
@@ -997,9 +1007,9 @@ namespace ExportOutputBinary
 		else
 		{
 			selectedmatrix = matrix->MatrixUser[frame];
-        }
+		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
 		{
@@ -1054,7 +1064,7 @@ namespace ExportOutputBinary
 			}
 		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		if (direction == ScanDirection::kColTopToBottom)             // top to bottom
 		{
@@ -1131,7 +1141,7 @@ namespace ExportOutputBinary
 			}
 		}
 
-		// ===========================================================================
+		// ===================================================================
 
 		dataout.Data[0] = output;
 

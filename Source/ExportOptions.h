@@ -51,7 +51,7 @@ struct BinaryOptions
 
 	LeastSignificantBit LSB = LeastSignificantBit::kBottomRight;
 
-	ColourSpace ColourSpaceRGB;
+	ColourSpace ColourSpaceRGB = ColourSpace::kRGB32;
 
 	BinaryFileContents Content = BinaryFileContents::kEntireAnimation;
 
@@ -115,14 +115,14 @@ struct CodeOptions
 
 	ExportLanguage Language = ExportLanguage::kCSV;
 
-	ColourSpace ColourSpaceRGB;
+	ColourSpace ColourSpaceRGB = ColourSpace::kRGB32;
 
 	LineContent Content = LineContent::kRowCol;
 
 	int LineCount = 10;
 
 	bool IncludePreamble = true;
-	bool CleanMode = false; // true = exclude everything from data output except the data!
+	bool CleanMode = false; 		// true = exclude everything from data output except the data!
 
 	bool RGBEnabled = false;
 	RGBMode RGBFormat = RGBMode::kRGB;
