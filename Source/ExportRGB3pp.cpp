@@ -216,7 +216,7 @@ namespace ExportRGB3BPP
 				{
 					s = L"";
 
-					for (int y = teo.Code.SelectiveEnd - 1; y >= teo.Code.SelectiveStart - 1; y++)
+					for (int y = teo.Code.SelectiveEnd - 1; y >= teo.Code.SelectiveStart - 1; y--)
 					{
 						switch (teo.Code.Content)
 						{
