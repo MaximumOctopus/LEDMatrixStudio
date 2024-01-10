@@ -1499,7 +1499,7 @@ namespace ExportMonoBi
 			case 1:
 				s = GSystemSettings->App.OpenBracket;
 
-				for (int x = matrix->Details.Width - 1; x >= 1; x++)
+				for (int x = matrix->Details.Width - 1; x >= 1; x--)
 				{
 					s +=  GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
 				}
