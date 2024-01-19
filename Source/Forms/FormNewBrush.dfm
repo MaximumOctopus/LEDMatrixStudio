@@ -27,6 +27,7 @@ object frmNewBrush: TfrmNewBrush
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 929
     DesignSize = (
       935
       65)
@@ -153,7 +154,7 @@ object frmNewBrush: TfrmNewBrush
       NumGlyphs = 2
       ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 781
+      ExplicitLeft = 769
     end
     object bSaveBrush: TButton
       Left = 335
@@ -189,6 +190,7 @@ object frmNewBrush: TfrmNewBrush
     ParentBackground = False
     ParentFont = False
     TabOrder = 1
+    ExplicitHeight = 569
     object lColours: TLabel
       Left = 8
       Top = 6
@@ -599,7 +601,7 @@ object frmNewBrush: TfrmNewBrush
     ModalResult = 2
     ParentFont = False
     TabOrder = 2
-    ExplicitLeft = 852
+    ExplicitLeft = 840
   end
   object pRGBPalette: TPanel
     Left = 742
@@ -610,6 +612,8 @@ object frmNewBrush: TfrmNewBrush
     Color = clWhite
     ParentBackground = False
     TabOrder = 3
+    ExplicitLeft = 736
+    ExplicitHeight = 569
     object sRGBPaletteColour: TShape
       Left = 14
       Top = 57
@@ -1111,6 +1115,8 @@ object frmNewBrush: TfrmNewBrush
     ParentDoubleBuffered = False
     TabOrder = 4
     StyleElements = [seFont, seBorder]
+    ExplicitWidth = 607
+    ExplicitHeight = 569
   end
   object cdNewBrush: TColorDialog
     Options = [cdFullOpen]
