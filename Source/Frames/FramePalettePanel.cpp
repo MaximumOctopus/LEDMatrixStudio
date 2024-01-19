@@ -41,6 +41,8 @@ void TframePalette::Init()
 	RGBPaletteHistory[16] = sRGBP17; RGBPaletteHistory[17] = sRGBP18; RGBPaletteHistory[18] = sRGBP19; RGBPaletteHistory[19] = sRGBP20;
 	RGBPaletteHistory[20] = sRGBP21; RGBPaletteHistory[21] = sRGBP22; RGBPaletteHistory[22] = sRGBP23; RGBPaletteHistory[23] = sRGBP24;
 	RGBPaletteHistory[24] = sRGBP25; RGBPaletteHistory[25] = sRGBP26; RGBPaletteHistory[26] = sRGBP27; RGBPaletteHistory[27] = sRGBP28;
+	RGBPaletteHistory[28] = sRGBP29; RGBPaletteHistory[29] = sRGBP30; RGBPaletteHistory[30] = sRGBP31; RGBPaletteHistory[31] = sRGBP32;
+	RGBPaletteHistory[32] = sRGBP33; RGBPaletteHistory[33] = sRGBP34; RGBPaletteHistory[34] = sRGBP35;
 
 	RGBPaletteHistoryIndex = 0;
 
@@ -51,6 +53,31 @@ void TframePalette::Init()
 void TframePalette::DeInit()
 {
 	SavePaletteHistory();
+}
+
+
+void TframePalette::SetUIToColour(int colour)
+{
+	int r = colour & 0x0000ff;
+	int g = (colour & 0x00ff00) >> 8;
+	int b = (colour & 0xff0000) >> 16;
+
+	sRGBPaletteColour->Brush->Color = TColor(colour);
+
+	tbRed->Position = r;
+	tbGreen->Position = g;
+	tbBlue->Position = b;
+
+	eRed->Text = r;
+	eGreen->Text = g;
+	eBlue->Text = b;
+
+	lPaletteColourHex->Caption = Utility::WS2US(GSystemSettings->App.HexPrefix) +
+								 IntToHex(tbRed->Position, 2) +
+								 IntToHex(tbGreen->Position, 2) +
+								 IntToHex(tbBlue->Position, 2);
+
+	lPaletteColourInteger->Caption = sRGBPaletteColour->Brush->Color;
 }
 
 
@@ -103,6 +130,8 @@ void __fastcall TframePalette::sRGBP1MouseDown(TObject *Sender, TMouseButton But
 	{
 		mouse = 2;
 	}
+
+	SetUIToColour(colour);
 
 	if (Sender == sRGBPaletteColour)
 	{
@@ -161,23 +190,22 @@ void __fastcall TframePalette::tbRedChange(TObject *Sender)
 
 void TframePalette::AddToHistory(int colour)
 {
-	bool canadd = false;
+	bool canadd = true;
 
-	// ensures no duplicates adjacent
-	if (RGBPaletteHistoryIndex == 0)
+	for (int t = 0; t < kPalletCount; t++)
 	{
-		canadd = !(colour == RGBPaletteHistory[27]->Brush->Color);
-	}
-	else
-	{
-		canadd = !(colour == RGBPaletteHistory[RGBPaletteHistoryIndex - 1]->Brush->Color);
+		if (colour == RGBPaletteHistory[t]->Brush->Color)
+		{
+			canadd = false;
+			break;
+		}
 	}
 
 	if (canadd)
 	{
 		RGBPaletteHistory[RGBPaletteHistoryIndex]->Brush->Color = TColor(colour);
 
-		if (RGBPaletteHistoryIndex == 27)
+		if (RGBPaletteHistoryIndex == kPalletCount - 1)
 		{
 			RGBPaletteHistoryIndex = 0;
 		}
@@ -208,7 +236,7 @@ bool TframePalette::LoadPaletteHistory()
 
 	// ===========================================================================
 
-	for (int t = 0; t < 28; t++)
+	for (int t = 0; t < kPalletCount; t++)
 	{
 		int x = Registry::ReadInteger(hKey, L"rgbpalettehistory" + std::to_wstring(t), 0);
 
@@ -246,7 +274,7 @@ bool TframePalette::SavePaletteHistory()
 
 	// ===========================================================================
 
-	for (int t = 0; t < 28; t++)
+	for (int t = 0; t < kPalletCount; t++)
 	{
 		Registry::WriteInteger(hKey, L"rgbpalettehistory" + std::to_wstring(t), RGBPaletteHistory[t]->Brush->Color);
 	}

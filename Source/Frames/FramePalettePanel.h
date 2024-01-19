@@ -61,6 +61,13 @@ __published:	// IDE-managed Components
 	TEdit *eGreen;
 	TEdit *eBlue;
 	TTrackBar *tbBlue;
+	TShape *sRGBP30;
+	TShape *sRGBP29;
+	TShape *sRGBP31;
+	TShape *sRGBP32;
+	TShape *sRGBP33;
+	TShape *sRGBP34;
+	TShape *sRGBP35;
 	void __fastcall eRedKeyPress(TObject *Sender, System::WideChar &Key);
 	void __fastcall sRGBP1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
@@ -73,7 +80,11 @@ private:
 	static const int CGreen = 1;
 	static const int CBlue  = 2;
 
+	static const int kPalletCount = 35;
+
 	int RGBPaletteHistoryIndex = 0;
+
+	void SetUIToColour(int);
 
 	bool LoadPaletteHistory();
 	bool SavePaletteHistory();
@@ -81,7 +92,7 @@ private:
 public:
 	__fastcall TframePalette(TComponent* Owner);
 
-	TShape *RGBPaletteHistory[28];
+	TShape *RGBPaletteHistory[kPalletCount];
 
 	void Init();
 	void DeInit();
