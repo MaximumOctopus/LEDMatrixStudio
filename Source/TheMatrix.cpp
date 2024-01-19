@@ -7057,20 +7057,20 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 	switch (mode)
 	{
 	case modeFlip:
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (Details.Width - x - 1)];
-			}
-		}
-		break;
-	case modeMirror:
 		for (int y = 0; y < Details.Height; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
 			{
 				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(Details.Height - y - 1) * Details.Width + x];
+			}
+		}
+		break;
+	case modeMirror:
+		for (int x = 0; x < Details.Width; x++)
+		{
+			for (int y = 0; y < Details.Height; y++)
+			{
+				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (Details.Width - x - 1)];
 			}
 		}
 		break;
@@ -7351,7 +7351,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
     {
 	case modeWipeVerticalOut:
 	{
-		int z = std::round(Details.Width / 2);
+		int z = std::round((double)Details.Width / 2);
 
 		for  (int x = 0; x <= z - 2; x++)
 		{
@@ -7387,7 +7387,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 	}
 	case modeWipeVerticalIn:
 	{
-		int z = std::round(Details.Width / 2);
+		int z = std::round((double)Details.Width / 2);
 
 		for (int x = 1; x <= z - 1; x++)
 		{
@@ -7422,7 +7422,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 	}
 	case modeWipeHorizontalOut:
 	{
-		int z = std::round(Details.Height / 2);
+		int z = std::round((double)Details.Height / 2);
 
 		for (int y = 0; y <= z - 2; y++)
 		{
@@ -7457,7 +7457,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 	}
 	case modeWipeHorizontalIn:
 	{
-		int z = std::round(Details.Height / 2);
+		int z = std::round((double)Details.Height / 2);
 
 		for (int y = 1; y < z; y++)
 		{
@@ -8090,7 +8090,7 @@ void TheMatrix::ScrollColumn(int layer, int frame, int mode, int column)
 
 
 #pragma region ReadOnlyProperties
-// value should be the same for all layers, so just return those of layer 0
+// value *should* be the same for all layers, so just return those of layer 0
 int TheMatrix::GetFrameCount()
 {
 	return MatrixLayers[CPermanentLayer]->Cells.size();

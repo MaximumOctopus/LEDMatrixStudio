@@ -204,6 +204,8 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 
 void __fastcall TfrmMain::FormDestroy(TObject *Sender)
 {
+    FramePalettePanel->DeInit();
+
 	delete FrameGradientPanel;
 	delete FrameLayerPanel;
 	delete FramePalettePanel;
@@ -3798,6 +3800,8 @@ void __fastcall TfrmMain::sRGBPalette1MouseDown(TObject *Sender, TMouseButton Bu
 										   thematrix->LEDRGBColours[CMouseMiddle],
 										   thematrix->LEDRGBColours[CMouseRight]);
 
+			FramePalettePanel->AddToHistory(shape->Brush->Color);
+
 			GenerateShades(shape->Brush->Color);
 		}
 	}
@@ -3828,26 +3832,28 @@ void __fastcall TfrmMain::sShade1MouseDown(TObject *Sender, TMouseButton Button,
 
 		if (Shift.Contains(ssLeft))
 		{
-		  sSelectionLMB->Brush->Color              = colour;
+			sSelectionLMB->Brush->Color = colour;
 
-		  thematrix->LEDRGBColours[CMouseLeft]   = colour;
+			thematrix->LEDRGBColours[CMouseLeft] = colour;
 		}
 		else if (Shift.Contains(ssMiddle))
 		{
-		  sSelectionMMB->Brush->Color              = colour;
+			sSelectionMMB->Brush->Color = colour;
 
-		  thematrix->LEDRGBColours[CMouseMiddle] = colour;
+			thematrix->LEDRGBColours[CMouseMiddle] = colour;
 		}
 		else if (Shift.Contains(ssRight))
 		{
-		  sSelectionRMB->Brush->Color              = colour;
+			sSelectionRMB->Brush->Color = colour;
 
-		  thematrix->LEDRGBColours[CMouseRight]  = colour;
+			thematrix->LEDRGBColours[CMouseRight] = colour;
 		}
 
 		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
 										 thematrix->LEDRGBColours[CMouseMiddle],
 										 thematrix->LEDRGBColours[CMouseRight]);
+
+        FramePalettePanel->AddToHistory(shape->Brush->Color);
 
 		if (shape->Tag != 999)
 		{
@@ -3868,21 +3874,21 @@ void __fastcall TfrmMain::Shape47MouseDown(TObject *Sender, TMouseButton Button,
 
 		if (Shift.Contains(ssLeft))
 		{
-			sSelectionLMB->Brush->Color              = shape->Brush->Color;
+			sSelectionLMB->Brush->Color = shape->Brush->Color;
 
-			thematrix->LEDRGBColours[CMouseLeft]   = colour;
+			thematrix->LEDRGBColours[CMouseLeft] = colour;
 		}
 		else if (Shift.Contains(ssMiddle))
 		{
-			sSelectionMMB->Brush->Color            = shape->Brush->Color;
+			sSelectionMMB->Brush->Color = shape->Brush->Color;
 
 			thematrix->LEDRGBColours[CMouseMiddle] = colour;
 		}
 		else if (Shift.Contains(ssRight))
 		{
-			sSelectionRMB->Brush->Color            = shape->Brush->Color;
+			sSelectionRMB->Brush->Color = shape->Brush->Color;
 
-			thematrix->LEDRGBColours[CMouseRight]  = colour;
+			thematrix->LEDRGBColours[CMouseRight] = colour;
 		}
 
 		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
