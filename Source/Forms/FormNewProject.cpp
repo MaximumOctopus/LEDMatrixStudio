@@ -405,6 +405,9 @@ void TForm16::UpdateHelp(MatrixMode mode)
 {
 	switch (mode)
 	{
+	case MatrixMode::kNone:
+		mHelp->Text = L"Error, no mode selected?!";
+		break;
 	case MatrixMode::kMono:
 		mHelp->Text = GLanguageHandler->Text[kNPModeMono].c_str();
 		break;
