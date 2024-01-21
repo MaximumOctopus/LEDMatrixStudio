@@ -3531,7 +3531,7 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 		thematrix->Render.Draw.SinglePoint  = true;
 
 		thematrix->Render.Draw.Parameter    = DefaultPatternParameter[drawingmode];
-		thematrix->Render.Draw.ParameterMax = DefaultPatternParameterMax[drawingmode];
+  		thematrix->Render.Draw.ParameterMax = DefaultPatternParameterMax[drawingmode];
 
 		if (thematrix->Details.Mode == MatrixMode::kRGB || thematrix->Details.Mode == MatrixMode::kRGB3BPP)
 		{
@@ -3564,9 +3564,9 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 	thematrix->Render.Draw.Special   = tbFrames->Max;
 
 	lSelectedTool->Caption           = DrawModes[drawingmode].c_str();
-    lSelectedTool->Refresh();
+	lSelectedTool->Refresh();
 
-	DisplayFrame(GetSelectedFrame());
+	thematrix->RefreshCurrentFrame();
 }
 
 

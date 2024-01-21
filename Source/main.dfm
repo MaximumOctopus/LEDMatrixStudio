@@ -766,8 +766,8 @@ object frmMain: TfrmMain
     TabOrder = 6
     ExplicitWidth = 1490
     object sbMouseMode: TSpeedButton
-      Left = 4
-      Top = 2
+      Left = 0
+      Top = 3
       Width = 30
       Height = 24
       Hint = 'Select normal drawing mode (RMB for sizes)'

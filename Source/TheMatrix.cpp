@@ -332,8 +332,6 @@ void TheMatrix::CopyCurrentFrameToDrawBuffer()
 			DisplayBuffer->Grid[y * Details.Width + x] = MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x];
 		}
 	}
-
-	PaintBox->Invalidate();
 }
 
 
@@ -1348,7 +1346,7 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 
 	if (Render.Draw.Mode != DrawMode::kNone)
 	{
-		if ((Render.Draw.SinglePoint) or (Render.Draw.Coords[0].X != - 1))
+		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
 			PaintBox->Canvas->Brush->Color = TColor(LEDColours[Render.Draw.Colour]);
 			DrawShape(true, 1, false);
@@ -1881,30 +1879,34 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 
 			// =======================================================================
 
-			PaintBox->Canvas->Brush->Color = TColor(LEDColours[CDisplayMarker]);
-
-			switch (Render.Shape)
+			// single point modes don't require "first click" marker
+			if (Render.Draw.SinglePoint)
 			{
-			case PixelShape::kSquare:
-				PaintBox->Canvas->FillRect(Rect(Render.Draw.Coords[0].X * Render.PixelSize,
+				PaintBox->Canvas->Brush->Color = TColor(LEDColours[CDisplayMarker]);
+
+				switch (Render.Shape)
+				{
+				case PixelShape::kSquare:
+					PaintBox->Canvas->FillRect(Rect(Render.Draw.Coords[0].X * Render.PixelSize,
+														 Render.Draw.Coords[0].Y * Render.PixelSize,
+														(Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
+														(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ));
+					break;
+				case PixelShape::kCircle:
+					PaintBox->Canvas->Ellipse(Render.Draw.Coords[0].X * Render.PixelSize,
+												   Render.Draw.Coords[0].Y * Render.PixelSize,
+												  (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
+												  (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ);
+					break;
+				case PixelShape::kRoundRect:
+					PaintBox->Canvas->RoundRect(Render.Draw.Coords[0].X * Render.PixelSize,
 													 Render.Draw.Coords[0].Y * Render.PixelSize,
 													(Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-													(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ));
-				break;
-			case PixelShape::kCircle:
-				PaintBox->Canvas->Ellipse(Render.Draw.Coords[0].X * Render.PixelSize,
-											   Render.Draw.Coords[0].Y * Render.PixelSize,
-											  (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-											  (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ);
-				break;
-			case PixelShape::kRoundRect:
-				PaintBox->Canvas->RoundRect(Render.Draw.Coords[0].X * Render.PixelSize,
-												 Render.Draw.Coords[0].Y * Render.PixelSize,
-												(Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-												(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ,
-												 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
-												 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
-				break;
+													(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ,
+													 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
+													 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
+					break;
+				}
 			}
 		}
 	}
@@ -3820,9 +3822,9 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 		Render.Draw.Point       = CDrawPointNone;
 		Render.Draw.Coords[0].X = -1;
 		Render.Draw.Coords[0].Y = -1;
-	}
 
-	PaintBox->Invalidate();
+		PaintBox->Invalidate();
+	}
 }
 
 
@@ -8437,11 +8439,17 @@ void TheMatrix::SetCurrentFrame(int frame)
 {
 	CurrentFrame = frame;
 
-//	  PaintBox->Invalidate();
-
 	CopyCurrentFrameToDrawBuffer();
 
-	//if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);      // to do, interferes with trackbar selection!!!
+   //	if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);      // to do, interferes with trackbar selection!!!
+}
+
+
+void TheMatrix::RefreshCurrentFrame()
+{
+	CopyCurrentFrameToDrawBuffer();
+
+   //	if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);      // to do, interferes with trackbar selection!!!
 }
 
 

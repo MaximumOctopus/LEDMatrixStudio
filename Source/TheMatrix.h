@@ -370,6 +370,8 @@ public:
 	void ChangeGrid(bool);
 	void SetDeadPixelsMode(bool);
 
+	void RefreshCurrentFrame();
+
 	void ChangePixels(int, int);
 
 	void FadeFirstToLast();
