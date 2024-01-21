@@ -3117,6 +3117,8 @@ void TheMatrix::PlotPixelMatrix(int x, int y, int defaultcolour)
 	{
 		switch (Render.Gradient.Option)
 		{
+		case GradientOption::kOff:
+			break;
 		case GradientOption::kVertical:
 			colour = Render.Gradient.IY[y];
 			break;
@@ -3163,6 +3165,8 @@ void TheMatrix::PlotPixelMatrixFrame(int frame, int x, int y, int defaultcolour)
 
 	switch (Render.Gradient.Option)
 	{
+	case GradientOption::kOff:
+		break;
 	case GradientOption::kVertical:
 		colour = Render.Gradient.IY[y];
 		break;
@@ -3224,6 +3228,8 @@ void TheMatrix::SimpleLine(int x1, int y1, int x2, int y2, int old_colour, bool 
 	{
 		switch (Render.Gradient.Option)
 		{
+		case GradientOption::kOff:
+			break;
 		case GradientOption::kVertical:
 			colour = Render.Gradient.IY[y1];
 			break;

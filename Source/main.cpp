@@ -1822,6 +1822,9 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 
 		switch (frmImportBitmap->Import)
 		{
+		case ImportMode::kInvalid:
+            // already handled above
+			break;
 		case ImportMode::kSingleImage:
 			ted = thematrix->ImportFromBMPSingleImage(frmImportBitmap->ImageFilename,
 													  frmImportBitmap->FrameCount,
@@ -3624,7 +3627,7 @@ void __fastcall TfrmMain::sbGradientClick(TObject *Sender)
 	{
 	case 0:
 		sbGradient->Tag = 1;
-		ToggleGradient(GradientOption::kVertical, false); // inverses display
+		ToggleGradient(GradientOption::kVertical, false); 	// inverses display
 		break;
 	case 1:
 		sbGradient->Tag = 2;
@@ -3632,7 +3635,7 @@ void __fastcall TfrmMain::sbGradientClick(TObject *Sender)
 		break;
 	case 2:
 		sbGradient->Tag = 0;
-		ToggleGradient(GradientOption::kOff, false); // inverses display
+		ToggleGradient(GradientOption::kOff, false); 		// inverses display
 		break;
 	}
 

@@ -356,33 +356,24 @@ struct ExportOptions
 
 	int ScanDirectionToInt()
 	{
-		if (Code.Source == ReadSource::kRows)
+		switch (Code.Direction)
 		{
-			switch (Code.Direction)
-			{
-			case ScanDirection::kRowLeftToRight:
-				return 0;
-			case ScanDirection::kRowRightToLeft:
-				return 1;
-			case ScanDirection::kRowAltLeftRight:
-				return 2;
-			case ScanDirection::kRowAltRightLeft:
-				return 3;
-			}
-		}
-		else
-		{
-			switch (Code.Direction)
-			{
-			case ScanDirection::kColTopToBottom:
-				return 0;
-			case ScanDirection::kColBottomToTop:
-				return 1;
-			case ScanDirection::kColAltDownUp:
-				return 2;
-			case ScanDirection::kColAltUpDown:
-				return 3;
-			}
+		case ScanDirection::kRowLeftToRight:
+			return 0;
+		case ScanDirection::kRowRightToLeft:
+			return 1;
+		case ScanDirection::kRowAltLeftRight:
+			return 2;
+		case ScanDirection::kRowAltRightLeft:
+			return 3;
+		case ScanDirection::kColTopToBottom:
+			return 0;
+		case ScanDirection::kColBottomToTop:
+			return 1;
+		case ScanDirection::kColAltDownUp:
+			return 2;
+		case ScanDirection::kColAltUpDown:
+			return 3;
 		}
 
 		return 0;
@@ -534,33 +525,24 @@ struct ExportOptions
 
 	int BinaryScanDirectionToInt()
 	{
-		if (Binary.Source == ReadSource::kRows)
+		switch (Binary.Direction)
 		{
-			switch (Binary.Direction)
-			{
-			case ScanDirection::kRowLeftToRight:
-				return 0;
-			case ScanDirection::kRowRightToLeft:
-				return 1;
-			case ScanDirection::kRowAltLeftRight:
-				return 2;
-			case ScanDirection::kRowAltRightLeft:
-				return 3;
-			}
-		}
-		else
-		{
-			switch (Binary.Direction)
-			{
-			case ScanDirection::kColTopToBottom:
-				return 0;
-			case ScanDirection::kColBottomToTop:
-				return 1;
-			case ScanDirection::kColAltDownUp:
-				return 2;
-			case ScanDirection::kColAltUpDown:
-				return 3;
-			}
+		case ScanDirection::kRowLeftToRight:
+			return 0;
+		case ScanDirection::kRowRightToLeft:
+			return 1;
+		case ScanDirection::kRowAltLeftRight:
+			return 2;
+		case ScanDirection::kRowAltRightLeft:
+			return 3;
+		case ScanDirection::kColTopToBottom:
+			return 0;
+		case ScanDirection::kColBottomToTop:
+			return 1;
+		case ScanDirection::kColAltDownUp:
+			return 2;
+		case ScanDirection::kColAltUpDown:
+			return 3;
 		}
 
 		return 0;
