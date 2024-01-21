@@ -15,10 +15,13 @@
 #pragma hdrstop
 
 #include "FramePalettePanel.h"
+#include "LanguageConstants.h"
+#include "LanguageHandler.h"
 #include "Registry.h"
 #include "SystemSettings.h"
 #include "Utility.h"
 
+extern LanguageHandler *GLanguageHandler;
 extern SystemSettings *GSystemSettings;
 
 //---------------------------------------------------------------------------
@@ -34,6 +37,8 @@ __fastcall TframePalette::TframePalette(TComponent* Owner)
 
 void TframePalette::Init()
 {
+	bClear->Caption = GLanguageHandler->Text[kClear].c_str();
+
 	RGBPaletteHistory[0] = sRGBP1; RGBPaletteHistory[1] = sRGBP2; RGBPaletteHistory[2] = sRGBP3; RGBPaletteHistory[3] = sRGBP4;
 	RGBPaletteHistory[4] = sRGBP5; RGBPaletteHistory[5] = sRGBP6; RGBPaletteHistory[6] = sRGBP7; RGBPaletteHistory[7] = sRGBP8;
 	RGBPaletteHistory[8] = sRGBP9; RGBPaletteHistory[9] = sRGBP10; RGBPaletteHistory[10] = sRGBP11; RGBPaletteHistory[11] = sRGBP12;
@@ -286,3 +291,16 @@ bool TframePalette::SavePaletteHistory()
     return true;
 }
 
+
+void __fastcall TframePalette::bClearClick(TObject *Sender)
+{
+	if (MessageDlg(GLanguageHandler->Text[kAreYouSureYouWantToClearThePalette].c_str(), mtWarning, mbYesNo, 0) == mrYes)
+	{
+		for (int t = 0; t < kPalletCount; t++)
+		{
+            RGBPaletteHistory[t]->Brush->Color = clBlack;
+		}
+
+        RGBPaletteHistoryIndex = 0;
+	}
+}

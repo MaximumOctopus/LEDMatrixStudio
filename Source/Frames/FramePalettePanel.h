@@ -20,6 +20,7 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.ExtCtrls.hpp>
+#include <Vcl.Buttons.hpp>
 //---------------------------------------------------------------------------
 class TframePalette : public TFrame
 {
@@ -68,11 +69,13 @@ __published:	// IDE-managed Components
 	TShape *sRGBP33;
 	TShape *sRGBP34;
 	TShape *sRGBP35;
+	TSpeedButton *bClear;
 	void __fastcall eRedKeyPress(TObject *Sender, System::WideChar &Key);
 	void __fastcall sRGBP1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
 	void __fastcall sRGBP1MouseMove(TObject *Sender, TShiftState Shift, int X, int Y);
 	void __fastcall tbRedChange(TObject *Sender);
+	void __fastcall bClearClick(TObject *Sender);
 
 private:
 

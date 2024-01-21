@@ -442,6 +442,13 @@ object framePalette: TframePalette
     OnMouseDown = sRGBP1MouseDown
     OnMouseMove = sRGBP1MouseMove
   end
+  object bClear: TSpeedButton
+    Left = 14
+    Top = 328
+    Width = 164
+    Height = 22
+    OnClick = bClearClick
+  end
   object tbRed: TTrackBar
     Left = 6
     Top = 80
