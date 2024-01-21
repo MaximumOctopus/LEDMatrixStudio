@@ -12,6 +12,6 @@ For rewrite progress and other cool stuff (maybe even cat pictures), follow my n
 
   https://maximumoctopus.hashnode.dev/
 
-You will have to copy the LEDMatrixStudio folder structure (from the latest public beta build) to your build environment, otherwise some parts (like language selection) won't work. 
+You will have to copy the LEDMatrixStudio folder structure (from the latest public beta build) to your build environment, otherwise some parts (like language selection) won't work or will cause errors. 
 
-Paul, December 16th 2023
+Paul, January 21st 2024
