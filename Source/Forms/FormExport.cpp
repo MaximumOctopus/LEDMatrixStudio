@@ -1427,7 +1427,7 @@ void __fastcall TfrmExport::bExportClick(TObject *Sender)
 
 			FileUtility::SaveVector(sdExport->FileName.c_str(), Output);
 
-			ModalResult = mrOk;
+			//ModalResult = mrOk;
 		}
 		break;
 	case 1:
@@ -1440,7 +1440,7 @@ void __fastcall TfrmExport::bExportClick(TObject *Sender)
 
 			if (SaveBinaryData(sdExport->FileName.c_str()))
 			{
-				ModalResult = mrOk;
+				//ModalResult = mrOk;
 			}
 			else
 			{
