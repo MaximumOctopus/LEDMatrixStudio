@@ -541,7 +541,7 @@ namespace ExportUtility
 			{
 				output.push_back(cc);
 				output.push_back(cc + L"-----------------------------------------------------------------");
-				output.push_back(cc + GLanguageHandler->Text[kOriginalFile] + L":L");
+				output.push_back(cc + GLanguageHandler->Text[kOriginalFile] + L":");
 				output.push_back(cc + L" " + GSystemSettings->App.DataFilename);
 			}
 		}
@@ -556,26 +556,26 @@ namespace ExportUtility
 			{
 				if (teo.FontMode)
 				{
-					output.push_back(cc + GLanguageHandler->Text[kFontCharacters] + L" " + std::to_wstring(teo.Code.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" " + std::to_wstring(teo.Code.StartFrame + 95));
+					output.push_back(cc + GLanguageHandler->Text[kFontCharacters] + L" " + std::to_wstring(teo.Code.StartFrame + 1) + L" " + GLanguageHandler->Text[kTo] + L" " + std::to_wstring(teo.Code.StartFrame + 95));
 				}
 				else
 				{
 					if (teo.Code.StartFrame == teo.Code.EndFrame)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame));
+						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame + 1));
 					}
 					else
 					{
-					  output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.Code.EndFrame));
+						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame + 1) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.Code.EndFrame + 1));
 					}
 
 					if (teo.Code.Source == ReadSource::kRows)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
+						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart + 1) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd + 1));
 					}
 					else
 					{
-					  output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
+					  output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart + 1) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd + 1));
 					}
 				}
 			}

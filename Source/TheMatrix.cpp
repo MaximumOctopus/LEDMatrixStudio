@@ -8441,11 +8441,13 @@ void TheMatrix::SetMirrorMode(MirrorMode newmode)
 }
 
 
-void TheMatrix::SetCurrentFrame(int frame)
+void TheMatrix::SetAndShowCurrentFrame(int frame)
 {
 	CurrentFrame = frame;
 
 	CopyCurrentFrameToDrawBuffer();
+
+    PaintBox->Invalidate();
 
    //	if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);      // to do, interferes with trackbar selection!!!
 }

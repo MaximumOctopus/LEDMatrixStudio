@@ -364,7 +364,8 @@ public:
 	void UnlockLayer(int);
 	bool IsLayerLocked(int);
 
-	void SetCurrentFrame(int);
+//	void SetCurrentFrame(int);
+	void SetAndShowCurrentFrame(int);
 	void SetCurrentLayer(int);
 	void SetLightBox(int);
 	void ChangeGrid(bool);

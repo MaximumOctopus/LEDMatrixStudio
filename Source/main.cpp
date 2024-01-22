@@ -856,7 +856,7 @@ void TfrmMain::PreviewWindowCommand(int command)
 
 void TfrmMain::PreviewWindowChangeFrame(int frame)
 {
-	thematrix->SetCurrentFrame(frame);
+	thematrix->SetAndShowCurrentFrame(frame);
 
 	SetFrameCaption(frame);
 }
@@ -1565,7 +1565,7 @@ void  TfrmMain::PlaybackStop()
 
 void TfrmMain::PlaybackFirstFrame()
 {
-	thematrix->SetCurrentFrame(0);
+	thematrix->SetAndShowCurrentFrame(0);
 
 	SetFrameCaption(0);
 }
@@ -1584,7 +1584,7 @@ void TfrmMain::PlaybackPreviousFrame()
 		i--;
 	}
 
-	thematrix->SetCurrentFrame(i - 1);
+	thematrix->SetAndShowCurrentFrame(i - 1);
 
 	SetFrameCaption(i - 1);
 }
@@ -1603,7 +1603,7 @@ void TfrmMain::PlaybackNextFrame()
 		i++;
 	}
 
-	thematrix->SetCurrentFrame(i - 1);
+	thematrix->SetAndShowCurrentFrame(i - 1);
 
 	SetFrameCaption(i - 1);
 }
@@ -1611,7 +1611,7 @@ void TfrmMain::PlaybackNextFrame()
 
 void TfrmMain::PlaybackLastFrame()
 {
-	thematrix->SetCurrentFrame(tbFrames->Max - 1);
+	thematrix->SetAndShowCurrentFrame(tbFrames->Max - 1);
 
 	SetFrameCaption(tbFrames->Max - 1);
 }
@@ -1866,7 +1866,7 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 
 			FormResize(nullptr);
 
-			thematrix->SetCurrentFrame(GetSelectedFrame());
+			thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
 
 			ManageUIControls(false, false);
 		}
@@ -3905,7 +3905,7 @@ void __fastcall TfrmMain::tbFramesTracking(TObject *Sender)
 {
 	SetFrameCaption(GetSelectedFrame());
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
 }
 #pragma end_region
 
@@ -3934,7 +3934,7 @@ void __fastcall TfrmMain::bAddFrameClick(TObject *Sender)
 	tbFrames->Max = thematrix->GetFrameCount();
 	tbFrames->Position  = oldselectedframe + 1;
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
 
 	frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = tbFrames->Position;
@@ -3952,7 +3952,7 @@ void __fastcall TfrmMain::bAddFrameCopyClick(TObject *Sender)
 	tbFrames->Max = thematrix->GetFrameCount();
 	tbFrames->Position  = oldselectedframe + 1;
 
-	thematrix->SetCurrentFrame(GetSelectedFrame());
+	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
 
 	frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 	frmPreviewPopout->tbFrames->Position = tbFrames->Position;
@@ -4106,7 +4106,7 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 			}
 		}
 
-		thematrix->SetCurrentFrame(0);
+		thematrix->SetAndShowCurrentFrame(0);
 
 		SetFrameCaption(0);
 
@@ -4257,7 +4257,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 		bDeleteFrame->Enabled          = (tbFrames->Max > 1);
 		bDeleteMultipleFrames->Enabled = (tbFrames->Max > 1);
 
-		thematrix->SetCurrentFrame(0);
+		thematrix->SetAndShowCurrentFrame(0);
 
 		SetFrameCaption(0);
 
@@ -5607,7 +5607,7 @@ void TfrmMain::DisplayFrame(int frame)
 {
 	SetFrameCaption(frame);
 
-	thematrix->SetCurrentFrame(frame);
+	thematrix->SetAndShowCurrentFrame(frame);
 }
 
 
@@ -5638,12 +5638,13 @@ void TfrmMain::GenerateShades(int colour)
 	}
 }
 
+
 #pragma region Timers
 void __fastcall TfrmMain::timerAnimateTimer(TObject *Sender)
 {
 	SetFrameCaption(timerAnimate->Tag);
 
-	thematrix->SetCurrentFrame(timerAnimate->Tag);
+	thematrix->SetAndShowCurrentFrame(timerAnimate->Tag);
 
 	if (timerAnimate->Tag == tbFrames->Max - 1)
 	{
