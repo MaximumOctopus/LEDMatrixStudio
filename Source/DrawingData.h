@@ -27,7 +27,8 @@ enum class DrawMode { kNone = 0,
 					  kCopy, kPaste,
 					  kGradientBrush,
 					  kFloodFill,
-					  kSpiral, kRing, kSplitRing, kPetals, kGrid, kPyramid, kLeftTriangle, kRightTriangle };
+					  kSpiral, kRing, kSplitRing, kPetals, kGrid, kPyramid, kLeftTriangle, kRightTriangle,
+					  kLeftAngleLine, kRightAngleLine };
 
 enum class DrawPoint { kNone, kFirst, kLast };
 
@@ -188,6 +189,10 @@ struct DrawData
 			return 20;
 		case DrawMode::kRightTriangle:
 			return 21;
+		case DrawMode::kLeftAngleLine:
+			return 22;
+		case DrawMode::kRightAngleLine:
+			return 23;
 		}
 
 		return 0;

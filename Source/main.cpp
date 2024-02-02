@@ -1070,6 +1070,11 @@ void __fastcall TfrmMain::MatrixOnColourChange(TheMatrix *Sender)
 {
 	switch (thematrix->Details.Mode)
 	{
+	case MatrixMode::kNone:
+	case MatrixMode::kMono:
+	case MatrixMode::kBiSequential:
+	case MatrixMode::kBiBitplanes:
+		break;
 	case MatrixMode::kRGB:
 		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseLeft]);
 		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseMiddle]);
@@ -3144,14 +3149,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		tbFrames->Max                  = ps.Special;
 		frmPreviewPopout->tbFrames->Max  = tbFrames->Max;
 
-		if (GSystemSettings->Project.Mode == MatrixMode::kRGB)
-		{
-			GSystemSettings->App.LastExport.clear(true);
-		}
-		else
-		{
-			GSystemSettings->App.LastExport.clear(false);
-		}
+		GSystemSettings->App.LastExport.clear(GSystemSettings->Project.Mode == MatrixMode::kRGB);
 
 		ChangeMatrixType();
 	}
@@ -4116,6 +4114,11 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 
 		switch (ted.Mode)
 		{
+		case MatrixMode::kNone:
+		case MatrixMode::kMono:
+		case MatrixMode::kBiSequential:
+		case MatrixMode::kBiBitplanes:
+			break;
 		case MatrixMode::kRGB:
 		case MatrixMode::kRGB3BPP:
 			sColour0->Brush->Color = TColor(ted.BackgroundColour);
@@ -4565,15 +4568,15 @@ void TfrmMain::UpdateMemoryUsage()
 
 	if (size < 32768)
 	{
-		caption = dimensions + L", " + GLanguageHandler->Text[kBytes] + L" " + std::to_wstring(size) + L" " + GLanguageHandler->Text[kBytes];
+		caption = dimensions + L", " + std::to_wstring(size) + L" " + GLanguageHandler->Text[kBytes];
 	}
 	else if (size < 1048576)
 	{
-		caption = dimensions + L", " + GLanguageHandler->Text[kBytes] + L" " + FloatToStrF((size / 1024), ffFixed, 7, 3).c_str() + L" KB";
+		caption = dimensions + L", " + FloatToStrF((size / 1024), ffFixed, 7, 3).c_str() + L" KB";
 	}
 	else
 	{
-		caption = dimensions + L", " + GLanguageHandler->Text[kBytes] + L" " + FloatToStrF((size / 1048576), ffFixed, 7, 3).c_str() + L" MB";
+		caption = dimensions + L", " + FloatToStrF((size / 1048576), ffFixed, 7, 3).c_str() + L" MB";
 	}
 
 	caption += L" (" + ConstantsHelper::MatrixModeAsString(thematrix->Details.Mode) + L")";
@@ -5029,6 +5032,8 @@ void TfrmMain::UpdateGradientColours()
 {
 	switch (thematrix->Render.Gradient.Option)
 	{
+	case GradientOption::kOff:
+		break;
 	case GradientOption::kVertical:
 		for (int t = 0; t < thematrix->Details.Height; t++)
 		{

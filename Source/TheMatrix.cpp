@@ -2933,6 +2933,22 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 
 				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
 				break;
+            case BrushSize::kBigLarge:
+			case BrushSize::kSuperLarge:
+			{
+				int p = ConstantsHelper::PixelsFromBrushSize(Render.Brush);
+
+				for (int a = 0; a < p; a++)
+				{
+					for (int b = 0; b < p; b++)
+					{
+						PlotPixelMatrixFrame(frame, x + a, y + b, index);
+					}
+				}
+
+				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
+				break;
+			}
 			}
 		}
 	}
@@ -3817,7 +3833,42 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 		break;
 	}
+	case DrawMode::kLeftAngleLine:
+	{
+		int i = 1;
+		int x = LastX - 1;
+		int y = LastY;
+
+		while (y < Details.Height)
+		{
+			for (int a = 1; a <= i; a++)
+			{
+				PlotInBounds(x + a, y, colour);
+			}
+
+			x++;
+			y += Render.Draw.Parameter;
+		}
+		break;
 	}
+	case DrawMode::kRightAngleLine:
+	{
+		int i = 1;
+		int x = LastX - 1;
+		int y = LastY;
+
+		while (y < Details.Height)
+		{
+			for (int a = 1; a <= i; a++)
+			{
+				PlotInBounds(x + a, y, colour);
+			}
+			x--;
+			y += Render.Draw.Parameter;
+		}
+		break;
+	}
+    }
 
 	if (!realtime)
 	{
@@ -4090,6 +4141,10 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 				{
 					switch (TextFont->Mode)
 					{
+					case MatrixMode::kNone:
+					case MatrixMode::kBiSequential:
+					case MatrixMode::kBiBitplanes:
+						break;
 					case MatrixMode::kMono:
 						if (TextFont->Data[data_index] == 1)
 						{
@@ -4108,6 +4163,10 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 				{
 					switch (TextFont->Mode)
 					{
+					case MatrixMode::kNone:
+					case MatrixMode::kBiSequential:
+					case MatrixMode::kBiBitplanes:
+						break;
 					case MatrixMode::kMono:
 						if (TextFont->Data[data_index] == 1)
 						{
@@ -8443,6 +8502,15 @@ void TheMatrix::SetMirrorMode(MirrorMode newmode)
 
 void TheMatrix::SetAndShowCurrentFrame(int frame)
 {
+	#if _DEBUG
+	if (frame >= MatrixLayers[CurrentLayer]->Cells.size())
+	{
+		std::wstring debug = L"Frame " + std::to_wstring(frame) + L" outside the valid frame limit of 0 to " + std::to_wstring(MatrixLayers[CurrentLayer]->Cells.size() - 1);
+
+		ShowMessage(debug.c_str());
+	}
+	#endif
+
 	CurrentFrame = frame;
 
 	CopyCurrentFrameToDrawBuffer();
@@ -9332,15 +9400,18 @@ void TheMatrix::GetFirst32Colours(std::vector<int> &colour_list)
 {
 	for (int layer = 0; layer < MatrixLayers.size(); layer++)
 	{
-		for (int x = 0; x < Details.Width; x++)
+		for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
 		{
-			for (int y = 0; y < Details.Height; y++)
+			for (int x = 0; x < Details.Width; x++)
 			{
-				if (std::find(colour_list.begin(), colour_list.end(), MatrixLayers[layer]->Cells[CurrentFrame]->Grid[y * Details.Width + x]) == colour_list.end())
+				for (int y = 0; y < Details.Height; y++)
 				{
-					colour_list.push_back(MatrixLayers[layer]->Cells[CurrentFrame]->Grid[y * Details.Width + x]);
+					if (std::find(colour_list.begin(), colour_list.end(), MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x]) == colour_list.end())
+					{
+						colour_list.push_back(MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x]);
 
-					if (colour_list.size() >= 32) return;
+						if (colour_list.size() >= 32) return;
+					}
 				}
 			}
 		}

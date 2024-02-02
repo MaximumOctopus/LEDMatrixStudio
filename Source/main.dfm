@@ -275,7 +275,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Delete current frame'
+      Hint = 'Delete multiple frames'
       DisabledImageIndex = 71
       Enabled = False
       ImageIndex = 37
@@ -380,7 +380,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 58
       Height = 24
-      Hint = 'Create new matrix'
+      Hint = 'Create new project'
       DisabledImageIndex = 40
       ImageIndex = 16
       Images = ilActive
@@ -473,7 +473,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 62
       Height = 24
-      Hint = 'Save the current matrix'
+      Hint = 'Save the current projeect'
       DisabledImageIndex = 61
       ImageIndex = 15
       Images = ilActive
@@ -495,7 +495,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 69
       Height = 24
-      Hint = 'Select pixel size'
+      Hint = 'Export data to file'
       DisabledImageIndex = 55
       ImageIndex = 32
       Images = ilActive
@@ -523,7 +523,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 88
       Height = 24
-      Hint = 'Select pixel size'
+      Hint = 'Generate code from matrix data'
       Enabled = False
       OnClick = sbGenerateCodeClick
     end
@@ -532,7 +532,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 62
       Height = 24
-      Hint = 'Save the current matrix'
+      Hint = 'Open a new project'
       DisabledImageIndex = 47
       ImageIndex = 14
       Images = ilActive
@@ -643,7 +643,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels right'
+      Hint = 'Shift the pixels down'
       DisabledImageIndex = 41
       ImageIndex = 11
       Images = ilActive
@@ -657,6 +657,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 50
       Height = 24
+      Hint = 'Invert pixels'
       Enabled = False
       OnClick = sbMirrorClick
     end
@@ -994,7 +995,7 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw an empty circle'
+      Hint = 'Draw an filled circle'
       GroupIndex = 1
       DisabledImageIndex = 43
       ImageIndex = 21

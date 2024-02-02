@@ -44,33 +44,34 @@ namespace ExportUtility
 
 		if (teo.FontMode)
 		{
-			wchar_t chr(frame + teo.Code.StartFrame - 1);
+			wchar_t chr(GSystemSettings->App.ASCIIIndex + frame + teo.Code.StartFrame);
+			std::wstring ascii = std::to_wstring(GSystemSettings->App.ASCIIIndex + frame + teo.Code.StartFrame);
 
 			switch (teo.Code.Language)
 			{
 			case ExportLanguage::kCSV:
-				output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";  // " + wchar_t(frame + teo.Code.StartFrame - 1) + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";  // " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kPICAXE:
-				output.push_back(L"EEPROM (" + m + L")  ; " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(L"EEPROM (" + m + L")  ; " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kC1Dim:
-				output.push_back(teo.DataPadding + m + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(teo.DataPadding + m + L"  // " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kC2Dim:
-				output.push_back(teo.DataPadding + L"{" + m + L"},  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(teo.DataPadding + L"{" + m + L"},  // " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kCFastLED:
-				output.push_back(teo.DataPadding + s + L"  // " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(teo.DataPadding + s + L"  // " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kPython1Dim:
-				output.push_back(teo.DataPadding + s + L"  # " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(teo.DataPadding + s + L"  # " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kPython2Dim:
-				output.push_back(teo.DataPadding + L"[" + m + L"],  # " + chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(teo.DataPadding + L"[" + m + L"],  # " + chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kMicrochip:
-				output.push_back(L"dt " + m + L" ; " +chr + L" ASCII " + std::to_wstring(frame + teo.Code.StartFrame - 1));
+				output.push_back(L"dt " + m + L" ; " +chr + L" ASCII " + ascii);
 				break;
 			case ExportLanguage::kPascal:
 				output.push_back(L"matrixdata : array[0..__LEDCount] of integer = (" + m + L");");
@@ -571,11 +572,11 @@ namespace ExportUtility
 
 					if (teo.Code.Source == ReadSource::kRows)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart + 1) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd + 1));
+						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
 					}
 					else
 					{
-					  output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart + 1) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd + 1));
+						output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
 					}
 				}
 			}

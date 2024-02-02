@@ -32,10 +32,12 @@ struct AppSettings
 	int PadModeHexRow = 0;
 	int PadModeDecCol = 0;
 	int PadModeDecRow = 0;
+
 	std::wstring HexPrefix = L"0x";
 	std::wstring BinaryPrefix = L"";
 	std::wstring OpenBracket = L"(";
 	std::wstring CloseBracket = L")";
+
 	ExportOptions LastExport;
 
 	std::wstring LastSaveLocation = L"";

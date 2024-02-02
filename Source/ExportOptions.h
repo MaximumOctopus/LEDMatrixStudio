@@ -164,7 +164,6 @@ struct CodeOptions
 			RGBChangeColour = 0x00000000;
 		}
 
-
 		RGBBrightness = 100;
 	}
 };

@@ -26,8 +26,8 @@ namespace Registry
 
 	[[nodiscard]] bool ReadBool(HKEY, const std::wstring, bool);
 
-	[[nodiscard]] bool WriteString(HKEY, const std::wstring&, const std::wstring&);
-	[[nodiscard]] bool WriteInteger(HKEY, const std::wstring&, const int &);
+	bool WriteString(HKEY, const std::wstring&, const std::wstring&);
+	bool WriteInteger(HKEY, const std::wstring&, const int &);
 
 	[[nodiscard]] bool Delete(HKEY, const std::wstring&);
 }
