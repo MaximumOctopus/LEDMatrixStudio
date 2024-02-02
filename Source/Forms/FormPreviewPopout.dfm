@@ -138,7 +138,7 @@ object frmPreviewPopout: TfrmPreviewPopout
       PositionToolTip = ptTop
       TabOrder = 4
       TickStyle = tsNone
-      OnChange = tbFramesChange
+      OnTracking = tbFramesTracking
       ExplicitWidth = 829
     end
     object bStartFrame: TBitBtn

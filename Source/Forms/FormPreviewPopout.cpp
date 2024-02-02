@@ -50,15 +50,6 @@ void __fastcall TfrmPreviewPopout::bPlayAnimationClick(TObject *Sender)
 }
 
 
-void __fastcall TfrmPreviewPopout::tbFramesChange(TObject *Sender)
-{
-	if (OnNewFrame)
-	{
-		OnNewFrame(tbFrames->Position);
-	}
-}
-
-
 void TfrmPreviewPopout::SetForPlaybackStart()
 {
 	bPlayAnimation->Enabled = false;
@@ -78,4 +69,13 @@ void TfrmPreviewPopout::SetForPlaybackStop()
 	bNextFrame->Enabled            = true;
 	bPreviousFrame->Enabled        = true;
 	bStopAnimation->Enabled        = false;
+}
+
+
+void __fastcall TfrmPreviewPopout::tbFramesTracking(TObject *Sender)
+{
+	if (OnNewFrame)
+	{
+		OnNewFrame(tbFrames->Position - 1);
+	}
 }

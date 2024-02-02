@@ -44,7 +44,7 @@ __published:	// IDE-managed Components
 	TBitBtn *bEndFrame;
 	TImageList *ImageList1;
 	void __fastcall bPlayAnimationClick(TObject *Sender);
-	void __fastcall tbFramesChange(TObject *Sender);
+	void __fastcall tbFramesTracking(TObject *Sender);
 private:
 
     void SetGuiLanguageText();
