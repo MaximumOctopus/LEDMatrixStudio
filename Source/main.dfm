@@ -376,7 +376,7 @@ object frmMain: TfrmMain
     TabOrder = 4
     ExplicitWidth = 1490
     object sbBuild: TSpeedButton
-      Left = 5
+      Left = 4
       Top = 2
       Width = 58
       Height = 24

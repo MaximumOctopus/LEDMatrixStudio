@@ -3210,6 +3210,8 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		}
 
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
+
+		FrameLayerPanel->UpdateLayerTable();
 	}
 
 	// ===========================================================================
@@ -4268,7 +4270,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 
 		sColour0->Brush->Color = TColor(ted.BackgroundColour);
 
-		// =========================================================================
+		// ===================================================================
 
 		if (miFontMode->Checked)
 		{
@@ -4276,14 +4278,14 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 			miFontModeClick(nullptr);
 		}
 
-		// == preview ==============================================================
+		// == preview ========================================================
 
 		miPreview->Checked        = ted.Preview.Enabled;
 		thematrix->SetPreviewActive(ted.Preview.Enabled);
 
 		SetPreview(ted.Preview.Size, ted.Preview.View, ted.Preview.Void, ted.Preview.Offset, ted.Preview.OffsetDirection, ted.Preview.Popout);
 
-		// =========================================================================
+		// ===================================================================
 
 		GSystemSettings->App.LastLoadLocation = ExtractFilePath(odMain->FileName.c_str());
 	}

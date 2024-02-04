@@ -4621,7 +4621,18 @@ bool TheMatrix::IsVisible(int index)
 
 void TheMatrix::SetVisibility(int LayerIndex, bool Visibility)
 {
+	#if _DEBUG
+	if (LayerIndex >= MatrixLayers.size())
+	{
+		std::wstring debug = L"Layer " + std::to_wstring(LayerIndex) + L" outside the valid layer limit of 0 to " + std::to_wstring(MatrixLayers.size() - 1);
+
+		ShowMessage(debug.c_str());
+	}
+	#endif
+
 	MatrixLayers[LayerIndex]->Visible = Visibility;
+
+    PaintBox->Invalidate();
 }
 
 
