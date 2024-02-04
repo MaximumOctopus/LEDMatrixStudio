@@ -105,7 +105,7 @@ private:
 	int RandomCoeff = 30;
 	bool DeadPixelsMode = false;
 	bool MatrixReadOnly = false;
-	SoftwareMode Software;
+	SoftwareMode Software = SoftwareMode::kAnimation;
 
 	int RadialOffsetDegrees = 0; // combination of the two below
 	int RadialOffset = 0;
