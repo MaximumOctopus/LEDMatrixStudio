@@ -2494,28 +2494,28 @@ void __fastcall TfrmMain::miRadialOffset45Click(TObject *Sender)
 	switch (mi->Tag)
 	{
 	case 0:
-		offset =   0;
+		offset = CZeroDegrees;
 		break;
 	case 1:
-		offset =  45;
+		offset = C45Degrees;
 		break;
 	case 2:
-		offset =  90;
+		offset = C90Degrees;
 		break;
 	case 3:
-		offset = 135;
+		offset = C135Degrees;
 		break;
 	case 4:
-		offset = 180;
+		offset = C180Degrees;
 		break;
 	case 5:
-		offset = 225;
+		offset = C225Degrees;
 		break;
 	case 6:
-		offset = 270;
+		offset = C270Degrees;
 		break;
 	case 7:
-		offset = 315;
+		offset = C315Degrees;
 		break;
 	}
 
@@ -3143,7 +3143,6 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		GSystemSettings->Project.SizeType         = ps.SizeType;
 		GSystemSettings->Project.Shape      	  = ps.Shape;
 		GSystemSettings->Project.CustomShapeParam = ps.CustomShapeParam;
-		GSystemSettings->Project.Pixel            = ps.Pixel;
 		GSystemSettings->Project.Background       = ps.Background;
 
 		tbFrames->Max                  = ps.Special;
@@ -3172,7 +3171,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	GSystemSettings->Project.PixelSize = 30;
 
-	switch (GSystemSettings->Project.Pixel)
+	switch (GSystemSettings->Project.Shape)
 	{
 	case PixelShape::kSquare:
 		miPixelShapeSquareClick(miPixelShapeSquare);
@@ -5118,10 +5117,7 @@ void __fastcall TfrmMain::miPixelShapeSquareClick(TObject *Sender)
 	sbPixelShape->Tag              = mi->Tag;
 	GSystemSettings->Project.Shape = ConstantsHelper::PixelShapeFromInt(mi->Tag);
 
-	if (sbClear->Enabled)
-	{
-		thematrix->ChangePixelShape(GSystemSettings->Project.Shape);
-	}
+	thematrix->ChangePixelShape(GSystemSettings->Project.Shape);
 
 	Screen->Cursor = crDefault;
 }
@@ -5316,38 +5312,37 @@ void TfrmMain::SetPreview(int size, ViewShape view, int voidsize, int offset, bo
 		miPreviewVoid10Click(miPreviewVoid10);
 	}
 
-
 	switch (offset)
 	{
-	case 0:
+	case CZeroDegrees:
 		miRadialOffset45Click(miRadialOffset0);
 		break;
 	case 1:
-	case 45:
+	case C45Degrees:
 		miRadialOffset45Click(miRadialOffset45);
 		break;
 	case 2:
-	case 90:
+	case C90Degrees:
 		miRadialOffset45Click(miRadialOffset90);
 		break;
 	case 3:
-	case 135:
+	case C135Degrees:
 		miRadialOffset45Click(miRadialOffset135);
 		break;
 	case 4:
-	case 180:
+	case C180Degrees:
 		miRadialOffset45Click(miRadialOffset180);
 		break;
 	case 5:
-	case 225:
+	case C225Degrees:
 		miRadialOffset45Click(miRadialOffset225);
 		break;
 	case 6:
-	case 270:
+	case C270Degrees:
 		miRadialOffset45Click(miRadialOffset270);
 		break;
 	case 7:
-	case 315:
+	case C315Degrees:
 		miRadialOffset45Click(miRadialOffset315);
 		break;
 

@@ -22,6 +22,9 @@ struct PreviewOptions
 	int Size = 1;
 	ViewShape View = ViewShape::kSquare;
 
+	PixelShape Shape = PixelShape::kSquare;         // selected by user
+	PixelShape DisplayShape = PixelShape::kSquare;  // used to render preview (may change from above depending on pixel size)
+
 	int Void = 15;
 	int Offset = 0;
     int Direction = 0;

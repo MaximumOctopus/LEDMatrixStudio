@@ -27,7 +27,6 @@ struct ProjectSettings
 	int Special = 0;
 	bool SizeType = false;
 	int PixelSize = 20;
-	PixelShape Pixel = PixelShape::kSquare;
 	PixelShape Shape = PixelShape::kSquare;
 
 	CustomShape ShapeCustom = CustomShape::kNone;
@@ -87,13 +86,13 @@ struct ProjectSettings
 		switch (i)
 		{
 		case 0:
-			Pixel = PixelShape::kSquare;
+			Shape = PixelShape::kSquare;
 			break;
 		case 1:
-			Pixel = PixelShape::kCircle;
+			Shape = PixelShape::kCircle;
 			break;
 		case 2:
-			Pixel = PixelShape::kRoundRect;
+			Shape = PixelShape::kRoundRect;
 			break;
 		}
 	}

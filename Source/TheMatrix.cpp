@@ -597,6 +597,15 @@ void TheMatrix::SetPreviewBoxSize(int size)
 
 		PreviewBox->Width = (Details.Width) * Preview.Size;
 		PreviewBox->Height = (Details.Height) * Preview.Size;
+
+		if (Preview.Size <= 2)
+		{
+			Preview.DisplayShape = PixelShape::kSquare;
+		}
+		else
+		{
+			Preview.DisplayShape = Preview.Shape;
+		}
 	}
 
 	if (!Details.Available) return;
@@ -716,6 +725,8 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 {
 	switch (Details.Mode)
 	{
+	case MatrixMode::kNone:
+		return;
 	case MatrixMode::kMono:
 	case MatrixMode::kBiSequential:
 	case MatrixMode::kBiBitplanes:
@@ -734,10 +745,9 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 		for (int y = 0; y < Details.Height; y++)
 		{
 			PreviewBox->Canvas->Brush->Color = TColor(MatrixRender->Grid[y * Details.Width + x]);
-
 			PreviewBox->Canvas->Pen->Color = PreviewBox->Canvas->Brush->Color;
 
-			switch (Render.Shape)
+			switch (Preview.DisplayShape)
 			{
 			case PixelShape::kSquare:
 				PreviewBox->Canvas->FillRect(Rect(x * Preview.Size,
@@ -789,7 +799,7 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 
 			PreviewBox->Canvas->Brush->Color = TColor(LEDColours[CDisplayMarker]);
 
-			switch (Render.Shape)
+			switch (Preview.DisplayShape)
 			{
 			case PixelShape::kSquare:
 				PreviewBox->Canvas->FillRect(Rect(Render.Draw.Coords[0].X * Preview.Size,
@@ -851,7 +861,7 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 						}
 					}
 
-					switch (Render.Shape)
+					switch (Preview.DisplayShape)
 					{
 					case PixelShape::kSquare:
 						PreviewBox->Canvas->FillRect(Rect((x + LastX) * Preview.Size,
@@ -8379,6 +8389,17 @@ void TheMatrix::ChangePixelSize(int newpixelsize)
 void TheMatrix::ChangePixelShape(PixelShape newpixelshape)
 {
 	Render.Shape = newpixelshape;
+
+	Preview.Shape = Render.Shape;
+
+	if (Preview.Size <= 2)
+	{
+		Preview.DisplayShape = PixelShape::kSquare;
+	}
+	else
+	{
+		Preview.DisplayShape = Preview.Shape;
+	}
 
 	PaintBox->Invalidate();
 }
