@@ -3134,6 +3134,14 @@ object frmMain: TfrmMain
         ShortCut = 16464
         OnClick = miPopoutPreviewClick
       end
+      object N65: TMenuItem
+        Caption = '-'
+      end
+      object miPreviewAllowDrawing: TMenuItem
+        AutoCheck = True
+        Caption = '.'
+        OnClick = miPreviewAllowDrawingClick
+      end
     end
     object Project1: TMenuItem
       Caption = 'Project'

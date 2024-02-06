@@ -569,5 +569,6 @@
 	static const int kFontWrap = 553;
 	static const int kMirrorDraw = 554;
 	static const int kAreYouSureYouWantToClearThePalette = 555;
-	static const int kLanguageConstantCount = 556;
+	static const int kAllowDrawing = 556;
+	static const int kLanguageConstantCount = 557;
 

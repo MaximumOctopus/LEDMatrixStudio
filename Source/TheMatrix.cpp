@@ -666,6 +666,12 @@ void TheMatrix::SetPreviewIncrementRadially(bool increment)
 }
 
 
+void TheMatrix::SetPreviewDrawing(bool candraw)
+{
+    Preview.CanDraw = candraw;
+}
+
+
 void TheMatrix::SetPreviewActive(bool active)
 {
 	Preview.Active = active;
@@ -1126,6 +1132,16 @@ void __fastcall TheMatrix::OnPreviewBoxMouseDown(TObject *Sender, TMouseButton B
 		if (OnPreviewMouseDown)
 		{
 			OnPreviewMouseDown(PreviewBox->Left + X, PreviewBox->Top + Y);
+		}
+	}
+	else if (Preview.CanDraw)
+	{
+		if (Preview.View == ViewShape::kSquare)
+		{
+			int nx = std::round(((double)X / PreviewBox->Width) * PaintBox->Width);
+			int ny = std::round(((double)Y / PreviewBox->Height) * PaintBox->Height);
+
+			PaintBox->OnMouseDown(nullptr, Button, Shift, nx, ny);
 		}
 	}
 }
@@ -9621,6 +9637,8 @@ std::wstring TheMatrix::GetPreviewDebug()
 }
 
 
+// generates a very simple test pattern
+// very useful when testing :)
 void TheMatrix::TestSignal()
 {
 	int y = 0;

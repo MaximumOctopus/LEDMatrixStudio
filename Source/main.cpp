@@ -1149,7 +1149,7 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 
 void __fastcall TfrmMain::MatrixOnPreviewMouseDown(int x, int y)
 {
-	puPreview->Popup(Left + x + 10, Top + y + 10);
+	puPreview->Popup(Left + x + 10, Top + y + 150);
 }
 
 
@@ -1366,6 +1366,7 @@ void TfrmMain::SetGuiLanguageText()
 	Previewoffsetradialsemicircle1->Caption = GLanguageHandler->Text[kPreviewOffsetRadialSemicircle].c_str();
 	miPreviewOffsetReverse->Caption = GLanguageHandler->Text[kReverse].c_str();
 	miPopoutPreview->Caption = GLanguageHandler->Text[kPopoutPreview].c_str();
+	miPreviewAllowDrawing->Caption = GLanguageHandler->Text[kAllowDrawing].c_str();
 	//
 	Project1->Caption = GLanguageHandler->Text[kProject].c_str();
 	miClearAllFramesLayer->Caption = GLanguageHandler->Text[kClearAllFramesCurrentLayer].c_str();
@@ -2551,6 +2552,12 @@ void __fastcall TfrmMain::miPopoutPreviewClick(TObject *Sender)
 	{
 		frmPreviewPopout->Close();
 	}
+}
+
+
+void __fastcall TfrmMain::miPreviewAllowDrawingClick(TObject *Sender)
+{
+	thematrix->SetPreviewDrawing(miPreviewAllowDrawing->Checked);
 }
 
 
@@ -6022,4 +6029,3 @@ void TfrmMain::LoadWithWarnings(const std::wstring file_name)
 	Application->ProcessMessages();
 	thematrix->SetMatrixReadOnly(false);
 }
-

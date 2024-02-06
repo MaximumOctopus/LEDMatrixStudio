@@ -19,6 +19,8 @@
 struct PreviewOptions
 {
 	bool Active = false;
+	bool CanDraw = false;                           // can the user draw directly to the preview canvas
+
 	int Size = 1;
 	ViewShape View = ViewShape::kSquare;
 

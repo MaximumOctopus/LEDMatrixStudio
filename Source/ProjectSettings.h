@@ -120,7 +120,7 @@ struct ProjectSettings
 
 	int PixelShapeToInt()
 	{
-		switch (Pixel)
+		switch (Shape)
 		{
 		case PixelShape::kSquare:
 			return 0;

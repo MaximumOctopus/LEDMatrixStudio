@@ -280,6 +280,7 @@ public:
 	void SetPreviewViewMode(ViewShape);
 	void SetPreviewPopout(bool);
 	void SetPreviewIncrementRadially(bool);
+	void SetPreviewDrawing(bool);                   // sets the ability to draw on the preview canvas
 
 	void SetFontWrap(bool);
 

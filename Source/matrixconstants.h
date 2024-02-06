@@ -178,6 +178,14 @@
 	static const int CMOMCurrentLayerFrames = 2;
 	static const int CMOMAll                = 3;
 
+	static const int CZeroDegrees = 0;
+	static const int C45Degrees =  45;
+	static const int C90Degrees =  90;
+	static const int C135Degrees = 135;
+	static const int C180Degrees = 180;
+	static const int C225Degrees = 225;
+	static const int C270Degrees = 270;
+	static const int C315Degrees = 315;
 
 
 namespace ConstantsHelper
