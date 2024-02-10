@@ -21,7 +21,9 @@ class Font
 
 public:
 
-    MatrixMode Mode = MatrixMode::kNone;
+	MatrixMode Mode = MatrixMode::kNone;
+
+	std::wstring Name = L"";
 
 	int *Data = nullptr;
 	int Start[96];
@@ -32,5 +34,5 @@ public:
 
 	void Clear();
 
-	bool Load(const std::wstring);
+	bool Load(const std::wstring, const std::wstring);
 };

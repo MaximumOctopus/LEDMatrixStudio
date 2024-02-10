@@ -42,10 +42,12 @@ void Font::Clear()
 		Start[i] = 0;
 		End[i] = 0;
 	}
+
+	Name = L"";
 }
 
 
-bool Font::Load(const std::wstring file_name)
+bool Font::Load(const std::wstring file_name, const std::wstring name)
 {
 	Clear();
 
@@ -55,6 +57,8 @@ bool Font::Load(const std::wstring file_name)
 
 	if (file)
 	{
+	    Name = name;
+
 		std::wstring s = L"";
 
 		std::getline(file, s);

@@ -1037,7 +1037,6 @@ object frmMain: TfrmMain
       ImageIndex = 26
       Images = ilActive
       Enabled = False
-      PopupMenu = puFonts
       OnClick = sbMouseModeClick
     end
     object sbFloodFill: TSpeedButton
@@ -5041,11 +5040,13 @@ object frmMain: TfrmMain
     object N4x41: TMenuItem
       Tag = 3
       Caption = '(4x4)'
+      RadioItem = True
       OnClick = miBrushSizeSmallClick
     end
     object N5x51: TMenuItem
       Tag = 4
       Caption = '(5x5)'
+      RadioItem = True
       OnClick = miBrushSizeSmallClick
     end
   end

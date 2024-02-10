@@ -2882,7 +2882,7 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
 		!MatrixLayers[CurrentLayer]->Visible) return;
 
-    if (x >= Details.Width || y >= Details.Height) return;
+	if (x >= Details.Width || y >= Details.Height) return;
 
 	switch (Render.Brush)
 	{
@@ -2987,7 +2987,7 @@ void TheMatrix::DrawWithGradientBrush(int x, int y)
 		!MatrixLayers[CurrentLayer]->Visible ||
 		Gradient.size() == 0) return;
 
-    if (x >= Details.Width || y >= Details.Height) return;
+	if (x >= Details.Width || y >= Details.Height) return;
 
 	PlotPixelMatrixFrame(CurrentFrame, x, y, Gradient[Render.Draw.Parameter]);
 
@@ -4122,6 +4122,26 @@ void TheMatrix::SetPixelBrush(BrushSize newbrushsize)
 #pragma end_region
 
 
+#pragma region Gradient_Brush
+void TheMatrix::ClearGradient()
+{
+	Gradient.clear();
+}
+
+
+void TheMatrix::AddGradient(int colour)
+{
+	Gradient.push_back(colour);
+}
+
+
+int TheMatrix::GradientCount()
+{
+    return Gradient.size();
+}
+#pragma end_region
+
+
 #pragma region Font
 void TheMatrix::DrawFontCharacter(int ascii, int frame)
 {
@@ -4243,9 +4263,9 @@ void TheMatrix::DeleteFontCharacter(int frame)
 }
 
 
-void TheMatrix::LoadTextToolFont(const std::wstring file_name)
+void TheMatrix::LoadTextToolFont(const std::wstring file_name, const std::wstring name)
 {
-	TextFont->Load(file_name);
+	TextFont->Load(file_name, name);
 }
 #pragma end_region
 
@@ -8338,9 +8358,21 @@ void TheMatrix::SetAutomateMode(bool mode)
 }
 
 
+std::wstring TheMatrix::GetFontName()
+{
+    return TextFont->Name;
+}
+
+
 void TheMatrix::SetFontWrap(bool mode)
 {
 	FontWrap = mode;
+}
+
+
+int TheMatrix::GetRandomCoeff()
+{
+	return RandomCoeff;
 }
 
 
@@ -9601,18 +9633,6 @@ void TheMatrix::BackupMatrix(int layer, int frame)
 void TheMatrix::BackupMatrix()
 {
 	BackupMatrix(CurrentLayer, CurrentFrame);
-}
-
-
-void TheMatrix::ClearGradient()
-{
-	Gradient.clear();
-}
-
-
-void TheMatrix::AddGradient(int colour)
-{
-	Gradient.push_back(colour);
 }
 
 

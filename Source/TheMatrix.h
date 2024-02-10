@@ -282,6 +282,7 @@ public:
 	void SetPreviewIncrementRadially(bool);
 	void SetPreviewDrawing(bool);                   // sets the ability to draw on the preview canvas
 
+    std::wstring GetFontName();
 	void SetFontWrap(bool);
 
 	void SetRandomCoeff(int);
@@ -380,7 +381,7 @@ public:
 
 	void DrawFontCharacter(int, int);
 	void DeleteFontCharacter(int);
-	void LoadTextToolFont(const std::wstring);
+	void LoadTextToolFont(const std::wstring, const std::wstring);
 
 	void ImportRowData(bool, int, int, const std::wstring);
 	void ImportColumnData(bool, int, int, const std::wstring);
@@ -465,6 +466,7 @@ public:
 
 	void ClearGradient();
 	void AddGradient(int);
+    int GradientCount();
 
 	int GetFrameCount();
 	bool GetDeadPixelsMode();
@@ -484,6 +486,8 @@ public:
 	int GetRadialOffset();
 	int GetRadialOffsetDirection();
 	bool GetAutomateMode();
+
+	int GetRandomCoeff();
 
 	#if _DEBUG
 	std::wstring GetPaintBoxDebug();

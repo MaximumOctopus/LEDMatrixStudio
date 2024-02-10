@@ -876,6 +876,8 @@ void __fastcall TfrmMain::CopyToGradientBrush()
 		{
 			thematrix->AddGradient(FrameGradientPanel->GetColour(t));
 		}
+
+       	UpdateDrawModeCaption(lSelectedTool->Tag);
 	}
 }
 
@@ -1186,7 +1188,7 @@ void TfrmMain::SetGuiLanguageText()
 	DrawModes.push_back(GLanguageHandler->Text[kLeftTriangle]);
 	DrawModes.push_back(GLanguageHandler->Text[kRightTriangle]);
 
-	lSelectedTool->Caption = DrawModes[0].c_str();
+	lSelectedTool->Caption = GetDrawModeText(0).c_str();
 
 	//
 
@@ -1466,6 +1468,72 @@ void TfrmMain::SetGuiLanguageText()
 	miAbout->Caption = Utility::WS2US(GLanguageHandler->Text[kAbout] + L" :)");
 }
 
+
+std::wstring TfrmMain::GetDrawModeText(int drawingmode)
+{
+	switch (drawingmode)
+	{
+	case 0:
+		switch (thematrix->Render.Brush)
+		{
+		case BrushSize::kSmall:
+			return DrawModes[drawingmode] + L" (1x1)";
+		case BrushSize::kMedium:
+			return DrawModes[drawingmode] + L" (2x2)";
+		case BrushSize::kLarge:
+			return DrawModes[drawingmode] + L" (3x3)";
+		case BrushSize::kBigLarge:
+			return DrawModes[drawingmode] + L" (4x4)";
+		case BrushSize::kSuperLarge:
+			return DrawModes[drawingmode] + L" (5x5)";
+		}
+		break;
+
+	case 4:
+		return DrawModes[drawingmode] + L" (" + L")";
+
+	case 7:
+		switch (thematrix->GetRandomCoeff())
+		{
+		case 20:
+			return DrawModes[drawingmode] + L" (" + GLanguageHandler->Text[kTiny] + L")";
+		case 30:
+			return DrawModes[drawingmode] + L" (" + GLanguageHandler->Text[kSmall] + L")";
+		case 40:
+			return DrawModes[drawingmode] + L" (" + GLanguageHandler->Text[kMedium] + L")";
+		case 50:
+			return DrawModes[drawingmode] + L" (" + GLanguageHandler->Text[kLarge] + L")";
+		case 60:
+			return DrawModes[drawingmode] + L" (" + GLanguageHandler->Text[kMassive] + L")";
+		}
+		break;
+
+	case 12:
+		if (thematrix->GradientCount() == 0)
+		{
+			return DrawModes[drawingmode] + L" (no gradient loaded)";
+		}
+		else
+		{
+			return DrawModes[drawingmode] + L" (" + std::to_wstring(thematrix->GradientCount()) + L" colours)";
+		}
+		break;
+
+	default:
+		return DrawModes[drawingmode];
+	}
+
+    return L"unknown";
+}
+
+
+void TfrmMain::UpdateDrawModeCaption(int drawingmode)
+{
+	lSelectedTool->Caption = GetDrawModeText(drawingmode).c_str();
+	lSelectedTool->Refresh();
+
+	lSelectedTool->Tag = drawingmode;
+}
 #pragma end_region
 
 
@@ -1534,35 +1602,35 @@ void  TfrmMain::PlaybackStart()
 
 void  TfrmMain::PlaybackStop()
 {
-	timerAnimate->Enabled      = false;
+	timerAnimate->Enabled = false;
 
-	bPlayAnimation->Enabled    = true;
-	bStartFrame->Enabled       = true;
-	bEndFrame->Enabled         = true;
-	bNextFrame->Enabled        = true;
-	bPreviousFrame->Enabled    = true;
-	bStopAnimation->Enabled    = false;
+	bPlayAnimation->Enabled = true;
+	bStartFrame->Enabled = true;
+	bEndFrame->Enabled = true;
+	bNextFrame->Enabled = true;
+	bPreviousFrame->Enabled = true;
+	bStopAnimation->Enabled = false;
 
-	miPreviousFrame->Enabled   = true;
-	miNextFrame->Enabled       = true;
+	miPreviousFrame->Enabled = true;
+	miNextFrame->Enabled = true;
 
 	frmPreviewPopout->SetForPlaybackStop();
 
-	bAddFrame->Enabled             = true;
-	bAddFrameCopy->Enabled         = true;
-	bAddFrameMultiple->Enabled     = true;
+	bAddFrame->Enabled = true;
+	bAddFrameCopy->Enabled = true;
+	bAddFrameMultiple->Enabled = true;
 
-	bDeleteFrame->Enabled          = tbFrames->Max != 1;
+	bDeleteFrame->Enabled = tbFrames->Max != 1;
 	bDeleteMultipleFrames->Enabled = tbFrames->Max != 1;
 
-	miAddFrame->Enabled             = true;
-	miAddFrameCopy->Enabled         = true;
-	miAddFrameMultiple->Enabled     = true;
+	miAddFrame->Enabled = true;
+	miAddFrameCopy->Enabled = true;
+	miAddFrameMultiple->Enabled = true;
 
-	miDeleteFrame->Enabled          = tbFrames->Max != 1;
+	miDeleteFrame->Enabled = tbFrames->Max != 1;
 	miDeleteMultipleFrames->Enabled = tbFrames->Max != 1;
 
-	thematrix->AnimPlaying    = false;
+	thematrix->AnimPlaying = false;
 	thematrix->SetMatrixReadOnly(false);
 
 	ManageUIControls(false, false);
@@ -3572,8 +3640,7 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 	thematrix->Render.Draw.CopyPos.Y = 0;
 	thematrix->Render.Draw.Special   = tbFrames->Max;
 
-	lSelectedTool->Caption           = DrawModes[drawingmode].c_str();
-	lSelectedTool->Refresh();
+	UpdateDrawModeCaption(drawingmode);
 
 	thematrix->RefreshCurrentFrame();
 }
@@ -4980,6 +5047,8 @@ void __fastcall TfrmMain::miBrushSizeSmallClick(TObject *Sender)
 	puBrushSize->Tag = mi->Tag;
 
 	thematrix->SetPixelBrush(ConstantsHelper::BrushFromInt(puBrushSize->Tag));
+
+	UpdateDrawModeCaption(lSelectedTool->Tag);
 }
 #pragma end_region
 
@@ -5186,6 +5255,8 @@ void __fastcall TfrmMain::miRandomnessTinyClick(TObject *Sender)
 	mi->Checked = true;
 
 	thematrix->SetRandomCoeff(mi->Tag);
+
+	UpdateDrawModeCaption(lSelectedTool->Tag);
 }
 #pragma end_region
 
@@ -5928,7 +5999,9 @@ void __fastcall TfrmMain::SelectFont(TObject *Sender)
 
 	if (FileExists(path.c_str()))
 	{
-		thematrix->LoadTextToolFont(path);
+		thematrix->LoadTextToolFont(path, GFontHandler->Fonts[mi->Tag]);
+
+		UpdateDrawModeCaption(lSelectedTool->Tag);
 
 		mi->Checked = true;
 	}

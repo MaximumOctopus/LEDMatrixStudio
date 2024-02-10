@@ -879,14 +879,18 @@ private:
 
 	ProjectSettings UserProjectSettings;
 
-	void SetGuiLanguageText();
-
 	void InitComponentCache();
-    void ConfigureControls();
-    void InitFrames();
+	void ConfigureControls();
+	void InitFrames();
 	void ManageUIControls(bool, bool);
 
-    int GetSelectedFrame();
+	int GetSelectedFrame();
+
+	// -- language -----------------------------------------------------------
+
+	void SetGuiLanguageText();
+	std::wstring GetDrawModeText(int);
+    void UpdateDrawModeCaption(int);
 
 	// -- dialogs ------------------------------------------------------------
 
