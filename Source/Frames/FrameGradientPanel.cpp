@@ -234,7 +234,9 @@ bool TframeGradient::LoadGradient(const std::wstring file_name)
 				}
 				else
 				{
-					std::wstring v = s.substr(2);
+					std::wstring v = L"";
+
+					if (s.length() >= 3) v = s.substr(2);
 
 					switch (ParameterType(s))
 					{
