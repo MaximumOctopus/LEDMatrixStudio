@@ -83,7 +83,7 @@ void __fastcall TfrmFontViewer::cbFontsChange(TObject *Sender)
 
 	if (FileExists(path.c_str()))
 	{
-		FontMatrix->LoadTextToolFont(path);
+		FontMatrix->LoadTextToolFont(path, name);
 	}
 	else
 	{

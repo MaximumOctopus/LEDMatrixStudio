@@ -499,8 +499,8 @@ object Form16: TForm16
       end
     end
     object cbClearAll: TCheckBox
-      Left = 20
-      Top = 16
+      Left = 24
+      Top = 23
       Width = 325
       Height = 17
       Caption = '.'

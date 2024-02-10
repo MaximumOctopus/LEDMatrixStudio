@@ -1279,8 +1279,8 @@ void TfrmAutomate::SetGuiLanguageText()
 	sbMirror->Caption = GLanguageHandler->Text[kMirror].c_str();
 	sbFlip->Caption = GLanguageHandler->Text[kFlip].c_str();
 	sbInvert->Caption = GLanguageHandler->Text[kInvert].c_str();
-	Label7->Caption = GLanguageHandler->Text[kRotate].c_str();
-	Label8->Caption = GLanguageHandler->Text[kScroll].c_str();
+	Label7->Caption = GLanguageHandler->Text[kScroll].c_str();
+	Label8->Caption = GLanguageHandler->Text[kRotate].c_str();
 	Label10->Caption = GLanguageHandler->Text[kJiggle].c_str();
 	Label11->Caption = GLanguageHandler->Text[kBounce].c_str();
 	Label19->Caption = GLanguageHandler->Text[kAlternate].c_str();

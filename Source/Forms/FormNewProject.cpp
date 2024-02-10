@@ -133,7 +133,7 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 	shapeCircle->Brush->Color = clWhite;
 	shapeRoundRect->Brush->Color = clWhite;
 
-	switch (ps.Pixel)
+	switch (ps.Shape)
 	{
 	case PixelShape::kSquare:
 		shapeSquare->Brush->Color = clLime;
@@ -219,15 +219,15 @@ void TForm16::SetTo(ProjectSettings &ps)
 
 	if (shapeSquare->Brush->Color == clLime)
 	{
-		ps.Pixel = PixelShape::kSquare;
+		ps.Shape = PixelShape::kSquare;
 	}
 	else if (shapeCircle->Brush->Color == clLime)
 	{
-		ps.Pixel = PixelShape::kCircle;
+		ps.Shape = PixelShape::kCircle;
 	}
 	else
 	{
-		ps.Pixel = PixelShape::kRoundRect;
+		ps.Shape = PixelShape::kRoundRect;
 	}
 
 	if (rbCommon->Checked)

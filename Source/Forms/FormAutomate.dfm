@@ -3,8 +3,8 @@ object frmAutomate: TfrmAutomate
   Top = 0
   BorderStyle = bsDialog
   Caption = 'frmAutomate'
-  ClientHeight = 660
-  ClientWidth = 896
+  ClientHeight = 667
+  ClientWidth = 905
   Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
