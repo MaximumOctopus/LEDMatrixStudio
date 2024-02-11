@@ -25,11 +25,13 @@ class TfrmAbout : public TForm
 {
 __published:	// IDE-managed Components
 	TImage *Image1;
-	TLabel *Label5;
-	TLabel *Label12;
+	TLabel *lWebsite;
+	TLabel *lEmail;
 	TLabel *Label3;
 	TLabel *lVersion;
 	TShape *Shape1;
+	void __fastcall lEmailClick(TObject *Sender);
+	void __fastcall lWebsiteClick(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TfrmAbout(TComponent* Owner);

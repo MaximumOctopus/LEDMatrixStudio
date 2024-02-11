@@ -966,7 +966,7 @@ object frmAbout: TfrmAbout
       1308D40740A000781308D40740A000781308D40740A0007893FF05B9F81FFA31
       38AA4E0000000049454E44AE426082}
   end
-  object Label5: TLabel
+  object lWebsite: TLabel
     Left = 286
     Top = 545
     Width = 104
@@ -980,8 +980,9 @@ object frmAbout: TfrmAbout
     Font.Style = []
     ParentFont = False
     StyleElements = [seClient, seBorder]
+    OnClick = lWebsiteClick
   end
-  object Label12: TLabel
+  object lEmail: TLabel
     Tag = 2
     Left = 286
     Top = 526
@@ -996,13 +997,14 @@ object frmAbout: TfrmAbout
     Font.Style = []
     ParentFont = False
     StyleElements = [seClient, seBorder]
+    OnClick = lEmailClick
   end
   object Label3: TLabel
     Left = 270
     Top = 507
-    Width = 133
+    Width = 160
     Height = 13
-    Caption = '(c) Paul Alan Freshney 2024'
+    Caption = '(c) Paul Alan Freshney 2012-2024'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = 6447714
     Font.Height = -11

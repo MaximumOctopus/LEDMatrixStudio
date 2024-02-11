@@ -15,13 +15,27 @@
 #pragma hdrstop
 
 #include "FormAbout.h"
+#include "Utility.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TfrmAbout *frmAbout;
 //---------------------------------------------------------------------------
+
 __fastcall TfrmAbout::TfrmAbout(TComponent* Owner)
 	: TForm(Owner)
 {
 }
 
+
+void __fastcall TfrmAbout::lEmailClick(TObject *Sender)
+{
+	Utility::ExecuteFile(L"mailto:paul@freshney.org");
+}
+
+
+void __fastcall TfrmAbout::lWebsiteClick(TObject *Sender)
+{
+	Utility::ExecuteFile(L"https://github.com/MaximumOctopus/LEDMatrixStudio");
+}
