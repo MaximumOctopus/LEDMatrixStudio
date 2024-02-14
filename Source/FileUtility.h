@@ -20,6 +20,14 @@
 
 namespace FileUtility
 {
+	// ===========================================================================
+	// LED Matrix Studio files
+	// ===========================================================================
+
+	LoadData LoadDataParameterType(const std::wstring s, bool headermode, bool matrixmode, bool deadpixelmode, bool layermode, bool coloursmode);
+
+	// ===========================================================================
+
 	MatrixMode GetMatrixModeFromFileChunk(const wchar_t);
 
 	bool SaveVector(const std::wstring, const std::vector<std::wstring>&);

@@ -1509,13 +1509,13 @@ std::wstring TfrmMain::GetDrawModeText(int drawingmode)
 		break;
 
 	case 12:
-		if (thematrix->GradientCount() == 0)
+		if (thematrix->GradientBrushCount() == 0)
 		{
 			return DrawModes[drawingmode] + L" (no gradient loaded)";
 		}
 		else
 		{
-			return DrawModes[drawingmode] + L" (" + std::to_wstring(thematrix->GradientCount()) + L" colours)";
+			return DrawModes[drawingmode] + L" (" + std::to_wstring(thematrix->GradientBrushCount()) + L" colours)";
 		}
 		break;
 

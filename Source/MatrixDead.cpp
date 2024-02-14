@@ -173,12 +173,9 @@ bool MatrixDead::Save(const std::wstring file_name, int width, int height)
 
 void MatrixDead::SetAllPixels(int NewStatus)
 {
-	for (int y = 0; y < Height; y++)
+	for (int z = 0; z < Width * Height; z++)
 	{
-		for (int x = 0; x < Width; x++)
-		{
-			Grid[y * Width + x] = NewStatus;
-		}
+		Grid[z] = NewStatus;
 	}
 }
 

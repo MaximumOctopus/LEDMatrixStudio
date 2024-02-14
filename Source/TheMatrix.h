@@ -32,6 +32,8 @@
 #include "MatrixDead.h"
 #include "PreviewSettings.h"
 
+#define _FrameTimer 1
+
 extern LanguageHandler *GLanguageHandler;
 
 
@@ -345,7 +347,7 @@ public:
 	void PerformEffectOnBrush(int);
 
 	void CopyCurrentFrame();
-	void CopyBackupToCopyFrame();
+	void CopyBackupToCurrentFrame();
 	void PasteCurrentFrame();
 	void PasteSpecial(int Mode);
 
@@ -466,7 +468,7 @@ public:
 
 	void ClearGradient();
 	void AddGradient(int);
-    int GradientCount();
+    int GradientBrushCount();
 
 	int GetFrameCount();
 	bool GetDeadPixelsMode();

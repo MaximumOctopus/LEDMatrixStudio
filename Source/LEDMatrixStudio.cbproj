@@ -341,7 +341,7 @@
             <BuildOrder>38</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormAddLayer.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}</VirtualFolder>
             <Form>Form3</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormAddLayer.h</DependentOn>
@@ -362,43 +362,43 @@
             <BuildOrder>105</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormColourChange.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}</VirtualFolder>
             <Form>frmColourChange</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormColourChange.h</DependentOn>
             <BuildOrder>41</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormCopyMultiple.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}</VirtualFolder>
             <Form>frmCopyMultiple</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormCopyMultiple.h</DependentOn>
             <BuildOrder>42</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormDeleteMultiple.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form7</Form>
+            <VirtualFolder>{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}</VirtualFolder>
+            <Form>frmDeleteMultiple</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormDeleteMultiple.h</DependentOn>
             <BuildOrder>43</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormExport.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{B69CFCA8-11C8-4D26-A6B3-1CDD01D0451C}</VirtualFolder>
             <Form>frmExport</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormExport.h</DependentOn>
             <BuildOrder>44</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormExportCode.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{B69CFCA8-11C8-4D26-A6B3-1CDD01D0451C}</VirtualFolder>
             <Form>frmExportCode</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormExportCode.h</DependentOn>
             <BuildOrder>45</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormExportGIF.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form10</Form>
+            <VirtualFolder>{B69CFCA8-11C8-4D26-A6B3-1CDD01D0451C}</VirtualFolder>
+            <Form>frmExportGIF</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormExportGIF.h</DependentOn>
             <BuildOrder>46</BuildOrder>
@@ -418,8 +418,8 @@
             <BuildOrder>48</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormMerge.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form13</Form>
+            <VirtualFolder>{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}</VirtualFolder>
+            <Form>frmMerge</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormMerge.h</DependentOn>
             <BuildOrder>49</BuildOrder>
@@ -433,7 +433,7 @@
         </CppCompile>
         <CppCompile Include="Forms\FormNewProject.cpp">
             <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form16</Form>
+            <Form>frmNewProject</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormNewProject.h</DependentOn>
             <BuildOrder>87</BuildOrder>
@@ -447,7 +447,7 @@
         </CppCompile>
         <CppCompile Include="Forms\FormPlaybackSpeed.cpp">
             <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form18</Form>
+            <Form>frmPlaybackSpeed</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormPlaybackSpeed.h</DependentOn>
             <BuildOrder>53</BuildOrder>
@@ -467,8 +467,8 @@
             <BuildOrder>55</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormSaveRange.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
-            <Form>Form20</Form>
+            <VirtualFolder>{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}</VirtualFolder>
+            <Form>frmSaveRange</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormSaveRange.h</DependentOn>
             <BuildOrder>56</BuildOrder>
@@ -481,7 +481,7 @@
             <BuildOrder>57</BuildOrder>
         </CppCompile>
         <CppCompile Include="Forms\FormToggleLockStatus.cpp">
-            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <VirtualFolder>{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}</VirtualFolder>
             <Form>frmToggleLockStatus</Form>
             <FormType>dfm</FormType>
             <DependentOn>Forms\FormToggleLockStatus.h</DependentOn>
@@ -742,7 +742,11 @@
                     <VFOLDER ID="{8AB26D79-0F70-404A-AA20-E4137B7AA8A1}" name="Examples"/>
                     <VFOLDER ID="{409CBED6-32FE-4D4D-AE8B-02842212B4C4}" name="Export"/>
                     <VFOLDER ID="{B4A7D0C6-E424-4C17-BAA9-C8DE4630B7DE}" name="Fonts"/>
-                    <VFOLDER ID="{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}" name="Forms"/>
+                    <VFOLDER ID="{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}" name="Forms">
+                        <VFOLDER ID="{B69CFCA8-11C8-4D26-A6B3-1CDD01D0451C}" name="Export"/>
+                        <VFOLDER ID="{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}" name="Frames"/>
+                        <VFOLDER ID="{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}" name="Layers"/>
+                    </VFOLDER>
                     <VFOLDER ID="{B3168827-5173-466D-8404-6A47CEC1E411}" name="Frames"/>
                     <VFOLDER ID="{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}" name="Language"/>
                     <VFOLDER ID="{56D1A25A-677A-4C26-A749-238C89982E20}" name="Layers"/>

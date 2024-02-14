@@ -162,4 +162,3 @@ namespace Utility
         return s.c_str();
 	}
 }
-

@@ -23,19 +23,13 @@ Matrix::Matrix(int width, int height, MatrixMode Mode, int Background)
 
 	Grid = new int[width * height];
 
-	for (int x = 0; x < width; x++)
+	if (Mode == MatrixMode::kRGB)
 	{
-		for (int y = 0; y < height; y++)
-		{
-			if (Mode == MatrixMode::kRGB)
-			{
-				Grid[y * width + x] = Background;
-			}
-			else
-			{
-				Grid[y * width + x] = 0;
-			}
-		}
+		std::memset(Grid, Background, width * height * sizeof(int));
+	}
+	else
+	{
+		std::memset(Grid, 0, width * height * sizeof(int));
 	}
 
 	MatrixHistory *mh = new MatrixHistory(Grid, width, height);
@@ -57,45 +51,30 @@ Matrix::~Matrix()
 
 void Matrix::Clear(MatrixMode Mode, int Background)
 {
-	for (int x = 0; x < Width; x++)
+	if (Mode == MatrixMode::kRGB)
 	{
-		for (int y = 0; y < Height; y++)
-		{
-			if (Mode == MatrixMode::kRGB)
-			{
-				Grid[y * Width + x] = Background;
-			}
-			else
-			{
-				Grid[y * Width + x] = 0;
-			}
-		}
+		std::memset(Grid, Background, Width * Height * sizeof(int));
+	}
+	else
+	{
+		std::memset(Grid, 0, Width * Height * sizeof(int));
 	}
 }
 
 
 void Matrix::ClearColour(int Background)
 {
-	for (int x = 0; x < Width; x++)
-	{
-		for (int y = 0; y < Height; y++)
-		{
-			Grid[y * Width + x] = Background;
-		}
-	}
+	std::memset(Grid, Background, Width * Height * sizeof(int));
 }
 
 
 void Matrix::ChangePixels(int colour_from, int colour_to)
 {
-	for (int x = 0; x < Width; x++)
+	for (int z = 0; z < Width * Height; z++)
 	{
-		for (int y = 0; y < Height; y++)
+		if (Grid[z] == colour_from)
 		{
-			if (Grid[y * Width + x] == colour_from)
-			{
-				Grid[y * Width + x] = colour_to;
-			}
+	 		Grid[z] = colour_to;
 		}
 	}
 }
@@ -129,13 +108,7 @@ void Matrix::AddToHistory()
 
 	MatrixHistory *mh = new MatrixHistory(this->Grid, Width, Height);
 
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			mh->Grid[y * Width + x] = Grid[y * Width + x];
-		}
-	}
+	std::memcpy(mh->Grid, Grid, Width * Height * sizeof(int));
 
 	History.push_back(mh);
 
@@ -161,13 +134,7 @@ void Matrix::AddToHistory(Matrix &m)
 
 	MatrixHistory *mh = new MatrixHistory(this->Grid, m.Width, m.Height);
 
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			mh->Grid[y * Width + x] = m.Grid[y * Width + x];
-		}
-	}
+	std::memcpy(mh->Grid, m.Grid, Width * Height * sizeof(int));
 
 	History.push_back(mh);
 
@@ -193,13 +160,7 @@ void Matrix::AddToHistory(Matrix *m)
 
 	MatrixHistory *mh = new MatrixHistory(this->Grid, m->Width, m->Height);
 
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			mh->Grid[y * Width + x] = m->Grid[y * Width + x];
-		}
-	}
+	std::memcpy(mh->Grid, m->Grid, Width * Height * sizeof(int));
 
 	History.push_back(mh);
 
@@ -214,13 +175,7 @@ void Matrix::Undo()
 		HistoryOffset--;
 	}
 
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			Grid[y * Width + x] = History[HistoryOffset]->Grid[y * Width + x];
-		}
-	}
+	std::memcpy(Grid, History[HistoryOffset]->Grid, Width * Height * sizeof(int));
 }
 
 
@@ -233,23 +188,11 @@ void Matrix::Redo()
 
 	MatrixHistory *mh = History[HistoryOffset];
 
-	for (int y = 0; y < Height; y++)
-	{
-		for (int x = 0; x < Width; x++)
-		{
-			Grid[y * Width + x] = mh->Grid[y * Width + x];
-		}
-	}
+	std::memcpy(Grid, mh->Grid, Width * Height * sizeof(int));
 }
 
 
 void Matrix::SetFromUndo(int undo)
 {
-	for (int x = 0; x < Width; x++)
-	{
-		for (int y = 0; y < Height; y++)
-		{
-			Grid[y * Width + x] = History[undo]->Grid[y * Width + x];
-		}
-	}
+	std::memcpy(Grid, History[undo]->Grid, Width * Height * sizeof(int));
 }
