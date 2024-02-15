@@ -25,7 +25,10 @@ Matrix::Matrix(int width, int height, MatrixMode Mode, int Background)
 
 	if (Mode == MatrixMode::kRGB)
 	{
-		std::memset(Grid, Background, width * height * sizeof(int));
+		for (int z = 0; z < width * height; z++)
+		{
+			Grid[z] = Background;
+		}
 	}
 	else
 	{
@@ -53,7 +56,10 @@ void Matrix::Clear(MatrixMode Mode, int Background)
 {
 	if (Mode == MatrixMode::kRGB)
 	{
-		std::memset(Grid, Background, Width * Height * sizeof(int));
+		for (int z = 0; z < Width * Height; z++)
+		{
+			Grid[z] = Background;
+		}
 	}
 	else
 	{
@@ -64,7 +70,10 @@ void Matrix::Clear(MatrixMode Mode, int Background)
 
 void Matrix::ClearColour(int Background)
 {
-	std::memset(Grid, Background, Width * Height * sizeof(int));
+	for (int z = 0; z < Width * Height; z++)
+	{
+		Grid[z] = Background;
+	}
 }
 
 
