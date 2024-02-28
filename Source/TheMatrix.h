@@ -32,7 +32,7 @@
 #include "MatrixDead.h"
 #include "PreviewSettings.h"
 
-#define _FrameTimer 1
+#define _FrameTimer 0
 
 extern LanguageHandler *GLanguageHandler;
 

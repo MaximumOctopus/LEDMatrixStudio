@@ -1519,6 +1519,16 @@ std::wstring TfrmMain::GetDrawModeText(int drawingmode)
 		}
 		break;
 
+	case 14:
+	case 15:
+	case 16:
+	case 17:
+	case 18:
+	case 19:
+	case 20:
+	case 21:
+	    return DrawModes[drawingmode] + L" (LEFT CTRL + WHEEL to change)";
+
 	default:
 		return DrawModes[drawingmode];
 	}
@@ -3633,7 +3643,7 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 	}
 	else if (iMMBGradient->Visible)
 	{
-		iMMBGradient->Visible = false;
+		ToggleGradient(GradientOption::kOff, false);
 	}
 
 	thematrix->Render.Draw.CopyPos.X = 0;

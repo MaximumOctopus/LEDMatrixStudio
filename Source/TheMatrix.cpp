@@ -741,6 +741,7 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 	for (int y = 0; y < Details.Height; y++)
 	{
 		int ydw = y * Details.Width;
+		int yps = y * Preview.Size;
 
 		for (int x = 0; x < Details.Width; x++)
 		{
@@ -751,21 +752,21 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 			{
 			case PixelShape::kSquare:
 				PreviewBox->Canvas->FillRect(Rect(x * Preview.Size,
-												  y * Preview.Size,
+												  yps,
 												 (x * Preview.Size) + Preview.Size,
-												 (y * Preview.Size) + Preview.Size));
+												  yps + Preview.Size));
 				break;
 			case PixelShape::kCircle:
 				PreviewBox->Canvas->Ellipse(x * Preview.Size,
-											y * Preview.Size,
+											yps,
 										   (x * Preview.Size) + Preview.Size,
-										   (y * Preview.Size) + Preview.Size);
+											yps + Preview.Size);
 				break;
 			case PixelShape::kRoundRect:
 				PreviewBox->Canvas->RoundRect(x * Preview.Size,
-											  y * Preview.Size,
+											  yps,
 											 (x * Preview.Size) + Preview.Size,
-											 (y * Preview.Size) + Preview.Size,
+											  yps + Preview.Size,
 											  Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)),
 											  Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)));
 				break;
@@ -825,9 +826,9 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 		}
 	}
 
-	// ===========================================================================
-	// ===========================================================================
-	// ===========================================================================
+	// =======================================================================
+	// =======================================================================
+	// =======================================================================
 
 	if (Render.Draw.CopyPos.X != 0)
 	{
@@ -1159,7 +1160,7 @@ void __fastcall TheMatrix::ClickPixel(TObject *Sender, TMouseButton Button, TShi
 	int x1 = std::floor((double)X / (double)Render.PixelSize);
 	int y1 = std::floor((double)Y / (double)Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor((double)X / (double)Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor((double)Y / (double)Render.PixelSize) + Render.TopLeft.Y;
@@ -1351,13 +1352,13 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 				PaintBox->Canvas->FillRect(Rect(x * Render.PixelSize,
 												irp,
 											   (x * Render.PixelSize) + Render.PixelSizeZ,
-											   irp + Render.PixelSizeZ));
+												irp + Render.PixelSizeZ));
 				break;
 			case PixelShape::kCircle:
 				PaintBox->Canvas->Ellipse(x * Render.PixelSize,
 										  irp,
 										 (x * Render.PixelSize) + Render.PixelSizeZ,
-										 irp + Render.PixelSizeZ);
+										  irp + Render.PixelSizeZ);
 				break;
 			case PixelShape::kRoundRect:
 				PaintBox->Canvas->RoundRect(x * Render.PixelSize,
@@ -1610,7 +1611,7 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -2076,7 +2077,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -2678,7 +2679,7 @@ void __fastcall TheMatrix::ClickPixelDeadPixel(TObject *Sender, TMouseButton But
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -4121,7 +4122,7 @@ void TheMatrix::RotateCopyBrush(int mode)
 {
 	if (Render.Draw.CopyPos.X == Render.Draw.CopyPos.Y)
 	{
-		BackupMatrix(-1, -1);
+		BackupMatrix();
 
 		switch (mode)
 		{
@@ -4152,7 +4153,7 @@ void TheMatrix::RotateCopyBrush(int mode)
 
 void TheMatrix::PerformEffectOnBrush(int mode)
 {
-	BackupMatrix(-1, -1);
+	BackupMatrix();
 
 	switch (mode)
 	{
@@ -7093,26 +7094,23 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 		}
 		break;
 	case modeInvert:
-		for (int x = 0; x < Details.Width; x++)
+		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
-			for (int y = 0; y < Details.Height; y++)
+			switch (Details.Mode)
 			{
-				switch (Details.Mode)
-				{
-				case MatrixMode::kMono:
-					MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = 1 - MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
-					break;
-				case MatrixMode::kBiSequential:
-				case MatrixMode::kBiBitplanes:
-					MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = 3 - MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
-					break;
-				case MatrixMode::kRGB:
-					MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = 0xFFFFFF - MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
-					break;
-				case MatrixMode::kRGB3BPP:
-					MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = 0x4 - MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x];
-					break;
-                }
+			case MatrixMode::kMono:
+				MatrixLayers[layer]->Cells[frame]->Grid[z] = 1 - MatrixLayers[layer]->Cells[frame]->Grid[z];
+				break;
+			case MatrixMode::kBiSequential:
+			case MatrixMode::kBiBitplanes:
+				MatrixLayers[layer]->Cells[frame]->Grid[z] = 3 - MatrixLayers[layer]->Cells[frame]->Grid[z];
+				break;
+			case MatrixMode::kRGB:
+				MatrixLayers[layer]->Cells[frame]->Grid[z] = 0xFFFFFF - MatrixLayers[layer]->Cells[frame]->Grid[z];
+				break;
+			case MatrixMode::kRGB3BPP:
+				MatrixLayers[layer]->Cells[frame]->Grid[z] = 0x4 - MatrixLayers[layer]->Cells[frame]->Grid[z];
+				break;
 			}
 		}
 		break;
@@ -7701,7 +7699,7 @@ void TheMatrix::PerformScrollOnCopyFrame(int mode)
 {
 	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
 
-	BackupMatrix(-1, -1);
+	BackupMatrix();
 
 	switch (mode)
 	{
@@ -8502,6 +8500,10 @@ void TheMatrix::RefreshCurrentFrame()
 
 void TheMatrix::SetCurrentLayer(int layer)
 {
+	Render.Draw.Point       = CDrawPointNone;
+	Render.Draw.Coords[0].X = -1;
+	Render.Draw.Coords[0].Y = -1;
+
 	CopyDrawBufferToCurrentFrame();
 
 	CurrentLayer = layer;
@@ -9382,13 +9384,13 @@ void TheMatrix::CopyToUserBuffer(int frame)
 
 void TheMatrix::RestoreFromUserBuffer(int frame)
 {
-	for (int z = 0; z < Details.Width * Details.Height; z++)
+	if (Details.Mode == MatrixMode::kRGB)
 	{
-		if (Details.Mode == MatrixMode::kRGB)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z] = MatrixUser[frame]->Grid[z];
-		}
-		else
+		std::memcpy(MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, MatrixUser[frame]->Grid, Details.Width * Details.Height * sizeof(int));
+	}
+	else
+	{
+		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
 			if (MatrixUser[frame]->Grid[z] == 1)
 			{
@@ -9475,7 +9477,7 @@ void TheMatrix::BackupMatrix(int layer, int frame)
 
 void TheMatrix::BackupMatrix()
 {
-	BackupMatrix(CurrentLayer, CurrentFrame);
+	std::memcpy(MatrixBackup->Grid, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
 }
 
 
