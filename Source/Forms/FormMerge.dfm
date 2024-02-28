@@ -1,7 +1,6 @@
-object Form13: TForm13
+object frmMerge: TfrmMerge
   Left = 0
   Top = 0
-  Caption = 'Form13'
   ClientHeight = 272
   ClientWidth = 643
   Color = clBtnFace

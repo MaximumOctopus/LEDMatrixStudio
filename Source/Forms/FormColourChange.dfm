@@ -2,7 +2,6 @@ object frmColourChange: TfrmColourChange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmColourChange'
   ClientHeight = 344
   ClientWidth = 543
   Color = clBtnFace

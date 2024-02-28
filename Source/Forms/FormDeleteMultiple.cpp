@@ -20,7 +20,7 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm7 *Form7;
+TfrmDeleteMultiple *frmDeleteMultiple;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -29,20 +29,20 @@ extern LanguageHandler *GLanguageHandler;
 
 DeleteMultipleObject OpenDeleteMultiple(int maxframecount)
 {
-	TForm7 *Form7 = new TForm7(Application);
+	TfrmDeleteMultiple *frmDeleteMultiple = new TfrmDeleteMultiple(Application);
 
-    Form7->FrameCount = maxframecount;
+    frmDeleteMultiple->FrameCount = maxframecount;
 
 	DeleteMultipleObject dmo;
 
-	if (Form7->ShowModal() == mrOk)
+	if (frmDeleteMultiple->ShowModal() == mrOk)
 	{
 		dmo.Process = true;
-		dmo.StartFrame = Form7->eStartFrame->Text.ToIntDef(0) - 1;
-		dmo.EndFrame = Form7->eEndFrame->Text.ToIntDef(0) - 1;
+		dmo.StartFrame = frmDeleteMultiple->eStartFrame->Text.ToIntDef(0) - 1;
+		dmo.EndFrame = frmDeleteMultiple->eEndFrame->Text.ToIntDef(0) - 1;
 	}
 
-	delete Form7;
+	delete frmDeleteMultiple;
 
 	return dmo;
 }
@@ -51,20 +51,20 @@ DeleteMultipleObject OpenDeleteMultiple(int maxframecount)
 //---------------------------------------------------------------------------
 
 
-__fastcall TForm7::TForm7(TComponent* Owner)
+__fastcall TfrmDeleteMultiple::TfrmDeleteMultiple(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm7::eStartFrameChange(TObject *Sender)
+void __fastcall TfrmDeleteMultiple::eStartFrameChange(TObject *Sender)
 {
 	bOk->Enabled = ValidateInputs();
 }
 
 
-void TForm7::SetGuiLanguageText()
+void TfrmDeleteMultiple::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kDeleteMultipleFramesC].c_str();
 
@@ -77,7 +77,7 @@ void TForm7::SetGuiLanguageText()
 }
 
 
-bool TForm7::ValidateInputs()
+bool TfrmDeleteMultiple::ValidateInputs()
 {
 	int sf = eStartFrame->Text.ToIntDef(-1);
 	int ef = eEndFrame->Text.ToIntDef(-1);

@@ -1,8 +1,7 @@
-object Form10: TForm10
+object frmExportGIF: TfrmExportGIF
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Form10'
   ClientHeight = 341
   ClientWidth = 640
   Color = clBtnFace

@@ -2,7 +2,6 @@ object frmToggleLockStatus: TfrmToggleLockStatus
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmToggleLockStatus'
   ClientHeight = 183
   ClientWidth = 372
   Color = clBtnFace

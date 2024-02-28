@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------
 
 
-class TForm16 : public TForm
+class TfrmNewProject : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel19;
@@ -117,7 +117,7 @@ public:
 
 	bool ClearStatus = false;
 
-	__fastcall TForm16(TComponent* Owner);
+	__fastcall TfrmNewProject(TComponent* Owner);
 };
 
 //---------------------------------------------------------------------------
@@ -125,6 +125,6 @@ public:
 ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstatus);
 
 //---------------------------------------------------------------------------
-extern PACKAGE TForm16 *Form16;
+extern PACKAGE TfrmNewProject *frmNewProject;
 //---------------------------------------------------------------------------
 #endif

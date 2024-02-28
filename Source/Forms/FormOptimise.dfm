@@ -1,7 +1,6 @@
 object frmOptimise: TfrmOptimise
   Left = 0
   Top = 0
-  Caption = 'frmOptimise'
   ClientHeight = 590
   ClientWidth = 995
   Color = clBtnFace
@@ -51,6 +50,8 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
+    ExplicitWidth = 718
+    ExplicitHeight = 334
   end
   object mData: TMemo
     Left = 263
@@ -68,6 +69,7 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
+    ExplicitWidth = 718
   end
   object Panel1: TPanel
     Left = 8
@@ -78,6 +80,7 @@ object frmOptimise: TfrmOptimise
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
+    ExplicitHeight = 532
     object gbOutputOptions: TGroupBox
       Left = 8
       Top = 6

@@ -2,7 +2,6 @@ object frmCopyMultiple: TfrmCopyMultiple
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmCopyMultiple'
   ClientHeight = 287
   ClientWidth = 415
   Color = clBtnFace

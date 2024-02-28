@@ -20,7 +20,7 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm18 *Form18;
+TfrmPlaybackSpeed *frmPlaybackSpeed;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -30,18 +30,18 @@ extern LanguageHandler *GLanguageHandler;
 
 int OpenCustomPlaybackSpeed(int oldspeed)
 {
-	TForm18 *Form18 = new TForm18(Application);
+	TfrmPlaybackSpeed *frmPlaybackSpeed = new TfrmPlaybackSpeed(Application);
 
 	int speed = oldspeed;
 
-	Form18->eSpeed->Text = speed;
+	frmPlaybackSpeed->eSpeed->Text = speed;
 
-	if (Form18->ShowModal() == mrOk)
+	if (frmPlaybackSpeed->ShowModal() == mrOk)
 	{
-		speed = Form18->eSpeed->Text.ToIntDef(0);
+		speed = frmPlaybackSpeed->eSpeed->Text.ToIntDef(0);
 	}
 
-	delete Form18;
+	delete frmPlaybackSpeed;
 
 	return speed;
 }
@@ -50,14 +50,14 @@ int OpenCustomPlaybackSpeed(int oldspeed)
 //---------------------------------------------------------------------------
 
 
-__fastcall TForm18::TForm18(TComponent* Owner)
+__fastcall TfrmPlaybackSpeed::TfrmPlaybackSpeed(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm18::bOKClick(TObject *Sender)
+void __fastcall TfrmPlaybackSpeed::bOKClick(TObject *Sender)
 {
 	int speed = eSpeed->Text.ToIntDef(0);
 
@@ -68,7 +68,7 @@ void __fastcall TForm18::bOKClick(TObject *Sender)
 }
 
 
-void TForm18::SetGuiLanguageText()
+void TfrmPlaybackSpeed::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kCustomPlaybackSpeed].c_str();
 	lEquality->Caption = GLanguageHandler->Text[k1000ms1Second].c_str();

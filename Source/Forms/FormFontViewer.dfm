@@ -2,7 +2,6 @@ object frmFontViewer: TfrmFontViewer
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmFontViewer'
   ClientHeight = 344
   ClientWidth = 483
   Color = clBtnFace
@@ -25,6 +24,7 @@ object frmFontViewer: TfrmFontViewer
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
+    ExplicitHeight = 286
     object bSelectFont: TLabel
       Left = 8
       Top = 15
@@ -60,7 +60,8 @@ object frmFontViewer: TfrmFontViewer
     Color = clWhite
     ParentBackground = False
     TabOrder = 1
-    ExplicitWidth = 889
+    ExplicitTop = 286
+    ExplicitWidth = 477
     object lCharacterValue: TLabel
       Left = 8
       Top = 9
@@ -109,9 +110,7 @@ object frmFontViewer: TfrmFontViewer
     Height = 292
     Align = alClient
     TabOrder = 2
-    ExplicitLeft = 248
-    ExplicitTop = 112
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitWidth = 332
+    ExplicitHeight = 286
   end
 end

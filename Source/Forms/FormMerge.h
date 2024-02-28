@@ -23,7 +23,7 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Graphics.hpp>
 //---------------------------------------------------------------------------
-class TForm13 : public TForm
+class TfrmMerge : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel1;
@@ -49,7 +49,7 @@ private:
 	void SetGuiLanguageText();
 
 public:
-	__fastcall TForm13(TComponent* Owner);
+	__fastcall TfrmMerge(TComponent* Owner);
 };
 
 //---------------------------------------------------------------------------
@@ -67,6 +67,6 @@ struct MergeObject
 MergeObject OpenMerge();
 
 //---------------------------------------------------------------------------
-extern PACKAGE TForm13 *Form13;
+extern PACKAGE TfrmMerge *frmMerge;
 //---------------------------------------------------------------------------
 #endif

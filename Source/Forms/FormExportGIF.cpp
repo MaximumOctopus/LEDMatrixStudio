@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm10 *Form10;
+TfrmExportGIF *frmExportGIF;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -31,43 +31,43 @@ extern LanguageHandler *GLanguageHandler;
 
 ExportGIFSettings OpenExportGIF(ExportGIFSettings oldgif)
 {
-	TForm10 *Form10 = new TForm10(Application);
+	TfrmExportGIF *frmExportGIF = new TfrmExportGIF(Application);
 
-	Form10->eFileName->Text  = oldgif.FileName.c_str();
-	Form10->ePixelSize->Text = oldgif.PixelSize;
+	frmExportGIF->eFileName->Text  = oldgif.FileName.c_str();
+	frmExportGIF->ePixelSize->Text = oldgif.PixelSize;
 
 	switch (oldgif.PixelShape)
 	{
 	case 0:
-		Form10->rbSquare->Checked = true;
+		frmExportGIF->rbSquare->Checked = true;
 		break;
 	case 1:
-		Form10->rbCircle->Checked = true;
+		frmExportGIF->rbCircle->Checked = true;
 		break;
 	case 2:
-		Form10->rbRoundRect->Checked = true;
+		frmExportGIF->rbRoundRect->Checked = true;
 		break;
 	}
 
-	Form10->ShapeNorfolkDigital->Brush->Color = TColor(oldgif.Background);
+	frmExportGIF->ShapeNorfolkDigital->Brush->Color = TColor(oldgif.Background);
 
-	Form10->seAnimationSpeed->Value = oldgif.AnimationSpeed;
+	frmExportGIF->seAnimationSpeed->Value = oldgif.AnimationSpeed;
 
-	if (Form10->ShowModal() == mrOk)
+	if (frmExportGIF->ShowModal() == mrOk)
 	{
 		oldgif.Process = true;
 
-		oldgif.FileName = Form10->eFileName->Text;
-		oldgif.PixelSize = Form10->ePixelSize->Text.ToIntDef(1);
+		oldgif.FileName = frmExportGIF->eFileName->Text;
+		oldgif.PixelSize = frmExportGIF->ePixelSize->Text.ToIntDef(1);
 
-		oldgif.Background     = Form10->ShapeNorfolkDigital->Brush->Color;
-		oldgif.AnimationSpeed = Form10->seAnimationSpeed->Value;
+		oldgif.Background     = frmExportGIF->ShapeNorfolkDigital->Brush->Color;
+		oldgif.AnimationSpeed = frmExportGIF->seAnimationSpeed->Value;
 
-		if (Form10->rbSquare->Checked)
+		if (frmExportGIF->rbSquare->Checked)
 		{
 		  	oldgif.PixelShape = 0;
 		}
-		else if (Form10->rbCircle->Checked)
+		else if (frmExportGIF->rbCircle->Checked)
 		{
 			oldgif.PixelShape = 1;
 		}
@@ -77,7 +77,7 @@ ExportGIFSettings OpenExportGIF(ExportGIFSettings oldgif)
 		}
 	}
 
-	delete Form10;
+	delete frmExportGIF;
 
 	return oldgif;
 }
@@ -85,14 +85,14 @@ ExportGIFSettings OpenExportGIF(ExportGIFSettings oldgif)
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-__fastcall TForm10::TForm10(TComponent* Owner)
+__fastcall TfrmExportGIF::TfrmExportGIF(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm10::ShapeNorfolkDigitalMouseDown(TObject *Sender, TMouseButton Button,
+void __fastcall TfrmExportGIF::ShapeNorfolkDigitalMouseDown(TObject *Sender, TMouseButton Button,
 		  TShiftState Shift, int X, int Y)
 {
 	if (cdExportGIF->Execute())
@@ -102,7 +102,7 @@ void __fastcall TForm10::ShapeNorfolkDigitalMouseDown(TObject *Sender, TMouseBut
 }
 
 
-void __fastcall TForm10::eFileNameChange(TObject *Sender)
+void __fastcall TfrmExportGIF::eFileNameChange(TObject *Sender)
 {
 	if (eFileName->Text != "")
 	{
@@ -111,7 +111,7 @@ void __fastcall TForm10::eFileNameChange(TObject *Sender)
 }
 
 
-void __fastcall TForm10::bSaveClick(TObject *Sender)
+void __fastcall TfrmExportGIF::bSaveClick(TObject *Sender)
 {
 	if (sdExportGIF->Execute())
 	{
@@ -122,7 +122,7 @@ void __fastcall TForm10::bSaveClick(TObject *Sender)
 }
 
 
-void TForm10::SetGuiLanguageText()
+void TfrmExportGIF::SetGuiLanguageText()
 {
 	Caption                     = GLanguageHandler->Text[kOK].c_str();
 

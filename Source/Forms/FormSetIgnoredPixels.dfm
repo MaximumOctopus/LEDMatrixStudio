@@ -2,7 +2,6 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmSetIgnoredPixels'
   ClientHeight = 217
   ClientWidth = 416
   Color = clBtnFace

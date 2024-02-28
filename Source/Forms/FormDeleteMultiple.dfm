@@ -1,8 +1,7 @@
-object Form7: TForm7
+object frmDeleteMultiple: TfrmDeleteMultiple
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Form7'
   ClientHeight = 194
   ClientWidth = 367
   Color = clBtnFace

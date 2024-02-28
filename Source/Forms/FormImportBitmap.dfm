@@ -2,7 +2,6 @@ object frmImportBitmap: TfrmImportBitmap
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmImportBitmap'
   ClientHeight = 405
   ClientWidth = 744
   Color = clBtnFace

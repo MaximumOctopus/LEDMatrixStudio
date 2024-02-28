@@ -3,8 +3,8 @@ object Form3: TForm3
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Add Layer'
-  ClientHeight = 250
-  ClientWidth = 596
+  ClientHeight = 252
+  ClientWidth = 595
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

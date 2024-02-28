@@ -1,8 +1,7 @@
-object Form18: TForm18
+object frmPlaybackSpeed: TfrmPlaybackSpeed
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Form18'
   ClientHeight = 192
   ClientWidth = 323
   Color = clBtnFace

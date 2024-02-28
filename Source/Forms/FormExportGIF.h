@@ -25,7 +25,7 @@
 #include <Vcl.Dialogs.hpp>
 
 //---------------------------------------------------------------------------
-class TForm10 : public TForm
+class TfrmExportGIF : public TForm
 {
 __published:	// IDE-managed Components
 	TImage *Image1;
@@ -60,7 +60,7 @@ private:
     void SetGuiLanguageText();
 
 public:
-	__fastcall TForm10(TComponent* Owner);
+	__fastcall TfrmExportGIF(TComponent* Owner);
 };
 
 //---------------------------------------------------------------------------
@@ -68,6 +68,6 @@ public:
 ExportGIFSettings OpenExportGIF(ExportGIFSettings);
 
 //---------------------------------------------------------------------------
-extern PACKAGE TForm10 *Form10;
+extern PACKAGE TfrmExportGIF *frmExportGIF;
 //---------------------------------------------------------------------------
 #endif

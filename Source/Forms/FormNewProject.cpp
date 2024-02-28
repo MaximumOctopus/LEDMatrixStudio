@@ -14,7 +14,7 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm16 *Form16;
+TfrmNewProject *frmNewProject;
 
 extern LanguageHandler *GLanguageHandler;
 extern PresetHandler *GPresetHandler;
@@ -25,9 +25,9 @@ extern SystemSettings *GSystemSettings;
 
 ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstatus)
 {
-	TForm16 *Form16 = new TForm16(Application);
+	TfrmNewProject *frmNewProject = new TfrmNewProject(Application);
 
-	Form16->ClearStatus = appstatus;
+	frmNewProject->ClearStatus = appstatus;
 
 	ProjectSettings NewProjectSettings;
 
@@ -38,14 +38,14 @@ ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstat
 	NewProjectSettings.Clear = false;
 	NewProjectSettings.ShapeCustom = CustomShape::kNone;
 
-	Form16->BuildFrom(OldProjectSettings);
+	frmNewProject->BuildFrom(OldProjectSettings);
 
-	if (Form16->ShowModal() == mrOk)
+	if (frmNewProject->ShowModal() == mrOk)
 	{
-		Form16->SetTo(NewProjectSettings);
+		frmNewProject->SetTo(NewProjectSettings);
 	}
 
-	delete Form16;
+	delete frmNewProject;
 
 	return NewProjectSettings;
 }
@@ -53,13 +53,13 @@ ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstat
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-__fastcall TForm16::TForm16(TComponent* Owner)
+__fastcall TfrmNewProject::TfrmNewProject(TComponent* Owner)
 	: TForm(Owner)
 {
 }
 
 
-void __fastcall TForm16::FormCreate(TObject *Sender)
+void __fastcall TfrmNewProject::FormCreate(TObject *Sender)
 {
 	SetGUILanguageText();
 
@@ -78,7 +78,7 @@ void __fastcall TForm16::FormCreate(TObject *Sender)
 }
 
 
-void TForm16::SetGUILanguageText()
+void TfrmNewProject::SetGUILanguageText()
 {
 	Caption = GLanguageHandler->Text[kCreate].c_str();
 
@@ -127,7 +127,7 @@ void TForm16::SetGUILanguageText()
 }
 
 
-void TForm16::BuildFrom(ProjectSettings &ps)
+void TfrmNewProject::BuildFrom(ProjectSettings &ps)
 {
 	shapeSquare->Brush->Color = clWhite;
 	shapeCircle->Brush->Color = clWhite;
@@ -178,7 +178,7 @@ void TForm16::BuildFrom(ProjectSettings &ps)
 }
 
 
-void TForm16::BuildPresetList()
+void TfrmNewProject::BuildPresetList()
 {
 	if (GPresetHandler->Presets.size() != 0)
 	{
@@ -192,7 +192,7 @@ void TForm16::BuildPresetList()
 }
 
 
-void TForm16::SetTo(ProjectSettings &ps)
+void TfrmNewProject::SetTo(ProjectSettings &ps)
 {
 	ps.Valid = true;
 
@@ -241,7 +241,7 @@ void TForm16::SetTo(ProjectSettings &ps)
 }
 
 
-void __fastcall TForm16::bOKClick(TObject *Sender)
+void __fastcall TfrmNewProject::bOKClick(TObject *Sender)
 {
 	if (Utility::ValidateNumber(cbFrames->Text.c_str(), 100000))
 	{
@@ -270,7 +270,7 @@ void __fastcall TForm16::bOKClick(TObject *Sender)
 }
 
 
-void __fastcall TForm16::cbCustomShapeChange(TObject *Sender)
+void __fastcall TfrmNewProject::cbCustomShapeChange(TObject *Sender)
 {
 	cbCustomShapeParam->Clear();
 
@@ -305,7 +305,7 @@ void __fastcall TForm16::cbCustomShapeChange(TObject *Sender)
 }
 
 
-void __fastcall TForm16::cbMatrixTypeChange(TObject *Sender)
+void __fastcall TfrmNewProject::cbMatrixTypeChange(TObject *Sender)
 {
 	int status = false;
 
@@ -321,7 +321,7 @@ void __fastcall TForm16::cbMatrixTypeChange(TObject *Sender)
 }
 
 
-void __fastcall TForm16::cbPresetsChange(TObject *Sender)
+void __fastcall TfrmNewProject::cbPresetsChange(TObject *Sender)
 {
 	if (cbPresets->ItemIndex != -1)
 	{
@@ -338,13 +338,13 @@ void __fastcall TForm16::cbPresetsChange(TObject *Sender)
 }
 
 
-void __fastcall TForm16::cbWidthChange(TObject *Sender)
+void __fastcall TfrmNewProject::cbWidthChange(TObject *Sender)
 {
 	cbCustomShapeChange(nullptr);
 }
 
 
-void __fastcall TForm16::rbCommonClick(TObject *Sender)
+void __fastcall TfrmNewProject::rbCommonClick(TObject *Sender)
 {
 	static const std::wstring CCommonSizes[] { L"1", L"2", L"4", L"5", L"7", L"8", L"12", L"16", L"24", L"32", L"48", L"60", L"64", L"128", L"256" };
 
@@ -391,7 +391,7 @@ void __fastcall TForm16::rbCommonClick(TObject *Sender)
 }
 
 
-void __fastcall TForm16::sBackgroundMouseDown(TObject *Sender, TMouseButton Button,
+void __fastcall TfrmNewProject::sBackgroundMouseDown(TObject *Sender, TMouseButton Button,
 		  TShiftState Shift, int X, int Y)
 {
 	if (cdNewProject->Execute())
@@ -401,7 +401,7 @@ void __fastcall TForm16::sBackgroundMouseDown(TObject *Sender, TMouseButton Butt
 }
 
 
-void TForm16::UpdateHelp(MatrixMode mode)
+void TfrmNewProject::UpdateHelp(MatrixMode mode)
 {
 	switch (mode)
 	{
@@ -427,7 +427,7 @@ void TForm16::UpdateHelp(MatrixMode mode)
 }
 
 
-void __fastcall TForm16::shapeSquareMouseDown(TObject *Sender, TMouseButton Button,
+void __fastcall TfrmNewProject::shapeSquareMouseDown(TObject *Sender, TMouseButton Button,
 		  TShiftState Shift, int X, int Y)
 {
 	TShape *shape = (TShape*)Sender;

@@ -1,8 +1,7 @@
-object Form16: TForm16
+object frmNewProject: TfrmNewProject
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Form16'
   ClientHeight = 382
   ClientWidth = 729
   Color = clBtnFace

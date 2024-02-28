@@ -22,7 +22,7 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Graphics.hpp>
 //---------------------------------------------------------------------------
-class TForm7 : public TForm
+class TfrmDeleteMultiple : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel1;
@@ -42,7 +42,7 @@ private:	// User declarations
 	bool ValidateInputs();
 
 public:		// User declarations
-	__fastcall TForm7(TComponent* Owner);
+	__fastcall TfrmDeleteMultiple(TComponent* Owner);
 
 	int FrameCount = 0;
 };
@@ -59,6 +59,6 @@ struct DeleteMultipleObject
 DeleteMultipleObject OpenDeleteMultiple(int);
 
 //---------------------------------------------------------------------------
-extern PACKAGE TForm7 *Form7;
+extern PACKAGE TfrmDeleteMultiple *frmDeleteMultiple;
 //---------------------------------------------------------------------------
 #endif

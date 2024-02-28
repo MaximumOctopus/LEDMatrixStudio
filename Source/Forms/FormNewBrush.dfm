@@ -1,7 +1,6 @@
 object frmNewBrush: TfrmNewBrush
   Left = 0
   Top = 0
-  Caption = 'frmNewBrush'
   ClientHeight = 640
   ClientWidth = 935
   Color = clBtnFace

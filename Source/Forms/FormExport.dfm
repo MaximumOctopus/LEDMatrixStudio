@@ -1,7 +1,6 @@
 object frmExport: TfrmExport
   Left = 0
   Top = 0
-  Caption = 'frmExport'
   ClientHeight = 670
   ClientWidth = 1085
   Color = clBtnFace

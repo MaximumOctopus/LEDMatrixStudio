@@ -2,7 +2,6 @@ object frmAutomate: TfrmAutomate
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmAutomate'
   ClientHeight = 667
   ClientWidth = 905
   Color = clBtnFace

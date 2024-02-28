@@ -1,7 +1,6 @@
 object frmPreviewPopout: TfrmPreviewPopout
   Left = 0
   Top = 0
-  Caption = 'frmPreviewPopout'
   ClientHeight = 736
   ClientWidth = 1155
   Color = clBtnFace

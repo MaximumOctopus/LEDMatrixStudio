@@ -21,7 +21,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm13 *Form13;
+TfrmMerge *frmMerge;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -30,26 +30,26 @@ extern LanguageHandler *GLanguageHandler;
 
 MergeObject OpenMerge()
 {
-	TForm13 *Form13 = new TForm13(Application);
+	TfrmMerge *frmMerge = new TfrmMerge(Application);
 
 	MergeObject mo;
 
-	if (Form13->ShowModal() == mrOk)
+	if (frmMerge->ShowModal() == mrOk)
 	{
 		mo.Process = true;
 
-		mo.FileName = Form13->eFileName->Text;
-		mo.StartFrame = Form13->eStartFrame->Text.ToIntDef(1);
+		mo.FileName = frmMerge->eFileName->Text;
+		mo.StartFrame = frmMerge->eStartFrame->Text.ToIntDef(1);
 
-		if (Form13->rbMergeBottom->Checked)
+		if (frmMerge->rbMergeBottom->Checked)
 		{
 			mo.Mode = MergeMode::kAnimationBottom;
 		}
-		else if (Form13->rbMergeTop->Checked)
+		else if (frmMerge->rbMergeTop->Checked)
 		{
 			mo.Mode = MergeMode::kAnimationTop;
 		}
-		else if (Form13->rbMergeNewLayer->Checked)
+		else if (frmMerge->rbMergeNewLayer->Checked)
 		{
 			mo.Mode = MergeMode::kNewLayer;
 		}
@@ -59,7 +59,7 @@ MergeObject OpenMerge()
         }
 	}
 
-	delete Form13;
+	delete frmMerge;
 
 	return mo;
 }
@@ -67,14 +67,14 @@ MergeObject OpenMerge()
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 
-__fastcall TForm13::TForm13(TComponent* Owner)
+__fastcall TfrmMerge::TfrmMerge(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm13::eFileNameChange(TObject *Sender)
+void __fastcall TfrmMerge::eFileNameChange(TObject *Sender)
 {
 	if (eFileName->Text != L"")
 	{
@@ -87,7 +87,7 @@ void __fastcall TForm13::eFileNameChange(TObject *Sender)
 }
 
 
-void __fastcall TForm13::eStartFrameChange(TObject *Sender)
+void __fastcall TfrmMerge::eStartFrameChange(TObject *Sender)
 {
 	if (eStartFrame->Text.ToIntDef(-1) == -1)
 	{
@@ -100,7 +100,7 @@ void __fastcall TForm13::eStartFrameChange(TObject *Sender)
 }
 
 
-void __fastcall TForm13::miMergeClick(TObject *Sender)
+void __fastcall TfrmMerge::miMergeClick(TObject *Sender)
 {
 	if (odMain->Execute())
 	{
@@ -111,7 +111,7 @@ void __fastcall TForm13::miMergeClick(TObject *Sender)
 }
 
 
-void TForm13::SetGuiLanguageText()
+void TfrmMerge::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kMerge].c_str();
 	Label1->Caption = GLanguageHandler->Text[kFileName].c_str();

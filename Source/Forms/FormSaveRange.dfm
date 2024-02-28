@@ -1,8 +1,7 @@
-object Form20: TForm20
+object frmSaveRange: TfrmSaveRange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Form20'
   ClientHeight = 158
   ClientWidth = 371
   Color = clBtnFace

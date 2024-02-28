@@ -22,7 +22,7 @@
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Graphics.hpp>
 
-class TForm18 : public TForm
+class TfrmPlaybackSpeed : public TForm
 {
 __published:	// IDE-managed Components
 	TImage *Image1;
@@ -39,7 +39,7 @@ private:
 	void SetGuiLanguageText();
 
 public:		// User declarations
-	__fastcall TForm18(TComponent* Owner);
+	__fastcall TfrmPlaybackSpeed(TComponent* Owner);
 };
 
 //---------------------------------------------------------------------------
@@ -47,6 +47,6 @@ public:		// User declarations
 int OpenCustomPlaybackSpeed(int oldspeed);
 
 
-extern PACKAGE TForm18 *Form18;
+extern PACKAGE TfrmPlaybackSpeed *frmPlaybackSpeed;
 //---------------------------------------------------------------------------
 #endif

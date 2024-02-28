@@ -30,7 +30,7 @@ struct SaveFrameRangeObject
 	int EndFrame = 0;
 };
 
-class TForm20 : public TForm
+class TfrmSaveRange : public TForm
 {
 __published:	// IDE-managed Components
 	TBevel *Bevel1;
@@ -49,7 +49,7 @@ private:	// User declarations
 	bool ValidateInputs();
 
 public:		// User declarations
-	__fastcall TForm20(TComponent* Owner);
+	__fastcall TfrmSaveRange(TComponent* Owner);
 
     int MatrixFrameCount = 0;
 };
@@ -59,6 +59,6 @@ public:		// User declarations
 SaveFrameRangeObject OpenFrameRange(int frame_count);
 
 
-extern PACKAGE TForm20 *Form20;
+extern PACKAGE TfrmSaveRange *frmSaveRange;
 
 #endif

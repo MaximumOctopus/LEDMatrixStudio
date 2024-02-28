@@ -2,7 +2,6 @@ object frmPreferences: TfrmPreferences
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'frmPreferences'
   ClientHeight = 588
   ClientWidth = 527
   Color = clBtnFace

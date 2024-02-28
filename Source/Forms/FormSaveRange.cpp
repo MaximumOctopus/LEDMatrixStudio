@@ -20,7 +20,7 @@
 
 #pragma package(smart_init)
 #pragma resource "*.dfm"
-TForm20 *Form20;
+TfrmSaveRange *frmSaveRange;
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -29,20 +29,20 @@ extern LanguageHandler *GLanguageHandler;
 
 SaveFrameRangeObject OpenFrameRange(int frame_count)
 {
-	TForm20 *Form20 = new TForm20(Application);
+	TfrmSaveRange *frmSaveRange = new TfrmSaveRange(Application);
 
 	SaveFrameRangeObject sfto;
 
-	Form20->MatrixFrameCount = frame_count;
+	frmSaveRange->MatrixFrameCount = frame_count;
 
-	if (Form20->ShowModal() == mrOk)
+	if (frmSaveRange->ShowModal() == mrOk)
 	{
 		sfto.Process = true;
-		sfto.StartFrame = Form20->eStartFrame->Text.ToInt() - 1;
-		sfto.EndFrame = Form20->eEndFrame->Text.ToInt() - 1;
+		sfto.StartFrame = frmSaveRange->eStartFrame->Text.ToInt() - 1;
+		sfto.EndFrame = frmSaveRange->eEndFrame->Text.ToInt() - 1;
 	}
 
-	delete Form20;
+	delete frmSaveRange;
 
 	return sfto;
 }
@@ -51,20 +51,20 @@ SaveFrameRangeObject OpenFrameRange(int frame_count)
 //---------------------------------------------------------------------------
 
 
-__fastcall TForm20::TForm20(TComponent* Owner)
+__fastcall TfrmSaveRange::TfrmSaveRange(TComponent* Owner)
 	: TForm(Owner)
 {
 	SetGuiLanguageText();
 }
 
 
-void __fastcall TForm20::eStartFrameChange(TObject *Sender)
+void __fastcall TfrmSaveRange::eStartFrameChange(TObject *Sender)
 {
 	bOK->Enabled = ValidateInputs();
 }
 
 
-void TForm20::SetGuiLanguageText()
+void TfrmSaveRange::SetGuiLanguageText()
 {
   Caption = GLanguageHandler->Text[kSaveARangeOfFrames].c_str();
 
@@ -76,7 +76,7 @@ void TForm20::SetGuiLanguageText()
 }
 
 
-bool TForm20::ValidateInputs()
+bool TfrmSaveRange::ValidateInputs()
 {
 	int sf = eStartFrame->Text.ToIntDef(-1);
 	int ef = eEndFrame->Text.ToIntDef(-1);

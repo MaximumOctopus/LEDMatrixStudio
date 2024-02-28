@@ -19,6 +19,7 @@
 #include "CalcUtility.h"
 #include "ColourUtility.h"
 #include "Convert.h"
+#include "FileUtility.h"
 #include "Formatting.h"
 #include "FormNewBrush.h"
 #include "LanguageConstants.h"
@@ -740,7 +741,6 @@ void TfrmNewBrush::SaveColours(const std::wstring file_name)
 }
 
 
-
 void TfrmNewBrush::LoadColours(const std::wstring file_name)
 {
 	std::wifstream file(file_name);
@@ -812,135 +812,6 @@ void TfrmNewBrush::AddToPaletteHistory(int colour)
 }
 
 
-LoadData TfrmNewBrush::LoadDataParameterType(const std::wstring s, bool headermode, bool matrixmode, bool coloursmode)
-{
-	if (s.find(L"{header") != std::wstring::npos)
-		return LoadData::kLoadBlockStartHeader;
-	else if (s.find(L"{deadpixel") != std::wstring::npos)
-		return LoadData::kLoadBlockStartDeadPixel;
-	else if (s.find(L"{colours") != std::wstring::npos)
-		return LoadData::kLoadBlockStartColours;
-	else if (s[0] == kDataBlockStart)
-		return LoadData::kLoadBlockBegin;
-	else if (s[0] == kDataBlockEnd)
-		return LoadData::kLoadBlockEnd;
-	else if (s[0] == L'[')
-		return LoadData::kLoadBlockBeginLayout;
-	else if (s[0] == L']')
-		return LoadData::kLoadBlockEndLayout;
-	else if (headermode)
-	{
-		switch (s[0])
-		{
-		case kAnimDataSource:
-			return LoadData::kLoadHeaderSource;
-		case kAnimSourceLSB:
-			return LoadData::kLoadHeaderSourceLSB;
-		case kAnimSourceDirection:
-			return LoadData::kLoadHeaderSourceDirection;
-		case kAnimPadMode:
-			return LoadData::kLoadHeaderPadMode;
-		case kAnimHexFormat:
-			return LoadData::kLoadHeaderHexFormat;
-		case kAnimHexOutput:
-			return LoadData::kLoadHeaderHexOutput;
-		case kAnimBrackets:
-			return LoadData::kLoadHeaderBrackets;
-		case kAnimSource:
-			return LoadData::kLoadHeaderDataSource;
-		case kAnimOrientation:
-			return LoadData::kLoadHeaderOrientation;
-		case kAnimScanDirection:
-			return LoadData::kLoadHeaderScanDirection;
-		case kAnimLSB:
-			return LoadData::kLoadHeaderLSB;
-		case kAnimLanguage:
-			return LoadData::kLoadHeaderLanguage;
-		case kAnimNumberFormat:
-			return LoadData::kLoadHeaderNumberFormat;
-
-		case kAnimNumberSize:
-			return LoadData::kLoadHeaderNumberSize;
-		case kAnimLineContent:
-			return LoadData::kLoadHeaderLineContent;
-		case kAnimLineCount:
-			return LoadData::kLoadHeaderLineCount;
-		case kAnimRGBMode:
-			return LoadData::kLoadHeaderRGBMode;
-		case kAnimRGBChangePixels:
-			return LoadData::kLoadHeaderRGBChangePixels;
-		case kAnimRGBChangeColour:
-			return LoadData::kLoadHeaderRGBChangeColour;
-		case kAnimOptimise:
-			return LoadData::kLoadHeaderOptimise;
-		case kAnimRGBBrightness:
-			return LoadData::kLoadHeaderRGBBrightness;
-
-		case kAnimAutomationFileName:
-			return LoadData::kLoadHeaderAutomationFile;
-		case kAnimComment:
-			return LoadData::kLoadHeaderMatrixComment;
-		case kAnimASCIIIndex:
-			return LoadData::kLoadHeaderASCIIIndex;
-		case kAnimRGBBackground:
-			return LoadData::kLoadHeaderRGBBackground;
-
-		case kAnimPreviewEnabled:
-			return LoadData::kLoadHeaderPreviewEnabled;
-		case kAnimPreviewSize:
-			return LoadData::kLoadHeaderPreviewSize;
-		case kAnimPreviewView:
-			return LoadData::kLoadHeaderPreviewView;
-		case kAnimPreviewVoid:
-			return LoadData::kLoadHeaderPreviewVoid;
-		case kAnimPreviewOffset:
-			return LoadData::kLoadHeaderPreviewOffset;
-		case kAnimPreviewDirection:
-			return LoadData::kLoadHeaderPreviewOffsetDir;
-		case kAnimPreviewIncRadially:
-			return LoadData::kLoadHeaderPreviewIncRadially;
-		case kAnimLayerCount:
-			return LoadData::kLoadHeaderLayerCount;
-
-		case kAnimBlockEnd:
-			return LoadData::kLoadHeaderEnd;
-		}
-	}
-	else if (matrixmode)
-	{
-		switch (s[0])
-		{
-		case kAnimWidth:
-			return LoadData::kLoadMatrixWidth;
-		case kAnimHeight:
-			return LoadData::kLoadMatrixHeight;
-		case kAnimRowData:
-			return LoadData::kLoadMatrixData;
-		case kAnimFrameLocked:
-			return LoadData::kLoadMatrixLocked;
-		}
-	}
-	else if (coloursmode)
-	{
-		switch (s[0])
-		{
-		case kAnimColoursCustom:
-			return LoadData::kLoadColoursCustom;
-		case kAnimColoursLeft:
-			return LoadData::kLoadColoursDraw0;
-		case kAnimColoursMiddle:
-			return LoadData::kLoadColoursDraw1;
-		case kAnimColoursRight:
-			return LoadData::kLoadColoursDraw2;
-		case kAnimColoursPaletteHistory:
-			return LoadData::kLoadColoursPaletteHistory;
-		}
-	}
-
-	return LoadData::kUnknown;
-}
-
-
 void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 {
 	std::wifstream file(file_name);
@@ -983,7 +854,7 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 
 					std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
-					switch (LoadDataParameterType(s, headermode, matrixmode, coloursmode))
+					switch (FileUtility::LoadDataParameterType(s, headermode, matrixmode, false, false, coloursmode))
 					{
 					case LoadData::kLoadBlockStartHeader:
 						headermode = true;
