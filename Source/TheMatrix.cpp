@@ -8502,7 +8502,7 @@ void TheMatrix::RefreshCurrentFrame()
 // the realtime display of the drawing mode is not copied from the buffer to the frame
 void TheMatrix::SetCurrentLayer(int layer)
 {
-	if (Render.Draw.Mode != CDrawPointNone)
+	if (Render.Draw.Point != CDrawPointNone)
 	{
 		Render.Draw.Point       = CDrawPointNone;
 		Render.Draw.Coords[0].X = -1;
