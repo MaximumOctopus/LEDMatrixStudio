@@ -1240,7 +1240,7 @@ void __fastcall TheMatrix::Shape1MouseMove(TObject *Sender, TShiftState Shift, i
 	int x1 = std::floor((double)X / (double)Render.PixelSize);
 	int y1 = std::floor((double)Y / (double)Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor((double)X / (double)Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor((double)Y / (double)Render.PixelSize) + Render.TopLeft.Y;
@@ -8498,13 +8498,20 @@ void TheMatrix::RefreshCurrentFrame()
 }
 
 
+// if we're currently in a drawing mode's loop then cancel and ensure
+// the realtime display of the drawing mode is not copied from the buffer to the frame
 void TheMatrix::SetCurrentLayer(int layer)
 {
-	Render.Draw.Point       = CDrawPointNone;
-	Render.Draw.Coords[0].X = -1;
-	Render.Draw.Coords[0].Y = -1;
-
-	CopyDrawBufferToCurrentFrame();
+	if (Render.Draw.Mode != CDrawPointNone)
+	{
+		Render.Draw.Point       = CDrawPointNone;
+		Render.Draw.Coords[0].X = -1;
+		Render.Draw.Coords[0].Y = -1;
+	}
+	else
+	{
+		CopyDrawBufferToCurrentFrame();
+    }
 
 	CurrentLayer = layer;
 
