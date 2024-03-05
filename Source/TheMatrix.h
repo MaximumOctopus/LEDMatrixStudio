@@ -64,12 +64,12 @@ struct MatrixRendering
 	PixelShape Shape = PixelShape::kSquare;
 	BrushSize Brush = BrushSize::kSmall;
 
-	TPoint TopLeft;		// index of the top left pixel (on screen) in x and y direction
-						// used when matrix is larger than display
-	TPoint BottomRight;	//
-						// used when matrix is larger than display
+	TPoint TopLeft = { 0,  0 };		// index of the top left pixel (on screen) in x and y direction
+									// used when matrix is larger than display
+	TPoint BottomRight = { 0, 0 };	//
+									// used when matrix is larger than display
 
-	TPoint ViewWindow;	// width and height, in pixels, of the display
+	TPoint ViewWindow = { 0, 0, };	// width and height, in pixels, of the display
 
 	MatrixGradient Gradient;
 

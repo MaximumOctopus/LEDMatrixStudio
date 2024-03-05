@@ -81,7 +81,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 
 	for (int x = 0; x < 10; x++)
 	{
-		Matrix *m = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);
+		Matrix *m = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);   // user buffers
 
 		MatrixUser.push_back(m);
 	}
@@ -103,6 +103,13 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 
 TheMatrix::~TheMatrix()
 {
+	for (int t = 0; t < 10; t++)
+	{
+		delete MatrixUser[t];
+	}
+
+    MatrixUser.clear();
+
 	delete TextFont;
 	delete DisplayBuffer;
 
@@ -137,45 +144,45 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 						  PixelShape pixelshape, bool grid, bool readonly, bool clearall,
 						  int backgroundcolour)
 {
-	CurrentFrame        = 0;
-	LightBox            = 0;
-	DeadPixelsMode      = false;
+	CurrentFrame = 0;
+	LightBox = 0;
+	DeadPixelsMode = false;
 
-	AnimPlaying          = false;
+	AnimPlaying = false;
 
-	Render.TopLeft.X      = 0;
-	Render.TopLeft.Y      = 0;
-	Render.BottomRight.X  = width - 1;
-	Render.BottomRight.Y  = height - 1;
-	Render.ViewWindow.X   = width - 1;
-	Render.ViewWindow.Y   = height - 1;
+	Render.TopLeft.X = 0;
+	Render.TopLeft.Y = 0;
+	Render.BottomRight.X = width - 1;
+	Render.BottomRight.Y = height - 1;
+	Render.ViewWindow.X = width - 1;
+	Render.ViewWindow.Y = height - 1;
 
-	Render.Draw.Mode        = DrawMode::kNone;
-	Render.Draw.Point       = CDrawPointNone;
-	Render.Draw.Colour      = 0;
+	Render.Draw.Mode = DrawMode::kNone;
+	Render.Draw.Point = CDrawPointNone;
+	Render.Draw.Colour = 0;
 	Render.Draw.Coords[0].X = -1;
 	Render.Draw.Coords[0].Y = -1;
-	Render.Draw.CopyPos.X   = 0;
-	Render.Draw.CopyPos.Y   = 0;
+	Render.Draw.CopyPos.X = 0;
+	Render.Draw.CopyPos.Y = 0;
 
-	LastX                = -1;
-	LastY                = -1;
+	LastX = -1;
+	LastY = -1;
 
-	PaintBox->Top        = top;
-	PaintBox->Left       = left;
-	PaintBox->Width      = width * pixelsize;
-	PaintBox->Height     = height * pixelsize;
+	PaintBox->Top = top;
+	PaintBox->Left = left;
+	PaintBox->Width = width * pixelsize;
+	PaintBox->Height = height * pixelsize;
 
-	PreviewBox->Top       = top;
+	PreviewBox->Top = top;
 
-	Details.Width         = width;
-	Details.Height        = height;
-	Details.Mode          = matrixmode;
+	Details.Width = width;
+	Details.Height = height;
+	Details.Mode = matrixmode;
 	Render.Gradient.Option = GradientOption::kOff;
-	Render.Shape     = pixelshape;
+	Render.Shape = pixelshape;
 	BrushSize Brush = BrushSize::kSmall;
-	MatrixReadOnly      = readonly;
-	RGBBackground       = backgroundcolour;
+	MatrixReadOnly = readonly;
+	RGBBackground = backgroundcolour;
 
 	Render.PixelSize = pixelsize;
 
@@ -605,25 +612,25 @@ void TheMatrix::SetPreviewBoxSize(int size)
 	switch (Preview.View)
 	{
 	case ViewShape::kSquare:
-		PreviewBox->OnPaint     = pbPreviewPaint;
+		PreviewBox->OnPaint = pbPreviewPaint;
 		break;
 	case ViewShape::kRadial:
-		PreviewBox->OnPaint     = pbPreviewPaintRadial;
+		PreviewBox->OnPaint = pbPreviewPaintRadial;
 
 		Preview.RPixel = GetPreviewPixelSize(Preview.ROffset);
 		break;
 	case ViewShape::kRadial3Q:
-		PreviewBox->OnPaint     = pbPreviewPaintRadialThreeQuarters;
+		PreviewBox->OnPaint = pbPreviewPaintRadialThreeQuarters;
 
 		Preview.RPixel = GetPreviewPixelSize(Preview.ROffset);
 		break;
 	case ViewShape::kSemiCircle:
-		PreviewBox->OnPaint     = pbPreviewPaintSemiCircle;
+		PreviewBox->OnPaint = pbPreviewPaintSemiCircle;
 
 		Preview.RPixel = GetPreviewPixelSize(Preview.ROffset);
 		break;
 	case ViewShape::kSemiCircleInverted:
-		PreviewBox->OnPaint     = pbPreviewPaintSemiCircleInverted;
+		PreviewBox->OnPaint = pbPreviewPaintSemiCircleInverted;
 
 		Preview.RPixel = GetPreviewPixelSize(Preview.ROffset);
 		break;
@@ -804,23 +811,23 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 			{
 			case PixelShape::kSquare:
 				PreviewBox->Canvas->FillRect(Rect(Render.Draw.Coords[0].X * Preview.Size,
-												 Render.Draw.Coords[0].Y * Preview.Size,
-												(Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
-												(Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size));
+												  Render.Draw.Coords[0].Y * Preview.Size,
+												 (Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
+												 (Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size));
 				break;
 			case PixelShape::kCircle:
 				PreviewBox->Canvas->Ellipse(Render.Draw.Coords[0].X * Preview.Size,
-										   Render.Draw.Coords[0].Y * Preview.Size,
-										  (Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
-										  (Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size);
+											Render.Draw.Coords[0].Y * Preview.Size,
+										   (Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
+										   (Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size);
 				break;
 			case PixelShape::kRoundRect:
 				PreviewBox->Canvas->RoundRect(Render.Draw.Coords[0].X * Preview.Size,
-											 Render.Draw.Coords[0].Y * Preview.Size,
-											(Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
-											(Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size,
-											 Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)),
-											 Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)));
+											  Render.Draw.Coords[0].Y * Preview.Size,
+											 (Render.Draw.Coords[0].X * Preview.Size) + Preview.Size,
+											 (Render.Draw.Coords[0].Y * Preview.Size) + Preview.Size,
+											  Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)),
+											  Preview.Size - (std::round(Preview.Size / CRoundRectCoeff)));
 				break;
 			}
 		}
@@ -5468,7 +5475,7 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 
 		if (frame > MatrixLayers[CurrentLayer]->Cells.size() - 1)
 		{
-			Matrix *matrix = new Matrix(fwidth, fheight, Details.Mode, RGBBackground); // to do
+			Matrix *matrix = new Matrix(fwidth, fheight, Details.Mode, RGBBackground);
 
 			MatrixLayers[CurrentLayer]->Cells.push_back(matrix);
 		}
@@ -6453,7 +6460,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 
 					if (s.length() >= 3) v = s.substr(2);
 
-					switch (FileUtility::LoadDataParameterType(s, headermode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode))  // TO DO layermode
+					switch (FileUtility::LoadDataParameterType(s, headermode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode))
 					{
 					case LoadData::kLoadBlockStartHeader:
 						if (s == L"{" + kFileHeaderFontHeader)
@@ -8502,6 +8509,15 @@ void TheMatrix::RefreshCurrentFrame()
 // the realtime display of the drawing mode is not copied from the buffer to the frame
 void TheMatrix::SetCurrentLayer(int layer)
 {
+	#if _DEBUG
+	if (layer >= MatrixLayers.size())
+	{
+		std::wstring debug = L"Layer " + std::to_wstring(layer) + L" outside the valid layer limit of 0 to " + std::to_wstring(MatrixLayers.size() - 1);
+
+		ShowMessage(debug.c_str());
+	}
+	#endif
+
 	if (Render.Draw.Point != CDrawPointNone)
 	{
 		Render.Draw.Point       = CDrawPointNone;
