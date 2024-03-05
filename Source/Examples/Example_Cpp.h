@@ -20,4 +20,4 @@ namespace ExampleCPP
 	{
 		return L"";
 	}
-
+}

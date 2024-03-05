@@ -41,4 +41,3 @@ namespace ExampleFastLED
 		return s += L"}\n";
 	}
 }
-
