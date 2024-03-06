@@ -121,6 +121,39 @@ __fastcall TfrmExport::TfrmExport(TComponent* Owner)
 }
 
 
+void __fastcall TfrmExport::reExportMouseWheelDown(TObject *Sender, TShiftState Shift,
+          TPoint &MousePos, bool &Handled)
+{
+	if (!IsUpdating)
+	{
+		TRect rect;
+
+		reExport->Perform(EM_GETRECT, 0, (LPARAM)&rect);
+		rect.Left = rect.Left + 1;
+		rect.Top  = rect.Bottom - 2;
+
+		TPoint topleft = rect.TopLeft();
+
+		int LastLineIndex   = reExport->Perform(EM_CHARFROMPOS, 0, (LPARAM)&topleft);
+		int LastVisibleLine = reExport->Perform(EM_EXLINEFROMCHAR, 0, (LPARAM)LastLineIndex);
+
+		if (LastScrollValue != LastVisibleLine && LastVisibleLine >= reExport->Lines->Count)
+		{
+			AddPreviewSection();
+		}
+
+		LastScrollValue = LastVisibleLine;
+	}
+}
+
+
+void __fastcall TfrmExport::reExportMouseWheelUp(TObject *Sender, TShiftState Shift,
+          TPoint &MousePos, bool &Handled)
+{
+	LastScrollValue = 0;
+}
+
+
 void TfrmExport::BuildUI(ExportOptions ieo)
 {
 	switch (Mode)

@@ -438,8 +438,6 @@ object frmExport: TfrmExport
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
-    ExplicitWidth = 1079
-    ExplicitHeight = 600
     object tsCode: TTabSheet
       Caption = '.'
       object Panel2: TPanel
@@ -911,8 +909,6 @@ object frmExport: TfrmExport
         Height = 576
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 662
-        ExplicitHeight = 570
         object reExport: TRichEdit
           Left = 1
           Top = 1
@@ -958,6 +954,8 @@ object frmExport: TfrmExport
           ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 0
+          OnMouseWheelDown = reExportMouseWheelDown
+          OnMouseWheelUp = reExportMouseWheelUp
           ExplicitWidth = 660
           ExplicitHeight = 545
         end

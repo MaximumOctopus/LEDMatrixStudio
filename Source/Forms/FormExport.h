@@ -164,8 +164,13 @@ __published:	// IDE-managed Components
 	void __fastcall sbOpenClick(TObject *Sender);
 	void __fastcall sbBinaryDataRowsClick(TObject *Sender);
 	void __fastcall bCloseClick(TObject *Sender);
+	void __fastcall reExportMouseWheelDown(TObject *Sender, TShiftState Shift, TPoint &MousePos,
+          bool &Handled);
+	void __fastcall reExportMouseWheelUp(TObject *Sender, TShiftState Shift, TPoint &MousePos,
+          bool &Handled);
 private:
 
+    int LastScrollValue = 0;
 	std::vector<std::wstring> Output;
 
 	void CreateExportOptions();
@@ -201,7 +206,6 @@ public:
 	std::wstring ProfileExtension = L"";
 	MatrixMode Mode = MatrixMode::kNone;
 	int LastRow = 0;
-	int LastScrollValue = 0;
 	int MaxFrameCount = 0;
 	int PixelCount = 0;
 	int PixelCountFrame = 0;
