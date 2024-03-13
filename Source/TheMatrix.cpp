@@ -8518,11 +8518,9 @@ void TheMatrix::SetCurrentLayer(int layer)
 	}
 	#endif
 
-	if (Render.Draw.Point != CDrawPointNone)
+	if (Render.Draw.Mode != DrawMode::kNone)
 	{
-		Render.Draw.Point       = CDrawPointNone;
-		Render.Draw.Coords[0].X = -1;
-		Render.Draw.Coords[0].Y = -1;
+		Render.Draw.Clear();
 	}
 	else
 	{

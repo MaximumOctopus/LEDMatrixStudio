@@ -40,9 +40,9 @@ static const std::wstring kAutomationActions[kActionsCount] = {
 	L"Wipe left", L"Wipe right", L"Wipe up", L"Wipe down"
 	};
 
-static const int kActionsWipe[kWipeCount] = { 9, 10, 11, 12, 36, 37, 38, 39 };
-static const int kActionsWipeOdd[kWipeOddCount] = { 36, 37, 38, 39 };
-static const int kActionsWipeOddW[kWipeOddWCount] = { 11, 12, 36, 37, 38, 39 };
-static const int kActionsWipeOddH[kWipeOddHCount] = { 9, 10, 36, 37, 38, 39 };
+static const int kActionsWipe[kWipeCount] 			= { 9, 10, 11, 12, 36, 37, 38, 39 };
+static const int kActionsWipeOdd[kWipeOddCount] 	= { 36, 37, 38, 39 };
+static const int kActionsWipeOddW[kWipeOddWCount] 	= { 11, 12, 36, 37, 38, 39 };
+static const int kActionsWipeOddH[kWipeOddHCount]	= { 9, 10, 36, 37, 38, 39 };
 
-static const int kActionsReveal[kRevealCount] = { 30, 31, 32, 33, 34, 35 };
+static const int kActionsReveal[kRevealCount] 		= { 30, 31, 32, 33, 34, 35 };

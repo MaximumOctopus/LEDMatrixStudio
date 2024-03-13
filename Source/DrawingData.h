@@ -49,6 +49,16 @@ struct DrawData
 
 	bool SinglePoint = false;		// this draw mode only requires a single click to render
 
+	void Clear()
+	{
+		Mode = DrawMode::kNone;
+		Point = CDrawPointNone;
+		Coords[0].X = -1;
+		Coords[0].Y = -1;
+		Special = -1;
+        CopyPos = { -1, -1 };
+	}
+
 	bool IsSinglePointMode(DrawMode mode)
 	{
 		switch (mode)
