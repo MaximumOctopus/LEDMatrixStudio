@@ -8520,7 +8520,7 @@ void TheMatrix::SetCurrentLayer(int layer)
 
 	if (Render.Draw.Mode != DrawMode::kNone)
 	{
-		Render.Draw.Clear();
+		Render.Draw.Reset();
 	}
 	else
 	{

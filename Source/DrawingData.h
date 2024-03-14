@@ -52,6 +52,12 @@ struct DrawData
 	void Clear()
 	{
 		Mode = DrawMode::kNone;
+
+        Reset();
+	}
+
+	void Reset()
+	{
 		Point = CDrawPointNone;
 		Coords[0].X = -1;
 		Coords[0].Y = -1;
