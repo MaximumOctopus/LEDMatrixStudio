@@ -142,6 +142,13 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 
 	// =======================================================================
 
+	if (thematrix->GetPreviewPopout())
+	{
+		frmPreviewPopout->Close();
+	}
+
+	// =======================================================================
+
 	for (int t = 0; t < 6; t++)
 	{
 		GSystemSettings->LEDColoursSingle[t] = thematrix->LEDColoursSingle[t];

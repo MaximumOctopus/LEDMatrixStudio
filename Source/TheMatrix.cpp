@@ -114,7 +114,11 @@ TheMatrix::~TheMatrix()
 	delete DisplayBuffer;
 
 	delete PaintBox;
-	delete PreviewBox;
+
+	if (PreviewBox != nullptr)
+	{
+		delete PreviewBox;
+	}
 
 	delete TextFont;
 
@@ -706,6 +710,7 @@ void TheMatrix::SetPreviewPopout(bool Popout)
 	PreviewPopout = Popout;
 
 	delete PreviewBox;
+    PreviewBox = nullptr;
 
 	if (Popout)
 	{
