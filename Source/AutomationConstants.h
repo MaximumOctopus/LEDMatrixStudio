@@ -21,6 +21,58 @@ static const int kWipeOddWCount = 6;
 static const int kWipeOddHCount = 6;
 static const int kRevealCount   = 6;
 
+static const int kAutomationMirror = 0;
+static const int kAutomationFlip = 1;
+static const int kAutomationInvert = 2;
+
+static const int kAutomationScrollLeft = 3;
+static const int kAutomationScrollRight = 4;
+static const int kAutomationScrollUp = 5;
+static const int kAutomationScrollDown = 6;
+
+static const int kAutomationRotateLeft = 7;
+static const int kAutomationRotateRight = 8;
+
+static const int kAutomationWipeVertical = 9;
+static const int kAutomationWipeVerticalClear = 10;
+static const int kAutomationWipeHorizontal = 11;
+static const int kAutomationWipeHorizontalClear = 12;
+
+static const int kAutomationJiggleLeft = 13;
+static const int kAutomationJiggleRight = 14;
+static const int kAutomationJiggleUp = 15;
+static const int kAutomationJiggleDown = 16;
+
+static const int kAutomationBounceLeftRight = 17;
+static const int kAutomationBounceUpDown = 18;
+
+static const int kAutomationBrush1EveryFrame = 19;
+static const int kAutomationBrush1FirstFrame = 20;
+static const int kAutomationBrush2EveryFrame = 21;
+static const int kAutomationBrush2FirstFrame = 22;
+
+static const int kAutomationScrollLeftRightSplit = 23;
+static const int kAutomationScrollRightLeftSplit = 24;
+static const int kAutomationScrollUpDownSplit = 25;
+static const int kAutomationScrollDownUpSplit = 26;
+
+static const int kAutomationColourCyclingLinear = 27;
+static const int kAutomationColourCyclingBounce = 28;
+
+static const int kAutomationAlternateUpDownScroll = 29;
+
+static const int kAutomationRevealLeftRight = 30;
+static const int kAutomationRevealRightLeft = 31;
+static const int kAutomationRevealTopBottom = 32;
+static const int kAutomationRevealBottomTop = 33;
+static const int kAutomationRevealCentreIn = 34;
+static const int kAutomationRevealCentreOut = 35;
+
+static const int kAutomationWipeLeft = 36;
+static const int kAutomationWipeRight = 37;
+static const int kAutomationWipeUp = 38;
+static const int kAutomationWipeDown = 39;
+
 static const std::wstring kAutomationActions[kActionsCount] = {
 	L"Mirror", L"Flip", L"Invert",
 	L"Scroll left", L"Scroll right", L"Scroll up", L"Scroll down",
@@ -33,7 +85,7 @@ static const std::wstring kAutomationActions[kActionsCount] = {
 	L"Brush #1 every frame", L"Brush #1 first frame",
 	L"Brush #2 every frame", L"Brush #2 first frame",
 	L"Scroll left/right split", L"Scroll right/left split",
-	L"Scroll up/downt split", L"Scroll downt/up split",
+	L"Scroll up/down split", L"Scroll down/up split",
 	L"Colour cycling (linear)", L"Colour cycling (bounce)",
 	L"Alternate up/down scroll",
 	L"Reveal left/right", L"Reveal right/left", L"Reveal top/bottom", L"Reveal bottom/top", L"Reveal centre in", L"Reveal centre out",

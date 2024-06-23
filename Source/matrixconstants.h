@@ -57,51 +57,51 @@
 	static const int __MaxWidth               = 256;
 	static const int __MaxHeight              = 256;
 
-	static const int modeFlipAll              = 0;
-	static const int modeMirrorAll            = 1;
-	static const int modeInvertAll            = 2;
-	static const int modeGradientAll          = 3;
+	static const int kEffectFlipAll              = 0;
+	static const int kEffectMirrorAll            = 1;
+	static const int kEffectInvertAll            = 2;
+	static const int kEffectGradientAll          = 3;
 
-	static const int modeFlip                 = 0;
-	static const int modeMirror               = 1;
-	static const int modeInvert               = 2;
+	static const int kEffectFlip                 = 0;
+	static const int kEffectMirror               = 1;
+	static const int kEffectInvert               = 2;
 
-	static const int modeScrollLeft           = 0;
-	static const int modeScrollRight          = 1;
-	static const int modeScrollUp             = 2;
-	static const int modeScrollDown           = 3;
-	static const int modeWipeHorizontalOut    = 4;
-	static const int modeWipeHorizontalIn     = 5;
-	static const int modeWipeVerticalOut      = 6;
-	static const int modeWipeVerticalIn       = 7;
-	static const int modeWipeLeftToRight      = 8;
-	static const int modeWipeRightToLeft      = 9;
-	static const int modeWipeUpToDown         = 10;
-	static const int modeWipeDownToUp         = 11;
+	static const int kEffectScrollLeft           = 0;
+	static const int kEffectScrollRight          = 1;
+	static const int kEffectScrollUp             = 2;
+	static const int kEffectScrollDown           = 3;
+	static const int kEffectWipeHorizontalOut    = 4;
+	static const int kEffectWipeHorizontalIn     = 5;
+	static const int kEffectWipeVerticalOut      = 6;
+	static const int kEffectWipeVerticalIn       = 7;
+	static const int kEffectWipeLeftToRight      = 8;
+	static const int kEffectWipeRightToLeft      = 9;
+	static const int kEffectWipeUpToDown         = 10;
+	static const int kEffectWipeDownToUp         = 11;
 
-	static const int modeRevealLeftRight      = 0;
-	static const int modeRevealRightLeft      = 1;
-	static const int modeRevealTopBottom      = 2;
-	static const int modeRevealBottomTop      = 3;
-	static const int modeRevealCentreOut      = 4;
-	static const int modeRevealCentreIn       = 5;
+	static const int kEffectRevealLeftRight      = 0;
+	static const int kEffectRevealRightLeft      = 1;
+	static const int kEffectRevealTopBottom      = 2;
+	static const int kEffectRevealBottomTop      = 3;
+	static const int kEffectRevealCentreOut      = 4;
+	static const int kEffectRevealCentreIn       = 5;
 
-	static const int modeSplitScrollLeftRight = 0;
-	static const int modeSplitScrollRightLeft = 1;
-	static const int modeSplitScrollUpDown    = 2;
-	static const int modeSplitScrollDownUp    = 3;
+	static const int kEffectSplitScrollLeftRight = 0;
+	static const int kEffectSplitScrollRightLeft = 1;
+	static const int kEffectSplitScrollUpDown    = 2;
+	static const int kEffectSplitScrollDownUp    = 3;
 
-	static const int modeAlternateScrollUpDown= 0;
-	static const int modeAlternateScrollDownUp= 1;
+	static const int kEffectAlternateScrollUpDown= 0;
+	static const int kEffectAlternateScrollDownUp= 1;
 
-	static const int modeScrollRowLeft        = 0;
-	static const int modeScrollRowRight       = 1;
+	static const int kEffectScrollRowLeft        = 0;
+	static const int kEffectScrollRowRight       = 1;
 
-	static const int modeScrollColumnUp       = 0;
-	static const int modeScrollColumnDown     = 1;
+	static const int kEffectScrollColumnUp       = 0;
+	static const int kEffectScrollColumnDown     = 1;
 
-	static const int modeRotateCW             = 0;
-	static const int modeRotateACW            = 1;
+	static const int kEffectRotateCW             = 0;
+	static const int kEffectRotateACW            = 1;
 
 	static const std::wstring CDrawModes[] = { L"Draw", L"Filled box", L"Empty box", L"Line", L"Font", L"Empty Circle", L"Filled circle", L"Random brush",
 											   L"Multi-draw", L"Colour picker", L"Copy brush", L"Paste brush", L"Gradient brush",

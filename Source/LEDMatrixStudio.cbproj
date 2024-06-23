@@ -6,7 +6,7 @@
         <AppType>Application</AppType>
         <MainSource>LEDMatrixStudio.cpp</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
     </PropertyGroup>
@@ -588,7 +588,7 @@
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>91</BuildOrder>
         </CppCompile>
-        <None Include="MatrixConstants.h">
+        <None Include="matrixconstants.h">
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>5</BuildOrder>
         </None>

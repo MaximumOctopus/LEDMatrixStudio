@@ -70,6 +70,12 @@ public:
 	{
 	}
 
+	void Clear()
+	{
+		Parameter1 = 0;
+		Parameter2 = 0;
+    }
+
 	void SetParameterReveal(int Width, int Height)
 	{
 		for (int t = 0; t < ActionList.size(); t++)

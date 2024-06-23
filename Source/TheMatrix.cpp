@@ -16,6 +16,7 @@
 #include <Vcl.Dialogs.hpp>
 #include <Vcl.Imaging.GIFImg.hpp>
 
+#include "AutomationConstants.h"
 #include "CalcUtility.h"
 #include "ColourUtility.h"
 #include "Convert.h"
@@ -115,10 +116,7 @@ TheMatrix::~TheMatrix()
 
 	delete PaintBox;
 
-	if (PreviewBox != nullptr)
-	{
-		delete PreviewBox;
-	}
+	delete PreviewBox;
 
 	delete TextFont;
 
@@ -134,6 +132,7 @@ void TheMatrix::InitPreviewBox(TComponent *Owner, TWinControl *WinControl, bool 
 	PreviewBox->Visible = Visible;
 	PreviewBox->Top = 0;
 	PreviewBox->Left = 0;
+
 	PreviewBox->OnMouseDown = &OnPreviewBoxMouseDown;
 
 	PreviewBox->Canvas->Pen->Color = clBtnFace;
@@ -201,14 +200,14 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 		Render.PixelSizeZ = Render.PixelSize;
 	}
 
-	// ===========================================================================
+	// =======================================================================
 
 	if (clearall)
 	{
 		SetDeadPixels(PixelAlive);
 	}
 
-	// ===========================================================================
+	// =======================================================================
 
 	if (Details.Mode == MatrixMode::kRGB)
 	{
@@ -219,11 +218,11 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 		Render.Gradient.Clear(0);
 	}
 
-	// ===========================================================================
+	// =======================================================================
 
 	ConfigurePaintboxDrawing();
 
-	// ===========================================================================
+	// =======================================================================
 
 	if (clearall)
 	{
@@ -710,7 +709,6 @@ void TheMatrix::SetPreviewPopout(bool Popout)
 	PreviewPopout = Popout;
 
 	delete PreviewBox;
-    PreviewBox = nullptr;
 
 	if (Popout)
 	{
@@ -1741,7 +1739,7 @@ void __fastcall TheMatrix::Shape1MouseMoveBiColour(TObject *Sender, TShiftState 
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -2242,7 +2240,7 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -2722,7 +2720,7 @@ void __fastcall TheMatrix::Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
 
-	if (x1 < 0 || y1 < 0) return;
+	if (x1 < 0 || y1 < 0 || x1 > Details.Width - 1 || y1 > Details.Height - 1) return;
 
 	x1 = std::floor(X / Render.PixelSize) + Render.TopLeft.X;
 	y1 = std::floor(Y / Render.PixelSize) + Render.TopLeft.Y;
@@ -4138,7 +4136,7 @@ void TheMatrix::RotateCopyBrush(int mode)
 
 		switch (mode)
 		{
-		case modeRotateCW:
+		case kEffectRotateCW:
 			for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 			{
 				for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
@@ -4147,7 +4145,7 @@ void TheMatrix::RotateCopyBrush(int mode)
 				}
 			}
 			break;
-		case modeRotateACW:
+		case kEffectRotateACW:
 			for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 			{
 				for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
@@ -4169,7 +4167,7 @@ void TheMatrix::PerformEffectOnBrush(int mode)
 
 	switch (mode)
 	{
-	case modeFlip:
+	case kEffectFlip:
 		for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 		{
 			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
@@ -4178,7 +4176,7 @@ void TheMatrix::PerformEffectOnBrush(int mode)
 			}
 		}
 		break;
-	case modeMirror:
+	case kEffectMirror:
 		for (int y = 0; y <= Render.Draw.CopyPos.X; y++)
 		{
 			for (int x = 0; x <= Render.Draw.CopyPos.Y; x++)
@@ -4187,7 +4185,7 @@ void TheMatrix::PerformEffectOnBrush(int mode)
 			}
 		}
 		break;
-	case modeInvert:
+	case kEffectInvert:
 		for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 		{
 			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
@@ -7087,7 +7085,7 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 
 	switch (mode)
 	{
-	case modeFlip:
+	case kEffectFlip:
 		for (int y = 0; y < Details.Height; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
@@ -7096,7 +7094,7 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 			}
 		}
 		break;
-	case modeMirror:
+	case kEffectMirror:
 		for (int x = 0; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7105,7 +7103,7 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 			}
 		}
 		break;
-	case modeInvert:
+	case kEffectInvert:
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
 			switch (Details.Mode)
@@ -7126,7 +7124,7 @@ void TheMatrix::PerformEffect(int mode, int layer, int frame)
 			}
 		}
 		break;
-	case modeGradientAll:
+	case kEffectGradientAll:
 		for (int x = 0; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7196,7 +7194,7 @@ void TheMatrix::PerformScroll(int mode, int layer, int frame)
 
 	switch (mode)
 	{
-	case modeScrollLeft:
+	case kEffectScrollLeft:
 		for (int x = 0; x <= Details.Width - 2; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7210,7 +7208,7 @@ void TheMatrix::PerformScroll(int mode, int layer, int frame)
 			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width];
 		}
 		break;
-	case modeScrollRight:
+	case kEffectScrollRight:
 		for (int x = 1; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7224,7 +7222,7 @@ void TheMatrix::PerformScroll(int mode, int layer, int frame)
 			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
 		}
 		break;
-	case modeScrollUp:
+	case kEffectScrollUp:
 		for (int y = 0; y < Details.Height - 1; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
@@ -7238,7 +7236,7 @@ void TheMatrix::PerformScroll(int mode, int layer, int frame)
 			MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[x];
 		}
 		break;
-	case modeScrollDown:
+	case kEffectScrollDown:
 		for (int y = 1; y < Details.Height; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
@@ -7264,23 +7262,23 @@ void TheMatrix::PerformSplitScroll(int mode, int layer, int frame)
 
 	switch (mode)
 	{
-	case modeSplitScrollLeftRight:
-	case modeSplitScrollRightLeft:
+	case kEffectSplitScrollLeftRight:
+	case kEffectSplitScrollRightLeft:
 	{
 		int mid = std::round(Details.Height / 2) - 1;
 
-		int	a = modeScrollRowLeft;
-		int b = modeScrollRowRight;
+		int	a = kEffectScrollRowLeft;
+		int b = kEffectScrollRowRight;
 
 		switch (mode)
 		{
-		case modeSplitScrollLeftRight:
-			a = modeScrollRowLeft;
-			b = modeScrollRowRight;
+		case kEffectSplitScrollLeftRight:
+			a = kEffectScrollRowLeft;
+			b = kEffectScrollRowRight;
 			break;
-		case modeSplitScrollRightLeft:
-			a = modeScrollRowRight;
-			b = modeScrollRowLeft;
+		case kEffectSplitScrollRightLeft:
+			a = kEffectScrollRowRight;
+			b = kEffectScrollRowLeft;
 			break;
 		}
 
@@ -7295,22 +7293,22 @@ void TheMatrix::PerformSplitScroll(int mode, int layer, int frame)
 		}
 		break;
 	}
-	case modeSplitScrollUpDown:
-	case modeSplitScrollDownUp:
+	case kEffectSplitScrollUpDown:
+	case kEffectSplitScrollDownUp:
 	{
 		int mid = std::round(Details.Width / 2) - 1;
-		int a = modeScrollColumnUp;
-		int b = modeScrollColumnDown;
+		int a = kEffectScrollColumnUp;
+		int b = kEffectScrollColumnDown;
 
 		switch (mode)
 		{
-		case modeSplitScrollUpDown:
-			a = modeScrollColumnUp;
-			b = modeScrollColumnDown;
+		case kEffectSplitScrollUpDown:
+			a = kEffectScrollColumnUp;
+			b = kEffectScrollColumnDown;
 			break;
-		case modeSplitScrollDownUp:
-			a = modeScrollColumnDown;
-			b = modeScrollColumnUp;
+		case kEffectSplitScrollDownUp:
+			a = kEffectScrollColumnDown;
+			b = kEffectScrollColumnUp;
 			break;
 		}
 
@@ -7335,13 +7333,13 @@ void TheMatrix::PerformAlternateScroll(int mode, int layer, int frame)
 
 	switch (mode)
 	{
-	case modeAlternateScrollUpDown:
-	case modeAlternateScrollDownUp:
+	case kEffectAlternateScrollUpDown:
+	case kEffectAlternateScrollDownUp:
 	{
 		int coeff = std::round((double)Details.Width / 4);
 
 		int count = 0;
-		int mode  = modeScrollColumnUp;
+		int mode  = kEffectScrollColumnUp;
 
 		for (int t = 0; t < Details.Width; t++)
 		{
@@ -7353,13 +7351,13 @@ void TheMatrix::PerformAlternateScroll(int mode, int layer, int frame)
 			{
 				count = 0;
 
-				if (mode == modeScrollColumnUp)
+				if (mode == kEffectScrollColumnUp)
 				{
-					mode = modeScrollColumnDown;
+					mode = kEffectScrollColumnDown;
 				}
 				else
 				{
-					mode = modeScrollColumnUp;
+					mode = kEffectScrollColumnUp;
 				}
 			}
 		}
@@ -7377,7 +7375,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 
 	switch (mode)
     {
-	case modeWipeVerticalOut:
+	case kEffectWipeVerticalOut:
 	{
 		int z = std::round((double)Details.Width / 2);
 
@@ -7389,7 +7387,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 			}
 		}
 
-		for (int x = Details.Width - 1; z >= z + 1; z--)
+		for (int x = Details.Width - 1; x >= z + 1; x--)
 		{
 			for (int y = 0; y < Details.Height; y++)
 			{
@@ -7401,7 +7399,6 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		{
 			if (clear)
 			{
-
 				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (z - 1)] = RGBBackground;
 				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + z]     = RGBBackground;
 			}
@@ -7413,7 +7410,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeVerticalIn:
+	case kEffectWipeVerticalIn:
 	{
 		int z = std::round((double)Details.Width / 2);
 
@@ -7448,7 +7445,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeHorizontalOut:
+	case kEffectWipeHorizontalOut:
 	{
 		int z = std::round((double)Details.Height / 2);
 
@@ -7478,12 +7475,12 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 			else
 			{
 				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(z - 1) * Details.Width + x] = MatrixBackup->Grid[x];
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z * Details.Width + z] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
+				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z * Details.Width + x] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
 			}
 		}
 		break;
 	}
-	case modeWipeHorizontalIn:
+	case kEffectWipeHorizontalIn:
 	{
 		int z = std::round((double)Details.Height / 2);
 
@@ -7518,7 +7515,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeLeftToRight:
+	case kEffectWipeLeftToRight:
 	{
 		for (int x = 0; x <= Details.Width - 2; x++)
 		{
@@ -7541,7 +7538,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeRightToLeft:
+	case kEffectWipeRightToLeft:
 	{
 		for (int x = 1; x < Details.Width; x++)
 		{
@@ -7564,7 +7561,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeUpToDown:
+	case kEffectWipeUpToDown:
 	{
 		for (int y = 0; y <= Details.Height - 2; y++)
 		{
@@ -7587,7 +7584,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 		}
 		break;
 	}
-	case modeWipeDownToUp:
+	case kEffectWipeDownToUp:
 	{
 		for (int y = 1; y < Details.Height; y++)
 		{
@@ -7633,7 +7630,7 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 
 	switch (mode)
 	{
-	case modeRevealLeftRight:
+	case kEffectRevealLeftRight:
 		if (parameter <= Details.Width - 1)
 		{
 			for (int x = parameter; x < Details.Width; x++)
@@ -7644,13 +7641,13 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 				}
 			}
 
-		 parameter++;
+			parameter++;
 		}
 		break;
-	case modeRevealRightLeft:
+	case kEffectRevealRightLeft:
 		if (parameter >= 0)
 		{
-			for (int x = parameter; x >= 0; x++)
+			for (int x = parameter; x >= 0; x--)
 			{
 				for (int y = 0; y < Details.Height; y++)
 				{
@@ -7661,7 +7658,7 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 			parameter--;
 		}
 		break;
-	case modeRevealTopBottom:
+	case kEffectRevealTopBottom:
 		if (parameter <= Details.Height - 1)
 		{
 			for (int y = parameter; y < Details.Height; y++)
@@ -7675,7 +7672,7 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 			parameter++;
 		}
 		break;
-	case modeRevealBottomTop:
+	case kEffectRevealBottomTop:
 		if (parameter >= 0)
 		{
 			for (int y = parameter; y >= 0; y--)
@@ -7689,8 +7686,8 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 			parameter--;
 		}
 		break;
-	case modeRevealCentreIn:
-	case modeRevealCentreOut:
+	case kEffectRevealCentreIn:
+	case kEffectRevealCentreOut:
 		break;
 	}
 
@@ -7715,7 +7712,7 @@ void TheMatrix::PerformScrollOnCopyFrame(int mode)
 
 	switch (mode)
 	{
-	case modeScrollLeft:
+	case kEffectScrollLeft:
 		for (int x = 0; x <= Details.Width - 2; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7729,7 +7726,7 @@ void TheMatrix::PerformScrollOnCopyFrame(int mode)
 			MatrixCopy->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width];
 		}
 		break;
-	case modeScrollRight:
+	case kEffectScrollRight:
 		for (int x = 1; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7743,7 +7740,7 @@ void TheMatrix::PerformScrollOnCopyFrame(int mode)
 			MatrixCopy->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
 		}
 		break;
-	case modeScrollUp:
+	case kEffectScrollUp:
 		for (int y = 0; y <= Details.Height - 2; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
@@ -7757,7 +7754,7 @@ void TheMatrix::PerformScrollOnCopyFrame(int mode)
 			MatrixCopy->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[x];
 		}
 		break;
-	case modeScrollDown:
+	case kEffectScrollDown:
 		for (int y = 1; y < Details.Height; y++)
 		{
 			for (int x = 0; x < Details.Width; x++)
@@ -7783,7 +7780,7 @@ void TheMatrix::PerformColumnScrollOnCurrentFrame(int mode, int column, bool cle
 
 	switch (mode)
 	{
-	case modeScrollUp:
+	case kEffectScrollUp:
 		for (int y = 0; y <= Details.Height - 2; y++)
 		{
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + column] = MatrixBackup->Grid[(y + 1) * Details.Width + column];
@@ -7798,7 +7795,7 @@ void TheMatrix::PerformColumnScrollOnCurrentFrame(int mode, int column, bool cle
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + column] = MatrixBackup->Grid[column];
 		}
 		break;
-	case modeScrollDown:
+	case kEffectScrollDown:
 		for (int y = 1; y < Details.Height; y++)
 		{
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + column] = MatrixBackup->Grid[(y - 1) * Details.Width + column];
@@ -7836,7 +7833,7 @@ void TheMatrix::PerformRowScrollOnCurrentFrame(int mode, int row, bool clear)
 
 	switch (mode)
 	{
-	case modeScrollLeft:
+	case kEffectScrollLeft:
 		for (int x = 0; x < Details.Width - 1; x++)
 		{
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + x] = MatrixBackup->Grid[row * Details.Width + (x + 1)];
@@ -7851,7 +7848,7 @@ void TheMatrix::PerformRowScrollOnCurrentFrame(int mode, int row, bool clear)
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[row];
 		}
 		break;
-	case modeScrollRight:
+	case kEffectScrollRight:
 		for (int x = 1; x < Details.Width; x++)
 		{
 			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + x] = MatrixBackup->Grid[row * Details.Width + (x - 1)];
@@ -7933,7 +7930,7 @@ void TheMatrix::RotateFrame(int mode, int layer, int frame)
 
 	switch (mode)
 	{
-	case modeRotateCW:
+	case kEffectRotateCW:
 		for (int x = 0; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -7942,7 +7939,7 @@ void TheMatrix::RotateFrame(int mode, int layer, int frame)
 			}
 		}
 		break;
-	case modeRotateACW:
+	case kEffectRotateACW:
 		for (int x = 0; x < Details.Width; x++)
 		{
 			for (int y = 0; y < Details.Height; y++)
@@ -8054,7 +8051,7 @@ void TheMatrix::ScrollRow(int layer, int frame, int mode, int row)
 
 	switch (mode)
 	{
-	case modeScrollRowLeft:
+	case kEffectScrollRowLeft:
 	{
 		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width];
 
@@ -8066,7 +8063,7 @@ void TheMatrix::ScrollRow(int layer, int frame, int mode, int row)
 		MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (Details.Width - 1)] = pixel;
 		break;
 	}
-	case modeScrollRowRight:
+	case kEffectScrollRowRight:
 	{
 		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (Details.Width - 1)];
 
@@ -8088,7 +8085,7 @@ void TheMatrix::ScrollColumn(int layer, int frame, int mode, int column)
 
 	switch (mode)
 	{
-	case modeScrollColumnUp:
+	case kEffectScrollColumnUp:
 	{
 		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[column];
 
@@ -8100,7 +8097,7 @@ void TheMatrix::ScrollColumn(int layer, int frame, int mode, int column)
 		MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) * Details.Width + column] = pixel;
 		break;
 	}
-	case modeScrollColumnDown:
+	case kEffectScrollColumnDown:
 	{
 		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) + Details.Width + column];
 
@@ -8587,7 +8584,7 @@ void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 	{
 		  // == colour cycling =================================================
 
-	case 27:	// linear
+	case kAutomationColourCyclingLinear:	// linear
 	{
 		int index = ao.CCTargetIndex;
 
@@ -8620,7 +8617,7 @@ void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 		break;
 	}
 
-	case 28:	// bounceybouncey
+	case kAutomationColourCyclingBounce:	// bounceybouncey
 	{
 		int index = ao.CCTargetIndex;
 		CyclingDirection direction = ao.CCDirection;
@@ -8628,7 +8625,7 @@ void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 		for (int x = 0; x < ao.SourceColours.size(); x++)
 		{
 			MatrixLayers[ao.Layer]->Cells[CurrentFrame]->ChangePixels(ao.SourceColours[x],
-																	   ao.TargetColours[index]);
+																	  ao.TargetColours[index]);
 			if (direction == CyclingDirection::kForwards)
 			{
 				if (index == ao.TargetColours.size() - 1)
@@ -8699,140 +8696,141 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 {
 	switch (actionId)
 	{
-	case 0:
-		PerformEffect(modeMirror, ao.Layer, CurrentFrame);
+	case kAutomationMirror:
+		PerformEffect(kEffectMirror, ao.Layer, CurrentFrame);
 		break;
-	case 1:
-		PerformEffect(modeFlip,   ao.Layer, CurrentFrame);
+	case kAutomationFlip:
+		PerformEffect(kEffectFlip,   ao.Layer, CurrentFrame);
 		break;
-	case 2:
-		PerformEffect(modeInvert, ao.Layer, CurrentFrame);
-		break;
-
-	case 3:
-		PerformScroll(modeScrollLeft,  ao.Layer, CurrentFrame);
-		break;
-	case 4:
-		PerformScroll(modeScrollRight, ao.Layer, CurrentFrame);
-		break;
-	case 5:
-		PerformScroll(modeScrollUp,    ao.Layer, CurrentFrame);
-		break;
-	case 6:
-		PerformScroll(modeScrollDown,  ao.Layer, CurrentFrame);
+	case kAutomationInvert:
+		PerformEffect(kEffectInvert, ao.Layer, CurrentFrame);
 		break;
 
-	case 7:
-		RotateFrame(modeRotateACW, ao.Layer, CurrentFrame);
+	case kAutomationScrollLeft:
+		PerformScroll(kEffectScrollLeft,  ao.Layer, CurrentFrame);
 		break;
-	case 8:
-		RotateFrame(modeRotateCW,  ao.Layer, CurrentFrame);
+	case kAutomationScrollRight:
+		PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
 		break;
-
-	case 9:
-		PerformWipeOnCurrentFrame(modeWipeVerticalOut,   ao.EraseBehind);
+	case kAutomationScrollUp:
+		PerformScroll(kEffectScrollUp,    ao.Layer, CurrentFrame);
 		break;
-	case 10:
-		PerformWipeOnCurrentFrame(modeWipeVerticalIn,    ao.EraseBehind);
-		break;
-	case 11:
-		PerformWipeOnCurrentFrame(modeWipeHorizontalOut, ao.EraseBehind);
-		break;
-	case 12:
-		PerformWipeOnCurrentFrame(modeWipeHorizontalIn,  ao.EraseBehind);
+	case kAutomationScrollDown:
+		PerformScroll(kEffectScrollDown,  ao.Layer, CurrentFrame);
 		break;
 
-	case 36:
-		PerformWipeOnCurrentFrame(modeWipeLeftToRight,   ao.EraseBehind);
+	case kAutomationRotateLeft:
+		RotateFrame(kEffectRotateACW, ao.Layer, CurrentFrame);
 		break;
-	case 37:
-		PerformWipeOnCurrentFrame(modeWipeRightToLeft,   ao.EraseBehind);
-		break;
-	case 38:
-		PerformWipeOnCurrentFrame(modeWipeUpToDown,      ao.EraseBehind);
-		break;
-	case 39:
-		PerformWipeOnCurrentFrame(modeWipeDownToUp,      ao.EraseBehind);
+	case kAutomationRotateRight:
+		RotateFrame(kEffectRotateCW,  ao.Layer, CurrentFrame);
 		break;
 
-	case 13 :
+	case kAutomationWipeVertical:
+		PerformWipeOnCurrentFrame(kEffectWipeVerticalOut,   ao.EraseBehind);
+		break;
+	case kAutomationWipeVerticalClear:
+		PerformWipeOnCurrentFrame(kEffectWipeVerticalIn,    ao.EraseBehind);
+		break;
+	case kAutomationWipeHorizontal:
+		PerformWipeOnCurrentFrame(kEffectWipeHorizontalOut, ao.EraseBehind);
+		break;
+	case kAutomationWipeHorizontalClear:
+		PerformWipeOnCurrentFrame(kEffectWipeHorizontalIn,  ao.EraseBehind);
+		break;
+
+	case kAutomationWipeLeft:
+		PerformWipeOnCurrentFrame(kEffectWipeLeftToRight,   ao.EraseBehind);
+		break;
+	case kAutomationWipeRight:
+		PerformWipeOnCurrentFrame(kEffectWipeRightToLeft,   ao.EraseBehind);
+		break;
+	case kAutomationWipeUp:
+		PerformWipeOnCurrentFrame(kEffectWipeUpToDown,      ao.EraseBehind);
+		break;
+	case kAutomationWipeDown:
+		PerformWipeOnCurrentFrame(kEffectWipeDownToUp,      ao.EraseBehind);
+		break;
+
+	case kAutomationJiggleLeft :
 		if (ao.ProcesingStage < Details.Height)
 		{
 			for (int x = 0; x <= ao.ProcesingStage % Details.Height; x++)
 			{
-				PerformRowScrollOnCurrentFrame(modeScrollLeft, x, ao.EraseBehind);
+				PerformRowScrollOnCurrentFrame(kEffectScrollLeft, x, ao.EraseBehind);
 			}
 		}
 		else
 		{
 			for (int x = 0; x < Details.Height; x++)
 			{
-				PerformRowScrollOnCurrentFrame(modeScrollLeft, x, ao.EraseBehind);
+				PerformRowScrollOnCurrentFrame(kEffectScrollLeft, x, ao.EraseBehind);
 			}
 		}
 		break;
 
-	case 14:
+	case kAutomationJiggleRight:
 		if (ao.ProcesingStage < Details.Height)
 		{
 			for (int x = 0; x <= ao.ProcesingStage % Details.Height; x++)
 			{
-				PerformRowScrollOnCurrentFrame(modeScrollRight, x, ao.EraseBehind);
+				PerformRowScrollOnCurrentFrame(kEffectScrollRight, x, ao.EraseBehind);
 			}
 		}
 		else
 		{
 			for (int x = 0; x < Details.Height; x++)
 			{
-				PerformRowScrollOnCurrentFrame(modeScrollRight, x, ao.EraseBehind);
+				PerformRowScrollOnCurrentFrame(kEffectScrollRight, x, ao.EraseBehind);
 			}
 		}
 		break;
 
-	case 15:
+	case kAutomationJiggleUp:
 		if (ao.ProcesingStage < Details.Width)
 		{
 			for (int x = 0; x <= ao.ProcesingStage % Details.Width; x++)
 			{
-				PerformColumnScrollOnCurrentFrame(modeScrollUp, x, ao.EraseBehind);
+				PerformColumnScrollOnCurrentFrame(kEffectScrollUp, x, ao.EraseBehind);
 			}
 		}
 		else
 		{
 			for (int x = 0; x < Details.Width; x++)
 			{
-				PerformColumnScrollOnCurrentFrame(modeScrollUp, x, ao.EraseBehind);
+				PerformColumnScrollOnCurrentFrame(kEffectScrollUp, x, ao.EraseBehind);
 			}
 		}
 		break;
 
-	case 16:
+	case kAutomationJiggleDown:
 		if (ao.ProcesingStage < Details.Width)
 		{
 			for (int x = 0; x <= ao.ProcesingStage % Details.Width; x++)
 			{
-				PerformColumnScrollOnCurrentFrame(modeScrollDown, x, ao.EraseBehind);
+				PerformColumnScrollOnCurrentFrame(kEffectScrollDown, x, ao.EraseBehind);
 			}
 		}
 		else
 		{
 			for (int x = 0; x < Details.Width; x++)
 			{
-				PerformColumnScrollOnCurrentFrame(modeScrollDown, x, ao.EraseBehind);
+				PerformColumnScrollOnCurrentFrame(kEffectScrollDown, x, ao.EraseBehind);
 			}
 		}
 		break;
 
+		  // Bounce left/right
 		  // parameter1 is scroll count
 		  // parameter2 is direction: 0 = right, 1 = left
-	case 17 :
+	case kAutomationBounceLeftRight:
 		if (ao.Parameter2 == 0)
 		{
-			PerformScroll(modeScrollRight, ao.Layer, CurrentFrame);
+			PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
 		}
 		else
 		{
-			PerformScroll(modeScrollLeft, ao.Layer, CurrentFrame);
+			PerformScroll(kEffectScrollLeft, ao.Layer, CurrentFrame);
 		}
 
 		if (ao.Parameter1 == Details.Width - 1)
@@ -8854,16 +8852,17 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		}
 		break;
 
+		  // Bounce up/down
 		  // parameter1 is scroll count
 		  // parameter2 is direction: 0 = right, 1 = left
-	case 18:
+	case kAutomationBounceUpDown:
 		if (ao.Parameter2 == 0)
 		{
-			PerformScroll(modeScrollUp, ao.Layer, CurrentFrame);
+			PerformScroll(kEffectScrollUp, ao.Layer, CurrentFrame);
 		}
 		else
 		{
-			PerformScroll(modeScrollDown, ao.Layer, CurrentFrame);
+			PerformScroll(kEffectScrollDown, ao.Layer, CurrentFrame);
 		}
 
 		if (ao.Parameter1 == Details.Width - 1)
@@ -8886,7 +8885,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		break;
 
 		  // == paste brush in to every frame ==================================
-	 case 19:
+	 case kAutomationBrush1EveryFrame:
 		for (int x = 0; x < ao.Brushes[0].BrushData.size(); x++)
 		{
 			StringToRow(false, ao.Brushes[0].BrushData[x], CurrentFrame, x,
@@ -8895,7 +8894,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		}
 		break;
 
-	case 20:
+	case kAutomationBrush1FirstFrame:
 		if (CurrentFrame == ao.FrameStart)
 		{
 			for (int x = 0; x < ao.Brushes[0].BrushData.size(); x++)
@@ -8907,7 +8906,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		}
 		break;
 
-	case 21:
+	case kAutomationBrush2EveryFrame:
 		for (int x = 0; x < ao.Brushes[1].BrushData.size(); x++)
 		{
 			StringToRow(false, ao.Brushes[1].BrushData[x], CurrentFrame, x,
@@ -8916,7 +8915,7 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		}
 		break;
 
-	case 22:
+	case kAutomationBrush2FirstFrame:
 		if (CurrentFrame == ao.FrameStart)
 		{
 			for (int x = 0; x < ao.Brushes[1].BrushData.size(); x++)
@@ -8929,41 +8928,41 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 		break;
 
           // == split scroll
-	case 23:
-		PerformSplitScroll(modeSplitScrollLeftRight, ao.Layer, CurrentFrame);
+	case kAutomationScrollLeftRightSplit:
+		PerformSplitScroll(kEffectSplitScrollLeftRight, ao.Layer, CurrentFrame);
 		break;
-	case 24:
-		PerformSplitScroll(modeSplitScrollRightLeft, ao.Layer, CurrentFrame);
+	case kAutomationScrollRightLeftSplit:
+		PerformSplitScroll(kEffectSplitScrollRightLeft, ao.Layer, CurrentFrame);
 		break;
-	case 25:
-		PerformSplitScroll(modeSplitScrollUpDown,    ao.Layer, CurrentFrame);
+	case kAutomationScrollUpDownSplit:
+		PerformSplitScroll(kEffectSplitScrollUpDown,    ao.Layer, CurrentFrame);
 		break;
-	case 26:
-		PerformSplitScroll(modeSplitScrollDownUp,    ao.Layer, CurrentFrame);
+	case kAutomationScrollDownUpSplit:
+		PerformSplitScroll(kEffectSplitScrollDownUp,    ao.Layer, CurrentFrame);
 		break;
 
 		  // alternate scrolls
-	case 29:
-		PerformAlternateScroll(modeAlternateScrollUpDown, ao.Layer, CurrentFrame);
+	case kAutomationAlternateUpDownScroll:
+		PerformAlternateScroll(kEffectAlternateScrollUpDown, ao.Layer, CurrentFrame);
 		break;
 
-	case 30:
-		PerformRevealOnCurrentFrame(modeRevealLeftRight, ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealLeftRight:
+		PerformRevealOnCurrentFrame(kEffectRevealLeftRight, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-	case 31:
-		PerformRevealOnCurrentFrame(modeRevealRightLeft, ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealRightLeft:
+		PerformRevealOnCurrentFrame(kEffectRevealRightLeft, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-	case 32:
-		PerformRevealOnCurrentFrame(modeRevealTopBottom, ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealTopBottom:
+		PerformRevealOnCurrentFrame(kEffectRevealTopBottom, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-	case 33:
-		PerformRevealOnCurrentFrame(modeRevealBottomTop, ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealBottomTop:
+		PerformRevealOnCurrentFrame(kEffectRevealBottomTop, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-	case 34:
-		PerformRevealOnCurrentFrame(modeRevealCentreIn,  ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealCentreIn:
+		PerformRevealOnCurrentFrame(kEffectRevealCentreIn,  ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
-	case 35:
-		PerformRevealOnCurrentFrame(modeRevealCentreOut, ao.ParameterRevealColour, ao.ParameterReveal);
+	case kAutomationRevealCentreOut:
+		PerformRevealOnCurrentFrame(kEffectRevealCentreOut, ao.ParameterRevealColour, ao.ParameterReveal);
 		break;
 
 //	default:

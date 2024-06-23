@@ -2328,13 +2328,13 @@ void __fastcall TfrmMain::Copyandshiftleft1Click(TObject *Sender)
 
 void __fastcall TfrmMain::Rotateanticlockwise1Click(TObject *Sender)
 {
-	thematrix->RotateCopyBrush(modeRotateACW);
+	thematrix->RotateCopyBrush(kEffectRotateACW);
 }
 
 
 void __fastcall TfrmMain::Rotateclockwise1Click(TObject *Sender)
 {
-	thematrix->RotateCopyBrush(modeRotateCW);
+	thematrix->RotateCopyBrush(kEffectRotateCW);
 }
 
 
@@ -2345,13 +2345,13 @@ void __fastcall TfrmMain::miBrushFlipClick(TObject *Sender)
 	switch (mi->Tag)
 	{
 	case 0:
-		thematrix->PerformEffectOnBrush(modeFlip);
+		thematrix->PerformEffectOnBrush(kEffectFlip);
 		break;
 	case 1:
-		thematrix->PerformEffectOnBrush(modeMirror);
+		thematrix->PerformEffectOnBrush(kEffectMirror);
 		break;
 	case 2:
-		thematrix->PerformEffectOnBrush(modeInvert);
+		thematrix->PerformEffectOnBrush(kEffectInvert);
 		break;
 	}
 }
@@ -2704,25 +2704,25 @@ void __fastcall TfrmMain::miClearAllFramesGradientClick(TObject *Sender)
 
 void __fastcall TfrmMain::miFlipAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(modeFlipAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectFlipAll, CMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miMirrorAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(modeMirrorAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectMirrorAll, CMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miInvertAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(modeInvertAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectInvertAll, CMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miGradientAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(modeGradientAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectGradientAll, CMOMCurrentLayerFrames);
 }
 
 
@@ -3452,7 +3452,7 @@ void __fastcall TfrmMain::sbClearClick(TObject *Sender)
 
 void __fastcall TfrmMain::sbMirrorClick(TObject *Sender)
 {
-	int effect = modeFlip;
+	int effect = kEffectFlip;
 
 	TSpeedButton *sb = (TSpeedButton*)Sender;
 
@@ -3462,18 +3462,18 @@ void __fastcall TfrmMain::sbMirrorClick(TObject *Sender)
 
 void TfrmMain::FrameEffect(int id)
 {
-	int effect = modeFlip;
+	int effect = kEffectFlip;
 
 	switch (id)
 	{
 	case 0:
-		effect = modeFlip;
+		effect = kEffectFlip;
 		break;
 	case 1:
-		effect = modeMirror;
+		effect = kEffectMirror;
 		break;
 	case 2:
-		effect = modeInvert;
+		effect = kEffectInvert;
 		break;
 	}
 
@@ -3498,21 +3498,21 @@ void __fastcall TfrmMain::sbScrollLeftClick(TObject *Sender)
 
 void TfrmMain::ScrollFrame(int scroll_mode)
 {
-	int direction = modeScrollLeft;
+	int direction = kEffectScrollLeft;
 
 	switch (scroll_mode)
 	{
 	case 0:
-		direction = modeScrollLeft;
+		direction = kEffectScrollLeft;
 		break;
 	case 1:
-		direction = modeScrollRight;
+		direction = kEffectScrollRight;
 		break;
 	case 2:
-		direction = modeScrollUp;
+		direction = kEffectScrollUp;
 		break;
 	case 3:
-		direction = modeScrollDown;
+		direction = kEffectScrollDown;
 		break;
 	}
 
@@ -3537,15 +3537,15 @@ void __fastcall TfrmMain::sbRotateLClick(TObject *Sender)
 
 void TfrmMain::RotateFrame(int direction)
 {
-	int rdirection = modeRotateCW;
+	int rdirection = kEffectRotateCW;
 
 	if (direction == 0)
 	{
-		rdirection = modeRotateACW;
+		rdirection = kEffectRotateACW;
 	}
 	else
 	{
-		rdirection = modeRotateCW;
+		rdirection = kEffectRotateCW;
 	}
 
 	if (FrameLayerPanel->GetSyncAll())
