@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.20.22                                                 =
+ =  LED Matrix Studio v0.20.23                                                 =
  =                                                                             =
- =  March 17th 2024                                                            =
+ =  June 23rd 2024                                                             =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -130,7 +130,7 @@
    Thanks           : Manoj, Dennis, Lasa, Nitesh, Lorenz, Greg, Andrew,
                       Apostolos, David, Peter, Zoltan, and Gary
 
-   Dedicated to Julie, Adam, and Dyanne.
+   Dedicated to Dad, Julie, Adam, and Dyanne.
 
 
  Help wanted!
@@ -141,6 +141,13 @@
  Please consider sending it to me so that I may include it with
  future updates.
 
+
+========================================================================
+== Updates for 0.20.23 beta ============================================
+======================================================================== 
+
+Fixed a few issues with Automations (Wipe, Reveal, and Bounce).
+A couple of minor tweaks, bug fixes, and refactoring.
 
 ========================================================================
 == Updates for 0.20.22 beta ============================================
