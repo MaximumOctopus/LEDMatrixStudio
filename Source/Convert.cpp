@@ -68,7 +68,7 @@ namespace Convert
 		int digit = 0;
 		int multiplier = 1;
 
-		for (int i = 0; i < s.length(); i++)
+		for (int i = s.length() - 1; i >= 0; i--)
 		{
 			int c = (unsigned char)s[i];
 
