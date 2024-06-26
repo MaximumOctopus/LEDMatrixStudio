@@ -409,7 +409,16 @@ namespace ExportOutputBinary
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
-			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+			}
 		}
 		else
 		{
@@ -617,7 +626,16 @@ namespace ExportOutputBinary
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
-			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+			}
 		}
 		else
 		{
@@ -794,7 +812,16 @@ namespace ExportOutputBinary
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
-			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+			}
 		}
 		else
 		{
@@ -1002,7 +1029,16 @@ namespace ExportOutputBinary
 
 		if (teo.ExportMode == ExportSource::kAnimation)
 		{
-			selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+			}
 		}
 		else
 		{
@@ -1149,14 +1185,14 @@ namespace ExportOutputBinary
 	}
 
 
-	std::wstring BinaryGetRowData(TheMatrix *matrix, bool hexmode, int direction, int frame, int row)
+	std::wstring BinaryGetRowData(Matrix *matrix, bool hexmode, int direction, int frame, int row)
 	{
 		std::wstring output = L"";
 		unsigned __int64 total = 0;
 
-		for (int x = 0; x < matrix->Details.Width; x++)
+		for (int x = 0; x < matrix->Width; x++)
 		{
-			if (matrix->MatrixLayers[0]->Cells[frame]->Grid[row * matrix->Details.Width + x] == 1)
+			if (matrix->Grid[row * matrix->Width + x] == 1)
 			{
 				if (direction == 0)
 				{
@@ -1164,7 +1200,7 @@ namespace ExportOutputBinary
 				}
 				else
 				{
-					total += powers[matrix->Details.Width - x];
+					total += powers[matrix->Width - x];
                 }
 			}
 		}
@@ -1172,20 +1208,20 @@ namespace ExportOutputBinary
 		if (hexmode)
 		{
 			return IntToHex(total, GSystemSettings->App.PadModeHexRow).c_str();
-        }
+		}
 
 		return std::to_wstring(total);
 	}
 
 
-	std::wstring BinaryGetColumnData(TheMatrix *matrix, bool hexmode, int direction, int frame, int col)
+	std::wstring BinaryGetColumnData(Matrix *matrix, bool hexmode, int direction, int frame, int col)
 	{
 		std::wstring output = L"";
 		unsigned __int64 total = 0;
 
-		for (int y = 0; y < matrix->Details.Height; y++)
+		for (int y = 0; y < matrix->Height; y++)
 		{
-			if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + col] == 1)
+			if (matrix->Grid[y * matrix->Width + col] == 1)
 			{
 				if (direction == 0)
 				{
@@ -1193,7 +1229,7 @@ namespace ExportOutputBinary
 				}
 				else
 				{
-					total += powers[matrix->Details.Height - y];
+					total += powers[matrix->Height - y];
                 }
 			}
 		}

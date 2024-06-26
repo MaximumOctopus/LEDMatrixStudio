@@ -32,8 +32,8 @@ namespace ExportOutputBinary
 	DataOut BinaryExportColumnData(TheMatrix *matrix, ExportOptions, int, int, const std::wstring);
 	DataOut BinaryExportColumnDataRGB(TheMatrix *matrix, ExportOptions, int, int, const std::wstring);
 
-	std::wstring BinaryGetRowData(TheMatrix *matrix, bool, int, int, int);
-	std::wstring BinaryGetColumnData(TheMatrix *matrix, bool, int, int, int);
+	std::wstring BinaryGetRowData(Matrix *matrix, bool, int, int, int);
+	std::wstring BinaryGetColumnData(Matrix *matrix, bool, int, int, int);
 
 	void BinaryAddContentByFrame(ExportOptions, const std::wstring, int, std::vector<std::wstring> &);
 }
