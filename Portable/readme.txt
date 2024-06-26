@@ -147,6 +147,8 @@
 ======================================================================== 
 
 Fixed a bug which broke Binary export. It's all working now!
+Fixed a bug which caused binary export to ignore all but the bottom layer.
+This is a legacy bug that goes back years...
 
 ========================================================================
 == Updates for 0.20.23 beta ============================================
