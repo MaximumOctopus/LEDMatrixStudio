@@ -374,7 +374,7 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 4
-    ExplicitWidth = 1490
+    ExplicitTop = -2
     object sbBuild: TSpeedButton
       Left = 4
       Top = 2

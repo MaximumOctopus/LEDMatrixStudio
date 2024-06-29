@@ -131,6 +131,13 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 
 bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std::vector<std::wstring> &data, std::vector<std::wstring> &output)
 {
+	if (data.size() == 0)
+	{
+		output.push_back(L"No data.");
+
+		return false;
+	}
+
 	std::vector<std::wstring> unique_items;
 	//  lUniqueItems.Sorted := true;
 
@@ -170,7 +177,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(uos) + L" bytes");
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(uos - os) + L" bytes (" +
-												std::to_wstring(std::round(((uos - os) / uos) * 100)) + L"%)");
+												std::to_wstring(std::round((((double)uos - (double)os) / (double)uos) * 100)) + L"%)");
 
 	ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
@@ -191,7 +198,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 
 		if (t !=  unique_items.size() - 1)
 		{
-			s += L"', ";
+			s += L", ";
 		}
 	 }
 
@@ -215,7 +222,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 
 	output.push_back(ExportUtility::GetVariableType(teo.Code.Language, teo.Code.Size) + L"ledarray[] = {");
 
-	s      = L"";
+	s = L"";
 	int i = std::to_wstring(unique_items.size()).length();
 	int count = 0;
 
@@ -258,7 +265,7 @@ void Optimiser::ProcessUnique(std::vector<std::wstring> &data, std::vector<std::
 		{
 			if (data[t][i] == L' ')
 			{
-				if (std::find(unique_items.begin(), unique_items.end(), s) != unique_items.end())
+				if (std::find(unique_items.begin(), unique_items.end(), s) == unique_items.end())
 				{
 					unique_items.push_back(s);
 				}
@@ -273,7 +280,7 @@ void Optimiser::ProcessUnique(std::vector<std::wstring> &data, std::vector<std::
 
 		if (s != L"")
 		{
-			if (std::find(unique_items.begin(), unique_items.end(), s) != unique_items.end())
+			if (std::find(unique_items.begin(), unique_items.end(), s) == unique_items.end())
 			{
 				unique_items.push_back(s);
 			}

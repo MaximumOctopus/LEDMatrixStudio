@@ -302,11 +302,11 @@ namespace ColourUtility
 	}
 
 
-	int DarkenRGB(int RGB)
+	int DarkenRGB(int BGR)
 	{
-		int r = (RGB & 0x0000ff);         // Windows colour structure = BGR
-		int b = (RGB & 0xff0000) >> 16;
-		int g = (RGB & 0x00ff00) >> 8;
+		int r = (BGR & 0x0000ff);         // Windows colour structure = BGR
+		int b = (BGR & 0xff0000) >> 16;
+		int g = (BGR & 0x00ff00) >> 8;
 
 		r = std::round((double)r * 0.8);
 		g = std::round((double)g * 0.8);
