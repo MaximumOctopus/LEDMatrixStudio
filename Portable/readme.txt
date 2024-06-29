@@ -2,7 +2,7 @@
  =                                                                             =
  =  LED Matrix Studio v0.20.24                                                 =
  =                                                                             =
- =  June 26th 2024                                                             =
+ =  June 29th 2024                                                             =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -141,6 +141,13 @@
  Please consider sending it to me so that I may include it with
  future updates.
 
+========================================================================
+== Updates for 0.20.25 beta ============================================
+======================================================================== 
+
+- Fixed Optimise (Tools->Optimise data)
+  Designed for RGB projects, can decrease RAM/ROM usage by a huge amount
+  by replacing the matrix data with a streamlined look-up table.
 
 ========================================================================
 == Updates for 0.20.24 beta ============================================
