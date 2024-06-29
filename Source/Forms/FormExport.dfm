@@ -438,6 +438,8 @@ object frmExport: TfrmExport
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
+    ExplicitWidth = 1079
+    ExplicitHeight = 600
     object tsCode: TTabSheet
       Caption = '.'
       object Panel2: TPanel
@@ -449,7 +451,6 @@ object frmExport: TfrmExport
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
-        ExplicitHeight = 570
         object gbSource: TGroupBox
           Left = 15
           Top = 8
@@ -956,8 +957,6 @@ object frmExport: TfrmExport
           TabOrder = 0
           OnMouseWheelDown = reExportMouseWheelDown
           OnMouseWheelUp = reExportMouseWheelUp
-          ExplicitWidth = 660
-          ExplicitHeight = 545
         end
         object pPreviewStatus: TPanel
           Left = 1
@@ -966,8 +965,6 @@ object frmExport: TfrmExport
           Height = 23
           Align = alBottom
           TabOrder = 1
-          ExplicitTop = 546
-          ExplicitWidth = 660
         end
       end
     end
@@ -983,6 +980,7 @@ object frmExport: TfrmExport
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
+        ExplicitHeight = 570
         object gbSourceBinary: TGroupBox
           Left = 15
           Top = 8
@@ -1344,6 +1342,8 @@ object frmExport: TfrmExport
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 1
+        ExplicitWidth = 662
+        ExplicitHeight = 570
       end
     end
   end

@@ -70,6 +70,8 @@ bool OpenAutomate(AutomationInput &ai, RGBPaletteColours rgbpc, std::vector<std:
 		UserAccept = true;
 
 		frmAutomate->SetAutomationInputFromGui(ai, ao);
+
+		ao.Clear(); // resets automation parameters
 	}
 
 	delete frmAutomate;
@@ -1211,17 +1213,15 @@ void TfrmAutomate::SaveColours(TColorListBox *clb, const std::wstring file_name)
 
 int TfrmAutomate::GetActionIDFromName(const std::wstring name)
 {
-	int actionid = -1;
-
 	for (int t = 0; t < kActionsCount; t++)
 	{
 		if (name == kAutomationActions[t])
 		{
 			return t;
 		}
-    }
+	}
 
-	return actionid;
+	return -1;
 }
 
 
@@ -1359,5 +1359,15 @@ void TfrmAutomate::SetCaption(const std::wstring path)
 		std::wstring p = L" \"" + path + L"\"";
 
 		Caption += p.c_str();
+	}
+}
+
+
+void __fastcall TfrmAutomate::sRevealColourMouseDown(TObject *Sender, TMouseButton Button,
+          TShiftState Shift, int X, int Y)
+{
+	if (cdColours->Execute())
+	{
+		sRevealColour->Brush->Color = cdColours->Color;
 	}
 }

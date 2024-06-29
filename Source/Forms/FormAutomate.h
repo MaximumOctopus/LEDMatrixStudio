@@ -183,6 +183,8 @@ __published:	// IDE-managed Components
 	void __fastcall sCB1TransparentColourMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
 	void __fastcall sbCyclingLinearClick(TObject *Sender);
+	void __fastcall sRevealColourMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+          int X, int Y);
 private:	// User declarations
 
 	std::vector<std::wstring> CustomBrush[2];

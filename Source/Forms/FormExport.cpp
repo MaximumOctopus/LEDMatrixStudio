@@ -1526,6 +1526,7 @@ void __fastcall TfrmExport::FormShow(TObject *Sender)
 	PixelCountFrame = matrix->Details.Height * matrix->Details.Width;
 
 	eFrameEnd->Text = std::to_wstring(MaxFrameCount).c_str();
+	eBinaryFrameEnd->Text = std::to_wstring(MaxFrameCount).c_str();
 
 	PopulateProfileList();
 

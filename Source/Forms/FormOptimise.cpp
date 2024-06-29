@@ -107,14 +107,16 @@ void __fastcall TfrmOptimise::sbOptimiseClick(TObject *Sender)
 	teo.Code.Language  = ExportLanguage(cbLanguageFormat->ItemIndex);
 	teo.Code.LineCount = cbPerRow->Text.ToIntDef(10);
 
-	if (Optimiser::OptimiseDataSimple(thematrix, teo, MatrixData, output))
-	{
-		mMemo->Clear();
+	mMemo->Clear();
 
-		for (int t = 0; t < output.size(); t++)
-		{
-			mMemo->Lines->Add(output[t].c_str());
-		}
+	if (!Optimiser::OptimiseDataSimple(thematrix, teo, MatrixData, output))
+	{
+		mMemo->Lines->Add(L"Error :(");
+	}
+
+	for (int t = 0; t < output.size(); t++)
+	{
+		mMemo->Lines->Add(output[t].c_str());
 	}
 }
 
@@ -151,7 +153,7 @@ void TfrmOptimise::PopulateMatrixData()
 		{
 			for (int l = 0; l < line.length(); l++)
 			{
-				if (incomment)
+				if (!incomment)
 				{
 					if (line[l] == L',')
 					{

@@ -9,6 +9,7 @@ object frmOptimise: TfrmOptimise
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poOwnerFormCenter
   DesignSize = (
     995
     590)
@@ -65,7 +66,11 @@ object frmOptimise: TfrmOptimise
     Font.Name = 'Courier New'
     Font.Style = []
     Lines.Strings = (
-      'Paste your data in here!')
+      'Paste your raw data in here (replace this text)!'
+      ''
+      'Comma delimited:'
+      ''
+      '23, 2, 54, 6, 9, 11, 7')
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1

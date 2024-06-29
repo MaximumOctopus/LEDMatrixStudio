@@ -1437,6 +1437,7 @@ object frmAutomate: TfrmAutomate
           Top = 67
           Width = 28
           Height = 22
+          OnMouseDown = sRevealColourMouseDown
         end
         object lColour: TLabel
           Left = 314
