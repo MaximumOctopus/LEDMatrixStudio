@@ -16,6 +16,7 @@
 #include "ColourUtility.h"
 #include "Convert.h"
 #include "ExportOutputBinary.h"
+#include "ExportUtility.h"
 #include "SystemSettings.h"
 #include "Utility.h"
 
@@ -58,10 +59,6 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		std::wstring spacingstring = L" ";
-
-		// =========================================================================
-
 		std::wstring op = L"";
 
 		teo.DataPadding = L"";
@@ -82,13 +79,13 @@ namespace ExportOutputBinary
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
-					dataout = BinaryExportRowData(matrix, teo, t, y, spacingstring);
+					dataout = BinaryExportRowData(matrix, teo, t, y);
 
 					for (int i = 0; i < dataout.Count; i++)
 					{
 						if (dataout.Data[i] != L"")
 						{
-							MatrixData[y]->push_back(baaProcessUnique(dataout.Data[i]) + spacingstring);
+							MatrixData[y]->push_back(baaProcessUnique(dataout.Data[i]) + L" ");
 						}
 					}
 
@@ -99,13 +96,13 @@ namespace ExportOutputBinary
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
-					dataout = BinaryExportColumnData(matrix, teo, t, x, spacingstring);
+					dataout = BinaryExportColumnData(matrix, teo, t, x);
 
 					for (int i = 0; i < dataout.Count; i++)
 					{
 						if (dataout.Data[i] != L"")
 						{
-							MatrixData[x]->push_back(baaProcessUnique(dataout.Data[i]) + spacingstring);
+							MatrixData[x]->push_back(baaProcessUnique(dataout.Data[i]) + L" ");
 						}
 					}
 
@@ -205,7 +202,7 @@ namespace ExportOutputBinary
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z] + spacingstring;
+							op += (*MatrixData[y])[z] + L" ";
 						}
 					}
 
@@ -213,7 +210,7 @@ namespace ExportOutputBinary
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z] + spacingstring;
+							op += (*MatrixData[y])[z] + L" ";
 						}
 					}
 
@@ -221,7 +218,7 @@ namespace ExportOutputBinary
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z] + spacingstring;
+							op += (*MatrixData[y])[z] + L" ";
                         }
 					}
 
@@ -263,12 +260,9 @@ namespace ExportOutputBinary
 		std::wstring MatrixData[MatrixDataCount];
 
 		DataOut dataout;
-		std::wstring spacingstring = L" ";
 		std::wstring s = L"";
 
 		entrycount = 0;
-
-		spacingstring   = L" ";
 
 		teo.DataPadding = L"";
 
@@ -286,7 +280,7 @@ namespace ExportOutputBinary
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
-					dataout = BinaryExportRowDataRGB(matrix, teo, t, y, spacingstring);
+					dataout = BinaryExportRowDataRGB(matrix, teo, t, y);
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
@@ -298,7 +292,7 @@ namespace ExportOutputBinary
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
-					dataout = BinaryExportColumnDataRGB(matrix, teo, t, x, spacingstring);
+					dataout = BinaryExportColumnDataRGB(matrix, teo, t, x);
 
 					MatrixData[x] = baaProcessUnique(dataout.Data[0]);
 
@@ -383,7 +377,48 @@ namespace ExportOutputBinary
 	}
 
 
-	DataOut BinaryExportRowData(TheMatrix *matrix, ExportOptions teo, int frame, int row, const std::wstring spacingchar)
+	bool BinaryCreateExportAnimationRGB3bpp(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount)
+	{
+		int MatrixDataCount = std::max(matrix->Details.Height, matrix->Details.Width);
+
+		std::wstring MatrixData[MatrixDataCount];
+
+		DataOut dataout;
+		std::wstring s = L"";
+
+		entrycount = 0;
+
+		teo.DataPadding = L"";
+
+		// =========================================================================
+		// =========================================================================
+
+		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
+		{
+			for (int i = 0; i < MatrixDataCount; i++)
+			{
+				MatrixData[i] = L"";
+			}
+
+            if (teo.Binary.Source == ReadSource::kRows)
+			{
+				dataout = BinaryExportFrameDataByRowRGB3bpp(matrix, teo, t);
+			}
+			else if (teo.Binary.Source == ReadSource::kColumns)
+			{
+				dataout = BinaryExportFrameDataByColumnRGB3bpp(matrix, teo, t);
+            }
+
+			entrycount += dataout.Count;
+
+			BinaryAddContentByFrame(teo, dataout.Data[0], t, output);
+		}
+
+		return true;
+    }
+
+
+	DataOut BinaryExportRowData(TheMatrix *matrix, ExportOptions teo, int frame, int row)
 	{
 		DataOut dataout;
 		dataout.Clear();
@@ -427,58 +462,7 @@ namespace ExportOutputBinary
 
 		// ===========================================================================
 
-		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
-		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionRow(direction, teo.Binary.Orientation, matrix->Details.Height, row);
 
 		// ===========================================================================
 
@@ -486,7 +470,7 @@ namespace ExportOutputBinary
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
@@ -523,7 +507,7 @@ namespace ExportOutputBinary
 		{
 			for (int x = matrix->Details.Width - 1; x >= 0; x--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
@@ -565,48 +549,9 @@ namespace ExportOutputBinary
 		{
 			if (ia.Data[x] != -1)
 			{
-				switch (teo.Binary.Size)
-				{
-				case NumberSize::k8bitSwap: // swap nybbles
-				{
-					std::wstring b = L"XX";
+				ia.SwapData(x, teo.Binary.Size);
 
-					s = IntToHex(ia.Data[x], 2);
-
-					b[0] = s[1];
-					b[1] = s[0];
-
-					ia.Data[x] = Convert::HexToInt(b);
-					break;
-				}
-				case NumberSize::k16bitSwap: // swap bytes
-				{
-					std::wstring b = L"XXXX";
-
-					s = IntToHex(ia.Data[x], 4);
-
-					b[0] = s[2];
-					b[1] = s[3];
-					b[2] = s[0];
-					b[3] = s[1];
-
-					ia.Data[x] = Convert::HexToInt(b);
-					break;
-				}
-				}
-
-				switch (teo.Binary.Format)
-				{
-				case NumberFormat::kDecimal:
-					dataout.Data[x] = std::to_wstring(ia.Data[x]);
-					break;
-				case NumberFormat::kBinary:
-					dataout.Data[x] = Convert::IntegerToBinary(bits, ia.Data[x]);
-					break;
-				case NumberFormat::kHex:
-					dataout.Data[x] = IntToHex(ia.Data[x], pads);
-					break;
-				}
+				dataout.Data[x] = ExportUtility::FormatDataAs(ia.Data[x], teo.Binary.Format, bits, pads);
 			}
 		}
 
@@ -614,7 +559,7 @@ namespace ExportOutputBinary
 	}
 
 
-	DataOut BinaryExportRowDataRGB(TheMatrix *matrix, ExportOptions teo, int frame, int row, const std::wstring spacingchar)
+	DataOut BinaryExportRowDataRGB(TheMatrix *matrix, ExportOptions teo, int frame, int row)
 	{
 		DataOut dataout;
 		std::wstring output = L"";
@@ -644,58 +589,7 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
-		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionRow(direction, teo.Binary.Orientation, matrix->Details.Height, row);
 
 		// ===========================================================================
 
@@ -703,34 +597,31 @@ namespace ExportOutputBinary
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
+					int pixel_value = selectedmatrix->Grid[row * matrix->Details.Width + x];
+
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + row] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
 						{
-							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
-						}
+
+						output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Binary, L"", L" ");
 
 						dataout.Count += 3;
 					}
 					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
 						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
-						}
-						else
-						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
 
-			//          if x <> matrix->DetailsWidth - 1 then
-						output += spacingchar;
+						output += IntToHex(ColourUtility::RGBConvertTo32(pixel_value, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+
+						output += L" ";
 
 						dataout.Count++;
 					}
@@ -742,34 +633,31 @@ namespace ExportOutputBinary
 		{
 			for (int x = matrix->Details.Width - 1; x >= 0; x--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
+					int pixel_value = selectedmatrix->Grid[row * matrix->Details.Width + x];
+
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
 						{
-							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
-						}
+
+						output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Binary, L"", L" ");
 
 						dataout.Count += 3;
 					}
 					else if (teo.Binary.Size == NumberSize::kRGB32bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + x] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
 						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
-						else
-						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + x], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
-                        }
 
-		  //        if x <> 0 then
-						output += spacingchar;
+						output += IntToHex(ColourUtility::RGBConvertTo32(pixel_value, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+
+						output += L" ";
 
 						dataout.Count++;
 					}
@@ -785,7 +673,113 @@ namespace ExportOutputBinary
 	}
 
 
-	DataOut BinaryExportColumnData(TheMatrix *matrix, ExportOptions teo, int frame, int col, const std::wstring spacingchar)
+	DataOut BinaryExportFrameDataByRowRGB3bpp(TheMatrix *matrix, ExportOptions teo, int frame)
+	{
+		DataOut dataout;
+		dataout.Clear();
+		std::wstring output = L"";
+		ScanDirection direction = teo.Code.Direction;
+
+		Matrix *selectedmatrix;
+
+		BitCounting bc;
+
+		auto baaBitStream = [&output, &teo](BitCounting &bc, int pixel, int test) -> void
+		{
+			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+
+			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+			{
+				p = powers[bc.bitcounter];
+			}
+
+			if ((pixel & test) == test)
+			{
+				bc.databyte += p;
+			}
+
+			if (bc.Next())
+			{
+				output += IntToHex(bc.databyte, 2) + L" ";
+
+				bc.Reset();
+			}
+		};
+
+		// ===================================================================
+
+		if (teo.ExportMode == ExportSource::kAnimation)
+		{
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+            }
+		}
+		else
+		{
+			selectedmatrix = matrix->MatrixUser[frame];
+		}
+
+
+		if (direction == ScanDirection::kRowLeftToRight)
+		{
+			bc.SetDirection(_BitCountDirectionDown, 7);
+
+			for (int row = 0; row < matrix->Details.Height; row++)
+			{
+				for (int pixel = 0; pixel < matrix->Details.Width; pixel++)
+				{
+					if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+					{
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 4);
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 2);
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 1);
+					}
+				}
+			}
+		}
+		else if (direction == ScanDirection::kRowRightToLeft)
+		{
+			bc.SetDirection(_BitCountDirectionUp, 7);
+
+			for (int row = 0; row < matrix->Details.Height; row++)
+			{
+				for (int pixel = matrix->Details.Width - 1; pixel >= 0; pixel--)
+				{
+					if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+					{
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 4);
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 2);
+						baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 1);
+					}
+				}
+			}
+		}
+
+		if (!bc.IsStartingPosition())
+		{
+			output += IntToHex(bc.databyte, 2) + L" ";
+
+			bc.outputcount++;
+		}
+
+		// ===================================================================
+
+		dataout.Count = bc.outputcount;
+
+		dataout.Data[0] = output;
+
+		return dataout;
+	}
+
+
+	DataOut BinaryExportColumnData(TheMatrix *matrix, ExportOptions teo, int frame, int col)
 	{
 		std::wstring s = L"";
 		DataOut dataout;
@@ -798,7 +792,7 @@ namespace ExportOutputBinary
 		int bitcounter = 0;
 		int dataindex  = 0;
 
-        ia.Data[dataindex] = 0;
+		ia.Data[dataindex] = 0;
 
 		int bits = teo.GetNumberSizeLength(teo.Binary.Size);
 		int pads = teo.GetNumberSizePadLength(teo.Binary.Size);
@@ -830,58 +824,7 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-                }
-				break;
-			}
-		}
-		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-                }
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionColumn(direction, teo.Binary.Orientation, matrix->Details.Width, col);
 
 		// ===================================================================
 
@@ -889,7 +832,7 @@ namespace ExportOutputBinary
 		{
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
@@ -926,7 +869,7 @@ namespace ExportOutputBinary
 		{
 			for (int y = matrix->Details.Height - 1; y >= 0; y--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
@@ -968,48 +911,9 @@ namespace ExportOutputBinary
 		{
 			if (ia.Data[y] != -1)
 			{
-				switch (teo.Binary.Size)
-				{
-				case NumberSize::k8bitSwap:		// swap nybbles
-				{
-					std::wstring b = L"XX";
+				ia.SwapData(y, teo.Binary.Size);
 
-					s = IntToHex(ia.Data[y], 2);
-
-					b[0] = s[1];
-					b[1] = s[0];
-
-					ia.Data[y] = Convert::HexToInt(b);
-					break;
-				}
-				case NumberSize::k16bitSwap:	// swap bytes
-				{
-					std::wstring b = L"XXXX";
-
-					s = IntToHex(ia.Data[y], 4);
-
-					b[0] = s[2];
-					b[1] = s[3];
-					b[2] = s[0];
-					b[3] = s[1];
-
-					ia.Data[y] = Convert::HexToInt(b);
-					break;
-				}
-				}
-
-				switch (teo.Binary.Format)
-				{
-				case NumberFormat::kDecimal:
-					dataout.Data[y] = std::to_wstring(ia.Data[y]);
-					break;
-				case NumberFormat::kBinary:
-					dataout.Data[y] = Convert::IntegerToBinary(bits, ia.Data[y]);
-					break;
-				case NumberFormat::kHex:
-					dataout.Data[y] = IntToHex(ia.Data[y], pads);
-					break;
-				}
+				dataout.Data[y] = ExportUtility::FormatDataAs(ia.Data[y], teo.Binary.Format, bits, pads);
 			}
 		}
 
@@ -1017,7 +921,7 @@ namespace ExportOutputBinary
 	}
 
 
-	DataOut BinaryExportColumnDataRGB(TheMatrix *matrix, ExportOptions teo, int frame, int col, const std::wstring spacingchar)
+	DataOut BinaryExportColumnDataRGB(TheMatrix *matrix, ExportOptions teo, int frame, int col)
 	{
 		Matrix *selectedmatrix;
 
@@ -1047,58 +951,7 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.Binary.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
-		else if (teo.Binary.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionColumn(direction, teo.Binary.Orientation, matrix->Details.Width, col);
 
 		// ===================================================================
 
@@ -1106,18 +959,18 @@ namespace ExportOutputBinary
 		{
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
+					int pixel_value = selectedmatrix->Grid[y * matrix->Details.Width + col];
+
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
 						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
-							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
-						}
+
+						output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Binary, L"", L" ");
 
 						dataout.Count += 3;
 					}
@@ -1125,14 +978,12 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
-						}
-						else
-						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
 
-						output += spacingchar;
+						output += IntToHex(ColourUtility::RGBConvertTo32(pixel_value, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+
+						output += L" ";
 
 						dataout.Count++;
 					}
@@ -1143,18 +994,18 @@ namespace ExportOutputBinary
 		{
 			for (int y = matrix->Details.Height - 1; y >= 0; y--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
+					int pixel_value = selectedmatrix->Grid[y * matrix->Details.Width + col];
+
 					if (teo.Binary.Size == NumberSize::kRGB8bit)
 					{
-						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
+						if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
 						{
-							output += ColourUtility::RGBConvertToSplit(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.RGBBrightness, teo.Binary.Format, L"", spacingchar, teo.Binary.ColourSpaceRGB);
-                        }
+
+						output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Binary, L"", L" ");
 
 						dataout.Count += 3;
 					}
@@ -1162,14 +1013,12 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.RGBChangePixels && selectedmatrix->Grid[y * matrix->Details.Width + col] == matrix->RGBBackground)
 						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(teo.Binary.RGBChangeColour, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
-						}
-						else
-						{
-							output += IntToHex(ColourUtility::RGBConvertTo32(selectedmatrix->Grid[y * matrix->Details.Width + col], teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+							pixel_value = teo.Binary.RGBChangeColour;
 						}
 
-						output += spacingchar;
+						output += IntToHex(ColourUtility::RGBConvertTo32(pixel_value, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+
+						output += L" ";
 
 						dataout.Count++;
 					}
@@ -1178,6 +1027,111 @@ namespace ExportOutputBinary
 		}
 
 		// ===================================================================
+
+		dataout.Data[0] = output;
+
+		return dataout;
+	}
+
+
+	DataOut BinaryExportFrameDataByColumnRGB3bpp(TheMatrix *matrix, ExportOptions teo, int frame)
+	{
+		DataOut dataout;
+		dataout.Clear();
+		std::wstring output = L"";
+		ScanDirection direction = teo.Code.Direction;
+
+		Matrix *selectedmatrix;
+
+		BitCounting bc;
+
+		auto baaBitStream = [&output, &teo](BitCounting &bc, int pixel, int test) -> void
+		{
+			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+
+			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+			{
+				p = powers[bc.bitcounter];
+			}
+
+			if ((pixel & test) == test)
+			{
+				bc.databyte += p;
+			}
+
+			if (bc.Next())
+			{
+				output += IntToHex(bc.databyte, 2) + L" ";
+
+				bc.Reset();
+			}
+		};
+
+		// ===================================================================
+
+		if (teo.ExportMode == ExportSource::kAnimation)
+		{
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+			}
+			else
+			{
+				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				selectedmatrix = matrix->MatrixMerge;
+            }
+		}
+		else
+		{
+			selectedmatrix = matrix->MatrixUser[frame];
+		}
+
+		if (direction == ScanDirection::kColTopToBottom)
+		{
+			bc.SetDirection(_BitCountDirectionDown, 7);
+
+			for (int col = 0; col < matrix->Details.Width; col++)
+			{
+				for (int pixel = 0; pixel < matrix->Details.Height; pixel++)
+				{
+					if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+					{
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 4);
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 2);
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 1);
+					}
+				}
+			}
+		}
+		else if (direction == ScanDirection::kColBottomToTop)
+		{
+			bc.SetDirection(_BitCountDirectionUp, 7);
+
+			for (int col = 0; col < matrix->Details.Width; col++)
+			{
+				for (int pixel = matrix->Details.Height - 1; pixel >= 0; pixel--)
+				{
+					if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+					{
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 4);
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 2);
+						baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 1);
+					}
+				}
+			}
+		}
+
+		if (!bc.IsStartingPosition())
+		{
+			output += IntToHex(bc.databyte, 2) + L" ";
+
+			bc.outputcount++;
+		}
+
+		// ===================================================================
+
+		dataout.Count = bc.outputcount;
 
 		dataout.Data[0] = output;
 

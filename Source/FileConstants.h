@@ -35,7 +35,7 @@
 	static const std::wstring kFilePrefixRGB3BPP = L"anim5";
 
 	static const std::wstring kFileHeaderColours = L"colours";
-	static const std::wstring kFileHeaderDeadPixel = L"deadpixel";
+	static const std::wstring kFileHeaderIgnoredPixel = L"deadpixel";   // DO NOT EDIT THIS
 	static const std::wstring kFileHeaderFontHeader = L"fontheader";
 	static const std::wstring kFileHeaderFontRGB = L"fontRGB";
 	static const std::wstring kFileHeaderHeader = L"header";
@@ -107,7 +107,7 @@
 	static const wchar_t kAnimRowData = L'r';
 	static const wchar_t kAnimFrameLocked = L'p';
 
-	static const wchar_t kAnimDeadPixelData = L'p';
+	static const wchar_t kAnimIgnoredPixelData = L'p';
 
 	static const wchar_t kAnimBrushColours = L'c';
 
@@ -173,7 +173,7 @@
 	static const std::wstring kAnimRowDataF = L"r:";
 	static const std::wstring kAnimFrameLockedF = L"p:";
 
-	static const std::wstring kAnimDeadPixelDataF = L"p:";
+	static const std::wstring kAnimIgnoredPixelDataF = L"p:";
 
 	static const std::wstring kAnimBrushColoursF = L"c:";
 

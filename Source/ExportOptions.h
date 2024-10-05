@@ -622,6 +622,34 @@ struct ExportOptions
 
 	//
 
+
+	int NybblesFromNumberSize()
+	{
+		switch (Code.Size)
+		{
+		case NumberSize::k8Bit:
+			return 2;
+		case NumberSize::k16bit:
+			return 4;
+		case NumberSize::k32bit:
+			return 8;
+		case NumberSize::k8bitSwap:
+			return 2;
+		case NumberSize::k16bitSwap:
+			return 4;
+		case NumberSize::k64bit:
+			return 16;
+		case NumberSize::kRGB8bit:
+			return 2;
+		case NumberSize::kRGB16bit:
+			return 4;
+		case NumberSize::kRGB32bit:
+			return 8;
+		}
+
+		return 1;
+	}
+
 	void SourceFromInt(int i)
 	{
 		switch (i)

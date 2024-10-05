@@ -164,7 +164,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 
 	// =======================================================================
 
-	int uos = data.size() * teo.GetNumberSizeLengthBytes(teo.Code.Size); // check these two values... to do
+	int uos = data.size() * teo.GetNumberSizeLengthBytes(teo.Code.Size);
 
 	int os  = teo.GetNumberSizeLengthBytes(teo.Code.Size) * unique_items.size() + (data.size() * indexdatasize);             // lut size of data
 

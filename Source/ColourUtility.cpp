@@ -142,7 +142,7 @@ namespace ColourUtility
 	}
 
 
-	std::wstring RGBColourNumberFormat(NumberFormat nf, int nybbles, int colour)
+	std::wstring RGBColourNumberFormat(NumberFormat nf, int nybbles, unsigned int colour)
 	{
 		switch (nf)
 		{
@@ -159,6 +159,178 @@ namespace ColourUtility
 		}
 
 		return L"errorRGBCNF";
+	}
+
+
+// converts windows format colour to separate R G B values
+	// eg ff0000 (blue)
+	// => 00 00 ff
+	// and converts to different colour space as required
+	std::wstring RGBConvertToSplit(int rgb, BinaryOptions& co, const std::wstring prefix,  const std::wstring spacer)
+	{
+		int r = (rgb & 0x0000ff);         // Windows colour structure = BGR
+		int b = (rgb & 0xff0000) >> 16;
+		int g = (rgb & 0x00ff00) >> 8;
+
+		int colour = 0;
+
+		if (co.RGBBrightness != 100)
+		{
+			r = std::round(((double)co.RGBBrightness / 100) * (double)r);
+			g = std::round(((double)co.RGBBrightness / 100) * (double)g);
+			b = std::round(((double)co.RGBBrightness / 100) * (double)b);
+		}
+
+		switch (co.ColourSpaceRGB)
+		{
+		case ColourSpace::kRGB32:
+		{
+			switch (co.RGBFormat)
+			{
+			case RGBMode::kRGB:
+				return prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer;
+			case RGBMode::kBGR:
+				return prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer;
+			case RGBMode::kGRB:
+				return prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer;
+			case RGBMode::kBRG:
+				return prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer;
+			case RGBMode::kRGBSimple:
+				return std::to_wstring(r) + spacer + std::to_wstring(g) + spacer + std::to_wstring(b);
+
+			default:
+				return prefix + L"00" + spacer + prefix + L"00" + spacer + prefix + L"00" + spacer;   // !
+			}
+			break;
+		}
+		case ColourSpace::kRGB565:
+		{
+			r = std::round((r / 255) * 31); // 5 bits
+			g = std::round((g / 255) * 63); // 6 bits
+			b = std::round((b / 255) * 31); // 5 bits
+
+			switch (co.RGBFormat)
+			{
+			case RGBMode::kRGB:
+				colour = (r << 11) + (g << 5) + b;
+				break;
+			case RGBMode::kBGR:
+				colour = (b << 11) + (g << 5) + r;
+				break;
+			case RGBMode::kGRB:
+				colour = (g << 10) + (r << 5) + b;
+				break;
+			case RGBMode::kBRG:
+				colour = (b << 11) + (r << 6) + g;
+				break;
+			case RGBMode::kRGBSimple:
+				colour = (r << 11) + (g << 5) + b;
+				break;
+
+			default:
+				colour = 0;
+			}
+
+			return prefix + RGBColourNumberFormat(co.Format, 2, (colour >> 8)) + spacer +
+				   prefix + RGBColourNumberFormat(co.Format, 2, (colour & 0x00FF)) + spacer;
+		}
+		}
+
+		return L"errorRGBCTS";
+	}
+
+
+	// converts windows format colour to separate R G B values
+	// eg ff0000 (blue)
+	// => 00 00 ff
+	// and converts to different colour space as required
+	std::wstring RGBConvertToSplit(int rgb, CodeOptions& co, const std::wstring prefix,  const std::wstring spacer)
+	{
+		int r = (rgb & 0x0000ff);         // Windows colour structure = BGR
+		int b = (rgb & 0xff0000) >> 16;
+		int g = (rgb & 0x00ff00) >> 8;
+
+		int colour = 0;
+
+		if (co.RGBBrightness != 100)
+		{
+			r = std::round(((double)co.RGBBrightness / 100) * (double)r);
+			g = std::round(((double)co.RGBBrightness / 100) * (double)g);
+			b = std::round(((double)co.RGBBrightness / 100) * (double)b);
+		}
+
+		switch (co.ColourSpaceRGB)
+		{
+		case ColourSpace::kRGB32:
+		{
+			switch (co.RGBFormat)
+			{
+			case RGBMode::kRGB:
+				return prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer;
+			case RGBMode::kBGR:
+				return prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer;
+			case RGBMode::kGRB:
+				return prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer;
+			case RGBMode::kBRG:
+				return prefix + RGBColourNumberFormat(co.Format, 2, b) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, r) + spacer +
+					   prefix + RGBColourNumberFormat(co.Format, 2, g) + spacer;
+			case RGBMode::kRGBSimple:
+				return std::to_wstring(r) + spacer + std::to_wstring(g) + spacer + std::to_wstring(b);
+
+			default:
+				return prefix + L"00" + spacer + prefix + L"00" + spacer + prefix + L"00" + spacer;   // !
+			}
+			break;
+		}
+		case ColourSpace::kRGB565:
+		{
+			r = std::round((r / 255) * 31); // 5 bits
+			g = std::round((g / 255) * 63); // 6 bits
+			b = std::round((b / 255) * 31); // 5 bits
+
+			switch (co.RGBFormat)
+			{
+			case RGBMode::kRGB:
+				colour = (r << 11) + (g << 5) + b;
+				break;
+			case RGBMode::kBGR:
+				colour = (b << 11) + (g << 5) + r;
+				break;
+			case RGBMode::kGRB:
+				colour = (g << 10) + (r << 5) + b;
+				break;
+			case RGBMode::kBRG:
+				colour = (b << 11) + (r << 6) + g;
+				break;
+			case RGBMode::kRGBSimple:
+				colour = (r << 11) + (g << 5) + b;
+				break;
+
+			default:
+				colour = 0;
+			}
+
+			return prefix + RGBColourNumberFormat(co.Format, 2, (colour >> 8)) + spacer +
+				   prefix + RGBColourNumberFormat(co.Format, 2, (colour & 0x00FF)) + spacer;
+		}
+		}
+
+		return L"errorRGBCTS";
 	}
 
 
@@ -248,57 +420,9 @@ namespace ColourUtility
 	}
 
 
-	std::wstring RGB3BPPFormatOutput(int r, int g, int b, RGBMode rgbmode, NumberFormat nf, NumberSize ns, int brightness, const std::wstring prefix, const std::wstring spacer)
+	std::wstring RGB3BPPFormatOutput(unsigned int value, CodeOptions& co, const std::wstring prefix, const std::wstring spacer, int nybbles)
 	{
-		if (ns == NumberSize::kRGB8bit)
-		{
-			switch (rgbmode)
-			{
-			case RGBMode::kRGB:
-				return prefix + RGBColourNumberFormat(nf, 2, r) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, g) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, b) + spacer;
-			case RGBMode::kBGR:
-				return prefix + RGBColourNumberFormat(nf, 2, b) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, g) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, r) + spacer;
-			case RGBMode::kGRB:
-				return prefix + RGBColourNumberFormat(nf, 2, g) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, r) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, b) + spacer;
-			case RGBMode::kBRG:
-				return prefix + RGBColourNumberFormat(nf, 2, b) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, r) + spacer +
-					   prefix + RGBColourNumberFormat(nf, 2, g) + spacer;
-
-			default:
-				return L"errorFO";
-			}
-		}
-		else
-		{
-			switch (rgbmode)
-			{
-			case RGBMode::kRGB:
-				return prefix + RGBColourNumberFormat(NumberFormat::kHex, 2, r) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, g) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, b) + spacer;
-			case RGBMode::kBGR:
-				return prefix + RGBColourNumberFormat(NumberFormat::kHex, 2, b) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, g) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, r) + spacer;
-			case RGBMode::kGRB:
-				return prefix + RGBColourNumberFormat(NumberFormat::kHex, 2, g) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, r) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, b) + spacer;
-			case RGBMode::kBRG:
-				return prefix + RGBColourNumberFormat(NumberFormat::kHex, 2, b) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, r) +
-					   RGBColourNumberFormat(NumberFormat::kHex, 2, g) + spacer;
-			}
-		}
-
-        return L"errorFOx";
+		return prefix + RGBColourNumberFormat(co.Format, nybbles, value) + spacer;
 	}
 
 

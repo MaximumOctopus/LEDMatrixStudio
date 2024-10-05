@@ -15,6 +15,8 @@
 
 #include "ExportOptions.h"
 
+	enum class ImportColourMode { kMono = 0, kRGB = 1, kRGB3bpp = 2 };
+	enum class ImportMode { kInvalid = 0, kSingleImage, kMultipleImages };
 
 	enum class ViewShape { kSquare = 0, kRadial, kRadial3Q, kSemiCircle, kSemiCircleInverted };
 	enum class MirrorMode { kOff = 0, kHorizontal, kVertical };
@@ -32,7 +34,7 @@
 	enum class LoadMode { kNew = 0, kAppend, kMergeBottomPriority, kMergeTopPriority, kMergeNewLayer, kMergeCurrentLayer };
 
 	enum class LoadData { kUnknown = 0,
-					  kLoadBlockStartHeader, kLoadBlockStartDeadPixel, kLoadBlockBegin, kLoadBlockEnd, kLoadBlockBeginLayout, kLoadBlockEndLayout, kLoadBlockStartColours,
+					  kLoadBlockStartHeader, kLoadBlockStartIgnoredPixel, kLoadBlockBegin, kLoadBlockEnd, kLoadBlockBeginLayout, kLoadBlockEndLayout, kLoadBlockStartColours,
 					  kLoadHeaderSource, kLoadHeaderSourceLSB, kLoadHeaderSourceDirection, kLoadHeaderPadMode, kLoadHeaderHexFormat, kLoadHeaderHexOutput, kLoadHeaderBrackets,
 					  kLoadHeaderDataSource, kLoadHeaderOrientation, kLoadHeaderScanDirection, kLoadHeaderLSB, kLoadHeaderLanguage, kLoadHeaderNumberFormat, kLoadHeaderNumberSize, kLoadHeaderLineContent, kLoadHeaderLineCount, kLoadHeaderRGBMode, kLoadHeaderRGBChangePixels, kLoadHeaderRGBChangeColour, kLoadHeaderOptimise,
 					  kLoadHeaderMatrixComment, kLoadHeaderRGBBackground, kLoadHeaderASCIIIndex, kLoadHeaderAutomationFile,
@@ -41,7 +43,7 @@
 					  kLoadHeaderPreviewEnabled, kLoadHeaderPreviewSize, kLoadHeaderPreviewView, kLoadHeaderPreviewVoid, kLoadHeaderPreviewOffset, kLoadHeaderPreviewOffsetDir, kLoadHeaderPreviewIncRadially,
 					  kLoadHeaderLayerCount,
 					  kLoadMatrixWidth, kLoadMatrixHeight, kLoadMatrixData, kLoadMatrixLocked,
-					  kLoadDeadPixelData,
+					  kLoadIgnoredPixelData,
 					  kLoadLayoutName, kLoadLayoutWidth, kLoadLayoutHeight, kLoadLayoutLocked,
 					  kLoadColoursCustom, kLoadColoursDraw0, kLoadColoursDraw1, kLoadColoursDraw2, kLoadColoursPaletteHistory,
 					  kLoadHeaderBinaryData };

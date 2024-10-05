@@ -6,35 +6,35 @@
 //---------------------------------------------------------------------------
 #include <Vcl.Styles.hpp>
 #include <Vcl.Themes.hpp>
-USEFORM("Frames\FrameUndoPanel.cpp", frameUndos); /* TFrame: File Type */
-USEFORM("Frames\FrameLayerPanel.cpp", frameLayers); /* TFrame: File Type */
-USEFORM("Frames\FramePalettePanel.cpp", framePalette); /* TFrame: File Type */
 USEFORM("Frames\FrameQuickData.cpp", Frame5); /* TFrame: File Type */
-USEFORM("Forms\FormNewProject.cpp", frmNewProject);
+USEFORM("Frames\FrameUndoPanel.cpp", frameUndos); /* TFrame: File Type */
+USEFORM("main.cpp", frmMain);
+USEFORM("Frames\FramePalettePanel.cpp", framePalette); /* TFrame: File Type */
 USEFORM("Forms\FormOptimise.cpp", frmOptimise);
 USEFORM("Forms\FormPlaybackSpeed.cpp", frmPlaybackSpeed);
-USEFORM("Forms\FormImportBitmap.cpp", frmImportBitmap);
+USEFORM("Forms\FormPreferences.cpp", frmPreferences);
 USEFORM("Forms\FormMerge.cpp", frmMerge);
 USEFORM("Forms\FormNewBrush.cpp", frmNewBrush);
-USEFORM("Forms\FormPreferences.cpp", frmPreferences);
-USEFORM("Forms\FormToggleLockStatus.cpp", frmToggleLockStatus);
+USEFORM("Forms\FormNewProject.cpp", frmNewProject);
+USEFORM("Forms\FormPreviewPopout.cpp", frmPreviewPopout);
 USEFORM("Frames\FrameFontPanel.cpp", frameFont); /* TFrame: File Type */
 USEFORM("Frames\FrameGradientPanel.cpp", frameGradient); /* TFrame: File Type */
-USEFORM("Forms\FormPreviewPopout.cpp", frmPreviewPopout);
+USEFORM("Frames\FrameLayerPanel.cpp", frameLayers); /* TFrame: File Type */
 USEFORM("Forms\FormSaveRange.cpp", frmSaveRange);
 USEFORM("Forms\FormSetIgnoredPixels.cpp", frmSetIgnoredPixels);
-USEFORM("main.cpp", frmMain);
-USEFORM("Forms\FormAddLayer.cpp", Form3);
+USEFORM("Forms\FormToggleLockStatus.cpp", frmToggleLockStatus);
 USEFORM("Forms\FormAutomate.cpp", frmAutomate);
 USEFORM("Forms\FormCheckVersion.cpp", frmCheckVersion);
-USEFORM("Forms\FormAbout.cpp", frmAbout);
 USEFORM("Forms\FormColourChange.cpp", frmColourChange);
-USEFORM("Forms\FormExportCode.cpp", frmExportCode);
+USEFORM("Forms\FormAbout.cpp", frmAbout);
+USEFORM("Forms\FormAddLayer.cpp", Form3);
+USEFORM("Forms\FormCopyMultiple.cpp", frmCopyMultiple);
 USEFORM("Forms\FormExportGIF.cpp", frmExportGIF);
 USEFORM("Forms\FormFontViewer.cpp", frmFontViewer);
-USEFORM("Forms\FormCopyMultiple.cpp", frmCopyMultiple);
+USEFORM("Forms\FormImportBitmap.cpp", frmImportBitmap);
 USEFORM("Forms\FormDeleteMultiple.cpp", frmDeleteMultiple);
 USEFORM("Forms\FormExport.cpp", frmExport);
+USEFORM("Forms\FormExportCode.cpp", frmExportCode);
 //---------------------------------------------------------------------------
 #include "LanguageHandler.h"
 #include "SystemSettings.h"

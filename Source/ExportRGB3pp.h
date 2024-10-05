@@ -34,6 +34,6 @@ namespace ExportRGB3BPP
 {
 	bool CreateExportAnimationRGB3BPP(TheMatrix *matrix, ExportOptions, std::vector<std::wstring> &, int&, std::vector<std::wstring> &);
 
-	DataOut ExportColumnDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring);
-	DataOut ExportRowDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring);
+	DataOut ExportColumnDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring, int);
+	DataOut ExportRowDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring, int);
 }

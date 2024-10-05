@@ -29,7 +29,7 @@
 #include "Layer.h"
 #include "Matrix.h"
 #include "MatrixConstants.h"
-#include "MatrixDead.h"
+#include "MatrixIgnored.h"
 #include "PreviewSettings.h"
 
 #define _FrameTimer 0
@@ -41,6 +41,7 @@ typedef void __fastcall (__closure *MouseOverEvent)(int, int);
 typedef void __fastcall (__closure *DebugEvent)(std::wstring);
 
 enum class MergeFrameMode { kRetainGridValue = 0, kConvertForRender, kConvertForFileOutput };
+
 
 struct MatrixDetails
 {
@@ -105,7 +106,8 @@ private:
 	int CurrentLayer = 0;
 	int LightBox = 0;
 	int RandomCoeff = 30;
-	bool DeadPixelsMode = false;
+	bool IgnoredPixelsMode = false;
+    bool HideIgnoredPixels = true;
 	bool MatrixReadOnly = false;
 	SoftwareMode Software = SoftwareMode::kAnimation;
 
@@ -150,9 +152,9 @@ private:
 	void __fastcall Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift, int X, int Y);
 	void __fastcall Shape1MouseUpRGB(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
 
-	void __fastcall ClickPixelDeadPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
-	void __fastcall Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState Shift, int X, int Y);
-	void __fastcall Shape1MouseUpDeadPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+	void __fastcall ClickPixelIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+	void __fastcall Shape1MouseMoveIgnoredPixel(TObject *Sender, TShiftState Shift, int X, int Y);
+	void __fastcall Shape1MouseUpIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
 
 	int GetPreviewPixelSize(int);
 
@@ -171,7 +173,7 @@ private:
 	void __fastcall PaintBoxUpdate(TObject *Sender);
 	void __fastcall PaintBoxUpdateRGB(TObject *Sender);
 	void __fastcall PaintBoxUpdateRGB_3BPP(TObject *Sender);
-	void __fastcall PaintBoxUpdateDeadPixel(TObject *Sender);
+	void __fastcall PaintBoxUpdateIgnoredPixel(TObject *Sender);
 
 	void DrawWithBrush(int Index, int x, int y);
 	void DrawWithBrushMulti(int Index, int x, int y);
@@ -203,6 +205,7 @@ public:
 	std::function<void(TheMatrix*)> OnDisplayBufferCopied;
 	std::function<void(TheMatrix*)> OnNewFrameDisplayed;
 	std::function<void(TheMatrix*)> OnColourChange;
+	std::function<void(TheMatrix*)> OnNew3bppColours;
 	std::function<void(int, int)> OnMouseOver;
 	std::function<void(int, int)> OnPreviewMouseDown;
 	// use this to send debug data from the component to screen or file based on your needs
@@ -243,7 +246,7 @@ public:
 
 	Matrix *MatrixBackup;
 	Matrix *MatrixCopy;
-	MatrixDead *MatrixDeadLayout;
+	MatrixIgnored *MatrixIgnoredLayout;
 	Matrix *MatrixRender;
 	Matrix *MatrixMerge;
 
@@ -300,10 +303,11 @@ public:
 	void BackupMatrix(int, int);
 	void BackupMatrix();            				// backs up current frame, current layer
 
-	void SetDeadPixels(int);
-	void SetDeadPixelsFromCustomShape(CustomShape, int);
-	void SetDeadPixelsFromFileName(const std::wstring);
-	void SaveDeadPixels(const std::wstring);
+	void SetIgnoredPixels(int);
+	void SetIgnoredPixelsFromCustomShape(CustomShape, int);
+	void SetIgnoredPixelsFromFileName(const std::wstring);
+	void SaveIgnoredPixels(const std::wstring);
+	void ToggleIgnoredPixels(bool);
 
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
@@ -373,7 +377,7 @@ public:
 	void SetCurrentLayer(int);
 	void SetLightBox(int);
 	void ChangeGrid(bool);
-	void SetDeadPixelsMode(bool);
+	void SetIgnoredPixelsMode(bool);
 
 	void RefreshCurrentFrame();
 
@@ -388,8 +392,11 @@ public:
 	void ImportRowData(bool, int, int, const std::wstring);
 	void ImportColumnData(bool, int, int, const std::wstring);
 	ImportData ImportLEDMatrixDataSingleFrame(const std::wstring);
-	ImportData ImportFromBMPSingleImage(const std::wstring, int, int, int, bool, bool);
-	ImportData ImportFromBMPMultipleImage(const std::wstring, int, int, int, int, int, bool, bool);
+    bool ProcessRGB3bppColours(TCanvas*, std::vector<int> &, int, int);
+	void ImportFromFrame(TCanvas*, ImportColourMode, int, int, int, int, std::vector<int> &);
+	ImportData ImportFromBMPSingleImage(const std::wstring, int, int, int, ImportColourMode, bool);
+	ImportData ImportFromBMPMultipleImage(const std::wstring, int, int, int, int, int, ImportColourMode, bool);
+
 	bool ExportToBitmap(const std::wstring);
 	bool ExportAnimationToBitmap(const std::wstring);
 
@@ -471,7 +478,7 @@ public:
     int GradientBrushCount();
 
 	int GetFrameCount();
-	bool GetDeadPixelsMode();
+	bool GetIgnoredPixelsMode();
 	SoftwareMode GetSoftwareMode();
 
 	int GetAutoPixelSize(int, int, int);

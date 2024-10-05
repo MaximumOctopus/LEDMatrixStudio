@@ -2,8 +2,8 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'frmMain'
-  ClientHeight = 883
-  ClientWidth = 1496
+  ClientHeight = 877
+  ClientWidth = 1490
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,7 +27,7 @@ object frmMain: TfrmMain
   object Bevel20: TBevel
     Left = 0
     Top = 139
-    Width = 1496
+    Width = 1490
     Height = 4
     Align = alTop
     Shape = bsTopLine
@@ -36,8 +36,8 @@ object frmMain: TfrmMain
   end
   object pAnimationToolbar: TPanel
     Left = 0
-    Top = 834
-    Width = 1496
+    Top = 828
+    Width = 1490
     Height = 30
     Align = alBottom
     Color = clWhite
@@ -45,10 +45,8 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    ExplicitTop = 828
-    ExplicitWidth = 1490
     DesignSize = (
-      1496
+      1490
       30)
     object lFrame: TLabel
       Left = 204
@@ -211,7 +209,7 @@ object frmMain: TfrmMain
     object tbFrames: TTrackBar
       Left = 622
       Top = 1
-      Width = 869
+      Width = 863
       Height = 28
       Anchors = [akLeft, akTop, akRight]
       Enabled = False
@@ -224,7 +222,6 @@ object frmMain: TfrmMain
       TickStyle = tsNone
       OnChange = tbFramesChange
       OnTracking = tbFramesTracking
-      ExplicitWidth = 863
     end
     object bStartFrame: TBitBtn
       Tag = 2
@@ -299,58 +296,50 @@ object frmMain: TfrmMain
   end
   object statusMain: TStatusBar
     Left = 0
-    Top = 864
-    Width = 1496
+    Top = 858
+    Width = 1490
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 858
-    ExplicitWidth = 1490
   end
   object pbFont: TPanel
-    Left = 1192
+    Left = 1186
     Top = 143
     Width = 100
-    Height = 691
+    Height = 685
     Align = alRight
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
     Visible = False
-    ExplicitLeft = 1186
-    ExplicitHeight = 685
     object pASCIICode: TPanel
       Left = 1
-      Top = 665
+      Top = 659
       Width = 98
       Height = 25
       Align = alBottom
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitTop = 659
     end
   end
   object pRGBPalette: TPanel
-    Left = 1292
+    Left = 1286
     Top = 143
     Width = 204
-    Height = 691
+    Height = 685
     Align = alRight
     Color = clWhite
     ParentBackground = False
     TabOrder = 3
     Visible = False
-    ExplicitLeft = 1286
-    ExplicitHeight = 685
     object PageControl1: TPageControl
       Left = 1
       Top = 1
       Width = 202
-      Height = 689
+      Height = 683
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
-      ExplicitHeight = 683
       object tsPalette: TTabSheet
         Caption = '.'
       end
@@ -363,7 +352,7 @@ object frmMain: TfrmMain
   object panelTop: TPanel
     Left = 0
     Top = 0
-    Width = 1496
+    Width = 1490
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -374,7 +363,6 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 4
-    ExplicitTop = -2
     object sbBuild: TSpeedButton
       Left = 4
       Top = 2
@@ -543,7 +531,7 @@ object frmMain: TfrmMain
   object panelMiddle: TPanel
     Left = 0
     Top = 27
-    Width = 1496
+    Width = 1490
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -553,7 +541,6 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 5
-    ExplicitWidth = 1490
     object sbClear: TSpeedButton
       Left = 4
       Top = 2
@@ -755,7 +742,7 @@ object frmMain: TfrmMain
   object paneTools: TPanel
     Left = 0
     Top = 54
-    Width = 1496
+    Width = 1490
     Height = 27
     Align = alTop
     BevelOuter = bvNone
@@ -765,7 +752,6 @@ object frmMain: TfrmMain
     ParentShowHint = False
     ShowHint = True
     TabOrder = 6
-    ExplicitWidth = 1490
     object sbMouseMode: TSpeedButton
       Left = 0
       Top = 3
@@ -1212,8 +1198,8 @@ object frmMain: TfrmMain
   object pCanvas: TPanel
     Left = 0
     Top = 143
-    Width = 743
-    Height = 691
+    Width = 737
+    Height = 685
     Align = alClient
     BevelOuter = bvNone
     Color = 3355443
@@ -1225,24 +1211,20 @@ object frmMain: TfrmMain
     StyleElements = [seFont, seBorder]
     OnMouseDown = pCanvasMouseDown
     OnMouseMove = pCanvasMouseMove
-    ExplicitWidth = 737
-    ExplicitHeight = 685
   end
   object pLayers: TPanel
-    Left = 743
+    Left = 737
     Top = 143
     Width = 232
-    Height = 691
+    Height = 685
     Align = alRight
     TabOrder = 8
     Visible = False
-    ExplicitLeft = 737
-    ExplicitHeight = 685
   end
   object pCurrentColours: TPanel
     Left = 0
     Top = 81
-    Width = 1496
+    Width = 1490
     Height = 24
     Align = alTop
     BevelOuter = bvNone
@@ -1253,7 +1235,6 @@ object frmMain: TfrmMain
     ShowHint = True
     TabOrder = 9
     Visible = False
-    ExplicitWidth = 1490
     object sSelectionMMB: TShape
       Tag = 2
       Left = 213
@@ -1523,7 +1504,7 @@ object frmMain: TfrmMain
   object panelRGBPalette: TPanel
     Left = 0
     Top = 105
-    Width = 1496
+    Width = 1490
     Height = 34
     Align = alTop
     BevelOuter = bvNone
@@ -1535,7 +1516,6 @@ object frmMain: TfrmMain
     ShowCaption = False
     ShowHint = True
     TabOrder = 10
-    ExplicitWidth = 1490
     object sRGBPalette1: TShape
       Left = 4
       Top = 14
@@ -2277,7 +2257,7 @@ object frmMain: TfrmMain
       BevelOuter = bvNone
       TabOrder = 0
       Visible = False
-      object Shape47: TShape
+      object sRGB3pp1: TShape
         Left = 9
         Top = 3
         Width = 18
@@ -2287,9 +2267,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clBlack
-        OnMouseDown = Shape47MouseDown
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape48: TShape
+      object sRGB3pp2: TShape
         Tag = 1
         Left = 30
         Top = 3
@@ -2300,8 +2280,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clBlue
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape49: TShape
+      object sRGB3pp3: TShape
         Tag = 2
         Left = 51
         Top = 3
@@ -2312,8 +2293,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clLime
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape50: TShape
+      object sRGB3pp4: TShape
         Tag = 3
         Left = 72
         Top = 3
@@ -2324,8 +2306,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clAqua
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape51: TShape
+      object sRGB3pp5: TShape
         Tag = 4
         Left = 93
         Top = 3
@@ -2336,8 +2319,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clRed
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape52: TShape
+      object sRGB3pp6: TShape
         Tag = 5
         Left = 114
         Top = 3
@@ -2348,8 +2332,9 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clFuchsia
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape53: TShape
+      object sRGB3pp7: TShape
         Tag = 6
         Left = 135
         Top = 3
@@ -2360,17 +2345,19 @@ object frmMain: TfrmMain
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
         Brush.Color = clYellow
+        OnMouseDown = sRGB3pp1MouseDown
       end
-      object Shape54: TShape
+      object sRGB3pp8: TShape
         Tag = 7
-        Left = 156
-        Top = 3
+        Left = 159
+        Top = 2
         Width = 18
         Height = 18
         Cursor = crHandPoint
         Hint = 
           'click with either mouse button to select (colour picker to chang' +
           'e colour)'
+        OnMouseDown = sRGB3pp1MouseDown
       end
     end
   end
@@ -2383,22 +2370,20 @@ object frmMain: TfrmMain
     Visible = False
   end
   object pQuickData: TPanel
-    Left = 975
+    Left = 969
     Top = 143
     Width = 217
-    Height = 691
+    Height = 685
     Align = alRight
     TabOrder = 12
     Visible = False
-    ExplicitLeft = 969
-    ExplicitHeight = 685
   end
   object miMain: TMainMenu
     AutoLineReduction = maManual
     Images = ilMenu
     Left = 712
     object File1: TMenuItem
-      Caption = 'File'
+      Caption = '.'
       object New1: TMenuItem
         Caption = '.'
         ImageIndex = 8
@@ -2515,7 +2500,7 @@ object frmMain: TfrmMain
       end
     end
     object Edit1: TMenuItem
-      Caption = 'Edit'
+      Caption = '.'
       object miUndo: TMenuItem
         Caption = '.'
         Enabled = False
@@ -2710,7 +2695,7 @@ object frmMain: TfrmMain
       end
     end
     object View1: TMenuItem
-      Caption = 'View'
+      Caption = '.'
       object miShowAnimationToolbar: TMenuItem
         AutoCheck = True
         Caption = '.'
@@ -2816,7 +2801,7 @@ object frmMain: TfrmMain
       end
     end
     object Preview1: TMenuItem
-      Caption = 'Preview'
+      Caption = '.'
       object miPreview: TMenuItem
         AutoCheck = True
         Caption = '.'
@@ -3143,7 +3128,7 @@ object frmMain: TfrmMain
       end
     end
     object Project1: TMenuItem
-      Caption = 'Project'
+      Caption = '.'
       object miClearAllFramesLayer: TMenuItem
         Caption = '.'
         Enabled = False
@@ -3184,14 +3169,14 @@ object frmMain: TfrmMain
       object N36: TMenuItem
         Caption = '-'
       end
-      object miDeadPixels: TMenuItem
+      object miIgnoredPixels: TMenuItem
         Caption = '.'
         Enabled = False
-        object miSetDeadPixels: TMenuItem
+        object miSetIgnoredPixels: TMenuItem
           Caption = '.'
           Enabled = False
           ShortCut = 123
-          OnClick = miSetDeadPixelsClick
+          OnClick = miSetIgnoredPixelsClick
         end
         object miSetIgnoredFromPattern: TMenuItem
           Caption = '.'
@@ -3201,21 +3186,31 @@ object frmMain: TfrmMain
         object N44: TMenuItem
           Caption = '-'
         end
-        object miClearAllDeadPixels: TMenuItem
+        object miClearAllIgnoredPixels: TMenuItem
           Caption = '.'
           Enabled = False
-          OnClick = miClearAllDeadPixelsClick
+          OnClick = miClearAllIgnoredPixelsClick
         end
         object N56: TMenuItem
           Caption = '-'
         end
-        object Savepattern1: TMenuItem
+        object miSaveIgnoredPixelsAsPattern: TMenuItem
           Caption = '.'
-          OnClick = Savepattern1Click
+          OnClick = miSaveIgnoredPixelsAsPatternClick
         end
-        object Loadpattern1: TMenuItem
+        object miLoadIgnoredPixelsAsPattern: TMenuItem
           Caption = '.'
-          OnClick = Loadpattern1Click
+          OnClick = miLoadIgnoredPixelsAsPatternClick
+        end
+        object N66: TMenuItem
+          Caption = '-'
+          Visible = False
+        end
+        object miHideIgnoredPixels: TMenuItem
+          AutoCheck = True
+          Caption = '.'
+          Visible = False
+          OnClick = miHideIgnoredPixelsClick
         end
       end
       object N43: TMenuItem
@@ -3263,7 +3258,7 @@ object frmMain: TfrmMain
       end
     end
     object Draw1: TMenuItem
-      Caption = 'Draw'
+      Caption = '.'
       object miMouseMode: TMenuItem
         Caption = '.'
         Enabled = False
@@ -3433,7 +3428,7 @@ object frmMain: TfrmMain
       end
     end
     object Frames1: TMenuItem
-      Caption = 'Frames'
+      Caption = '.'
       object miAddFrame: TMenuItem
         Caption = '.'
         Enabled = False
@@ -3469,7 +3464,7 @@ object frmMain: TfrmMain
       end
     end
     object Layers1: TMenuItem
-      Caption = 'Layers'
+      Caption = '.'
       object miToggleLayoutPanel: TMenuItem
         Caption = '.'
         ShortCut = 118
@@ -3494,7 +3489,7 @@ object frmMain: TfrmMain
       end
     end
     object Colours1: TMenuItem
-      Caption = 'Colours'
+      Caption = '.'
       object miChangeColoursFrame: TMenuItem
         Caption = '.'
         Enabled = False
@@ -3558,7 +3553,7 @@ object frmMain: TfrmMain
       end
     end
     object Buffer1: TMenuItem
-      Caption = 'Memories'
+      Caption = '.'
       object miCopyCurrentTo: TMenuItem
         Caption = '.'
         Enabled = False
@@ -3703,7 +3698,7 @@ object frmMain: TfrmMain
       end
     end
     object ools1: TMenuItem
-      Caption = 'Tools'
+      Caption = '.'
       object miAutoSave: TMenuItem
         Caption = '.'
         RadioItem = True
@@ -3764,8 +3759,8 @@ object frmMain: TfrmMain
         OnClick = miFontViewerClick
       end
     end
-    object About1: TMenuItem
-      Caption = 'Help'
+    object miHelp: TMenuItem
+      Caption = '.'
       object Help1: TMenuItem
         Caption = '.'
         ShortCut = 112

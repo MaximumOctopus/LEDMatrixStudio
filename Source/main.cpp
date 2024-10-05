@@ -104,6 +104,7 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	thematrix->OnDisplayBufferCopied = std::bind(MatrixOnDisplayBufferCopied, std::placeholders::_1);
 	thematrix->OnNewFrameDisplayed   = std::bind(MatrixOnNewFrameDisplayed, std::placeholders::_1);
 	thematrix->OnColourChange        = std::bind(MatrixOnColourChange, std::placeholders::_1);
+	thematrix->OnNew3bppColours      = std::bind(MatrixOnNew3bppColours, std::placeholders::_1);
 	thematrix->OnMouseOver           = std::bind(MatrixOnMouseOver, std::placeholders::_1, std::placeholders::_2);
 	thematrix->OnPreviewMouseDown    = std::bind(MatrixOnPreviewMouseDown, std::placeholders::_1, std::placeholders::_2);
 	thematrix->OnDebugEvent          = std::bind(MatrixOnDebug, std::placeholders::_1, std::placeholders::_2);
@@ -404,6 +405,9 @@ void TfrmMain::InitComponentCache()
 	_RGBPalette[8]  = sRGBPalette9; _RGBPalette[9]  = sRGBPalette10; _RGBPalette[10] = sRGBPalette11; _RGBPalette[11] = sRGBPalette12;
 	_RGBPalette[12] = sRGBPalette13; _RGBPalette[13] = sRGBPalette14; _RGBPalette[14] = sRGBPalette15; _RGBPalette[15] = sRGBPalette16;
 
+	_RGB3ppPalette[0] = sRGB3pp1; _RGB3ppPalette[1] = sRGB3pp2; _RGB3ppPalette[2] = sRGB3pp3; _RGB3ppPalette[3] = sRGB3pp4;
+	_RGB3ppPalette[4] = sRGB3pp5; _RGB3ppPalette[5] = sRGB3pp6; _RGB3ppPalette[6] = sRGB3pp7; _RGB3ppPalette[7] = sRGB3pp8;
+
 	_RGBShade[0] = sShade1; _RGBShade[1] = sShade2;  _RGBShade[2]  = sShade3;  _RGBShade[3]  = sShade4;  _RGBShade[4]  = sShade5;  _RGBShade[5]  = sShade6;  _RGBShade[6]  = sShade7;  _RGBShade[7] = sShade8;
 	_RGBShade[8] = sShade9; _RGBShade[9] = sShade10; _RGBShade[10] = sShade11; _RGBShade[11] = sShade12; _RGBShade[12] = sShade13; _RGBShade[13] = sShade14; _RGBShade[14] = sShade15; _RGBShade[15] = sShade16;
 
@@ -619,20 +623,20 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	miShiftDown->Enabled         = normal_true;
 	miAddComment->Enabled        = normal_true;
 
-	// bit of hack for when dead pixel mode active :)
-	if (thematrix->GetDeadPixelsMode())
+	// bit of hack for when ignored pixel mode active :)
+	if (thematrix->GetIgnoredPixelsMode())
 	{
-		miDeadPixels->Enabled            = true;
-		miSetDeadPixels->Enabled         = true;
+		miIgnoredPixels->Enabled            = true;
+		miSetIgnoredPixels->Enabled         = true;
 		miSetIgnoredFromPattern->Enabled = true;
-		miClearAllDeadPixels->Enabled    = true;
+		miClearAllIgnoredPixels->Enabled    = true;
 	}
 	else
 	{
-		miDeadPixels->Enabled            = normal_true;
-		miSetDeadPixels->Enabled         = normal_true;
+		miIgnoredPixels->Enabled            = normal_true;
+		miSetIgnoredPixels->Enabled         = normal_true;
 		miSetIgnoredFromPattern->Enabled = normal_true;
-		miClearAllDeadPixels->Enabled    = normal_true;
+		miClearAllIgnoredPixels->Enabled    = normal_true;
 	}
 
 	if (thematrix->AnimPlaying)
@@ -732,7 +736,6 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	miPatternPyramid->Enabled          = normal_true;
 	miPatternLeftTriangle->Enabled     = normal_true;
 	miPatternRightTriangle->Enabled    = normal_true;
-
 
 	miAppend->Enabled                  = normal_true;
 	miMerge->Enabled                   = normal_true;
@@ -1098,6 +1101,15 @@ void __fastcall TfrmMain::MatrixOnColourChange(TheMatrix *Sender)
 }
 
 
+void __fastcall TfrmMain::MatrixOnNew3bppColours(TheMatrix *Sender)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		_RGB3ppPalette[i]->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[i]);
+	}
+}
+
+
 void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 {
 	OldMouseX = x;
@@ -1385,12 +1397,13 @@ void TfrmMain::SetGuiLanguageText()
 	miMirrorAllFrames->Caption = GLanguageHandler->Text[kMirrorAllFrames].c_str();
 	miInvertAllFrames->Caption = GLanguageHandler->Text[kInvertAllFrames].c_str();
 	miGradientAllFrames->Caption = GLanguageHandler->Text[kApplyGradientToAllFrames].c_str();
-	miDeadPixels->Caption = GLanguageHandler->Text[kIgnoredPixels].c_str();
-	miSetDeadPixels->Caption = GLanguageHandler->Text[kSetIgnoredPixels].c_str();
+	miIgnoredPixels->Caption = GLanguageHandler->Text[kIgnoredPixels].c_str();
+	miSetIgnoredPixels->Caption = GLanguageHandler->Text[kSetIgnoredPixels].c_str();
 	miSetIgnoredFromPattern->Caption = Utility::WS2US(GLanguageHandler->Text[kSetFromPattern] + L"...");
-	miClearAllDeadPixels->Caption = GLanguageHandler->Text[kClearAllIgnoredPixels].c_str();
-	Savepattern1->Caption = Utility::WS2US(GLanguageHandler->Text[kSavePattern] + L"...");
-	Loadpattern1->Caption = Utility::WS2US(GLanguageHandler->Text[kLoadPattern] + L"...");
+	miClearAllIgnoredPixels->Caption = GLanguageHandler->Text[kClearAllIgnoredPixels].c_str();
+	miSaveIgnoredPixelsAsPattern->Caption = Utility::WS2US(GLanguageHandler->Text[kSavePattern] + L"...");
+	miLoadIgnoredPixelsAsPattern->Caption = Utility::WS2US(GLanguageHandler->Text[kLoadPattern] + L"...");
+	miHideIgnoredPixels->Caption = Utility::WS2US(GLanguageHandler->Text[kHideIgnoredPixels] + L"...");
 	miFadeFirstLast->Caption = GLanguageHandler->Text[kFadeFirstLast].c_str();
 	miExport->Caption = Utility::WS2US(GLanguageHandler->Text[kExport] + L"...");
 	miCodeTemplates->Caption = Utility::WS2US(GLanguageHandler->Text[kCodeTemplates] + L"...");
@@ -1446,7 +1459,7 @@ void TfrmMain::SetGuiLanguageText()
 	N34->Caption = GLanguageHandler->Text[kGradients].c_str();
 	miGradientFillFrame->Caption = GLanguageHandler->Text[kFillFrame].c_str();
 	miGradientLoad->Caption = GLanguageHandler->Text[kLoad].c_str();
-	miGradientSave->Caption = GLanguageHandler->Text[kSaveCurrent].c_str();
+	miGradientSave->Caption = Utility::WS2US(GLanguageHandler->Text[kSaveCurrent] + L"...");
 	//
 	Buffer1->Caption = GLanguageHandler->Text[kMemories].c_str();
 	miCopyCurrentTo->Caption = GLanguageHandler->Text[kCopyCurrentTo].c_str();
@@ -1465,7 +1478,7 @@ void TfrmMain::SetGuiLanguageText()
 	miOptimiseData->Caption = GLanguageHandler->Text[kOptimiseData].c_str();
 	miFontViewer->Caption = Utility::WS2US(GLanguageHandler->Text[kFontViewer] + L"...");
 	//
-	About1->Caption = GLanguageHandler->Text[kAbout].c_str();
+	miHelp->Caption = GLanguageHandler->Text[kHelp].c_str();
 	Help1->Caption = Utility::WS2US(GLanguageHandler->Text[kHelp] + L"...");
 	Showshortcutkeys1->Caption = GLanguageHandler->Text[kShowShortcutKeys].c_str();
 	miLanguage->Caption = GLanguageHandler->Text[kLanguage].c_str();
@@ -1894,13 +1907,17 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 
 			GSystemSettings->Project.Clear   = true;
 
-			if (frmImportBitmap->RGBImport)
+			switch (frmImportBitmap->ImportMode)
 			{
-				GSystemSettings->Project.Mode = MatrixMode::kRGB;
-			}
-			else
-			{
-				GSystemSettings->Project.Mode = MatrixMode::kMono;
+				case ImportColourMode::kMono:
+					GSystemSettings->Project.Mode = MatrixMode::kMono;
+					break;
+				case ImportColourMode::kRGB:
+					GSystemSettings->Project.Mode = MatrixMode::kRGB;
+					break;
+				case ImportColourMode::kRGB3bpp:
+					GSystemSettings->Project.Mode = MatrixMode::kRGB3BPP;
+					break;
 			}
 
 			thematrix->NewMatrix(GSystemSettings->Project.Mode,
@@ -1921,7 +1938,7 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 													  frmImportBitmap->FrameCount,
 													  frmImportBitmap->FrameWidth,
 													  frmImportBitmap->FrameHeight,
-													  frmImportBitmap->RGBImport,
+													  frmImportBitmap->ImportMode,
 													  frmImportBitmap->CreateNew);
 			break;
 		case ImportMode::kMultipleImages:
@@ -1931,7 +1948,7 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 														frmImportBitmap->PadLength,
 														frmImportBitmap->FrameWidth,
 														frmImportBitmap->FrameHeight,
-														frmImportBitmap->RGBImport,
+														frmImportBitmap->ImportMode,
 														frmImportBitmap->CreateNew);
 			break;
 		}
@@ -1960,6 +1977,8 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 			thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
 
 			ManageUIControls(false, false);
+
+			ChangeMatrixType();
 		}
 	}
 }
@@ -2726,21 +2745,21 @@ void __fastcall TfrmMain::miGradientAllFramesClick(TObject *Sender)
 }
 
 
-void __fastcall TfrmMain::miSetDeadPixelsClick(TObject *Sender)
+void __fastcall TfrmMain::miSetIgnoredPixelsClick(TObject *Sender)
 {
-	thematrix->SetDeadPixelsMode(!thematrix->GetDeadPixelsMode());
+	thematrix->SetIgnoredPixelsMode(!thematrix->GetIgnoredPixelsMode());
 
-	if (thematrix->GetDeadPixelsMode())
+	if (thematrix->GetIgnoredPixelsMode())
 	{
 		ManageUIControls(true, false);
 
-		miSetDeadPixels->Caption = GLanguageHandler->Text[kAcceptDeadPixels].c_str();
+		miSetIgnoredPixels->Caption = GLanguageHandler->Text[kAcceptIgnoredPixels].c_str();
 	}
 	else
 	{
 		ManageUIControls(false, false);
 
-		miSetDeadPixels->Caption = GLanguageHandler->Text[kSetDeadPixels].c_str();
+		miSetIgnoredPixels->Caption = GLanguageHandler->Text[kSetIgnoredPixels].c_str();
 	}
 }
 
@@ -2751,36 +2770,42 @@ void __fastcall TfrmMain::miSetIgnoredFromPatternClick(TObject *Sender)
 
 	if (sipo.Process)
 	{
-		thematrix->SetDeadPixelsFromCustomShape(sipo.Shape, sipo.Parameter);
+		thematrix->SetIgnoredPixelsFromCustomShape(sipo.Shape, sipo.Parameter);
 	}
 }
 
 
-void __fastcall TfrmMain::miClearAllDeadPixelsClick(TObject *Sender)
+void __fastcall TfrmMain::miClearAllIgnoredPixelsClick(TObject *Sender)
 {
-	thematrix->SetDeadPixels(false);
+	thematrix->SetIgnoredPixels(false);
 }
 
 
-void __fastcall TfrmMain::Savepattern1Click(TObject *Sender)
+void __fastcall TfrmMain::miSaveIgnoredPixelsAsPatternClick(TObject *Sender)
 {
 	ConfigureSaveDialog(CSaveIgnorePixels);
 
 	if (sdMain->Execute())
 	{
-		thematrix->SaveDeadPixels(sdMain->FileName.c_str());
+		thematrix->SaveIgnoredPixels(sdMain->FileName.c_str());
 	}
 }
 
 
-void __fastcall TfrmMain::Loadpattern1Click(TObject *Sender)
+void __fastcall TfrmMain::miLoadIgnoredPixelsAsPatternClick(TObject *Sender)
 {
 	ConfigureOpenDialog(CLoadIgnorePixels);
 
 	if (odMain->Execute())
 	{
-		thematrix->SetDeadPixelsFromFileName(odMain->FileName.c_str());
+		thematrix->SetIgnoredPixelsFromFileName(odMain->FileName.c_str());
 	}
+}
+
+
+void __fastcall TfrmMain::miHideIgnoredPixelsClick(TObject *Sender)
+{
+	thematrix->ToggleIgnoredPixels(miHideIgnoredPixels->Checked);
 }
 
 
@@ -3284,7 +3309,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	if (GSystemSettings->Project.ShapeCustom != CustomShape::kNone)
 	{
-		thematrix->SetDeadPixelsFromCustomShape(GSystemSettings->Project.ShapeCustom, GSystemSettings->Project.CustomShapeParam);
+		thematrix->SetIgnoredPixelsFromCustomShape(GSystemSettings->Project.ShapeCustom, GSystemSettings->Project.CustomShapeParam);
 	}
 
 	// ===========================================================================
@@ -3633,7 +3658,7 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 		}
 		else
 		{
-			thematrix->Render.Draw.Colour = 1;        // ensures something is drawn as we move before clicking
+			thematrix->Render.Draw.Colour = 1;         // ensures something is drawn as we move before clicking
 		}
 	}
 	else
@@ -3844,8 +3869,6 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 
 	thematrix->Render.Draw.Mode = dm;
 }
-//---------------------------------------------------------------------------
-
 #pragma end_region
 
 
@@ -3956,7 +3979,7 @@ void __fastcall TfrmMain::sShade1MouseDown(TObject *Sender, TMouseButton Button,
 }
 
 
-void __fastcall TfrmMain::Shape47MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+void __fastcall TfrmMain::sRGB3pp1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
 		  int X, int Y)
 {
 	if (thematrix->Details.Mode == MatrixMode::kRGB3BPP)
@@ -5472,7 +5495,6 @@ void TfrmMain::SyncPreviewVoid(int v)
 	_PreviewMenuVoid[0][v]->Checked = true;
 	_PreviewMenuVoid[1][v]->Checked = true;
 }
-
 
 
 // settings already loaded, put them where they are needed

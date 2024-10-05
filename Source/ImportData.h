@@ -95,7 +95,6 @@ struct ImportData
 	int ASCIIIndex = 32;
 	bool FontMode = false;
 
-	bool RGBImport = false;
 	int BackgroundColour = 0;
 
 	int RGBBrightness = 100;

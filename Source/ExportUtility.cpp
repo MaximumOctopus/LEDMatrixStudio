@@ -11,6 +11,7 @@
 //
 // ===================================================================
 
+#include "Convert.h"
 #include "DateUtility.h"
 #include "ExportUtility.h"
 #include "Formatting.h"
@@ -120,7 +121,7 @@ namespace ExportUtility
 	}
 
 
-	void AddContentByRowCol(ExportOptions teo, const std::wstring s, std::vector<std::wstring> &output)
+	void AddRowColContent(ExportOptions teo, const std::wstring s, std::vector<std::wstring> &output)
 	{
 		if (s.empty()) return;
 
@@ -861,6 +862,23 @@ namespace ExportUtility
 		return L"";
 	}
 
+	void AddEnding(std::vector<std::wstring> &output, ExportOptions &teo)
+	{
+		switch (teo.Code.Language)
+		{
+		case ExportLanguage::kC1Dim:
+		case ExportLanguage::kC2Dim:
+			output.push_back(teo.DataPadding + L"};");
+			break;
+		case ExportLanguage::kCFastLED:
+			break;
+		case ExportLanguage::kPython1Dim:
+		case ExportLanguage::kPython2Dim:
+			output.push_back(teo.DataPadding + L"]");
+			break;
+		}
+    }
+
 	std::wstring GetPadding(ExportLanguage language, int variable_definition)
 	{
 		if (variable_definition != 0)
@@ -872,4 +890,135 @@ namespace ExportUtility
 			return L"\t\t\t\t"; // four tabs, customisable soon...
 		}
 	}
+
+	std::wstring FormatDataAs(const unsigned __int64 input, NumberFormat nf, int bits, int pads)
+	{
+		switch (nf)
+		{
+			case NumberFormat::kDecimal:
+				return std::to_wstring(input);
+			case NumberFormat::kBinary:
+				return Convert::IntegerToBinary(bits, input);
+			case NumberFormat::kHex:
+				return IntToHex(input, pads).c_str();
+		}
+
+		return L"";
+	}
+
+	ScanDirection UpdateDirectionColumn(ScanDirection direction, InputOrientation io, int width, int col)
+	{
+		if (io == InputOrientation::kTopBottomLeftRight)
+		{
+			switch (direction)
+			{
+			case  ScanDirection::kColAltDownUp:
+				if (col % 2 == 0)
+				{
+					return ScanDirection::kColTopToBottom;
+				}
+				else
+				{
+					return ScanDirection::kColBottomToTop;
+				}
+				break;
+			case ScanDirection::kColAltUpDown:
+				if (col % 2 == 0)
+				{
+					return ScanDirection::kColBottomToTop;
+				}
+				else
+				{
+					return ScanDirection::kColTopToBottom;
+				}
+				break;
+			}
+		}
+		else if (io == InputOrientation::kBottomTopRightLeft)
+		{
+			switch (direction)
+			{
+			case ScanDirection::kColAltDownUp:
+				if ((width - col - 1) % 2 == 0)
+				{
+					return ScanDirection::kColTopToBottom;
+				}
+				else
+				{
+					return ScanDirection::kColBottomToTop;
+				}
+				break;
+			case ScanDirection::kColAltUpDown:
+				if ((width - col - 1) % 2 == 0)
+				{
+				   return ScanDirection::kColBottomToTop;
+				}
+				else
+				{
+				   return ScanDirection::kColTopToBottom;
+				}
+				break;
+			}
+		}
+
+		return direction;
+    }
+
+	ScanDirection UpdateDirectionRow(ScanDirection direction, InputOrientation io, int height, int row)
+	{
+		if (io == InputOrientation::kTopBottomLeftRight)
+		{
+			switch (direction)
+			{
+			case ScanDirection::kRowAltLeftRight:
+				if (row % 2 == 0)
+				{
+					return ScanDirection::kRowLeftToRight;
+				}
+				else
+				{
+					return ScanDirection::kRowRightToLeft;
+				}
+				break;
+			case ScanDirection::kRowAltRightLeft:
+				if (row % 2 == 0)
+				{
+					return ScanDirection::kRowRightToLeft;
+				}
+				else
+				{
+					return ScanDirection::kRowLeftToRight;
+                }
+				break;
+			}
+		}
+		else if (io == InputOrientation::kBottomTopRightLeft)
+		{
+			switch (direction)
+			{
+			case ScanDirection::kRowAltLeftRight:
+				if ((height - row - 1) % 2 == 0)
+				{
+					return ScanDirection::kRowLeftToRight;
+				}
+				else
+				{
+					return ScanDirection::kRowRightToLeft;
+				}
+				break;
+			case ScanDirection::kRowAltRightLeft:
+				if ((height - row - 1) % 2 == 0)
+				{
+					return ScanDirection::kRowRightToLeft;
+				}
+				else
+				{
+					return ScanDirection::kRowLeftToRight;
+                }
+				break;
+			}
+		}
+
+        return direction;
+    }
 }

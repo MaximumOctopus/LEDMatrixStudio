@@ -50,7 +50,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 	MatrixRender = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);
 	DisplayBuffer = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);
 	MatrixMerge = new Matrix(__MaxWidth, __MaxHeight, Details.Mode, RGBBackground);
-	MatrixDeadLayout = new MatrixDead(__MaxWidth, __MaxHeight);
+	MatrixIgnoredLayout = new MatrixIgnored(__MaxWidth, __MaxHeight);
 
 	// ===========================================================================
 
@@ -149,7 +149,8 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 {
 	CurrentFrame = 0;
 	LightBox = 0;
-	DeadPixelsMode = false;
+	IgnoredPixelsMode = false;
+    HideIgnoredPixels = true;
 
 	AnimPlaying = false;
 
@@ -204,7 +205,7 @@ void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int le
 
 	if (clearall)
 	{
-		SetDeadPixels(PixelAlive);
+		SetIgnoredPixels(PixelAlive);
 	}
 
 	// =======================================================================
@@ -731,23 +732,6 @@ void TheMatrix::SetPreviewPopout(bool Popout)
 
 void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 {
-	switch (Details.Mode)
-	{
-	case MatrixMode::kNone:
-		return;
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		BuildMonoBiRenderFrame();
-		break;
-	case MatrixMode::kRGB:
-		BuildRGBRenderFrame();
-		break;
-	case MatrixMode::kRGB3BPP:
-		BuildRGB3BPPRenderFrame();
-		break;
-	}
-
 	for (int y = 0; y < Details.Height; y++)
 	{
 		int ydw = y * Details.Width;
@@ -792,17 +776,6 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 	{
 		if (Render.Draw.Coords[0].X != - 1)
 		{
-			switch (Details.Mode)
-			{
-			case MatrixMode::kRGB:
-			case MatrixMode::kRGB3BPP:
-				PreviewBox->Canvas->Brush->Color = TColor(Render.Draw.Colour);
-				break;
-
-			default:
-				PreviewBox->Canvas->Brush->Color = TColor(LEDColours[Render.Draw.Colour]);
-			}
-
 			// need a preview version of draw shape
 			//DrawShape(true, PreviewBox->Canvas, Preview.Size, Preview.Size, 1, false);
 
@@ -851,7 +824,7 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 				{
 					if (Details.Mode == MatrixMode::kRGB)
 					{
-						if (MatrixDeadLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
+						if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 						{
 							PreviewBox->Canvas->Brush->Color = TColor(MatrixCopy->Grid[y * Details.Width + x]);
 						}
@@ -862,7 +835,7 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 					}
 					else
 					{
-						if (MatrixDeadLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
+						if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 						{
 							PreviewBox->Canvas->Brush->Color = TColor(LEDColours[MatrixCopy->Grid[y * Details.Width + x]]);
 						}
@@ -906,21 +879,6 @@ void __fastcall TheMatrix::pbPreviewPaintRadial(TObject *Sender)
 {
 	int cx = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 	int cy = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
-
-	switch (Details.Mode)
-	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		BuildMonoBiRenderFrame();
-		break;
-	case MatrixMode::kRGB:
-		BuildRGBRenderFrame();
-		break;
-	case MatrixMode::kRGB3BPP:
-		BuildRGB3BPPRenderFrame();
-		break;
-	}
 
 	for (int y = 0; y < Details.Height; y++)
 	{
@@ -966,21 +924,6 @@ void __fastcall TheMatrix::pbPreviewPaintRadialThreeQuarters(TObject *Sender)
 	int cx = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 	int cy = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 
-	switch (Details.Mode)
-	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		BuildMonoBiRenderFrame();
-		break;
-	case MatrixMode::kRGB:
-		BuildRGBRenderFrame();
-		break;
-	case MatrixMode::kRGB3BPP:
-		BuildRGB3BPPRenderFrame();
-		break;
-	}
-
 	for (int y = 0; y < Details.Height; y++)
 	{
 		int ydw = y * Details.Width;
@@ -1023,21 +966,6 @@ void __fastcall TheMatrix::pbPreviewPaintSemiCircle(TObject *Sender)
 	int cx = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 	int cy = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 
-	switch (Details.Mode)
-	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		BuildMonoBiRenderFrame();
-		break;
-	case MatrixMode::kRGB:
-		BuildRGBRenderFrame();
-		break;
-	case MatrixMode::kRGB3BPP:
-		BuildRGB3BPPRenderFrame();
-		break;
-	}
-
 	for (int y = 0; y < Details.Height; y++)
 	{
 		int ydw = y * Details.Width;
@@ -1079,21 +1007,6 @@ void __fastcall TheMatrix::pbPreviewPaintSemiCircleInverted(TObject *Sender)
 {
 	int cx = std::round(std::min(PreviewBox->Width, PreviewBox->Height) / 2);
 	int cy = 4;
-
-	switch (Details.Mode)
-	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-		BuildMonoBiRenderFrame();
-		break;
-	case MatrixMode::kRGB:
-		BuildRGBRenderFrame();
-		break;
-	case MatrixMode::kRGB3BPP:
-		BuildRGB3BPPRenderFrame();
-		break;
-	}
 
 	for (int y = 0; y < Details.Height; y++)
 	{
@@ -1186,16 +1099,10 @@ void __fastcall TheMatrix::ClickPixel(TObject *Sender, TMouseButton Button, TShi
 		case DrawMode::kNone:
 			DrawWithBrush(1, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(1, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1220,16 +1127,10 @@ void __fastcall TheMatrix::ClickPixel(TObject *Sender, TMouseButton Button, TShi
 		case DrawMode::kNone:
 			DrawWithBrush(0, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(0, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1240,6 +1141,9 @@ void __fastcall TheMatrix::ClickPixel(TObject *Sender, TMouseButton Button, TShi
 
 		CopyDrawBufferToCurrentFrame();
 	}
+
+	LastX = x1;
+	LastY = y1;
 
 	PreviewBox->Invalidate();
 }
@@ -1274,9 +1178,6 @@ void __fastcall TheMatrix::Shape1MouseMove(TObject *Sender, TShiftState Shift, i
 				DrawWithBrush(1, x1, y1);
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti :
@@ -1284,9 +1185,6 @@ void __fastcall TheMatrix::Shape1MouseMove(TObject *Sender, TShiftState Shift, i
 			{
 				DrawWithBrushMulti(1, x1, y1);
 			}
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1304,9 +1202,6 @@ void __fastcall TheMatrix::Shape1MouseMove(TObject *Sender, TShiftState Shift, i
 				DrawWithBrush(0, x1, y1);
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
@@ -1314,9 +1209,6 @@ void __fastcall TheMatrix::Shape1MouseMove(TObject *Sender, TShiftState Shift, i
 			{
 				DrawWithBrushMulti(0, x1, y1);
 			}
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1395,7 +1287,6 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 	{
 		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
-			PaintBox->Canvas->Brush->Color = TColor(LEDColours[Render.Draw.Colour]);
 			DrawShape(true, 1, false);
 
 			// =======================================================================
@@ -1441,12 +1332,12 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 		{
 			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastX <= Details.Width - 1 &&
-					y + LastY >= 0 && y + LastY <= Details.Height - 1)
+				if (x + LastX >= 0 && x + LastX < Details.Width &&
+					y + LastY >= 0 && y + LastY < Details.Height)
 				{
-					if (MatrixDeadLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
+					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
-						PaintBox->Canvas->Brush->Color = TColor(LEDColours[MatrixCopy->Grid[y * Details.Width + x]]);      // ? to do (from original source!)
+						PaintBox->Canvas->Brush->Color = TColor(LEDColours[MatrixCopy->Grid[y * Details.Width + x]]);
 					}
 					else
 					{
@@ -1500,7 +1391,7 @@ void TheMatrix::BuildMonoBiRenderFrame()
 	{
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
-			if (MatrixDeadLayout->Grid[z] == PixelAlive)
+			if (MatrixIgnoredLayout->Grid[z] == PixelAlive)
 			{
 				switch (DisplayBuffer->Grid[z])
 				{
@@ -1530,7 +1421,7 @@ void TheMatrix::BuildMonoBiRenderFrame()
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
-				if (MatrixDeadLayout->Grid[z] == PixelDead)
+				if (MatrixIgnoredLayout->Grid[z] == PixelIgnored)
 				{
 					MatrixRender->Grid[z] = CanvasBackground;
 				}
@@ -1637,16 +1528,10 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 		case DrawMode::kNone:
 			DrawWithBrush(SelectionLMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionLMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1680,16 +1565,10 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 		case DrawMode::kNone:
 			DrawWithBrush(SelectionMMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionMMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1709,16 +1588,10 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 		case DrawMode::kNone:
 			DrawWithBrush(SelectionRMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionRMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1729,6 +1602,9 @@ void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Butt
 
 		CopyDrawBufferToCurrentFrame();
 	}
+
+	LastX = x1;
+	LastY = y1;
 
 	PaintBox->Invalidate();
 }
@@ -1760,16 +1636,10 @@ void __fastcall TheMatrix::Shape1MouseMoveBiColour(TObject *Sender, TShiftState 
 		case DrawMode::kNone:
 			DrawWithBrush(SelectionLMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionLMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1795,16 +1665,10 @@ void __fastcall TheMatrix::Shape1MouseMoveBiColour(TObject *Sender, TShiftState 
 				DrawWithBrush(SelectionMMB, x1, y1);
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionMMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1819,16 +1683,10 @@ void __fastcall TheMatrix::Shape1MouseMoveBiColour(TObject *Sender, TShiftState 
 		case DrawMode::kNone:
 			DrawWithBrush(SelectionRMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionRMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -1850,7 +1708,17 @@ void TheMatrix::BuildRGBRenderFrame()
 
 	if (MatrixLayers.size() == 1)
 	{
-		std::memcpy(MatrixRender->Grid, DisplayBuffer->Grid, Details.Width * Details.Height * sizeof(int));
+		for (int z = 0; z < Details.Width * Details.Height; z++)
+		{
+			if (MatrixIgnoredLayout->Grid[z] == PixelAlive)
+			{
+				MatrixRender->Grid[z] = DisplayBuffer->Grid[z];
+			}
+			else
+			{
+				MatrixRender->Grid[z] = CanvasBackground;
+			}
+		}
 
 		return;
 	}
@@ -1861,7 +1729,7 @@ void TheMatrix::BuildRGBRenderFrame()
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
-				if (MatrixDeadLayout->Grid[z] != PixelAlive)
+				if (MatrixIgnoredLayout->Grid[z] != PixelAlive)
 				{
 					MatrixRender->Grid[z] = CanvasBackground;
 				}
@@ -1967,7 +1835,6 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 	{
 		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
-			PaintBox->Canvas->Brush->Color = TColor(Render.Draw.Colour);
 			DrawShape(true, Render.Draw.Colour, false);
 
 			// =======================================================================
@@ -2013,10 +1880,10 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 		{
 			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastY <= Details.Width - 1 &&
-					y + LastY >= 0 && y + LastY <= Details.Height - 1)
+				if (x + LastX >= 0 && x + LastY < Details.Width &&
+					y + LastY >= 0 && y + LastY < Details.Height)
 				{
-					if (MatrixDeadLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
+					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
 						PaintBox->Canvas->Brush->Color = TColor(MatrixCopy->Grid[y * Details.Width + x]);
 					}
@@ -2029,9 +1896,9 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 					{
 					case PixelShape::kSquare:
 						PaintBox->Canvas->FillRect(Rect((x + LastX) * Render.PixelSize,
-														  (y + LastY) * Render.PixelSize,
-														 ((x + LastX) * Render.PixelSize) + Render.PixelSizeZ,
-														 ((y + LastY) * Render.PixelSize) + Render.PixelSizeZ));
+														(y + LastY) * Render.PixelSize,
+													   ((x + LastX) * Render.PixelSize) + Render.PixelSizeZ,
+													   ((y + LastY) * Render.PixelSize) + Render.PixelSizeZ));
 						break;
 					case PixelShape::kCircle:
 						PaintBox->Canvas->Ellipse((x + LastX) * Render.PixelSize,
@@ -2104,9 +1971,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 		case DrawMode::kGradientBrush:
 			DrawWithBrush(SelectionLMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kRandom:
@@ -2116,9 +1980,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionLMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -2157,9 +2018,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 				break;
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
             break;
 		case DrawMode::kRandom:
@@ -2167,10 +2025,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionMMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kPicker:
@@ -2182,9 +2036,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 				DrawWithGradientBrush(x1, y1);
 
 				if (OnChange) OnChange(this);
-
-				LastX = x1;
-				LastY = y1;
 			}
 			break;
 
@@ -2204,9 +2055,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 		case DrawMode::kGradientBrush:
 			DrawWithBrush(SelectionRMB, x1, y1);
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kRandom:
@@ -2214,9 +2062,6 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionRMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -2230,6 +2075,9 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 
 		CopyDrawBufferToCurrentFrame();
 	}
+
+	LastX = x1;
+	LastY = y1;
 
 	PaintBox->Invalidate();
 }
@@ -2265,9 +2113,6 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 				DrawWithBrush(SelectionLMB, x1, y1);
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
@@ -2275,9 +2120,6 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 			{
 				DrawWithBrushMulti(SelectionLMB, x1, y1);
 			}
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -2306,16 +2148,10 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 				break;
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
 			DrawWithBrushMulti(SelectionMMB, x1, y1);
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -2328,9 +2164,6 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 				DrawWithGradientBrush(x1, y1);
 
 				if (OnChange) OnChange(this);
-
-				LastX = x1;
-				LastY = y1;
 			}
 			break;
 		}
@@ -2348,9 +2181,6 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 				DrawWithBrush(SelectionRMB, x1, y1);
 			}
 
-			LastX = x1;
-			LastY = y1;
-
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
@@ -2358,9 +2188,6 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 			{
 				DrawWithBrushMulti(SelectionRMB, x1, y1);
 			}
-
-			LastX = x1;
-			LastY = y1;
 
 			if (OnChange) OnChange(this);
 			break;
@@ -2387,7 +2214,7 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 	{
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
-			if (MatrixDeadLayout->Grid[z] == PixelAlive)
+			if (MatrixIgnoredLayout->Grid[z] == PixelAlive)
 			{
 				if (DisplayBuffer->Grid[z] != RGBBackground)
 				{
@@ -2409,7 +2236,7 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
-				if (MatrixDeadLayout->Grid[z] != PixelAlive)
+				if (MatrixIgnoredLayout->Grid[z] != PixelAlive)
 				{
 					MatrixRender->Grid[z] = CanvasBackground;
 				}
@@ -2513,7 +2340,6 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 	{
 		if (Render.Draw.SinglePoint || Render.Draw.Coords[0].X != - 1)
 		{
-			PaintBox->Canvas->Brush->Color = TColor(Render.Draw.Colour);
 			DrawShape(true, Render.Draw.Colour, false);
 
 			// =======================================================================
@@ -2555,12 +2381,12 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 		{
 			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastX <= Details.Width - 1 &&
-				    y + LastY >= 0 && y + LastY <= Details.Height - 1)
+				if (x + LastX >= 0 && x + LastX < Details.Width &&
+					y + LastY >= 0 && y + LastY < Details.Height)
 				{
-					if (MatrixDeadLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
+					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
-						PaintBox->Canvas->Brush->Color = TColor(LEDRGB3BPPColours[MatrixCopy->Grid[y * Details.Width + x]]); // ? to do
+						PaintBox->Canvas->Brush->Color = TColor(LEDRGB3BPPColours[MatrixCopy->Grid[y * Details.Width + x]]);
 					}
 					else
 					{
@@ -2607,14 +2433,14 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 #pragma end_region
 
 
-#pragma region DeadPixels
-void __fastcall TheMatrix::PaintBoxUpdateDeadPixel(TObject *Sender)
+#pragma region IgnoredPixels
+void __fastcall TheMatrix::PaintBoxUpdateIgnoredPixel(TObject *Sender)
 {
 	for (int x = 0; x < Details.Width; x++)
 	{
 		for (int y = 0; y < Details.Height; y++)
 		{
-			if (MatrixDeadLayout->Grid[(Render.TopLeft.Y + y) * Details.Width + (Render.TopLeft.X + x)] == PixelAlive)
+			if (MatrixIgnoredLayout->Grid[(Render.TopLeft.Y + y) * Details.Width + (Render.TopLeft.X + x)] == PixelAlive)
 			{
 				PaintBox->Canvas->Brush->Color = TColor(0x000000);
 			}
@@ -2651,38 +2477,38 @@ void __fastcall TheMatrix::PaintBoxUpdateDeadPixel(TObject *Sender)
 }
 
 
-void TheMatrix::SetDeadPixels(int deadness)
+void TheMatrix::SetIgnoredPixels(int ignoredness)
 {
 	for (int z = 0; z < __MaxWidth * __MaxHeight; z++)
 	{
-		MatrixDeadLayout->Grid[z] = deadness;
+		MatrixIgnoredLayout->Grid[z] = ignoredness;
 	}
 }
 
 
-void TheMatrix::SetDeadPixelsFromCustomShape(CustomShape shape, int parameter)
+void TheMatrix::SetIgnoredPixelsFromCustomShape(CustomShape shape, int parameter)
 {
-	MatrixDeadLayout->SetFromCustomShape(Details.Width, Details.Height, shape, parameter);
+	MatrixIgnoredLayout->SetFromCustomShape(Details.Width, Details.Height, shape, parameter);
 
 	PaintBox->Invalidate();
 }
 
 
-void TheMatrix::SetDeadPixelsFromFileName(const std::wstring file_name)
+void TheMatrix::SetIgnoredPixelsFromFileName(const std::wstring file_name)
 {
-	MatrixDeadLayout->Load(file_name);
+	MatrixIgnoredLayout->Load(file_name);
 
 	PaintBox->Invalidate();
 }
 
 
-void TheMatrix::SaveDeadPixels(const std::wstring file_name)
+void TheMatrix::SaveIgnoredPixels(const std::wstring file_name)
 {
-	MatrixDeadLayout->Save(file_name, Details.Width, Details.Height);
+	MatrixIgnoredLayout->Save(file_name, Details.Width, Details.Height);
 }
 
 
-void __fastcall TheMatrix::ClickPixelDeadPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)    // to do
+void __fastcall TheMatrix::ClickPixelIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)    // to do
 {
 	if (IsThisFrameLocked(0, CurrentFrame)) return;
 
@@ -2698,13 +2524,13 @@ void __fastcall TheMatrix::ClickPixelDeadPixel(TObject *Sender, TMouseButton But
 
 	if (Shift.Contains(ssLeft))
 	{
-		if (MatrixDeadLayout->Grid[y1 * Details.Width + x1] == PixelAlive)
+		if (MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] == PixelAlive)
 		{
-			MatrixDeadLayout->Grid[y1 * Details.Width + x1] = PixelDead;
+			MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] = PixelIgnored;
 		}
 		else
 		{
-			MatrixDeadLayout->Grid[y1 * Details.Width + x1] = PixelAlive;
+			MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] = PixelAlive;
 		}
 
 		LastX = x1;
@@ -2715,7 +2541,7 @@ void __fastcall TheMatrix::ClickPixelDeadPixel(TObject *Sender, TMouseButton But
 }
 
 
-void __fastcall TheMatrix::Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState Shift, int X, int Y)
+void __fastcall TheMatrix::Shape1MouseMoveIgnoredPixel(TObject *Sender, TShiftState Shift, int X, int Y)
 {
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
@@ -2735,13 +2561,13 @@ void __fastcall TheMatrix::Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState
 	{
 		if (!(LastX == x1 && LastY == y1))
 		{
-			if (MatrixDeadLayout->Grid[y1 * Details.Width + x1] == PixelAlive)
+			if (MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] == PixelAlive)
 			{
-				MatrixDeadLayout->Grid[y1 * Details.Width + x1] = PixelDead;
+				MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] = PixelIgnored;
 			}
 			else
 			{
-				MatrixDeadLayout->Grid[y1 * Details.Width + x1] = PixelAlive;
+				MatrixIgnoredLayout->Grid[y1 * Details.Width + x1] = PixelAlive;
 			}
 		}
 	}
@@ -2753,9 +2579,15 @@ void __fastcall TheMatrix::Shape1MouseMoveDeadPixel(TObject *Sender, TShiftState
 }
 
 
-void __fastcall TheMatrix::Shape1MouseUpDeadPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
+void __fastcall TheMatrix::Shape1MouseUpIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
 
+}
+
+
+void TheMatrix::ToggleIgnoredPixels(bool hide)
+{
+    HideIgnoredPixels = hide;
 }
 #pragma end_region
 
@@ -2870,13 +2702,13 @@ void TheMatrix::ConfigurePaintboxDrawing()
 	}
 	else
 	{
-		if (DeadPixelsMode)
+		if (IgnoredPixelsMode)
 		{
-			PaintBox->OnMouseDown = ClickPixelDeadPixel;
-			PaintBox->OnMouseMove = Shape1MouseMoveDeadPixel;
-			PaintBox->OnMouseUp   = Shape1MouseUpDeadPixel;
+			PaintBox->OnMouseDown = ClickPixelIgnoredPixel;
+			PaintBox->OnMouseMove = Shape1MouseMoveIgnoredPixel;
+			PaintBox->OnMouseUp   = Shape1MouseUpIgnoredPixel;
 
-			PaintBox->OnPaint     = PaintBoxUpdateDeadPixel;
+			PaintBox->OnPaint     = PaintBoxUpdateIgnoredPixel;
 		}
 		else
 		{
@@ -3251,12 +3083,16 @@ void TheMatrix::PlotInBounds(int x, int y, int colour)
 
 
 // this and PlotPixelMatrixFrame() are the only two safe methods of drawing on the matrix
-// this takes in to account the gradient status and allows for the drawing buffer and
+// this takes into account the gradient status and allows for the drawing buffer and
 // various other drawing modes.
 void TheMatrix::PlotPixelMatrix(int x, int y, int defaultcolour)
 {
 	int colour = defaultcolour;
 	int newcoord = 0;
+
+	if ((true)) {
+
+	}
 
 	if (LastMouseButton == CMouseMiddle)
 	{
@@ -4275,8 +4111,8 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 			else
 			{
 				canwrite = (Render.Draw.Coords[0].X >= 0 &&
-					Render.Draw.Coords[0].X <= Details.Width - 1 &&
-					y >= 0 && startY - y <= Details.Height - 1);
+					Render.Draw.Coords[0].X < Details.Width &&
+					y >= 0 && startY - y < Details.Height);
 			}
 
 			if (canwrite)
@@ -4350,8 +4186,8 @@ void TheMatrix::DeleteFontCharacter(int frame)
 	for (int y = Render.Draw.Coords[0].Y; y >= Render.Draw.Coords[0].Y - 7; y--)
 	{
 		if (Render.Draw.Coords[0].X >= 0 &&
-			Render.Draw.Coords[0].X <= Details.Width - 1 &&
-			y >= 0 && y <= Details.Height - 1)
+			Render.Draw.Coords[0].X < Details.Width &&
+			y >= 0 && y < Details.Height)
 		{
 			MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + Render.Draw.Coords[0].X] = 0;
 		}
@@ -5357,7 +5193,76 @@ int TheMatrix::BottomBounds()
 
 
 #pragma region FileIO_Bitmap
-ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int count, int width, int height, bool rgbimport, bool createnew)
+// returns false if more than 8 colours (the limit for 3bpp) are found in the source image
+bool TheMatrix::ProcessRGB3bppColours(TCanvas* canvas, std::vector<int> &rgb3ppcolours, int width, int height)
+{
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			rgb3ppcolours.push_back(canvas->Pixels[x][y]);
+		}
+	}
+
+	std::sort(rgb3ppcolours.begin(), rgb3ppcolours.end());
+
+	auto last = std::unique(rgb3ppcolours.begin(), rgb3ppcolours.end());
+	rgb3ppcolours.erase(last, rgb3ppcolours.end());
+
+	if (rgb3ppcolours.size() > 8)
+	{
+		std::wstring m = L"Too many colours in image (" + std::to_wstring(rgb3ppcolours.size()) + L"). Exiting :(";
+
+		ShowMessage(m.c_str());
+
+		return false;
+	}
+	else
+	{
+		for (int t = 0; t < rgb3ppcolours.size(); t++)
+		{
+			LEDRGB3BPPColours[t] = rgb3ppcolours[t];
+		}
+
+		if (OnNew3bppColours) OnNew3bppColours(this);
+	}
+
+	return true;
+}
+
+void TheMatrix::ImportFromFrame(TCanvas* canvas, ImportColourMode icm, int width, int height, int frame, int offset, std::vector<int> &rgb3ppcolours)
+{
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			switch (icm)
+			{
+				case ImportColourMode::kMono:
+					if (canvas->Pixels[offset + x][y] == clBlack)
+					{
+						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 0;
+					}
+					else
+					{
+						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 1;
+					}
+					break;
+				case ImportColourMode::kRGB:
+					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = canvas->Pixels[offset + x][y];
+					break;
+				case ImportColourMode::kRGB3bpp:
+					auto it = std::find(rgb3ppcolours.begin(), rgb3ppcolours.end(), canvas->Pixels[offset + x][y]);
+
+					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = it - rgb3ppcolours.begin();
+					break;
+			}
+		}
+	}
+}
+
+
+ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int count, int width, int height, ImportColourMode icm, bool createnew)
 {
 	ImportData import;
 
@@ -5366,6 +5271,16 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 
 	if (!bmp->Empty)
 	{
+		std::vector<int> rgb3ppcolours;
+
+		if (icm == ImportColourMode::kRGB3bpp)
+		{
+			if (!ProcessRGB3bppColours(bmp->Canvas, rgb3ppcolours, width * count, height))
+			{
+				return import;
+			}
+		}
+
 		int FrameStart = 0;
 		int FrameEnd = 0;
 
@@ -5392,27 +5307,7 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 				MatrixLayers[CurrentLayer]->Cells.push_back(matrix);
 			}
 
-			for (int x = 0; x < width; x++)
-			{
-				for (int y = 0; y < height; y++)
-				{
-					if (rgbimport)
-					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = bmp->Canvas->Pixels[wo + x][y];
-					}
-					else
-					{
-						if (bmp->Canvas->Pixels[wo + x][y] == clBlack)
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 0;
-						}
-						else
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 1;
-						}
-					}
-				}
-			}
+			ImportFromFrame(bmp->Canvas, icm, width, height, frame, wo, rgb3ppcolours);
 
 			if (frame == CurrentFrame)
 			{
@@ -5425,8 +5320,6 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
         import.ImportOk = true;
 		import.NewWidth = width;
 		import.NewHeight = height;
-		//import.NewFrames   = FrameCount;
-		import.RGBImport = rgbimport;
 
 		PaintBox->Invalidate();
 
@@ -5443,11 +5336,13 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 }
 
 
-ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int startframe, int count, int padlength, int fwidth, int fheight, bool RGBimport, bool createnew)
+ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int startframe, int count, int padlength, int fwidth, int fheight, ImportColourMode icm, bool createnew)
 {
 	ImportData import;
 
 	std::wstring file_name = L"";
+
+	std::vector<int> rgb3ppcolours;
 
 	for (int i = 0; i < count; i++)
 	{
@@ -5464,6 +5359,14 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 
 		TBitmap *bmp = new TBitmap();
 		bmp->LoadFromFile(file_name.c_str());
+
+		if (icm == ImportColourMode::kRGB3bpp && i == 0)
+		{
+			if (!ProcessRGB3bppColours(bmp->Canvas, rgb3ppcolours, fwidth, fheight))
+			{
+				return import;
+			}
+		}
 
 		if (createnew)
 		{
@@ -5483,27 +5386,7 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 			MatrixLayers[CurrentLayer]->Cells.push_back(matrix);
 		}
 
-		for (int x = 0; x < fwidth; x++)
-		{
-			for (int y = 0; y < fheight; y++)
-			{
-				if (RGBimport)
-				{
-					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * fwidth + x] = bmp->Canvas->Pixels[x][y];
-				}
-				else
-				{
-					if (bmp->Canvas->Pixels[x][y] == clBlack)
-					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * fwidth + x] = 0;
-					}
-					else
-					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * fwidth + x] = 1;
-					}
-				}
-			}
-		}
+		ImportFromFrame(bmp->Canvas, icm, fwidth, fheight, frame, 0, rgb3ppcolours);
 
 		delete bmp;
 	}
@@ -5513,7 +5396,6 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 	import.NewWidth = fwidth;
 	import.NewHeight = fheight;
 	import.NewFrames = count;
-	import.RGBImport = RGBimport;
 
 	PaintBox->Invalidate();
 
@@ -5641,7 +5523,6 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 	import.SourceLSB       = -1;
 	//  Result.SourceDirection = -1;
 	import.Mode      = MatrixMode::kMono;
-	import.RGBImport       = false;
 	import.Preview.Enabled = Preview.Active;
 
   // ===========================================================================
@@ -5922,7 +5803,6 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 	ImportData import;
 	import.ImportOk = true;
 	import.Mode = MatrixMode::kMono;
-	import.RGBImport = false;
 	import.RGBBrightness = 100;
 
 	import.Colours.HasData = false;
@@ -5941,7 +5821,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		bool headermode = false;
 		bool fontmode = false;
-		bool deadpixelmode = false;
+		bool ignoredpixelmode = false;
 		bool matrixdatamode = false;
 		bool layermode = false;
 		bool coloursmode = false;
@@ -5960,7 +5840,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 		if (loadmode == LoadMode::kNew)
 		{
-			SetDeadPixels(PixelAlive);
+			SetIgnoredPixels(PixelAlive);
 		}
 
 		if (loadmode == LoadMode::kAppend)
@@ -5996,7 +5876,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 					std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
-					switch (FileUtility::LoadDataParameterType(s, headermode, matrixdatamode, deadpixelmode, layermode, coloursmode))
+					switch (FileUtility::LoadDataParameterType(s, headermode, matrixdatamode, ignoredpixelmode, layermode, coloursmode))
 					{
 					case LoadData::kLoadBlockStartHeader:
 						if (s == L"{" + kFileHeaderFontHeader)
@@ -6010,8 +5890,8 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 						headermode = true;
 						break;
-					case LoadData::kLoadBlockStartDeadPixel:
-						deadpixelmode  = true;
+					case LoadData::kLoadBlockStartIgnoredPixel:
+						ignoredpixelmode  = true;
 						matrixdatamode = false;
 
 						row = 0;
@@ -6297,7 +6177,7 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 
 					 // ======================================================================
 
-					case LoadData::kLoadDeadPixelData:
+					case LoadData::kLoadIgnoredPixelData:
 					{
 						int x     = 0;
 						std::wstring pixel = L"";
@@ -6308,11 +6188,11 @@ ImportData TheMatrix::LoadLEDMatrixData(const std::wstring file_name, ExportOpti
 							{
 								if (pixel == L"0")
 								{
-									MatrixDeadLayout->Grid[row * tempMaxWidth + x] = PixelAlive;
+									MatrixIgnoredLayout->Grid[row * tempMaxWidth + x] = PixelAlive;
 								}
 								else
 								{
-									MatrixDeadLayout->Grid[row * tempMaxWidth + x] = PixelDead;
+									MatrixIgnoredLayout->Grid[row * tempMaxWidth + x] = PixelIgnored;
 								}
 
 								x++;
@@ -6421,7 +6301,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 	bool addedSingleFrame = false;
 	MatrixMode lMatrixMode = MatrixMode::kMono;
 	bool headermode = false;
-	bool deadpixelmode = false;
+	bool ignoredpixelmode = false;
 	bool fontmode = false;
 	bool lMatrixDataMode = false;
 	bool lLayerMode = false;
@@ -6435,7 +6315,6 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 	import.SourceLSB = -1;
 	//  Result.SourceDirection = -1;
 	import.Mode = MatrixMode::kMono;
-	import.RGBImport = false;
 
 	// ===========================================================================
 	// ===========================================================================
@@ -6463,7 +6342,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 
 					if (s.length() >= 3) v = s.substr(2);
 
-					switch (FileUtility::LoadDataParameterType(s, headermode, lMatrixDataMode, deadpixelmode, lLayerMode, lColoursMode))
+					switch (FileUtility::LoadDataParameterType(s, headermode, lMatrixDataMode, ignoredpixelmode, lLayerMode, lColoursMode))
 					{
 					case LoadData::kLoadBlockStartHeader:
 						if (s == L"{" + kFileHeaderFontHeader)
@@ -6478,8 +6357,8 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						headermode = true;
 						break;
 
-					case LoadData::kLoadBlockStartDeadPixel:
-						deadpixelmode   = true;
+					case LoadData::kLoadBlockStartIgnoredPixel:
+						ignoredpixelmode   = true;
 						lMatrixDataMode = false;
 
 						Row = 0;
@@ -6542,19 +6421,23 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 						{
 							if (v[i] == ' ' || i == v.length() - 1)
 							{
-								if (import.RGBImport)
+								switch (lMatrixMode)
 								{
-									if (lRGBBackground != -1)
-									{
-										if (Convert::HexToInt(pixel) == lRGBBackground)
+									case MatrixMode::kMono:
+										MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = Convert::HexToInt(pixel);
+										break;
+									case MatrixMode::kRGB:
+										if (lRGBBackground != -1)
 										{
-											MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = RGBBackground;
+											if (Convert::HexToInt(pixel) == lRGBBackground)
+											{
+												MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = RGBBackground;
+											}
 										}
-									}
-								}
-								else
-								{
-									MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = Convert::HexToInt(pixel);
+										break;
+									case MatrixMode::kRGB3BPP:
+                                        // to do
+										break;
 								}
 
 								x++;
@@ -6573,7 +6456,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 
 					// =======================================================
 
-					case LoadData::kLoadDeadPixelData:
+					case LoadData::kLoadIgnoredPixelData:
 					{
 						int x = 0;
 						std::wstring pixel = L"";
@@ -6584,11 +6467,11 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 							{
 								if (pixel == L"0")
 								{
-									MatrixDeadLayout->Grid[Row * Details.Width + x] = PixelAlive;
+									MatrixIgnoredLayout->Grid[Row * Details.Width + x] = PixelAlive;
 								}
 								else
 								{
-									MatrixDeadLayout->Grid[Row * Details.Width + x] = PixelDead;
+									MatrixIgnoredLayout->Grid[Row * Details.Width + x] = PixelIgnored;
 								}
 
 								x++;
@@ -6738,7 +6621,7 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 
 		// ===========================================================================
 
-		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel + L"\n");
+		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
 
 		for (int y = 0; y < Details.Height; y++)
 		{
@@ -6746,10 +6629,10 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 
 			for (int x = 0; x < Details.Width; x++)
 			{
-				s += std::to_wstring(MatrixDeadLayout->Grid[y * Details.Width + x]) + L" ";
+				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
 			}
 
-			file << Formatting::to_utf8(kAnimDeadPixelDataF + s + L"\n");
+			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
 		}
 
 		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
@@ -6843,7 +6726,7 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 
 		// ===========================================================================
 
-		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel + L"\n");
+		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
 
 		for (int y = 0; y < Details.Height; y++)
 		{
@@ -6851,10 +6734,10 @@ void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOp
 
 			for (int x = 0; x < Details.Width; x++)
 			{
-				s += std::to_wstring(MatrixDeadLayout->Grid[y * Details.Width + x]) + L" ";
+				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
 			}
 
-			file << Formatting::to_utf8(kAnimDeadPixelDataF + s + L"\n");
+			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
 		}
 
 		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
@@ -6927,7 +6810,7 @@ void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, in
 
 		// ===========================================================================
 
-		file << Formatting::to_utf8(L"{" + kFileHeaderDeadPixel + L"\n");
+		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
 
 		for (int y = 0; y < Details.Height; y++)
 		{
@@ -6935,10 +6818,10 @@ void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, in
 
 			for (int x = 0; x < Details.Width; x++)
 			{
-				s += std::to_wstring(MatrixDeadLayout->Grid[y * Details.Width + x]) + L" ";
+				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
 			}
 
-			file << Formatting::to_utf8(kAnimDeadPixelDataF + s + L"\n");
+			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
 		}
 
 		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
@@ -7631,7 +7514,7 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 	switch (mode)
 	{
 	case kEffectRevealLeftRight:
-		if (parameter <= Details.Width - 1)
+		if (parameter < Details.Width)
 		{
 			for (int x = parameter; x < Details.Width; x++)
 			{
@@ -7659,7 +7542,7 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 		}
 		break;
 	case kEffectRevealTopBottom:
-		if (parameter <= Details.Height - 1)
+		if (parameter < Details.Height)
 		{
 			for (int y = parameter; y < Details.Height; y++)
 			{
@@ -8122,9 +8005,9 @@ int TheMatrix::GetFrameCount()
 }
 
 
-bool TheMatrix::GetDeadPixelsMode()
+bool TheMatrix::GetIgnoredPixelsMode()
 {
-	return DeadPixelsMode;
+	return IgnoredPixelsMode;
 }
 
 
@@ -8558,9 +8441,9 @@ void TheMatrix::ChangeGrid(bool grid)
 }
 
 
-void TheMatrix::SetDeadPixelsMode(bool mode)
+void TheMatrix::SetIgnoredPixelsMode(bool mode)
 {
-	DeadPixelsMode = mode;
+	IgnoredPixelsMode = mode;
 
 	ConfigurePaintboxDrawing();
 }

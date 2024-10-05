@@ -21,7 +21,7 @@
 namespace ExportUtility
 {
 	void AddContentByFrame(ExportOptions, const std::wstring, int, std::vector<std::wstring> &);
-	void AddContentByRowCol(ExportOptions, const std::wstring, std::vector<std::wstring> &);
+	void AddRowColContent(ExportOptions, const std::wstring, std::vector<std::wstring> &);
 
 	std::wstring GetRowData(int *, int, int, bool, int, int, int);
 	std::wstring GetColumnData(int *, int, bool, int, int, int);
@@ -47,7 +47,14 @@ namespace ExportUtility
 	std::wstring GetVariableIDFrameOut(ExportLanguage);
 	std::wstring GetVariableType(ExportLanguage, NumberSize);
 
+   	void AddEnding(std::vector<std::wstring> &, ExportOptions &);
+
 	std::wstring GetPadding(ExportLanguage, int);
 
+	std::wstring FormatDataAs(const unsigned __int64, NumberFormat, int, int);
+
 	std::wstring TitleWithComments(const std::wstring, ExportLanguage, bool);
+
+    ScanDirection UpdateDirectionColumn(ScanDirection, InputOrientation, int, int);
+	ScanDirection UpdateDirectionRow(ScanDirection, InputOrientation, int, int);
 }

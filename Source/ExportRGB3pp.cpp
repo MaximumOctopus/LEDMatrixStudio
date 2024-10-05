@@ -28,34 +28,18 @@ namespace ExportRGB3BPP
 {
 	bool CreateExportAnimationRGB3BPP(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount, std::vector<std::wstring> &unique_items)
 	{
-		auto baaAddContentByRowCol = [teo](const std::wstring s) -> std::wstring
-		{
-			std::wstring m = s.substr(0, s.length() - 2); // trims last (and unnecessary) ", " from data
+		int MatrixDataCount = std::max(matrix->Details.Height, matrix->Details.Width);
 
-			switch (teo.Code.Language)
-			{
-			case ExportLanguage::kCSV:
-				return GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";";
-			case ExportLanguage::kPICAXE:
-				return L"EEPROM (" + m + L")";
-			case ExportLanguage::kC1Dim:
-				return teo.DataPadding + s;
-			case ExportLanguage::kC2Dim:
-				return teo.DataPadding + L"{" + s + L"},";
-			case ExportLanguage::kCFastLED:
-				return teo.DataPadding + s;
-			case ExportLanguage::kPython1Dim:
-				return teo.DataPadding + s;
-			case ExportLanguage::kPython2Dim:
-				return teo.DataPadding + L"[" + s + L"],";
-			case ExportLanguage::kMicrochip:
-				return L"dt " + m;
-			case ExportLanguage::kPascal:
-				return L"matrixdata : array[0..__LEDCount] of integer = (" + m + L");";
-			case ExportLanguage::kSpecial:
-				return s;
-			}
-		};
+		std::wstring MatrixData[MatrixDataCount];
+
+		entrycount = 0; // total of all entries added to data variable in output
+
+		std::wstring s = L"";
+		std::wstring vartype = L"";
+		std::wstring spacingstring = L"";
+		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
+		std::wstring cdescription = L"";
+		DataOut dataout;
 
 		auto baaProcessUnique = [unique_items](const std::wstring s) -> std::wstring
 		{
@@ -76,18 +60,23 @@ namespace ExportRGB3BPP
 			}
 		};
 
-		int MatrixDataCount = std::max(matrix->Details.Height, matrix->Details.Width);
-
-		std::wstring MatrixData[MatrixDataCount];
-
-		entrycount = 0; // total of all entries added to data variable in output
-
-		std::wstring s = L"";
-		std::wstring vartype = L"";
-		std::wstring spacingstring = L"";
-		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
-		std::wstring cdescription = L"";
-		DataOut dataout;
+		auto baaUpdateOutput = [teo, &output, &s](const std::wstring &data) -> void
+		{
+			switch (teo.Code.Content)
+			{
+				case LineContent::kRowCol:
+					if (!data.empty())
+					{
+						ExportUtility::AddRowColContent(teo, data, output);
+					}
+					break;
+				case LineContent::kFrame:
+					s += data;
+					break;
+				case LineContent::kBytes:
+					break;
+			}
+		};
 
 		// ===================================================================
 
@@ -150,16 +139,18 @@ namespace ExportRGB3BPP
 
 			// ===============================================================
 
-			for (int i = 0; i < __MaxHeight; i++)
+			for (int i = 0; i < MatrixDataCount; i++)
 			{
 				MatrixData[i] = L"";
 			}
 
 			if (teo.Code.Source == ReadSource::kRows)
 			{
+				int nybbles = std::ceil(((double)matrix->Details.Width * 3) / 4); // 3bits per pixel / 4 bits per hex character
+
 				for (int y = teo.Code.SelectiveStart - 1; y <= teo.Code.SelectiveEnd - 1; y++)
 				{
-					dataout = ExportRowDataRGB3BPP(matrix, prefix, teo, t, y, spacingstring);
+					dataout = ExportRowDataRGB3BPP(matrix, prefix, teo, t, y, spacingstring, nybbles);
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
@@ -169,9 +160,11 @@ namespace ExportRGB3BPP
 
 			if (teo.Code.Source == ReadSource::kColumns)
 			{
+				int nybbles = std::ceil(((double)matrix->Details.Height * 3) / 4); // 3bits per pixel / 4 bits per hex character
+
 				for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd - 1; x++)
 				{
-					dataout = ExportColumnDataRGB3BPP(matrix, prefix, teo, t, x, spacingstring);
+					dataout = ExportColumnDataRGB3BPP(matrix, prefix, teo, t, x, spacingstring, nybbles);
 
 					MatrixData[x] = baaProcessUnique(dataout.Data[0]);
 
@@ -185,59 +178,26 @@ namespace ExportRGB3BPP
 
 			if (teo.Code.Source == ReadSource::kRows)
 			{
+				s = L"";
+
 				if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
-					s = L"";
-
 					for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 					{
-						switch (teo.Code.Content)
-						{
-						case LineContent::kRowCol:
-							if (!MatrixData[y].empty())
-							{
-								output.push_back(baaAddContentByRowCol(MatrixData[y]));
-							}
-							break;
-						case LineContent::kFrame:
-							s += MatrixData[y];
-							break;
-                        case LineContent::kBytes:
-							break;
-						}
-					}
-
-					if (teo.Code.Content == LineContent::kFrame)
-					{
-						ExportUtility::AddContentByFrame(teo, s, t, output);
+						baaUpdateOutput(MatrixData[y]);
 					}
 				}
 				else
 				{
-					s = L"";
-
 					for (int y = teo.Code.SelectiveEnd - 1; y >= teo.Code.SelectiveStart - 1; y--)
 					{
-						switch (teo.Code.Content)
-						{
-						case LineContent::kRowCol:
-							if (!MatrixData[y].empty())
-							{
-								output.push_back(baaAddContentByRowCol(MatrixData[y]));
-							}
-							break;
-						case LineContent::kFrame:
-							s += MatrixData[y];
-							break;
-                        case LineContent::kBytes:
-							break;
-						}
+						baaUpdateOutput(MatrixData[y]);
 					}
+				}
 
-					if (teo.Code.Content == LineContent::kFrame)
-					{
-						ExportUtility::AddContentByFrame(teo, s, t, output);
-					}
+				if (teo.Code.Content == LineContent::kFrame)
+				{
+					ExportUtility::AddContentByFrame(teo, s, t, output);
 				}
 			}
 
@@ -252,59 +212,26 @@ namespace ExportRGB3BPP
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
 				{
+					s = L"";
+
 					if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
-						s = L"";
-
 						for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd ; x++)
 						{
-							switch (teo.Code.Content)
-							{
-							case LineContent::kRowCol:
-								if (!MatrixData[x].empty())
-								{
-									output.push_back(baaAddContentByRowCol(MatrixData[x]));
-								}
-								break;
-							case LineContent::kFrame:
-								s += MatrixData[x];
-								break;
-                            case LineContent::kBytes:
-								break;
-							}
-						}
-
-						if (teo.Code.Content == LineContent::kFrame)
-						{
-							ExportUtility::AddContentByFrame(teo, s, t, output);
+							baaUpdateOutput(MatrixData[x]);
 						}
 					}
 					else
 					{
-						s = L"";
-
 						for (int x = teo.Code.SelectiveEnd - 1; x >= teo.Code.SelectiveStart - 1; x--)
 						{
-							switch (teo.Code.Content)
-							{
-							case LineContent::kRowCol:
-								if (!MatrixData[x].empty())
-								{
-									output.push_back(baaAddContentByRowCol(MatrixData[x]));
-								}
-								break;
-							case LineContent::kFrame:
-								s += MatrixData[x];
-								break;
-                            case LineContent::kBytes:
-								break;
-							}
+							baaUpdateOutput(MatrixData[x]);
 						}
+					}
 
-						if (teo.Code.Content == LineContent::kFrame)
-						{
-							ExportUtility::AddContentByFrame(teo, s, t, output);
-						}
+					if (teo.Code.Content == LineContent::kFrame)
+					{
+						ExportUtility::AddContentByFrame(teo, s, t, output);
 					}
 
 					break;
@@ -313,7 +240,6 @@ namespace ExportRGB3BPP
 					s = GLanguageHandler->Text[kSure24x16BoardNotAvailableInRGBMode]; // sure 2416 not available in RGB (it's only mono)!!
 					break;
 				}
-
 
 				if (teo.Code.Language == ExportLanguage::kCFastLED)
 				{
@@ -324,19 +250,7 @@ namespace ExportRGB3BPP
 			}
 		}
 
-		switch (teo.Code.Language)
-		{
-		case ExportLanguage::kC1Dim:
-		case ExportLanguage::kC2Dim:
-			output.push_back(teo.DataPadding + L"};");
-			break;
-		case ExportLanguage::kCFastLED:
-			break;
-		case ExportLanguage::kPython1Dim:
-		case ExportLanguage::kPython2Dim:
-			output.push_back(teo.DataPadding + L"]");
-			break;
-		}
+		ExportUtility::AddEnding(output, teo);
 
 		if (teo.Code.IncludePreamble)
 		{
@@ -347,7 +261,7 @@ namespace ExportRGB3BPP
 	}
 
 
-	DataOut ExportColumnDataRGB3BPP(TheMatrix *matrix, const std::wstring prefix, ExportOptions teo, int frame, int col, const std::wstring spacingchar)
+	DataOut ExportColumnDataRGB3BPP(TheMatrix *matrix, const std::wstring prefix, ExportOptions teo, int frame, int col, const std::wstring spacingchar, int nybbles)
 	{
 		DataOut dataout;
 		dataout.Count = 0;
@@ -355,6 +269,30 @@ namespace ExportRGB3BPP
 		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
+
+		BitCounting bc;
+
+		auto baaBitStream = [&output, &teo, prefix, spacingchar](BitCounting &bc, int pixel, int test) -> void
+		{
+			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+
+			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+			{
+				p = powers[bc.bitcounter];
+			}
+
+			if ((pixel & test) == test)
+			{
+				bc.databyte += p;
+			}
+
+			if (bc.Next())
+			{
+				output += ColourUtility::RGB3BPPFormatOutput(bc.databyte, teo.Code, prefix, spacingchar, 8);
+
+				bc.Reset();
+			}
+		};
 
 		// ===================================================================
 
@@ -378,115 +316,45 @@ namespace ExportRGB3BPP
 
 		// ===================================================================
 
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-                break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionColumn(direction, teo.Code.Orientation, matrix->Details.Width, col);
 
 		// ===================================================================
 
-		int r = 0;
-		int g = 0;
-		int b = 0;
-
 		if (direction == ScanDirection::kColTopToBottom)             // top to bottom
 		{
+			bc.SetDirection(_BitCountDirectionDown, 31);
+
 			for (int pixel = 0; pixel < matrix->Details.Height; pixel++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 4) == 4)
-					{
-						r += powers[pixel];
-					}
-
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 2) == 2)
-					{
-						g += powers[pixel];
-					}
-
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 1) == 1)
-					{
-						b += powers[pixel];
-					}
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 4);
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 2);
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 1);
 				}
 			}
 		}
 		else if (direction == ScanDirection::kColBottomToTop)        // bottom to top
 		{
+			bc.SetDirection(_BitCountDirectionUp, 31);
+
 			for (int pixel = matrix->Details.Height - 1; pixel >= 0; pixel--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 4) == 4)
-					{
-						r += powers[matrix->Details.Height - 1 - pixel];
-					}
-
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 2) == 2)
-					{
-						g += powers[matrix->Details.Height - 1 - pixel];
-					}
-
-					if ((selectedmatrix->Grid[pixel * matrix->Details.Width + col] & 1) == 1)
-					{
-						b += powers[matrix->Details.Height - 1 - pixel];
-					}
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 4);
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 2);
+					baaBitStream(bc, selectedmatrix->Grid[pixel * matrix->Details.Width + col], 1);
 				}
 			}
 		}
 
-		output += ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.Code.RGBFormat, teo.Code.Format, teo.Code.Size, teo.Code.RGBBrightness, prefix, spacingchar);
+		if (!bc.IsStartingPosition())
+		{
+			output += ColourUtility::RGB3BPPFormatOutput(bc.databyte, teo.Code, prefix, spacingchar, 8);
 
-		dataout.Count += 3;
+			bc.outputcount++;
+		}
 
 		// ===================================================================
 
@@ -496,7 +364,7 @@ namespace ExportRGB3BPP
 	}
 
 
-	DataOut ExportRowDataRGB3BPP(TheMatrix *matrix, const std::wstring prefix, ExportOptions teo, int frame, int row, const std::wstring spacingchar)
+	DataOut ExportRowDataRGB3BPP(TheMatrix *matrix, const std::wstring prefix, ExportOptions teo, int frame, int row, const std::wstring spacingchar, int nybbles)
 	{
 		DataOut dataout;
 		dataout.Clear();
@@ -504,6 +372,30 @@ namespace ExportRGB3BPP
 		ScanDirection direction = teo.Code.Direction;
 
 		Matrix *selectedmatrix;
+
+		BitCounting bc;
+
+		auto baaBitStream = [&output, &teo, prefix, spacingchar](BitCounting &bc, int pixel, int test) -> void
+		{
+			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+
+			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+			{
+				p = powers[bc.bitcounter];
+			}
+
+			if ((pixel & test) == test)
+			{
+				bc.databyte += p;
+			}
+
+			if (bc.Next())
+			{
+				output += ColourUtility::RGB3BPPFormatOutput(bc.databyte, teo.Code, prefix, spacingchar, 8);
+
+				bc.Reset();
+			}
+		};
 
 		// ===================================================================
 
@@ -527,117 +419,47 @@ namespace ExportRGB3BPP
 
 		// ===================================================================
 
-		int r = 0;
-		int g = 0;
-		int b = 0;
-
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				break;
-			}
-		}
-		//else
-//			MessageDlg('Error, unknown orientation ' + InttoStr(Ord(teo.Orientation)), mtError, [mbOK], 0);
+		direction = ExportUtility::UpdateDirectionRow(direction, teo.Code.Orientation, matrix->Details.Height, row);
 
 		// ===================================================================
 
 		if (direction == ScanDirection::kRowLeftToRight)
 		{
+			bc.SetDirection(_BitCountDirectionDown, 31);
+
 			for (int pixel = 0; pixel < matrix->Details.Width; pixel++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 4) == 4)
-					{
-						r += powers[pixel];
-					}
-
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 2) == 2)
-					{
-						g += powers[pixel];
-					}
-
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 1) == 1)
-					{
-						b += powers[pixel];
-					}
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 4);
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 2);
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 1);
 				}
 			}
 		}
 		else if (direction == ScanDirection::kRowRightToLeft)
 		{
+			bc.SetDirection(_BitCountDirectionUp, 31);
+
 			for (int pixel = matrix->Details.Width - 1; pixel >= 0; pixel--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
 				{
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 4) == 4)
-					{
-						r += powers[matrix->Details.Width - 1 - pixel];
-					}
-
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 2) == 2)
-					{
-						g += powers[matrix->Details.Width - 1 - pixel];
-					}
-
-					if ((selectedmatrix->Grid[row * matrix->Details.Width + pixel] & 1) == 1)
-					{
-						 b += powers[matrix->Details.Width - 1 - pixel];
-					}
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 4);
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 2);
+					baaBitStream(bc, selectedmatrix->Grid[row * matrix->Details.Width + pixel], 1);
 				}
 			}
 		}
 
-		output += output + ColourUtility::RGB3BPPFormatOutput(r, g, b, teo.Code.RGBFormat, teo.Code.Format, teo.Code.Size, teo.Code.RGBBrightness, prefix, spacingchar);
+		if (!bc.IsStartingPosition())
+		{
+			output += ColourUtility::RGB3BPPFormatOutput(bc.databyte, teo.Code, prefix, spacingchar, 8);
 
-		dataout.Count += 3;
+			bc.outputcount++;
+		}
+
+		dataout.Count++;
 
 		// ===================================================================
 

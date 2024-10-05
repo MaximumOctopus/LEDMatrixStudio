@@ -26,34 +26,11 @@ namespace ExportRGB
 {
 	bool CreateExportAnimationRGB(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount, std::vector<std::wstring> &unique_items)
 	{
-		auto baaAddContentByRowCol = [teo](const std::wstring s) -> std::wstring
-		{
-			std::wstring m = s.substr(0, s.length()); // trims last (and unnecessary) ", " from data
+		int MatrixDataCount = std::max(matrix->Details.Height, matrix->Details.Width);
 
-			switch (teo.Code.Language)
-			{
-			case ExportLanguage::kCSV:
-				return GSystemSettings->App.OpenBracket + m + GSystemSettings->App.CloseBracket + L";";
-			case ExportLanguage::kPICAXE:
-				return L"EEPROM (" + m + L")";
-			case ExportLanguage::kC1Dim:
-				return teo.DataPadding + s;
-			case ExportLanguage::kC2Dim:
-				return teo.DataPadding + L"{" + s + L"},";
-			case ExportLanguage::kCFastLED:
-				return teo.DataPadding + s;
-			case ExportLanguage::kPython1Dim:
-				return teo.DataPadding + s;
-			case ExportLanguage::kPython2Dim:
-				return teo.DataPadding + L"[" + s + L"],";
-			case ExportLanguage::kMicrochip:
-				return L"dt " + m;
-			case ExportLanguage::kPascal:
-				return L"matrixdata : array[0..__LEDCount] of integer = (" + m + L");";
-			case ExportLanguage::kSpecial:
-				return s;
-			}
-		};
+		std::wstring MatrixData[MatrixDataCount];
+
+		std::wstring s = L"";
 
 		auto baaProcessUnique = [unique_items](const std::wstring s) -> std::wstring
 		{
@@ -74,13 +51,26 @@ namespace ExportRGB
 			}
 		};
 
-		int MatrixDataCount = std::max(matrix->Details.Height, matrix->Details.Width);
-
-		std::wstring MatrixData[MatrixDataCount];
+		auto baaUpdateOutput = [teo, &output, &s](const std::wstring &data) -> void
+		{
+			switch (teo.Code.Content)
+			{
+				case LineContent::kRowCol:
+					if (!data.empty())
+					{
+						ExportUtility::AddRowColContent(teo, data, output);
+					}
+					break;
+				case LineContent::kFrame:
+					s += data;
+					break;
+				case LineContent::kBytes:
+					break;
+			}
+		};
 
 		entrycount = 0; // total of all entries added to data variable in output
 
-		std::wstring s = L"";
 		std::wstring vartype = L"";
 		std::wstring spacingstring = L"";
 		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
@@ -180,59 +170,26 @@ namespace ExportRGB
 
 			if (teo.Code.Source == ReadSource::kRows)
 			{
+				s = L"";
+
 				if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 				{
-					s = L"";
-
 					for (int y = 0; y < matrix->Details.Height; y++)
 					{
-						switch (teo.Code.Content)
-						{
-						case LineContent::kRowCol:
-							if (!MatrixData[y].empty())
-							{
-								output.push_back(baaAddContentByRowCol(MatrixData[y]));
-							}
-							break;
-						case LineContent::kFrame:
-							s += MatrixData[y];
-							break;
-						case LineContent::kBytes:
-							break;
-						}
-					}
-
-					if (teo.Code.Content == LineContent::kFrame)
-					{
-						ExportUtility::AddContentByFrame(teo, s, t, output);
+						baaUpdateOutput(MatrixData[y]);
 					}
 				}
 				else
 				{
-					s = L"";
-
 					for (int y = matrix->Details.Height - 1; y >= 0; y--)
 					{
-						switch (teo.Code.Content)
-						{
-						case LineContent::kRowCol:
-							if (!MatrixData[y].empty())
-							{
-								output.push_back(baaAddContentByRowCol(MatrixData[y]));
-							}
-							break;
-						case LineContent::kFrame:
-							s += MatrixData[y];
-							break;
-                        case LineContent::kBytes:
-							break;
-						}
+						baaUpdateOutput(MatrixData[y]);
 					}
+				}
 
-					if (teo.Code.Content == LineContent::kFrame)
-					{
-						ExportUtility::AddContentByFrame(teo, s, t, output);
-					}
+				if (teo.Code.Content == LineContent::kFrame)
+				{
+					ExportUtility::AddContentByFrame(teo, s, t, output);
 				}
 			}
 
@@ -247,59 +204,26 @@ namespace ExportRGB
 				case InputOrientation::kTopBottomLeftRight:
 				case InputOrientation::kBottomTopRightLeft:
 				{
+					s = L"";
+
 					if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
 					{
-						s = L"";
-
-						for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd ; x++)
+						for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
 						{
-							switch (teo.Code.Content)
-							{
-							case LineContent::kRowCol:
-								if (!MatrixData[x].empty())
-								{
-									output.push_back(baaAddContentByRowCol(MatrixData[x]));
-								}
-								break;
-							case LineContent::kFrame:
-								s += MatrixData[x];
-								break;
-							case LineContent::kBytes:
-								break;
-							}
-						}
-
-						if (teo.Code.Content == LineContent::kFrame)
-						{
-							ExportUtility::AddContentByFrame(teo, s, t, output);
+							baaUpdateOutput(MatrixData[x]);
 						}
 					}
 					else
 					{
-						s = L"";
-
 						for (int x = teo.Code.SelectiveEnd - 1; x >= teo.Code.SelectiveStart - 1; x--)
 						{
-							switch (teo.Code.Content)
-							{
-							case LineContent::kRowCol:
-								if (!MatrixData[x].empty())
-								{
-									output.push_back(baaAddContentByRowCol(MatrixData[x]));
-								}
-								break;
-							case LineContent::kFrame:
-								s += MatrixData[x];
-								break;
-                            case LineContent::kBytes:
-								break;
-							}
+							baaUpdateOutput(MatrixData[x]);
 						}
+					}
 
-						if (teo.Code.Content == LineContent::kFrame)
-						{
-							ExportUtility::AddContentByFrame(teo, s, t, output);
-						}
+					if (teo.Code.Content == LineContent::kFrame)
+					{
+						ExportUtility::AddContentByFrame(teo, s, t, output);
 					}
 					break;
 				}
@@ -319,19 +243,7 @@ namespace ExportRGB
 
 		// =========================================================================
 
-		switch (teo.Code.Language)
-		{
-		case ExportLanguage::kC1Dim:
-		case ExportLanguage::kC2Dim:
-			output.push_back(teo.DataPadding + L"};");
-			break;
-		case ExportLanguage::kCFastLED:
-			break;
-		case ExportLanguage::kPython1Dim:
-		case ExportLanguage::kPython2Dim:
-			output.push_back(teo.DataPadding + L"]");
-			break;
-		}
+		ExportUtility::AddEnding(output, teo);
 
 		if (teo.Code.IncludePreamble)
 		{
@@ -373,58 +285,7 @@ namespace ExportRGB
 
 		// ===========================================================================
 
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case  ScanDirection::kColAltDownUp:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-                }
-				break;
-			case ScanDirection::kColAltUpDown:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-				   direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-				   direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionColumn(direction, teo.Code.Orientation, matrix->Details.Width, col);
 
 		// ===========================================================================
 
@@ -432,50 +293,38 @@ namespace ExportRGB
 		{
 			for (int pixel = 0; pixel < matrix->Details.Height; pixel++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if (teo.Code.Size == NumberSize::kRGB8bit)
+					int pixel_value = selectedmatrix->Grid[pixel * matrix->Details.Width + col];
+
+					if (teo.Code.RGBChangePixels && pixel_value == matrix->RGBBackground)
 					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += ColourUtility::RGBConvertToSplit(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
+						pixel_value = teo.Code.RGBChangeColour;
+					}
+
+					switch (teo.Code.Size)
+					{
+					case NumberSize::kRGB8bit:
+						output = output + ColourUtility::RGBConvertToSplit(pixel_value, teo.Code, prefix, spacingchar);
 
 						dataout.Count += 3;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB16bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
+						break;
+
+					case NumberSize::kRGB16bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo16(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB32bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.LSB,  teo.Code.RGBBrightness));
-						}
+						break;
+
+					case NumberSize::kRGB32bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo32(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
+						break;
 					}
 				}
 			}
@@ -484,50 +333,38 @@ namespace ExportRGB
 		{
 			for (int pixel = matrix->Details.Height - 1; pixel >= 0; pixel--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[pixel * matrix->Details.Width + col] == PixelAlive)
 				{
-					if (teo.Code.Size == NumberSize::kRGB8bit)
+					int pixel_value = selectedmatrix->Grid[pixel * matrix->Details.Width + col];
+
+					if (teo.Code.RGBChangePixels && pixel_value == matrix->RGBBackground)
 					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += ColourUtility::RGBConvertToSplit(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-                        }
+						pixel_value = teo.Code.RGBChangeColour;
+					}
+
+					switch (teo.Code.Size)
+					{
+					case NumberSize::kRGB8bit:
+						output = output + ColourUtility::RGBConvertToSplit(pixel_value, teo.Code, prefix, spacingchar);
 
 						dataout.Count += 3;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB16bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
+						break;
+
+					case NumberSize::kRGB16bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo16(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB32bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[pixel * matrix->Details.Width + col] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(selectedmatrix->Grid[pixel * matrix->Details.Width + col], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-                        }
+						break;
+
+					case NumberSize::kRGB32bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo32(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
+						break;
 					}
 				}
 			}
@@ -572,62 +409,7 @@ namespace ExportRGB
 
 		// ===========================================================================
 
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-                }
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-                }
-				break;
-			}
-		}
-		else
-		{
-//			MessageDlg('Error, unknown orientation ' + IntToStr(Ord(teo.Orientation)), mtError, [mbOK], 0);
-		}
+		direction = ExportUtility::UpdateDirectionRow(direction, teo.Code.Orientation, matrix->Details.Height, row);
 
 		// ===========================================================================
 
@@ -635,50 +417,38 @@ namespace ExportRGB
 		{
 			for (int pixel = 0; pixel < matrix->Details.Width; pixel++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
 				{
-					if (teo.Code.Size == NumberSize::kRGB8bit)
+					int pixel_value = selectedmatrix->Grid[row * matrix->Details.Width + pixel];
+
+					if (teo.Code.RGBChangePixels && pixel_value == matrix->RGBBackground)
 					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output += ColourUtility::RGBConvertToSplit(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
-						else
-						{
-							output += ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
+						pixel_value = teo.Code.RGBChangeColour;
+					}
+
+					switch (teo.Code.Size)
+					{
+					case NumberSize::kRGB8bit:
+						output = output + ColourUtility::RGBConvertToSplit(pixel_value, teo.Code, prefix, spacingchar);
 
 						dataout.Count += 3;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB16bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
+						break;
+
+					case NumberSize::kRGB16bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo16(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB32bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
+                        break;
+
+					case NumberSize::kRGB32bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo32(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
 
 						output += spacingchar;
 
 						dataout.Count++;
+						break;
 					}
 				}
 			}
@@ -687,50 +457,38 @@ namespace ExportRGB
 		{
 			for (int pixel = matrix->Details.Width - 1; pixel >= 0; pixel--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + pixel] == PixelAlive)
 				{
-					if (teo.Code.Size == NumberSize::kRGB8bit)
+					int pixel_value = selectedmatrix->Grid[row * matrix->Details.Width + pixel];
+
+					if (teo.Code.RGBChangePixels && pixel_value == matrix->RGBBackground)
 					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output = output + ColourUtility::RGBConvertToSplit(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
-						else
-						{
-							output = output + ColourUtility::RGBConvertToSplit(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.RGBBrightness, teo.Code.Format, prefix, spacingchar, teo.Code.ColourSpaceRGB);
-						}
+						pixel_value = teo.Code.RGBChangeColour;
+					}
+
+					switch (teo.Code.Size)
+					{
+					case NumberSize::kRGB8bit:
+						output = output + ColourUtility::RGBConvertToSplit(pixel_value, teo.Code, prefix, spacingchar);
 
 						dataout.Count += 3;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB16bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output = output + prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output = output + prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 4, ColourUtility::RGBConvertTo16(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
-						}
+						break;
 
-						output = output + spacingchar;
+					case NumberSize::kRGB16bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo16(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
+
+						output += spacingchar;
 
 						dataout.Count++;
-					}
-					else if (teo.Code.Size == NumberSize::kRGB32bit)
-					{
-						if (teo.Code.RGBChangePixels && selectedmatrix->Grid[row * matrix->Details.Width + pixel] == matrix->RGBBackground)
-						{
-							output = output + prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(teo.Code.RGBChangeColour, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
-						else
-						{
-							output = output + prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, 8, ColourUtility::RGBConvertTo32(selectedmatrix->Grid[row * matrix->Details.Width + pixel], teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
-						}
+						break;
 
-						output = output + spacingchar;
+					case NumberSize::kRGB32bit:
+						output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo32(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
+
+						output += spacingchar;
 
 						dataout.Count++;
+						break;
 					}
 				}
 			}

@@ -191,40 +191,41 @@ namespace ExportMonoBi
 				MatrixData[i]->clear();
 			}
 
-			if (teo.Code.Source == ReadSource::kRows)
+			switch (teo.Code.Source)
 			{
-				for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
-				{
-					tdo = ExportRowData(matrix, teo, t, y, spacingstring);
-
-					for (int i = 0; i < tdo.Count; i++)
+				case ReadSource::kRows:
+					for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 					{
-						if (!tdo.Data[i].empty())
+						tdo = ExportRowData(matrix, teo, t, y, spacingstring);
+
+						for (int i = 0; i < tdo.Count; i++)
 						{
-							MatrixData[y]->push_back(baaProcessUnique(prefix + tdo.Data[i]) + spacingstring);
+							if (!tdo.Data[i].empty())
+							{
+								MatrixData[y]->push_back(baaProcessUnique(prefix + tdo.Data[i]) + spacingstring);
+							}
 						}
+
+						entrycount += tdo.Count;
 					}
+					break;
 
-					entrycount += tdo.Count;
-				}
-			}
-
-			if (teo.Code.Source == ReadSource::kColumns)
-			{
-				for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
-				{
-					tdo = ExportColumnData(matrix, teo, t, x, spacingstring);
-
-					for (int i = 0; i < tdo.Count; i++)
+				case ReadSource::kColumns:
+					for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
 					{
-						if (!tdo.Data[i].empty())
-						{
-							MatrixData[x]->push_back(baaProcessUnique(prefix + tdo.Data[i]) + spacingstring);
-						}
-					}
+						tdo = ExportColumnData(matrix, teo, t, x, spacingstring);
 
-					entrycount += tdo.Count;
-				}
+						for (int i = 0; i < tdo.Count; i++)
+						{
+							if (!tdo.Data[i].empty())
+							{
+								MatrixData[x]->push_back(baaProcessUnique(prefix + tdo.Data[i]) + spacingstring);
+							}
+						}
+
+						entrycount += tdo.Count;
+					}
+                    break;
 			}
 
 			// ===============================================================
@@ -290,7 +291,7 @@ namespace ExportMonoBi
 
 					if (teo.Code.Content == LineContent::kRowCol)
 					{
-						ExportUtility::AddContentByRowCol(teo, op, output);
+						ExportUtility::AddRowColContent(teo, op, output);
 					}
 
 					y += delta;
@@ -307,6 +308,8 @@ namespace ExportMonoBi
 
 				switch (teo.Code.Content)
 				{
+				case LineContent::kRowCol:
+					break;
 				case LineContent::kFrame:
 					ExportUtility::AddContentByFrame(teo, op, t, output);
                     break;
@@ -392,7 +395,7 @@ namespace ExportMonoBi
 						{
 							if (!op.empty())
 							{
-								ExportUtility::AddContentByRowCol(teo, op, output);
+								ExportUtility::AddRowColContent(teo, op, output);
 							}
 						}
 
@@ -414,7 +417,7 @@ namespace ExportMonoBi
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z];// + spacingstring;
+							op += (*MatrixData[y])[z];
 						}
 					}
 
@@ -422,7 +425,7 @@ namespace ExportMonoBi
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z];// + spacingstring;
+							op += (*MatrixData[y])[z];
 						}
 					}
 
@@ -430,14 +433,16 @@ namespace ExportMonoBi
 					{
 						for (int z = 0; z < MatrixData[y]->size(); z++)
 						{
-							op += (*MatrixData[y])[z];// + spacingstring;
+							op += (*MatrixData[y])[z];
 						}
 					}
-                    break;
+					break;
 				}
 
 				switch (teo.Code.Content)
 				{
+				case LineContent::kRowCol:
+					break;
 				case LineContent::kFrame:
 					ExportUtility::AddContentByFrame(teo, op, t, output);
 					break;
@@ -477,19 +482,7 @@ namespace ExportMonoBi
 			break;
 		}
 
-		switch (teo.Code.Language)
-		{
-		case ExportLanguage::kC1Dim:
-		case ExportLanguage::kC2Dim:
-			output.push_back(teo.DataPadding + L"};");
-			break;
-		case ExportLanguage::kCFastLED:
-			break;
-		case ExportLanguage::kPython1Dim:
-		case ExportLanguage::kPython2Dim:
-			output.push_back(teo.DataPadding + L"]");
-			break;
-		}
+		ExportUtility::AddEnding(output, teo);
 
 		for (int t = 0; t < MatrixDataCount; t++)
 		{
@@ -550,58 +543,7 @@ namespace ExportMonoBi
 
 		// ===================================================================
 
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if (col % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kColAltDownUp:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				else
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				break;
-			case ScanDirection::kColAltUpDown:
-				if ((matrix->Details.Width - col - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kColBottomToTop;
-				}
-				else
-				{
-					direction = ScanDirection::kColTopToBottom;
-				}
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionColumn(direction, teo.Code.Orientation, matrix->Details.Width, col);
 
 		// ===================================================================
 
@@ -609,7 +551,7 @@ namespace ExportMonoBi
 		{
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
@@ -644,7 +586,7 @@ namespace ExportMonoBi
 		{
 			for (int y = matrix->Details.Height - 1; y >= 0; y--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[y * matrix->Details.Width + col] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[y * matrix->Details.Width + col] == 1)
 					{
@@ -686,48 +628,9 @@ namespace ExportMonoBi
 			{
 				dataout.Count++;
 
-				switch (teo.Code.Size)
-				{
-				case NumberSize::k8bitSwap:		// swap nybbles
-				{
-					std::wstring b = L"XX";
+				ia.SwapData(y, teo.Code.Size);
 
-					s = IntToHex(ia.Data[y], 2);
-
-					b[0] = s[1];
-					b[1] = s[0];
-
-					ia.Data[y] = Convert::HexToInt(b);
-					break;
-				}
-				case NumberSize::k16bitSwap:	// swap bytes
-				{
-					std::wstring b = L"XXXX";
-
-					s = IntToHex(ia.Data[y], 4);
-
-					b[0] = s[2];
-					b[1] = s[3];
-					b[2] = s[0];
-					b[3] = s[1];
-
-					ia.Data[y] = Convert::HexToInt(b);
-					break;
-				}
-				}
-
-				switch (teo.Code.Format)
-				{
-				case NumberFormat::kDecimal:
-					dataout.Data[y] = std::to_wstring(ia.Data[y]);
-					break;
-				case NumberFormat::kBinary:
-					dataout.Data[y] = Convert::IntegerToBinary(bits, ia.Data[y]);
-					break;
-				case NumberFormat::kHex:
-					dataout.Data[y] = IntToHex(ia.Data[y], pads);
-					break;
-				}
+				dataout.Data[y] = ExportUtility::FormatDataAs(ia.Data[y], teo.Code.Format, bits, pads);
 			}
 		}
 
@@ -741,7 +644,6 @@ namespace ExportMonoBi
 	{
 		InternalArray ia;
 		ia.Clear();
-		std::wstring s = L"";
 		DataOut dataout;
 
 		Matrix *selectedmatrix;
@@ -782,58 +684,7 @@ namespace ExportMonoBi
 
 		// ===================================================================
 
-		if (teo.Code.Orientation == InputOrientation::kTopBottomLeftRight)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if (row % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-                }
-				break;
-			}
-		}
-		else if (teo.Code.Orientation == InputOrientation::kBottomTopRightLeft)
-		{
-			switch (direction)
-			{
-			case ScanDirection::kRowAltLeftRight:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowLeftToRight;
-				}
-				else
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				break;
-			case ScanDirection::kRowAltRightLeft:
-				if ((matrix->Details.Height - row - 1) % 2 == 0)
-				{
-					direction = ScanDirection::kRowRightToLeft;
-				}
-				else
-				{
-					direction = ScanDirection::kRowLeftToRight;
-                }
-				break;
-			}
-		}
+		direction = ExportUtility::UpdateDirectionRow(direction, teo.Code.Orientation, matrix->Details.Height, row);
 
 		// ===================================================================
 
@@ -841,7 +692,7 @@ namespace ExportMonoBi
 		{
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
@@ -876,7 +727,7 @@ namespace ExportMonoBi
 		{
 			for (int x = matrix->Details.Width - 1; x >= 0; x--)
 			{
-				if (matrix->MatrixDeadLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
+				if (matrix->MatrixIgnoredLayout->Grid[row * matrix->Details.Width + x] == PixelAlive)
 				{
 					if (selectedmatrix->Grid[row * matrix->Details.Width + x] == 1)
 					{
@@ -918,48 +769,9 @@ namespace ExportMonoBi
 			{
 				dataout.Count++;
 
-				switch (teo.Code.Size)
-				{
-				case NumberSize::k8bitSwap:		// swap nybbles
-				{
-					std::wstring b = L"XX";
+				ia.SwapData(x, teo.Code.Size);
 
-					s = IntToHex(ia.Data[x], 2);
-
-					b[0] = s[1];
-					b[1] = s[0];
-
-					ia.Data[x] = Convert::HexToInt(b);
-					break;
-				}
-				case NumberSize::k16bitSwap:	// swap bytes
-				{
-					std::wstring b = L"XXXX";
-
-					s = IntToHex(ia.Data[x], 4);
-
-					b[0] = s[2];
-					b[1] = s[3];
-					b[2] = s[0];
-					b[3] = s[1];
-
-					ia.Data[x] = Convert::HexToInt(b);
-					break;
-				}
-				}
-
-				switch (teo.Code.Format)
-				{
-				case NumberFormat::kDecimal:
-					dataout.Data[x] = std::to_wstring(ia.Data[x]);
-					break;
-				case NumberFormat::kBinary:
-					dataout.Data[x] = Convert::IntegerToBinary(bits, ia.Data[x]);
-					break;
-				case NumberFormat::kHex:
-					dataout.Data[x] = IntToHex(ia.Data[x], pads);
-					break;
-				}
+				dataout.Data[x] = ExportUtility::FormatDataAs(ia.Data[x], teo.Code.Format, bits, pads);
 			}
 		}
 
@@ -974,7 +786,6 @@ namespace ExportMonoBi
 		DataOutDisplay dod;
 
 		int mydata = 0;
-		std::wstring s = L"";
 
 		for (int y = 0; y < matrix->Details.Height; y++)
 		{
@@ -986,25 +797,16 @@ namespace ExportMonoBi
 				{
 					if (sourceLSB == 0)
 					{
-						mydata = mydata + (powers[x]);
+						mydata += powers[x];
 					}
 					else
 					{
-						mydata = mydata + (powers[matrix->Details.Width - x - 1]);
+						mydata += (powers[matrix->Details.Width - x - 1]);
                     }
 				}
 			}
 
-			if (hexformat)
-			{
-				s = IntToHex(mydata, GSystemSettings->App.PadModeHexRow);
-			}
-			else
-			{
-				s = std::to_wstring(mydata);
-			}
-
-			dod.RowData[y] = s;
+			dod.SetRow(y, mydata, GSystemSettings->App.PadModeHexRow, hexformat);
 		}
 
 		for (int x = 0; x < matrix->Details.Width; x++)
@@ -1017,25 +819,16 @@ namespace ExportMonoBi
 				{
 					if (sourceLSB == 0)
 					{
-						mydata = mydata + (powers[y]);
+						mydata += (powers[y]);
 					}
 					else
 					{
-						mydata = mydata + (powers[matrix->Details.Height - y - 1]);
+						mydata += (powers[matrix->Details.Height - y - 1]);
 					}
 				}
 			}
 
-			if (hexformat)
-			{
-				s = IntToHex(mydata, GSystemSettings->App.PadModeHexCol);
-			}
-			else
-			{
-				s = std::to_wstring(mydata);
-			}
-
-			dod.ColumnData[x] = s;
+			dod.SetColumn(x, mydata, GSystemSettings->App.PadModeHexCol, hexformat);
 		}
 
 		// ===================================================================
@@ -1044,30 +837,27 @@ namespace ExportMonoBi
 
 		if (!sourcedisplayvisible) return dod;
 
-		s = L"";
+		std::wstring s = L"";
 
 		if (source == 0)
 		{
-
 			// ===============================================================
 			// Row data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			if (sourcedirection == 0)
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = 0; y <= matrix->Details.Height - 2; y++)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
 				}
 
-				s = s + GSystemSettings->App.HexPrefix + dod.RowData[matrix->Details.Height - 1] + GSystemSettings->App.CloseBracket;
+				s += GSystemSettings->App.HexPrefix + dod.RowData[matrix->Details.Height - 1] + GSystemSettings->App.CloseBracket;
 			}
 			else
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = matrix->Details.Height - 1; y >= 1; y--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
@@ -1084,11 +874,11 @@ namespace ExportMonoBi
 			// Column data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			switch (sourcedirection)
 			{
 			case 0:
-				s = GSystemSettings->App.OpenBracket;
-
 				if (combinenibbles)
 				{
 					int column = 0;
@@ -1113,8 +903,6 @@ namespace ExportMonoBi
 				s += GSystemSettings->App.HexPrefix + dod.ColumnData[matrix->Details.Width - 1] + GSystemSettings->App.CloseBracket;
 				break;
 			case 1:
-				s = GSystemSettings->App.OpenBracket;
-
 				if (combinenibbles)
 				{
 					int column = matrix->Details.Width - 1;
@@ -1139,8 +927,6 @@ namespace ExportMonoBi
 				}
 				break;
 			case 2:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = 7; x >= 0; x--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1189,16 +975,7 @@ namespace ExportMonoBi
 				}
 			}
 
-			if (hexformat)
-			{
-				s = IntToHex(Convert::BinToInt(temp), GSystemSettings->App.PadModeHexRow);
-			}
-			else
-			{
-				s = std::to_wstring(Convert::BinToInt(temp));
-			}
-
-			dod.RowData[y] = s;
+			dod.SetRow(y, Convert::BinToInt(temp), GSystemSettings->App.PadModeHexRow, hexformat);
 		}
 
 		for (int x = 0; x < matrix->Details.Width; x++)
@@ -1217,16 +994,7 @@ namespace ExportMonoBi
 				}
 			}
 
-			if (hexformat)
-			{
-				s = IntToHex(Convert::BinToInt(temp), GSystemSettings->App.PadModeHexCol);
-			}
-			else
-			{
-				s = std::to_wstring(Convert::BinToInt(temp));
-            }
-
-			dod.ColumnData[x] = s;
+			dod.SetColumn(x, Convert::BinToInt(temp), GSystemSettings->App.PadModeHexCol, hexformat);
 		}
 
 		// ===================================================================
@@ -1243,10 +1011,10 @@ namespace ExportMonoBi
 			// Row data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			if (sourcedirection == 0)
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = 0; y <= matrix->Details.Height - 2; y++)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
@@ -1256,8 +1024,6 @@ namespace ExportMonoBi
 			}
 			else
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = matrix->Details.Height - 1; y >= 1; y--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
@@ -1274,11 +1040,11 @@ namespace ExportMonoBi
 			// Column data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			switch (sourcedirection)
 			{
 			case 0:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = 0; x < matrix->Details.Width - 1; x++)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1287,8 +1053,6 @@ namespace ExportMonoBi
 				s += GSystemSettings->App.HexPrefix + dod.ColumnData[matrix->Details.Width - 1] + GSystemSettings->App.CloseBracket;
 				break;
 			case 1:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = matrix->Details.Width - 1; x >= 1; x--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1297,8 +1061,6 @@ namespace ExportMonoBi
 				s += GSystemSettings->App.HexPrefix + dod.ColumnData[0] + GSystemSettings->App.CloseBracket;
 				break;
 			case 2:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = 7; x >= 0; x--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1375,12 +1137,7 @@ namespace ExportMonoBi
 				}
 			}
 
-			if (hexformat)
-				s = IntToHex(bitplane, GSystemSettings->App.PadModeHexRow);
-			else
-			  	s = std::to_wstring(bitplane);
-
-			dod.RowData[y] = s;
+			dod.SetRow(y, bitplane, GSystemSettings->App.PadModeHexRow, hexformat);
 		}
 
 		for (int x = 0; x < matrix->Details.Width; x++)
@@ -1427,16 +1184,7 @@ namespace ExportMonoBi
                 }
 			}
 
-			if (hexformat)
-			{
-				s = IntToHex(bitplane, GSystemSettings->App.PadModeHexCol);
-			}
-			else
-			{
-				s = std::to_wstring(bitplane);
-            }
-
-			dod.ColumnData[x] = s;
+			dod.SetColumn(x, bitplane, GSystemSettings->App.PadModeHexCol, hexformat);
 		}
 
 		// ===================================================================
@@ -1453,10 +1201,10 @@ namespace ExportMonoBi
 			// Row data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			if (source_direction == 0)
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = 0; y <= matrix->Details.Height - 2; y++)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
@@ -1466,8 +1214,6 @@ namespace ExportMonoBi
 			}
 			else
 			{
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int y = matrix->Details.Height - 1; y >= 1; y--)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.RowData[y] + L", ";
@@ -1484,11 +1230,11 @@ namespace ExportMonoBi
 			// Column data
 			// ===============================================================
 
+			s = GSystemSettings->App.OpenBracket;
+
 			switch (source_direction)
 			{
 			case 0:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = 0; x <= matrix->Details.Width - 2; x++)
 				{
 					s += GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1497,8 +1243,6 @@ namespace ExportMonoBi
 				s +=  GSystemSettings->App.HexPrefix + dod.ColumnData[matrix->Details.Width - 1] + GSystemSettings->App.CloseBracket;
 				break;
 			case 1:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = matrix->Details.Width - 1; x >= 1; x--)
 				{
 					s +=  GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";
@@ -1507,8 +1251,6 @@ namespace ExportMonoBi
 				s + GSystemSettings->App.HexPrefix + dod.ColumnData[0] + GSystemSettings->App.CloseBracket;
 				break;
 			case 2:
-				s = GSystemSettings->App.OpenBracket;
-
 				for (int x = 7; x >= 0; x--)
 				{
 					s +=  GSystemSettings->App.HexPrefix + dod.ColumnData[x] + L", ";

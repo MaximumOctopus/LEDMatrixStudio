@@ -21,12 +21,12 @@
 // LED Matrix Studio files
 // ===========================================================================
 
-LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermode, bool matrixmode, bool deadpixelmode, bool layermode, bool coloursmode)
+LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermode, bool matrixmode, bool ignoredpixelmode, bool layermode, bool coloursmode)
 {
 	if (s.find(L"{header") != std::wstring::npos)
 		return LoadData::kLoadBlockStartHeader;
-	else if (s.find(L"{deadpixel") != std::wstring::npos)
-		return LoadData::kLoadBlockStartDeadPixel;
+	else if (s.find(L"{deadpixel") != std::wstring::npos)       // DO NOT EDIT THIS!!!
+		return LoadData::kLoadBlockStartIgnoredPixel;
 	else if (s.find(L"{colours") != std::wstring::npos)
 		return LoadData::kLoadBlockStartColours;
 	else if (s[0] == kDataBlockStart)
@@ -117,12 +117,12 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 			return LoadData::kLoadHeaderEnd;
 		}
 	}
-	else if (deadpixelmode)
+	else if (ignoredpixelmode)
 	{
 		switch (s[0])
 		{
-		case kAnimDeadPixelData:
-			return LoadData::kLoadDeadPixelData;
+		case kAnimIgnoredPixelData:
+			return LoadData::kLoadIgnoredPixelData;
 		}
 	}
 	else if (matrixmode)

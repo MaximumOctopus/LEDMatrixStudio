@@ -24,11 +24,15 @@ namespace ColourUtility
 	static const std::wstring BiColoursLSBRight[] = { L"00", L"10", L"01", L"11" };
 
 	std::wstring RGBPlusInteger(int, int);
-	std::wstring RGBColourNumberFormat(NumberFormat, int, int);
+	std::wstring RGBColourNumberFormat(NumberFormat, int, unsigned int);
 	int RGBConvertTo16(int, RGBMode, LeastSignificantBit, ColourSpace, int);
 	int RGBConvertTo32(int, RGBMode, LeastSignificantBit, int);
+
+	std::wstring RGBConvertToSplit(int, BinaryOptions&, const std::wstring,  const std::wstring);
+	std::wstring RGBConvertToSplit(int, CodeOptions&, const std::wstring,  const std::wstring);
 	std::wstring RGBConvertToSplit(int, RGBMode, int, NumberFormat, const std::wstring, const std::wstring, ColourSpace);
-	std::wstring RGB3BPPFormatOutput(int, int, int, RGBMode, NumberFormat, NumberSize, int, const std::wstring, const std::wstring);
+
+	std::wstring RGB3BPPFormatOutput(unsigned int, CodeOptions&, const std::wstring, const std::wstring, int);
 
 	int HexToInt(const std::wstring);
 	int DarkenRGB(int);

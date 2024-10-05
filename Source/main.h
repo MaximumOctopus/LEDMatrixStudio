@@ -205,14 +205,14 @@ __published:	// IDE-managed Components
 	TLabel *Label16;
 	TLabel *Label17;
 	TPanel *pRGB_3BPP;
-	TShape *Shape47;
-	TShape *Shape48;
-	TShape *Shape49;
-	TShape *Shape50;
-	TShape *Shape51;
-	TShape *Shape52;
-	TShape *Shape53;
-	TShape *Shape54;
+	TShape *sRGB3pp1;
+	TShape *sRGB3pp2;
+	TShape *sRGB3pp3;
+	TShape *sRGB3pp4;
+	TShape *sRGB3pp5;
+	TShape *sRGB3pp6;
+	TShape *sRGB3pp7;
+	TShape *sRGB3pp8;
 	TPanel *pUndoToolbar;
 	TPanel *pQuickData;
 	TMainMenu *miMain;
@@ -361,14 +361,14 @@ __published:	// IDE-managed Components
 	TMenuItem *miInvertAllFrames;
 	TMenuItem *miGradientAllFrames;
 	TMenuItem *N36;
-	TMenuItem *miDeadPixels;
-	TMenuItem *miSetDeadPixels;
+	TMenuItem *miIgnoredPixels;
+	TMenuItem *miSetIgnoredPixels;
 	TMenuItem *miSetIgnoredFromPattern;
 	TMenuItem *N44;
-	TMenuItem *miClearAllDeadPixels;
+	TMenuItem *miClearAllIgnoredPixels;
 	TMenuItem *N56;
-	TMenuItem *Savepattern1;
-	TMenuItem *Loadpattern1;
+	TMenuItem *miSaveIgnoredPixelsAsPattern;
+	TMenuItem *miLoadIgnoredPixelsAsPattern;
 	TMenuItem *N43;
 	TMenuItem *miFadeFirstLast;
 	TMenuItem *N35;
@@ -467,7 +467,7 @@ __published:	// IDE-managed Components
 	TMenuItem *miOptimiseData;
 	TMenuItem *N52;
 	TMenuItem *miFontViewer;
-	TMenuItem *About1;
+	TMenuItem *miHelp;
 	TMenuItem *Help1;
 	TMenuItem *Showshortcutkeys1;
 	TMenuItem *N24;
@@ -652,6 +652,8 @@ __published:	// IDE-managed Components
 	TMenuItem *miDrawTestPattern;
 	TMenuItem *N65;
 	TMenuItem *miPreviewAllowDrawing;
+	TMenuItem *N66;
+	TMenuItem *miHideIgnoredPixels;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -764,11 +766,11 @@ __published:	// IDE-managed Components
 	void __fastcall miMirrorAllFramesClick(TObject *Sender);
 	void __fastcall miInvertAllFramesClick(TObject *Sender);
 	void __fastcall miGradientAllFramesClick(TObject *Sender);
-	void __fastcall miSetDeadPixelsClick(TObject *Sender);
+	void __fastcall miSetIgnoredPixelsClick(TObject *Sender);
 	void __fastcall miSetIgnoredFromPatternClick(TObject *Sender);
-	void __fastcall miClearAllDeadPixelsClick(TObject *Sender);
-	void __fastcall Savepattern1Click(TObject *Sender);
-	void __fastcall Loadpattern1Click(TObject *Sender);
+	void __fastcall miClearAllIgnoredPixelsClick(TObject *Sender);
+	void __fastcall miSaveIgnoredPixelsAsPatternClick(TObject *Sender);
+	void __fastcall miLoadIgnoredPixelsAsPatternClick(TObject *Sender);
 	void __fastcall miFadeFirstLastClick(TObject *Sender);
 	void __fastcall miUnlockAllClick(TObject *Sender);
 	void __fastcall miLockAllClick(TObject *Sender);
@@ -803,7 +805,7 @@ __published:	// IDE-managed Components
           int X, int Y);
 	void __fastcall Setcustomspeed1Click(TObject *Sender);
 	void __fastcall miSaveGradientClick(TObject *Sender);
-	void __fastcall Shape47MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
+	void __fastcall sRGB3pp1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
 	void __fastcall miIncrementRadiallyClick(TObject *Sender);
 	void __fastcall miAddCommentClick(TObject *Sender);
@@ -823,6 +825,7 @@ __published:	// IDE-managed Components
 	void __fastcall PaintBox1Click(TObject *Sender);
 	void __fastcall miDrawTestPatternClick(TObject *Sender);
 	void __fastcall miPreviewAllowDrawingClick(TObject *Sender);
+	void __fastcall miHideIgnoredPixelsClick(TObject *Sender);
 
 private:
 
@@ -873,6 +876,7 @@ private:
 	TMenuItem *_PreviewMenuVoid[2][7];
 
 	TShape *_RGBPalette[16];
+    TShape *_RGB3ppPalette[8];
 	TShape *_RGBShade[16];
 
     std::vector<TMenuItem*> FileHistoryMenus;
@@ -1005,6 +1009,7 @@ private:
 	void __fastcall MatrixOnDisplayBufferCopied(TheMatrix*);
 	void __fastcall MatrixOnNewFrameDisplayed(TheMatrix*);
 	void __fastcall MatrixOnColourChange(TheMatrix*);
+	void __fastcall MatrixOnNew3bppColours(TheMatrix*);
 	void __fastcall MatrixOnMouseOver(int, int);
 	void __fastcall MatrixOnPreviewMouseDown(int, int);
 	void __fastcall MatrixOnDebug(TheMatrix*, const std::wstring s);

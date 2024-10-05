@@ -21,8 +21,8 @@
     static const int kHowManyFrames = 5;
     static const int kInvalidNumberFramesToAdd = 6;
     static const int kCustom = 7;
-    static const int kAcceptDeadPixels = 8;
-    static const int kSetDeadPixels = 9;
+	static const int kAcceptIgnoredPixels = 8;
+    static const int kUnused1 = 9;
     static const int kOpeningNewMatrixWillClearCurrentProject = 10;
     static const int kOpeningNewProjectWillClearCurrentProject = 11;
     static const int kPresetFileName = 12;
@@ -156,7 +156,7 @@
     static const int kMirrorAllFrames = 140;
     static const int kInvertAllFrames = 141;
     static const int kApplyGradientToAllFrames = 142;
-    static const int kIgnoredPixels = 143;
+	static const int kIgnoredPixels = 143;
     static const int kSetIgnoredPixels = 144;
     static const int kSetFromPattern = 145;
     static const int kClearAllIgnoredPixels = 146;
@@ -570,5 +570,6 @@
 	static const int kMirrorDraw = 554;
 	static const int kAreYouSureYouWantToClearThePalette = 555;
 	static const int kAllowDrawing = 556;
-	static const int kLanguageConstantCount = 557;
+	static const int kHideIgnoredPixels = 557;
+	static const int kLanguageConstantCount = 558;
 
