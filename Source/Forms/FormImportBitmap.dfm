@@ -230,7 +230,7 @@ object frmImportBitmap: TfrmImportBitmap
       Left = 600
       Top = 17
       Width = 4
-      Height = 144
+      Height = 147
       Shape = bsLeftLine
     end
     object cbWidth: TComboBox
@@ -307,14 +307,20 @@ object frmImportBitmap: TfrmImportBitmap
       TabOrder = 3
       OnClick = bAutoClick
     end
-    object cbRGBImport: TCheckBox
+    object cbImportColourMode: TComboBox
       Left = 116
-      Top = 32
-      Width = 73
-      Height = 17
-      Caption = '.'
+      Top = 26
+      Width = 85
+      Height = 23
+      Style = csDropDownList
+      ItemIndex = 0
       TabOrder = 4
-      OnClick = cbRGBImportClick
+      Text = 'Mono'
+      OnChange = cbImportColourModeChange
+      Items.Strings = (
+        'Mono'
+        'RGB'
+        'RGB 3bpp')
     end
   end
   object cbCreateNew: TCheckBox
@@ -555,7 +561,7 @@ object frmImportBitmap: TfrmImportBitmap
   object opdMain: TOpenPictureDialog
     Filter = 'Bitmaps (*.bmp)|*.bmp'
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 488
-    Top = 368
+    Left = 32
+    Top = 360
   end
 end

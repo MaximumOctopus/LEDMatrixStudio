@@ -1,8 +1,8 @@
 object frmExport: TfrmExport
   Left = 0
   Top = 0
-  ClientHeight = 670
-  ClientWidth = 1085
+  ClientHeight = 711
+  ClientWidth = 1012
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,17 +16,15 @@ object frmExport: TfrmExport
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 606
-    Width = 1085
+    Top = 647
+    Width = 1012
     Height = 64
     Align = alBottom
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 600
-    ExplicitWidth = 1079
     DesignSize = (
-      1085
+      1012
       64)
     object gbProfiles: TGroupBox
       Left = 4
@@ -200,14 +198,13 @@ object frmExport: TfrmExport
       end
     end
     object GroupBox6: TGroupBox
-      Left = 749
+      Left = 676
       Top = 2
       Width = 314
       Height = 55
       Anchors = [akRight, akBottom]
       Caption = '.'
       TabOrder = 1
-      ExplicitLeft = 743
       object bCancel: TBitBtn
         Left = 228
         Top = 21
@@ -374,7 +371,7 @@ object frmExport: TfrmExport
     object cbAutoPreview: TCheckBox
       Left = 471
       Top = 24
-      Width = 162
+      Width = 122
       Height = 17
       Caption = '.'
       TabOrder = 2
@@ -432,25 +429,24 @@ object frmExport: TfrmExport
   object pcExport: TPageControl
     Left = 0
     Top = 0
-    Width = 1085
-    Height = 606
+    Width = 1012
+    Height = 647
     ActivePage = tsCode
     Align = alClient
     TabOrder = 1
     OnChange = cbOptimiseClick
-    ExplicitWidth = 1079
-    ExplicitHeight = 600
     object tsCode: TTabSheet
       Caption = '.'
       object Panel2: TPanel
         Left = 0
         Top = 0
         Width = 409
-        Height = 576
+        Height = 617
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
+        ExplicitLeft = -5
         object gbSource: TGroupBox
           Left = 15
           Top = 8
@@ -459,7 +455,7 @@ object frmExport: TfrmExport
           Caption = '.'
           TabOrder = 0
           object sbDataRows: TSpeedButton
-            Left = 12
+            Left = 16
             Top = 24
             Width = 75
             Height = 25
@@ -469,7 +465,7 @@ object frmExport: TfrmExport
             OnClick = cbDirectionChange
           end
           object sbDataColumns: TSpeedButton
-            Left = 93
+            Left = 97
             Top = 24
             Width = 75
             Height = 25
@@ -543,8 +539,8 @@ object frmExport: TfrmExport
           end
           object cbOptimise: TCheckBox
             Left = 16
-            Top = 229
-            Width = 152
+            Top = 220
+            Width = 166
             Height = 17
             Caption = '.'
             TabOrder = 4
@@ -902,19 +898,28 @@ object frmExport: TfrmExport
             OnClick = cbOptimiseClick
           end
         end
+        object bResetCode: TBitBtn
+          Left = 15
+          Top = 590
+          Width = 380
+          Height = 22
+          ModalResult = 1
+          TabOrder = 9
+          OnClick = bResetCodeClick
+        end
       end
       object Panel4: TPanel
         Left = 409
         Top = 0
-        Width = 668
-        Height = 576
+        Width = 595
+        Height = 617
         Align = alClient
         TabOrder = 1
         object reExport: TRichEdit
           Left = 1
           Top = 1
-          Width = 666
-          Height = 551
+          Width = 593
+          Height = 592
           Align = alClient
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
@@ -960,8 +965,8 @@ object frmExport: TfrmExport
         end
         object pPreviewStatus: TPanel
           Left = 1
-          Top = 552
-          Width = 666
+          Top = 593
+          Width = 593
           Height = 23
           Align = alBottom
           TabOrder = 1
@@ -975,12 +980,11 @@ object frmExport: TfrmExport
         Left = 0
         Top = 0
         Width = 409
-        Height = 576
+        Height = 617
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
-        ExplicitHeight = 570
         object gbSourceBinary: TGroupBox
           Left = 15
           Top = 8
@@ -1327,12 +1331,21 @@ object frmExport: TfrmExport
             OnClick = cbOptimiseClick
           end
         end
+        object bResetBinary: TBitBtn
+          Left = 15
+          Top = 590
+          Width = 380
+          Height = 22
+          ModalResult = 1
+          TabOrder = 7
+          OnClick = bResetBinaryClick
+        end
       end
       object mBinary: TMemo
         Left = 409
         Top = 0
-        Width = 668
-        Height = 576
+        Width = 595
+        Height = 617
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1342,8 +1355,6 @@ object frmExport: TfrmExport
         ParentFont = False
         ScrollBars = ssVertical
         TabOrder = 1
-        ExplicitWidth = 662
-        ExplicitHeight = 570
       end
     end
   end

@@ -188,12 +188,10 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 		gbNumberGrouping->Visible = false;
 		gbNumberGroupingBinary->Visible = false;
 
-		gbRGB->Visible = true;
-		gbRGB->Height = 65;                    		// hides background change option
-		gbBinaryRGB->Visible = true;
+		gbRGB->Visible = false;
+		gbBinaryRGB->Visible = false;
 
-		gbNumberGroupingRGB->Visible = true;
-		gbNumberGroupingBinaryRGB->Visible = true;
+		gbNumberGroupingRGB->Visible = false;
 
 		ProfileExtension = L"ledsexportrgb3bpp";
 		break;
@@ -1201,21 +1199,28 @@ void TfrmExport::PreviewBinary()
 		}
 		else
 		{
-			if (cbOptimise->Checked)
+			if (Mode == MatrixMode::kRGB3BPP)
 			{
-				ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
-
-				if (!Optimiser::OptimiseData(matrix, InternalEO, IOutput))
-				{
-					ClearForRetry();
-
-					ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
-				}
+				ExportOutputBinary::BinaryCreateExportAnimationRGB3bpp(matrix, InternalEO, IOutput, entrycount);
 			}
 			else
 			{
-				ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
-            }
+				if (cbOptimise->Checked)
+				{
+					ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
+
+					if (!Optimiser::OptimiseData(matrix, InternalEO, IOutput))
+					{
+						ClearForRetry();
+
+						ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
+					}
+				}
+				else
+				{
+					ExportOutputBinary::BinaryCreateExportAnimation(matrix, InternalEO, IOutput, entrycount, Unique);
+				}
+			}
 		}
 
 		// ===================================================================
@@ -1509,8 +1514,8 @@ void __fastcall TfrmExport::bCopyToClipboardClick(TObject *Sender)
 void __fastcall TfrmExport::FormConstrainedResize(TObject *Sender, int &MinWidth,
           int &MinHeight, int &MaxWidth, int &MaxHeight)
 {
-	MinHeight = 740;
-	MinWidth  = 688;
+	MinHeight = 710;
+	MinWidth  = 958;
 }
 
 
@@ -1647,6 +1652,8 @@ void TfrmExport::SetGuiLanguageText()
 	cbLanguageFormat->Items->Add(GLanguageHandler->Text[kExportMicrochip].c_str());
 	cbLanguageFormat->Items->Add(GLanguageHandler->Text[kExportPascal].c_str());
 
+	bResetCode->Caption = GLanguageHandler->Text[kResetToDefaults].c_str();
+
 	//
 
 	tsBinary->Caption = GLanguageHandler->Text[kBinary].c_str();
@@ -1676,6 +1683,8 @@ void TfrmExport::SetGuiLanguageText()
 
 	gbNumberGroupingBinaryRGB->Caption = GLanguageHandler->Text[kNumberGrouping].c_str();
 	sbBinaryNumberSizeRGB8bits->Caption = GLanguageHandler->Text[k8BitsOneBytePerColour].c_str();
+
+	bResetBinary->Caption = GLanguageHandler->Text[kResetToDefaults].c_str();
 
 	//
 
@@ -1946,4 +1955,24 @@ bool TfrmExport::ValidateNumberEdit(TEdit *edit)
 void __fastcall TfrmExport::bCloseClick(TObject *Sender)
 {
 	CreateExportOptions();
+}
+
+
+void __fastcall TfrmExport::bResetCodeClick(TObject *Sender)
+{
+	ExportOptions reset_code;
+
+	reset_code.Binary = InternalEO.Binary;
+
+	BuildFromProfile(reset_code);
+}
+
+
+void __fastcall TfrmExport::bResetBinaryClick(TObject *Sender)
+{
+	ExportOptions reset_binary;
+
+	reset_binary.Code = InternalEO.Code;
+
+	BuildFromProfile(reset_binary);
 }

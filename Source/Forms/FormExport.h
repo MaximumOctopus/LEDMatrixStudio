@@ -146,6 +146,8 @@ __published:	// IDE-managed Components
 	TMemo *mBinary;
 	TSaveDialog *sdExport;
 	TColorDialog *cdExport;
+	TBitBtn *bResetCode;
+	TBitBtn *bResetBinary;
 	void __fastcall shapeBackgroundPixelsMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
 	void __fastcall sbRGBClick(TObject *Sender);
@@ -168,6 +170,8 @@ __published:	// IDE-managed Components
           bool &Handled);
 	void __fastcall reExportMouseWheelUp(TObject *Sender, TShiftState Shift, TPoint &MousePos,
           bool &Handled);
+	void __fastcall bResetCodeClick(TObject *Sender);
+	void __fastcall bResetBinaryClick(TObject *Sender);
 private:
 
     int LastScrollValue = 0;

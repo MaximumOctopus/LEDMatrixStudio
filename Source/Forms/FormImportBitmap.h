@@ -25,9 +25,7 @@
 #include <Vcl.ExtDlgs.hpp>
 //---------------------------------------------------------------------------
 
-
-enum class ImportMode { kInvalid = 0, kSingleImage, kMultipleImages };
-
+#include "MatrixConstants.h"
 
 class TfrmImportBitmap : public TForm
 {
@@ -49,7 +47,6 @@ __published:	// IDE-managed Components
 	TComboBox *cbHeight;
 	TEdit *eFrames;
 	TBitBtn *bAuto;
-	TCheckBox *cbRGBImport;
 	TCheckBox *cbCreateNew;
 	TPageControl *pcImportMethod;
 	TTabSheet *tsSingleImage;
@@ -71,12 +68,13 @@ __published:	// IDE-managed Components
 	TEdit *eMIFirstFrame;
 	TEdit *eMIPadLength;
 	TOpenPictureDialog *opdMain;
+	TComboBox *cbImportColourMode;
 	void __fastcall sbMISelectFirstImageClick(TObject *Sender);
 	void __fastcall bOKClick(TObject *Sender);
-	void __fastcall cbRGBImportClick(TObject *Sender);
 	void __fastcall bCancelClick(TObject *Sender);
 	void __fastcall bSelectClick(TObject *Sender);
 	void __fastcall bAutoClick(TObject *Sender);
+	void __fastcall cbImportColourModeChange(TObject *Sender);
 private:
 
 	void SetGuiLanguageText();
@@ -87,7 +85,7 @@ public:		// User declarations
 
 	ImportMode Import = ImportMode::kInvalid;
 
-	bool RGBImport = false;
+	ImportColourMode ImportMode = ImportColourMode::kMono;
 	bool CreateNew = false;
 	std::wstring ImageFilename = L"";
 	int FrameCount = -1;

@@ -47,6 +47,19 @@ void __fastcall TfrmImportBitmap::bOKClick(TObject *Sender)
 {
 	Import = ImportMode::kInvalid;
 
+	switch (cbImportColourMode->ItemIndex)
+	{
+		case 0:
+			ImportMode = ImportColourMode::kMono;
+			break;
+		case 1:
+			ImportMode = ImportColourMode::kRGB;
+			break;
+		case 2:
+			ImportMode = ImportColourMode::kRGB3bpp;
+			break;
+	}
+
 	switch (pcImportMethod->ActivePageIndex)
 	{
 	case 0:
@@ -58,7 +71,6 @@ void __fastcall TfrmImportBitmap::bOKClick(TObject *Sender)
 			FrameWidth  = cbWidth->Text.ToIntDef(0);
 			FrameHeight = cbHeight->Text.ToIntDef(0);
 
-			RGBImport   = cbRGBImport->Checked;
 			CreateNew   = cbCreateNew->Checked;
 		}
 		break;
@@ -75,19 +87,11 @@ void __fastcall TfrmImportBitmap::bOKClick(TObject *Sender)
 			PadLength   = eMIPadLength->Text.ToIntDef(0);
 			Pattern     = eMIPattern->Text.ToIntDef(0);
 
-			RGBImport   = cbRGBImport->Checked;
 			CreateNew   = cbCreateNew->Checked;
 		}
 		break;
 	}
 }
-
-
-void __fastcall TfrmImportBitmap::cbRGBImportClick(TObject *Sender)
-{
-	lHelpText->Visible = !cbRGBImport->Checked;
-}
-
 
 void __fastcall TfrmImportBitmap::bCancelClick(TObject *Sender)
 {
@@ -103,12 +107,14 @@ void __fastcall TfrmImportBitmap::bSelectClick(TObject *Sender)
 		{
 			iImport->Picture->LoadFromFile(opdMain->FileName);
 
-			ImageFilename        = opdMain->FileName;
+			ImageFilename         = opdMain->FileName;
 
 			lFileName->Caption    = opdMain->FileName;
 
 			lImageWidth->Caption  = iImport->Picture->Width;
 			lImageHeight->Caption = iImport->Picture->Height;
+
+            bAutoClick(nullptr);
 
 			bOK->Enabled = true;
 		}
@@ -146,7 +152,6 @@ void TfrmImportBitmap::SetGuiLanguageText()
 	Label7->Caption = GLanguageHandler->Text[kPattern].c_str();
 
 	gbSettings->Caption = GLanguageHandler->Text[kImportSettings].c_str();
-	cbRGBImport->Caption = GLanguageHandler->Text[kRGBImport].c_str();
 	cbCreateNew->Caption = GLanguageHandler->Text[kCreateNewMatrixClearsAllData].c_str();
 	Label2->Caption = GLanguageHandler->Text[kFramesToImport].c_str();
 	Label3->Caption = GLanguageHandler->Text[kFrameWidth].c_str();
@@ -227,4 +232,10 @@ void TfrmImportBitmap::SetMultipleImageDetails()
 
 		eMIPadLength->Text  =(PatternEnd - PatternStart);
 	}
+}
+
+
+void __fastcall TfrmImportBitmap::cbImportColourModeChange(TObject *Sender)
+{
+	lHelpText->Visible = cbImportColourMode->ItemIndex > 0;
 }

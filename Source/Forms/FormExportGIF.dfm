@@ -17,6 +17,7 @@ object frmExportGIF: TfrmExportGIF
     Top = 8
     Width = 64
     Height = 64
+    Hint = 'some of my icon choices make no sense'
     AutoSize = True
     Picture.Data = {
       07544269746D617036300000424D363000000000000036000000280000004000

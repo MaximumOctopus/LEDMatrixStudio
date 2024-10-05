@@ -139,7 +139,7 @@ object frmOptimise: TfrmOptimise
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 13
+        Left = 12
         Top = 82
         Width = 4
         Height = 13
