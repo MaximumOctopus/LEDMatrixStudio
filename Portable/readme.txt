@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.20.24                                                 =
+ =  LED Matrix Studio v0.20.27                                                 =
  =                                                                             =
- =  June 29th 2024                                                             =
+ =  October 19th 2024                                                           =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -50,7 +50,7 @@
 
  Features:
  
- - Supports up to 256x256 matrix
+ - Supports a matrix with up to 1024x1024 pixels!
  - Supports as many frames as you have memory!
    100k frames of RGB 64x64 requires ~3.7GB
    100k frames of RGB 16x16 requires ~370MB
@@ -141,38 +141,50 @@
  Please consider sending it to me so that I may include it with
  future updates.
 
-========================================================================
+== Updates for 0.20.27 beta ============================================
+
+- Removed 256x256 pixel limit, increased to 1024x1024.
+  Be warned that a matrix that size will be very unwieldy! Improvements incoming...
+- Fixed issue with horizontal scrollbar not working with matrices too big for the display 
+- Fixed a couple of minor issues with the brush tool
+- A few tweaks to Custom Brush usability 
+
+== Updates for 0.20.26 beta ============================================
+
+- Fixed bugs with RGB3bpp export (binary and code)
+- Fixed RGB3bpp colour selections not working
+- Removed all references to "Dead Pixels", these are now know throughout the application 
+  as Ignored Pixels, as this makes much more sense.
+- Fixed a bug which caused Ignored Pixels to be displayed when using an RGB matrix project
+  (they should be hidden from view)
+- Added the abiltity to "import from bitmap" with 3-bits per pixel images
+- Major refactoring of Export code
+  Working towards a rewrite of all Export code at some point soon
+- Added a Reset to Default option on the Export dialog
+- A couple of minor bugs fixed
+
 == Updates for 0.20.25 beta ============================================
-======================================================================== 
 
 - Fixed Optimise (Tools->Optimise data)
   Designed for RGB projects, can decrease RAM/ROM usage by a huge amount
   by replacing the matrix data with a streamlined look-up table.
 
-========================================================================
 == Updates for 0.20.24 beta ============================================
-======================================================================== 
 
 Fixed a bug which broke Binary export. It's all working now!
 Fixed a bug which caused binary export to ignore all but the bottom layer.
 This is a legacy bug that goes back years...
 
-========================================================================
 == Updates for 0.20.23 beta ============================================
-======================================================================== 
 
 Fixed a few issues with Automations (Wipe, Reveal, and Bounce).
 A couple of minor tweaks, bug fixes, and refactoring.
 
-========================================================================
 == Updates for 0.20.22 beta ============================================
-======================================================================== 
 
 A few minor tweaks and bug fixes.
 
-========================================================================
 == Updates for 0.20.20 beta ============================================
-======================================================================== 
 
 First official public build of the C++ rewrite.
 
