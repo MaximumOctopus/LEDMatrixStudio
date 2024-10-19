@@ -475,6 +475,7 @@ void TfrmNewBrush::SetGuiLanguageText()
 
 	bCreate->Caption = GLanguageHandler->Text[kCreate].c_str();
 
+	lBrush->Caption = GLanguageHandler->Text[kCustomBrush].c_str();
 	bLoadBrush->Caption = GLanguageHandler->Text[kOpen].c_str();
 	bSaveBrush->Caption = GLanguageHandler->Text[kSave].c_str();
 
@@ -1011,4 +1012,3 @@ void TfrmNewBrush::SaveBrush(const std::wstring file_name)
 		file.close();
 	}
 }
-

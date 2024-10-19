@@ -214,12 +214,12 @@ object frmNewProject: TfrmNewProject
       object gbMatrixOptions: TGroupBox
         Left = 10
         Top = 14
-        Width = 463
+        Width = 471
         Height = 85
         Caption = '.'
         TabOrder = 0
         object Label1: TLabel
-          Left = 221
+          Left = 219
           Top = 20
           Width = 8
           Height = 18
@@ -240,34 +240,36 @@ object frmNewProject: TfrmNewProject
         end
         object lBackground: TLabel
           Left = 13
-          Top = 57
+          Top = 56
           Width = 3
           Height = 15
           Caption = '.'
         end
         object Label11: TLabel
           Left = 308
-          Top = 57
+          Top = 56
           Width = 3
           Height = 15
           Caption = '.'
         end
         object cbHeight: TComboBox
-          Left = 237
+          Left = 232
           Top = 20
-          Width = 41
+          Width = 52
           Height = 23
           Hint = 'Select matrix height'
           TabOrder = 0
+          Text = '1024'
           OnChange = cbWidthChange
         end
         object cbWidth: TComboBox
-          Left = 173
+          Left = 163
           Top = 20
-          Width = 42
+          Width = 52
           Height = 23
           Hint = 'Select matrix width'
           TabOrder = 1
+          Text = '1024'
           OnChange = cbWidthChange
         end
         object cbMatrixType: TComboBox
@@ -329,9 +331,9 @@ object frmNewProject: TfrmNewProject
           end
         end
         object rbCommon: TRadioButton
-          Left = 174
+          Left = 163
           Top = 55
-          Width = 66
+          Width = 77
           Height = 17
           Caption = '.'
           Checked = True
@@ -349,9 +351,9 @@ object frmNewProject: TfrmNewProject
           OnClick = rbCommonClick
         end
         object cbCustomShape: TComboBox
-          Left = 297
+          Left = 290
           Top = 20
-          Width = 152
+          Width = 167
           Height = 23
           Hint = 'Matrix shape'
           Style = csDropDownList

@@ -114,6 +114,7 @@ __fastcall TfrmExport::TfrmExport(TComponent* Owner)
 	cbLineCount->Items->Add(L"100");
 	cbLineCount->Items->Add(L"128");
 	cbLineCount->Items->Add(L"256");
+	cbLineCount->Items->Add(L"512");
 
 	cbLineCount->ItemIndex = 1;
 

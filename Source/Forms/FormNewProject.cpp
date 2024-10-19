@@ -346,7 +346,7 @@ void __fastcall TfrmNewProject::cbWidthChange(TObject *Sender)
 
 void __fastcall TfrmNewProject::rbCommonClick(TObject *Sender)
 {
-	static const std::wstring CCommonSizes[] { L"1", L"2", L"4", L"5", L"7", L"8", L"12", L"16", L"24", L"32", L"48", L"60", L"64", L"128", L"256" };
+	static const std::wstring CCommonSizes[] { L"1", L"2", L"4", L"5", L"6", L"7", L"8", L"12", L"16", L"24", L"32", L"48", L"60", L"64", L"128", L"256", L"384", L"512", L"768", L"1024" };
 
 	cbWidth->Clear();
 	cbHeight->Clear();
@@ -361,12 +361,20 @@ void __fastcall TfrmNewProject::rbCommonClick(TObject *Sender)
 			cbHeight->Items->Add(s.c_str());
 		}
 
+		for (int x = 16; x < 20; x++)
+		{
+			std::wstring s = std::to_wstring(x);
+
+			cbWidth->Items->Add(CCommonSizes[x].c_str());
+			cbHeight->Items->Add(CCommonSizes[x].c_str());
+		}
+
 		cbWidth->ItemIndex = cbWidth->Items->IndexOf(OldWidth);
 		cbHeight->ItemIndex = cbHeight->Items->IndexOf(OldHeight);
 	}
 	else
 	{
-		for (int x = 0; x < 16; x++)
+		for (int x = 0; x < 20; x++)
 		{
 			cbWidth->Items->Add(CCommonSizes[x].c_str());
 			cbHeight->Items->Add(CCommonSizes[x].c_str());

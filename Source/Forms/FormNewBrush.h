@@ -52,9 +52,6 @@ class TfrmNewBrush : public TForm
 {
 __published:	// IDE-managed Components
 	TPanel *pMain;
-	TLabel *Label1;
-	TComboBox *cbAvailableTypes;
-	TButton *bCreate;
 	TBitBtn *sbSave;
 	TButton *bSaveBrush;
 	TButton *bLoadBrush;
@@ -67,7 +64,6 @@ __published:	// IDE-managed Components
 	TBitBtn *bSaveColours;
 	TBitBtn *bColourUp;
 	TBitBtn *bColourDown;
-	TBitBtn *sbCancel;
 	TPanel *pRGBPalette;
 	TShape *sRGBPaletteColour;
 	TShape *sRGBP1;
@@ -110,6 +106,11 @@ __published:	// IDE-managed Components
 	TImage *Image1;
 	TImage *iColoursMiddle;
 	TImage *iColoursRight;
+	TLabel *lBrush;
+	TComboBox *cbAvailableTypes;
+	TLabel *Label1;
+	TButton *bCreate;
+	TBitBtn *sbCancel;
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
