@@ -56,8 +56,8 @@
 
 	static const int BrushSizePixels[] = { 1, 2, 3, 4, 5 };
 
-	static const int __MaxWidth               = 256;
-	static const int __MaxHeight              = 256;
+	static const int __MaxWidth               = 1024;
+	static const int __MaxHeight              = 1024;
 
 	static const int kEffectFlipAll              = 0;
 	static const int kEffectMirrorAll            = 1;

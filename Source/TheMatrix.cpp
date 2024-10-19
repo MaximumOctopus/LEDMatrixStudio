@@ -815,12 +815,12 @@ void __fastcall TheMatrix::pbPreviewPaint(TObject *Sender)
 
 	if (Render.Draw.CopyPos.X != 0)
 	{
-		for (int x = 0; x < Render.Draw.CopyPos.X; x++)
+		for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 		{
-			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
+			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastX < Details.Width &&
-					y + LastY >= 0 && y + LastY < Details.Height)
+				if (x + LastX >= 0 && x + LastX <= Details.Width &&
+					y + LastY >= 0 && y + LastY <= Details.Height)
 				{
 					if (Details.Mode == MatrixMode::kRGB)
 					{
@@ -1328,12 +1328,12 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 
 	if (Render.Draw.CopyPos.X != 0)
 	{
-		for (int x = 0; x < Render.Draw.CopyPos.X; x++)
+		for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 		{
-			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
+			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastX < Details.Width &&
-					y + LastY >= 0 && y + LastY < Details.Height)
+				if (x + LastX >= 0 && x + LastX <= Details.Width &&
+					y + LastY >= 0 && y + LastY <= Details.Height)
 				{
 					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
@@ -1793,7 +1793,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 
 		for (int x = 0; x <= Render.ViewWindow.X; x++)
 		{
-			PaintBox->Canvas->Brush->Color = TColor(MatrixRender->Grid[rtlyy + x]);
+			PaintBox->Canvas->Brush->Color = TColor(MatrixRender->Grid[rtlyy + (Render.TopLeft.X + x)]);
 
 			switch (Render.Shape)
 			{
@@ -1876,12 +1876,12 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 
 	if (Render.Draw.CopyPos.X != 0)
 	{
-		for (int x = 0; x < Render.Draw.CopyPos.X; x++)
+		for (int x = 0; x <= Render.Draw.CopyPos.X; x++)
 		{
-			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
+			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastY < Details.Width &&
-					y + LastY >= 0 && y + LastY < Details.Height)
+				if (x + LastX >= 0 && x + LastX <= Details.Width &&
+					y + LastY >= 0 && y + LastY <= Details.Height)
 				{
 					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
@@ -2377,12 +2377,12 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB_3BPP(TObject *Sender)
 
 	if (Render.Draw.CopyPos.X != 0)
 	{
-		for (int x = 0; x <  Render.Draw.CopyPos.X; x++)
+		for (int x = 0; x <=  Render.Draw.CopyPos.X; x++)
 		{
-			for (int y = 0; y < Render.Draw.CopyPos.Y; y++)
+			for (int y = 0; y <= Render.Draw.CopyPos.Y; y++)
 			{
-				if (x + LastX >= 0 && x + LastX < Details.Width &&
-					y + LastY >= 0 && y + LastY < Details.Height)
+				if (x + LastX >= 0 && x + LastX <= Details.Width &&
+					y + LastY >= 0 && y + LastY <= Details.Height)
 				{
 					if (MatrixIgnoredLayout->Grid[(y + LastY) * Details.Width + (x + LastX)] == PixelAlive)
 					{
@@ -2950,9 +2950,9 @@ void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 	{
 	case MatrixMode::kRGB:
 	case MatrixMode::kRGB3BPP:
-		for (int x2 = 0; x2 < Render.Draw.CopyPos.X; x2++)
+		for (int x2 = 0; x2 <= Render.Draw.CopyPos.X; x2++)
 		{
-			for (int y2 = 0; y2 < Render.Draw.CopyPos.Y; y2++)
+			for (int y2 = 0; y2 <= Render.Draw.CopyPos.Y; y2++)
 			{
 				if (x2 + x1 >= 0 && x2 + x1 < Details.Width &&
 					y2 + y1 >= 0 && y2 + y1 < Details.Height)
@@ -3930,26 +3930,20 @@ void TheMatrix::CopyShape()
 
 	if (Render.Draw.Coords[0].X > Render.Draw.Coords[1].X)
 	{
-		int tc = Render.Draw.Coords[0].X;
-
-		Render.Draw.Coords[0].X = Render.Draw.Coords[1].X;
-		Render.Draw.Coords[1].X = tc;
+		std::swap(Render.Draw.Coords[0].X, Render.Draw.Coords[1].X);
 	}
 
 	if (Render.Draw.Coords[0].Y > Render.Draw.Coords[1].Y)
 	{
-		int tc = Render.Draw.Coords[0].Y;
-
-		Render.Draw.Coords[0].Y = Render.Draw.Coords[1].Y;
-		Render.Draw.Coords[1].Y = tc;
+		std::swap(Render.Draw.Coords[0].Y, Render.Draw.Coords[1].Y);
 	}
 
 	Render.Draw.CopyPos.X = Render.Draw.Coords[1].X - Render.Draw.Coords[0].X;
 	Render.Draw.CopyPos.Y = Render.Draw.Coords[1].Y - Render.Draw.Coords[0].Y;
 
-	for (int x = Render.Draw.Coords[0].X; x < Render.Draw.Coords[1].X; x++)
+	for (int x = Render.Draw.Coords[0].X; x <= Render.Draw.Coords[1].X; x++)
 	{
-		for (int y = Render.Draw.Coords[0].Y; y < Render.Draw.Coords[1].Y; y++)
+		for (int y = Render.Draw.Coords[0].Y; y <= Render.Draw.Coords[1].Y; y++)
 		{
 			MatrixCopy->Grid[(y - Render.Draw.Coords[0].Y) * Details.Width + (x - Render.Draw.Coords[0].X)] = MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x];
 		}
@@ -5550,14 +5544,15 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 		lTempFrame->PixelFormat = pf24bit;
 
 		TGIFRenderer *lGR = new TGIFRenderer(lGIF);
+        lGR->Animate = true;
 
-		int gifheight    = lGIF->Height;
+		int gifHeight    = lGIF->Height;
 		int gifWidth     = lGIF->Width;
 
-		if (gifheight > 256 || gifheight > 256)
+		if (gifWidth > __MaxWidth || gifHeight > __MaxHeight)
 		{
 			import.ImportOk    = false;
-			import.ErrorString = GLanguageHandler->Text[kGIFDimensionsAreTooLarge] + L" " + std::to_wstring(gifWidth) + L" x " + std::to_wstring(gifheight) + L").";
+			import.ErrorString = GLanguageHandler->Text[kGIFDimensionsAreTooLarge] + L" " + std::to_wstring(gifWidth) + L" x " + std::to_wstring(gifHeight) + L").";
 
 			delete lGIF;
 			delete lGR;
@@ -5567,35 +5562,49 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 		}
 
 		Details.Width  = gifWidth;
-		Details.Height = gifheight;
+		Details.Height = gifHeight;
 
 		try
 		{
-			lTempFrame->SetSize(gifWidth, gifheight);
+			lTempFrame->SetSize(gifWidth, gifHeight);
 
 			TRGBTriple *ptr;
 
+			lTempFrame->Canvas->Lock();
+
 			for (int t = 0; t < lGIF->Images->Count; t++)
 			{
-				if (lGIF->Images->Frames[t]->Empty) continue;	// ignore bad frames
+				if (lGIF->Images->Frames[t]->Empty)
+				{
+					lGR->NextFrame();
+
+					continue;	// ignore bad frames
+				}
 
 				for (int layer = 0; layer < MatrixLayers.size(); layer++)
 				{
 					Matrix *m = new Matrix(lGIF->Width, lGIF->Height, MatrixMode::kRGB, RGBBackground);
 
 					MatrixLayers[layer]->Cells.push_back(m);
-                }
+				}
 
-				lGR->Draw(lTempFrame->Canvas, lTempFrame->Canvas->ClipRect);
-
-				for (int y = 0; y < lGIF->Height; y++)
+				try
 				{
-					ptr = reinterpret_cast<TRGBTriple *>(lTempFrame->ScanLine[y]);
+					lGR->Draw(lTempFrame->Canvas, lTempFrame->Canvas->ClipRect);
 
-					for (int x = 0; x < lGIF->Width; x++)
+					for (int y = 0; y < lGIF->Height; y++)
 					{
-						MatrixLayers[CurrentLayer]->Cells.back()->Grid[y * Details.Width + x] = (ptr[x].rgbtBlue << 16) + (ptr[x].rgbtGreen << 8) + (ptr[x].rgbtRed);
+						ptr = reinterpret_cast<TRGBTriple *>(lTempFrame->ScanLine[y]);
+
+						for (int x = 0; x < lGIF->Width; x++)
+						{
+							MatrixLayers[CurrentLayer]->Cells.back()->Grid[y * Details.Width + x] = (ptr[x].rgbtBlue << 16) + (ptr[x].rgbtGreen << 8) + (ptr[x].rgbtRed);
+						}
 					}
+				}
+				catch(...)
+				{
+
 				}
 
 				lGR->NextFrame();
@@ -9188,7 +9197,7 @@ void TheMatrix::ChangeZoomUI(int pixelsize)
 			ScrollVertical->Visible = false;
 		}
 
-        Render.ViewWindow.Y = Details.Height - 1;
+		Render.ViewWindow.Y = Details.Height - 1;
 	}
 }
 
@@ -9203,10 +9212,10 @@ void __fastcall TheMatrix::ScrollBarHorizontalChange(TObject *Sender)
 
 void __fastcall TheMatrix::ScrollBarVerticalChange(TObject *Sender)
 {
-  Render.TopLeft.Y = ScrollVertical->Position;
-  Render.BottomRight.Y = Render.TopLeft.Y + Render.ViewWindow.Y - 1;
+	Render.TopLeft.Y = ScrollVertical->Position;
+	Render.BottomRight.Y = Render.TopLeft.Y + Render.ViewWindow.Y - 1;
 
-  PaintBox->Invalidate();
+	PaintBox->Invalidate();
 }
 #pragma end_region
 

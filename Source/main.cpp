@@ -1413,7 +1413,7 @@ void TfrmMain::SetGuiLanguageText()
 	//
 	Draw1->Caption = GLanguageHandler->Text[kDraw].c_str();
 	miMouseMode->Caption = GLanguageHandler->Text[kFreehandBrush].c_str();
-	miNewBrush->Caption = GLanguageHandler->Text[kCustomBrush].c_str();
+	miNewBrush->Caption = Utility::WS2US(GLanguageHandler->Text[kCustomBrush] + L"...");
 	miDrawCopy->Caption = GLanguageHandler->Text[kCopyPaste].c_str();
 	miFilledRectangle->Caption = GLanguageHandler->Text[kFilledRectangle].c_str();
 	miFrame->Caption = GLanguageHandler->Text[kEmptyRectangle].c_str();
@@ -3281,12 +3281,10 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		GSystemSettings->Project.PixelSize = thematrix->GetAutoPixelSize(pCanvas->Width, pCanvas->Height, sbGradient->Tag);
 	}
 
-	if (GSystemSettings->Project.PixelSize == 0)
+	if (GSystemSettings->Project.PixelSize <= 0)
 	{
 		GSystemSettings->Project.PixelSize = thematrix->GetAutoPixelSize(pCanvas->Width, pCanvas->Height, sbGradient->Tag);
 	}
-
-	GSystemSettings->Project.PixelSize = 30;
 
 	switch (GSystemSettings->Project.Shape)
 	{
@@ -4644,7 +4642,7 @@ void TfrmMain::SetFrameCaption(int i)
 {
 	if (thematrix->GetSoftwareMode() == SoftwareMode::kFont)
 	{
-		lFrame->Caption     = Char(i + GSystemSettings->App.ASCIIIndex);
+		lFrame->Caption = Char(i + GSystemSettings->App.ASCIIIndex);
 
 		std::wstring caption = L"ASCII: " + std::to_wstring(i + GSystemSettings->App.ASCIIIndex - 1);
 
