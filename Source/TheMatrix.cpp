@@ -2124,7 +2124,12 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kRandom:
-			DrawWithBrush(ColourUtility::RandomColour(SelectionLMB, RandomCoeff), x1, y1);
+			if (!(LastX == x1 && LastY == y1))
+			{
+				DrawWithBrush(ColourUtility::RandomColour(SelectionLMB, RandomCoeff), x1, y1);
+            }
+
+			if (OnChange) OnChange(this);
 			break;
 		}
 	}
@@ -2138,33 +2143,50 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 			switch (Render.Gradient.Option)
 			{
 			case GradientOption::kOff:
-				DrawWithBrush(SelectionMMB, x1, y1);
+				if (!(LastX == x1 && LastY == y1))
+				{
+					DrawWithBrush(SelectionMMB, x1, y1);
+                }
 				break;
 			case GradientOption::kVertical:
-				DrawWithBrush(Render.Gradient.IY[y1], x1, y1);
+				if (!(LastX == x1 && LastY == y1))
+				{
+					DrawWithBrush(Render.Gradient.IY[y1], x1, y1);
+				}
 				break;
 			case GradientOption::kHorizontal:
-				DrawWithBrush(Render.Gradient.IX[x1], x1, y1);
+                if (!(LastX == x1 && LastY == y1))
+				{
+					DrawWithBrush(Render.Gradient.IX[x1], x1, y1);
+				}
 				break;
 			}
 
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kMulti:
-			DrawWithBrushMulti(SelectionMMB, x1, y1);
+			if (!(LastX == x1 && LastY == y1))
+			{
+				DrawWithBrushMulti(SelectionMMB, x1, y1);
+			}
 
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kRandom:
-			DrawWithBrush(ColourUtility::RandomColour(SelectionMMB, RandomCoeff), x1, y1);
+			if (!(LastX == x1 && LastY == y1))
+			{
+				DrawWithBrush(ColourUtility::RandomColour(SelectionMMB, RandomCoeff), x1, y1);
+			}
+
+			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kGradientBrush:
 			if (!(LastX == x1 && LastY == y1))
 			{
 				DrawWithGradientBrush(x1, y1);
-
-				if (OnChange) OnChange(this);
 			}
+
+			if (OnChange) OnChange(this);
 			break;
 		}
 	}
@@ -2192,7 +2214,12 @@ void __fastcall TheMatrix::Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift
 			if (OnChange) OnChange(this);
 			break;
 		case DrawMode::kRandom:
-			DrawWithBrush(ColourUtility::RandomColour(SelectionRMB, RandomCoeff), x1, y1);
+			if (!(LastX == x1 && LastY == y1))
+			{
+				DrawWithBrush(ColourUtility::RandomColour(SelectionRMB, RandomCoeff), x1, y1);
+            }
+
+            if (OnChange) OnChange(this);
 			break;
 		}
 	}
@@ -2670,7 +2697,7 @@ int TheMatrix::GetPixelFrom(MatrixMode matrixformat, MatrixMode importformat, in
 		case MatrixMode::kRGB3BPP:
 			return pixel;
 		}
-        break;
+		break;
 	}
 
 	return 0;

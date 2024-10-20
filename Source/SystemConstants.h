@@ -14,7 +14,7 @@
 #pragma once
 
 
-static const std::wstring __LEDStudioDate = L"October 19th 2024";
+static const std::wstring __LEDStudioDate = L"October 20th 2024";
 
 #if _WIN64
 static const std::wstring __LEDStudioVersion = L"0.20.27 (x64)";

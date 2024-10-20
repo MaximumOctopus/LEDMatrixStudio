@@ -141,7 +141,7 @@ void Matrix::AddToHistory(Matrix &m)
 		History.erase(History.begin());
 	}
 
-	MatrixHistory *mh = new MatrixHistory(this->Grid, m.Width, m.Height);
+	MatrixHistory *mh = new MatrixHistory(m.Grid, m.Width, m.Height);
 
 	std::memcpy(mh->Grid, m.Grid, Width * Height * sizeof(int));
 
@@ -167,7 +167,7 @@ void Matrix::AddToHistory(Matrix *m)
 		History.erase(History.begin());
 	}
 
-	MatrixHistory *mh = new MatrixHistory(this->Grid, m->Width, m->Height);
+	MatrixHistory *mh = new MatrixHistory(m->Grid, m->Width, m->Height);
 
 	std::memcpy(mh->Grid, m->Grid, Width * Height * sizeof(int));
 
