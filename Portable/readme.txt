@@ -2,7 +2,7 @@
  =                                                                             =
  =  LED Matrix Studio v0.20.27                                                 =
  =                                                                             =
- =  October 19th 2024                                                           =
+ =  October 20th 2024                                                           =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -148,6 +148,7 @@
 - Fixed issue with horizontal scrollbar not working with matrices too big for the display 
 - Fixed a couple of minor issues with the brush tool
 - A few tweaks to Custom Brush usability 
+- Fixed a couple of issues with jerky drawing with middle and right mouse buttons.
 
 == Updates for 0.20.26 beta ============================================
 
