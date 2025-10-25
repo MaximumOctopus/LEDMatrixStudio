@@ -44,6 +44,7 @@ __published:	// IDE-managed Components
 	TComboBox *cbDataSize;
 	TComboBox *cbLanguageFormat;
 	TComboBox *cbPerRow;
+	TLabel *lStats;
 	void __fastcall sbCopyOutputClick(TObject *Sender);
 	void __fastcall sbOptimiseClick(TObject *Sender);
 private:

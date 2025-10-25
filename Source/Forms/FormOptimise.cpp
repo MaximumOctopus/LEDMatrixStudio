@@ -186,6 +186,8 @@ void TfrmOptimise::PopulateMatrixData()
 			}
 		}
 	}
+
+	lStats->Caption = MatrixData.size() + L" items";
 }
 
 

@@ -51,8 +51,6 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
-    ExplicitWidth = 718
-    ExplicitHeight = 334
   end
   object mData: TMemo
     Left = 263
@@ -84,6 +82,13 @@ object frmOptimise: TfrmOptimise
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
+    object lStats: TLabel
+      Left = 8
+      Top = 125
+      Width = 9
+      Height = 15
+      Caption = '...'
+    end
     object gbOutputOptions: TGroupBox
       Left = 8
       Top = 6
