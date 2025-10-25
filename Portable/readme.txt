@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.20.27                                                 =
+ =  LED Matrix Studio v0.20.28                                                 =
  =                                                                             =
- =  October 20th 2024                                                           =
+ =  October 25th 2025                                                          =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -113,7 +113,7 @@
 
 ========================================================================
 
- LED Matrix Studio has been developed with C++ Builder Community Edition 11.3.
+ LED Matrix Studio has been developed with C++ Builder Community Edition 12.1.
  The source code can be found at the link at the top of this document.
 
  If you wish to compile the product, or make your own changes, then download
@@ -140,6 +140,13 @@
 
  Please consider sending it to me so that I may include it with
  future updates.
+
+== Updates for 0.20.28 beta ============================================
+
+- Fixed a bug with exporting to RGB565 format.
+- Fixed a bug with Automation where split up/down doesn't work correctly
+
+A few minor tweaks.
 
 == Updates for 0.20.27 beta ============================================
 
