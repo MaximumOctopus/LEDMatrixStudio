@@ -165,7 +165,6 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 	// =======================================================================
 
 	int uos = data.size() * teo.GetNumberSizeLengthBytes(teo.Code.Size);
-
 	int os  = teo.GetNumberSizeLengthBytes(teo.Code.Size) * unique_items.size() + (data.size() * indexdatasize);             // lut size of data
 
 	output.clear();
@@ -177,7 +176,7 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(uos) + L" bytes");
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
 	output.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(uos - os) + L" bytes (" +
-												std::to_wstring(std::round((((double)uos - (double)os) / (double)uos) * 100)) + L"%)");
+	std::to_wstring(std::round((((double)uos - (double)os) / (double)uos) * 100)) + L"%)");
 
 	ExportUtility::GetSpacerLine(teo.Code.Language, output);
 
@@ -245,9 +244,9 @@ bool Optimiser::OptimiseDataSimple(TheMatrix *thematrix, ExportOptions teo, std:
 	if (!s.empty())
 	{
 		output.push_back(s);
-
-		output.push_back(L"};");
 	}
+
+	output.push_back(L"};");
 
 	// =======================================================================
 
