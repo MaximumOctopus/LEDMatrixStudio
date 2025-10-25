@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -523,7 +523,7 @@ namespace ExportUtility
 		std::wstring cc = GetCommentCharacter(teo.Code.Language);
 
 		output.push_back(cc + L"=================================================================");
-		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2024");
+		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2025");
 		output.push_back(cc);
 		output.push_back(cc + L"https://github.com/MaximumOctopus/LEDMatrixStudio");
 		output.push_back(cc);

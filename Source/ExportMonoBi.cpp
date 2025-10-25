@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -327,6 +327,10 @@ namespace ExportMonoBi
 						op = L"";
 						lc = 0;
 						rc = 0;
+						break;
+
+					default:
+						break;
 					}
 					break;
 				}
@@ -459,6 +463,10 @@ namespace ExportMonoBi
 						op = L"";
 						lc = 0;
 						rc = 0;
+						break;
+
+					default:
+						break;
 					}
                     break;
 				}
@@ -479,6 +487,9 @@ namespace ExportMonoBi
 			{
 				output.push_back(baaAddContentBySize(op, 0, rc));
 			}
+			break;
+
+		default:
 			break;
 		}
 

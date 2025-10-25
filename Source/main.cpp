@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -283,7 +283,7 @@ void __fastcall TfrmMain::FormMouseWheelDown(TObject *Sender, TShiftState Shift,
 				tbFrames->Position--;
 			}
 
-			tbFramesChange(nullptr);
+			tbFramesTracking(nullptr);
 
 			frmPreviewPopout->tbFrames->Position = tbFrames->Position;
 		}
@@ -315,7 +315,7 @@ void __fastcall TfrmMain::FormMouseWheelUp(TObject *Sender, TShiftState Shift, T
 				tbFrames->Position++;
 			}
 
-			tbFramesChange(nullptr);
+			tbFramesTracking(nullptr);
 
 			frmPreviewPopout->tbFrames->Position = tbFrames->Position;
 		}
@@ -3863,6 +3863,9 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 	}
 	case MatrixMode::kRGB3BPP:
 		break;
+
+	default:
+		break;
 	}
 
 	thematrix->Render.Draw.Mode = dm;
@@ -4077,7 +4080,7 @@ void __fastcall TfrmMain::bAddFrameMultipleClick(TObject *Sender)
 	std::wstring s = InputBox(GLanguageHandler->Text[kAddBlankFrames].c_str(),
 							  GLanguageHandler->Text[kHowManyFrames].c_str(), L"1").c_str();
 
-	if (!s.empty() && Utility::ValidateNumber(s, 99))
+	if (!s.empty() && Utility::ValidateNumber(s, 999))
 	{
 		int sf = stoi(s);
 
@@ -4096,6 +4099,7 @@ void __fastcall TfrmMain::bDeleteFrameClick(TObject *Sender)
 {
 	if (tbFrames->Position == 1 && tbFrames->Max == 1)
 	{
+        // can't delete the only frame in the project :)
 	}
 	else
 	{
@@ -4154,10 +4158,6 @@ void __fastcall TfrmMain::tbFramesChange(TObject *Sender)
 {
 //
 }
-#pragma end_region
-
-
-#pragma region Timers
 #pragma end_region
 
 
@@ -4603,6 +4603,9 @@ void TfrmMain::ChangeMatrixType()
 
 		iMMBGradient->Visible = false;
 		break;
+
+	default:
+		break;
 	}
 
 	FormResize(nullptr);
@@ -4738,6 +4741,9 @@ void TfrmMain::UpdateData()
 												 FrameQuickData->GetDirection(),
 												 FrameQuickData->GetHex(),
 												 pQuickData->Visible);
+			break;
+
+		default:
 			break;
 		}
 

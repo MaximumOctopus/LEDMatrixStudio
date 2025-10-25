@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -42,23 +42,23 @@ namespace ColourUtility
 		{
 			int xT = 0;
 
-			r = std::round((r / 255) * 31);
-			g = std::round((g / 255) * 63);
-			b = std::round((b / 255) * 31);
+			r = std::round(((double)r / 255) * 31);
+			g = std::round(((double)g / 255) * 63);
+			b = std::round(((double)b / 255) * 31);
 
 			switch (convertmode)
 			{
 			case RGBMode::kRGB:
-				xT = (r << 11) + (g << 5) + b;
+				xT = (r << 11) + (g << 5) + b;              // rrrrrggggggbbbbb
 				break;
 			case RGBMode::kBGR:
-				xT = (b << 11) + (g << 5) + r;
+				xT = (b << 11) + (g << 5) + r;              // bbbbbggggggrrrrr
 				break;
 			case RGBMode::kGRB:
-				xT = (g << 10) + (r << 5) + b;
+				xT = (g << 10) + (r << 5) + b;              // ggggggrrrrrbbbbb
 				break;
 			case RGBMode::kBRG:
-				xT = (b << 11) + (r << 6) + g;
+				xT = (b << 11) + (r << 6) + g;              // bbbbbrrrrrgggggg
 				break;
 
 			default:

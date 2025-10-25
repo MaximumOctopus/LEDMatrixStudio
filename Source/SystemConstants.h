@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -14,12 +14,12 @@
 #pragma once
 
 
-static const std::wstring __LEDStudioDate = L"October 20th 2024";
+static const std::wstring __LEDStudioDate = L"October 25th 2025";
 
 #if _WIN64
-static const std::wstring __LEDStudioVersion = L"0.20.27 (x64)";
+static const std::wstring __LEDStudioVersion = L"0.20.28 (x64)";
 #else
-static const std::wstring __LEDStudioVersion = L"0.20.27 (x32)";
+static const std::wstring __LEDStudioVersion = L"0.20.28 (x32)";
 #endif
 
 static const std::wstring __SimpleTextFull = L"(c) Paul Alan Freshney :: " + __LEDStudioDate + L" :: www.MaximumOctopus.com";

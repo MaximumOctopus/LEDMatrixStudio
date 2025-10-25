@@ -26,7 +26,7 @@ object frmMain: TfrmMain
   TextHeight = 13
   object Bevel20: TBevel
     Left = 0
-    Top = 139
+    Top = 131
     Width = 1490
     Height = 4
     Align = alTop
@@ -304,9 +304,9 @@ object frmMain: TfrmMain
   end
   object pbFont: TPanel
     Left = 1186
-    Top = 143
+    Top = 135
     Width = 100
-    Height = 685
+    Height = 693
     Align = alRight
     Color = clWhite
     ParentBackground = False
@@ -314,7 +314,7 @@ object frmMain: TfrmMain
     Visible = False
     object pASCIICode: TPanel
       Left = 1
-      Top = 659
+      Top = 667
       Width = 98
       Height = 25
       Align = alBottom
@@ -324,9 +324,9 @@ object frmMain: TfrmMain
   end
   object pRGBPalette: TPanel
     Left = 1286
-    Top = 143
+    Top = 135
     Width = 204
-    Height = 685
+    Height = 693
     Align = alRight
     Color = clWhite
     ParentBackground = False
@@ -336,7 +336,7 @@ object frmMain: TfrmMain
       Left = 1
       Top = 1
       Width = 202
-      Height = 683
+      Height = 691
       ActivePage = tsPalette
       Align = alClient
       TabOrder = 0
@@ -376,9 +376,9 @@ object frmMain: TfrmMain
     end
     object Bevel3: TBevel
       Left = 469
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbPreset: TSpeedButton
@@ -419,9 +419,9 @@ object frmMain: TfrmMain
     end
     object Bevel17: TBevel
       Left = 205
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object lMemoryUsage: TLabel
@@ -451,9 +451,9 @@ object frmMain: TfrmMain
     end
     object Bevel19: TBevel
       Left = 559
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbSave: TSpeedButton
@@ -472,9 +472,9 @@ object frmMain: TfrmMain
     end
     object Bevel10: TBevel
       Left = 641
-      Top = 11
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbExport: TSpeedButton
@@ -493,16 +493,16 @@ object frmMain: TfrmMain
     end
     object Bevel4: TBevel
       Left = 393
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object Bevel16: TBevel
       Left = 289
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbGenerateCode: TSpeedButton
@@ -530,9 +530,9 @@ object frmMain: TfrmMain
   end
   object panelMiddle: TPanel
     Left = 0
-    Top = 27
+    Top = 50
     Width = 1490
-    Height = 27
+    Height = 23
     Align = alTop
     BevelOuter = bvNone
     DoubleBuffered = True
@@ -552,9 +552,9 @@ object frmMain: TfrmMain
     end
     object Bevel1: TBevel
       Left = 60
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbMirror: TSpeedButton
@@ -578,9 +578,9 @@ object frmMain: TfrmMain
     end
     object Bevel2: TBevel
       Left = 225
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbScrollLeft: TSpeedButton
@@ -650,9 +650,9 @@ object frmMain: TfrmMain
     end
     object Bevel6: TBevel
       Left = 398
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbRotateL: TSpeedButton
@@ -695,16 +695,16 @@ object frmMain: TfrmMain
     end
     object Bevel13: TBevel
       Left = 491
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object Bevel14: TBevel
       Left = 662
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object cbRotateAngle: TComboBox
@@ -741,9 +741,9 @@ object frmMain: TfrmMain
   end
   object paneTools: TPanel
     Left = 0
-    Top = 54
+    Top = 27
     Width = 1490
-    Height = 27
+    Height = 23
     Align = alTop
     BevelOuter = bvNone
     DoubleBuffered = True
@@ -830,9 +830,9 @@ object frmMain: TfrmMain
     end
     object Bevel15: TBevel
       Left = 491
-      Top = 12
+      Top = 6
       Width = 5
-      Height = 10
+      Height = 14
       Shape = bsLeftLine
     end
     object sbGradient: TSpeedButton
@@ -1178,7 +1178,7 @@ object frmMain: TfrmMain
     end
     object Bevel21: TBevel
       Left = 764
-      Top = 12
+      Top = 6
       Width = 5
       Height = 14
       Shape = bsLeftLine
@@ -1197,9 +1197,9 @@ object frmMain: TfrmMain
   end
   object pCanvas: TPanel
     Left = 0
-    Top = 143
+    Top = 135
     Width = 737
-    Height = 685
+    Height = 693
     Align = alClient
     BevelOuter = bvNone
     Color = 3355443
@@ -1214,16 +1214,16 @@ object frmMain: TfrmMain
   end
   object pLayers: TPanel
     Left = 737
-    Top = 143
+    Top = 135
     Width = 232
-    Height = 685
+    Height = 693
     Align = alRight
     TabOrder = 8
     Visible = False
   end
   object pCurrentColours: TPanel
     Left = 0
-    Top = 81
+    Top = 73
     Width = 1490
     Height = 24
     Align = alTop
@@ -1503,7 +1503,7 @@ object frmMain: TfrmMain
   end
   object panelRGBPalette: TPanel
     Left = 0
-    Top = 105
+    Top = 97
     Width = 1490
     Height = 34
     Align = alTop
@@ -2371,9 +2371,9 @@ object frmMain: TfrmMain
   end
   object pQuickData: TPanel
     Left = 969
-    Top = 143
+    Top = 135
     Width = 217
-    Height = 685
+    Height = 693
     Align = alRight
     TabOrder = 12
     Visible = False
@@ -2381,7 +2381,8 @@ object frmMain: TfrmMain
   object miMain: TMainMenu
     AutoLineReduction = maManual
     Images = ilMenu
-    Left = 712
+    Left = 720
+    Top = 65528
     object File1: TMenuItem
       Caption = '.'
       object New1: TMenuItem
@@ -4931,7 +4932,8 @@ object frmMain: TfrmMain
     Top = 56
   end
   object puGradient: TPopupMenu
-    Left = 760
+    Left = 792
+    Top = 65528
     object miGradientColour0: TMenuItem
       Caption = '.'
       OnClick = miGradientColour0Click

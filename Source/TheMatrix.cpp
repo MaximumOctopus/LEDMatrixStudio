@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -143,7 +143,8 @@ void TheMatrix::InitPreviewBox(TComponent *Owner, TWinControl *WinControl, bool 
 }
 
 
-void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount, int top, int left, int width, int height, int pixelsize,
+void TheMatrix::NewMatrix(MatrixMode matrixmode, int framecount,
+                          int top, int left, int width, int height, int pixelsize,
 						  PixelShape pixelshape, bool grid, bool readonly, bool clearall,
 						  int backgroundcolour)
 {
@@ -1367,12 +1368,13 @@ void __fastcall TheMatrix::PaintBoxUpdate(TObject *Sender)
 												 ((x + LastX) * Render.PixelSize) + Render.PixelSizeZ,
 												 ((y + LastY) * Render.PixelSize) + Render.PixelSizeZ);
 						break;
-					case PixelShape::kRoundRect : PaintBox->Canvas->RoundRect((x + LastX) * Render.PixelSize,
-													  (y + LastY) * Render.PixelSize,
-													 ((x + LastX) * Render.PixelSize) + Render.PixelSizeZ,
-													 ((y + LastY) * Render.PixelSize) + Render.PixelSizeZ,
-													   Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
-													   Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
+					case PixelShape::kRoundRect :
+						PaintBox->Canvas->RoundRect((x + LastX) * Render.PixelSize,
+													(y + LastY) * Render.PixelSize,
+												   ((x + LastX) * Render.PixelSize) + Render.PixelSizeZ,
+												   ((y + LastY) * Render.PixelSize) + Render.PixelSizeZ,
+													 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
+												     Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
 						break;
 					}
 				}
@@ -1821,7 +1823,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 			case PixelShape::kSquare:
 				PaintBox->Canvas->FillRect(Rect(x * Render.PixelSize,
 												irp,
-												x * Render.PixelSize + Render.PixelSizeZ,
+											   (x * Render.PixelSize) + Render.PixelSizeZ,
 												irp + Render.PixelSizeZ));
 				break;
 			case PixelShape::kCircle:
@@ -1869,23 +1871,23 @@ void __fastcall TheMatrix::PaintBoxUpdateRGB(TObject *Sender)
 				{
 				case PixelShape::kSquare:
 					PaintBox->Canvas->FillRect(Rect(Render.Draw.Coords[0].X * Render.PixelSize,
-														 Render.Draw.Coords[0].Y * Render.PixelSize,
-														(Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-														(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ));
+													Render.Draw.Coords[0].Y * Render.PixelSize,
+												   (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
+												   (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ));
 					break;
 				case PixelShape::kCircle:
 					PaintBox->Canvas->Ellipse(Render.Draw.Coords[0].X * Render.PixelSize,
-												   Render.Draw.Coords[0].Y * Render.PixelSize,
-												  (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-												  (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ);
+											  Render.Draw.Coords[0].Y * Render.PixelSize,
+											 (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
+											 (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ);
 					break;
 				case PixelShape::kRoundRect:
 					PaintBox->Canvas->RoundRect(Render.Draw.Coords[0].X * Render.PixelSize,
-													 Render.Draw.Coords[0].Y * Render.PixelSize,
-													(Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
-													(Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ,
-													 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
-													 Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
+												Render.Draw.Coords[0].Y * Render.PixelSize,
+											   (Render.Draw.Coords[0].X * Render.PixelSize) + Render.PixelSizeZ,
+											   (Render.Draw.Coords[0].Y * Render.PixelSize) + Render.PixelSizeZ,
+												Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)),
+												Render.PixelSize - (std::round(Render.PixelSize / CRoundRectCoeff)));
 					break;
 				}
 			}
@@ -7347,7 +7349,7 @@ void TheMatrix::PerformSplitScroll(int mode, int layer, int frame)
 			ScrollColumn(layer, frame, a, column);
 		}
 
-		for (int column = mid + 1; column < Details.Height; column++)
+		for (int column = mid + 1; column < Details.Width; column++)
 		{
 			ScrollColumn(layer, frame, b, column);
 		}
