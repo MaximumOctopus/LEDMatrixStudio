@@ -446,7 +446,6 @@ object frmExport: TfrmExport
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 0
-        ExplicitLeft = -5
         object gbSource: TGroupBox
           Left = 15
           Top = 8

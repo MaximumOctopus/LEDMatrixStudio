@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -931,6 +931,9 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 							row++;
 						}
 						break;
+
+					default:
+						break;
 					}
 				}
 			}
@@ -981,6 +984,9 @@ void TfrmNewBrush::SaveBrush(const std::wstring file_name)
 			break;
 		case MatrixMode::kRGB3BPP:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixRGB3BPP + L"\n");
+			break;
+
+		default:
 			break;
 		}
 

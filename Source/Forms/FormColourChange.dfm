@@ -2,7 +2,7 @@ object frmColourChange: TfrmColourChange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 344
+  ClientHeight = 347
   ClientWidth = 543
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,16 +12,9 @@ object frmColourChange: TfrmColourChange
   Font.Style = []
   Position = poMainFormCenter
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 309
-    Width = 535
-    Height = 4
-    Shape = bsTopLine
-  end
   object Label3: TLabel
     Left = 8
-    Top = 316
+    Top = 324
     Width = 3
     Height = 15
     Caption = '.'

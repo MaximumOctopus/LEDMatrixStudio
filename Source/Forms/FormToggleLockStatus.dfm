@@ -2,8 +2,8 @@ object frmToggleLockStatus: TfrmToggleLockStatus
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 183
-  ClientWidth = 372
+  ClientHeight = 181
+  ClientWidth = 366
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,13 +11,6 @@ object frmToggleLockStatus: TfrmToggleLockStatus
   Font.Name = 'Segoe UI'
   Font.Style = []
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 142
-    Width = 355
-    Height = 4
-    Shape = bsTopLine
-  end
   object Image1: TImage
     Left = 8
     Top = 8
@@ -416,7 +409,7 @@ object frmToggleLockStatus: TfrmToggleLockStatus
   end
   object bOk: TBitBtn
     Left = 207
-    Top = 152
+    Top = 150
     Width = 75
     Height = 25
     Enabled = False
@@ -504,7 +497,7 @@ object frmToggleLockStatus: TfrmToggleLockStatus
   end
   object bCancel: TBitBtn
     Left = 288
-    Top = 152
+    Top = 150
     Width = 75
     Height = 25
     Cancel = True

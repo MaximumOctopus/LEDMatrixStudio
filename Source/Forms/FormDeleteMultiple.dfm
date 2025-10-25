@@ -2,8 +2,8 @@ object frmDeleteMultiple: TfrmDeleteMultiple
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 194
-  ClientWidth = 367
+  ClientHeight = 198
+  ClientWidth = 374
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,13 +12,6 @@ object frmDeleteMultiple: TfrmDeleteMultiple
   Font.Style = []
   Position = poMainFormCenter
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 158
-    Width = 365
-    Height = 4
-    Shape = bsTopLine
-  end
   object lWarning: TLabel
     Left = 8
     Top = 132

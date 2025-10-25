@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -29,7 +29,6 @@
 class TfrmColourChange : public TForm
 {
 __published:	// IDE-managed Components
-	TBevel *Bevel1;
 	TLabel *Label3;
 	TImage *Image1;
 	TBitBtn *bOK;

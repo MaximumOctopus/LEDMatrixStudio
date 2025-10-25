@@ -1,7 +1,7 @@
 object frmMerge: TfrmMerge
   Left = 0
   Top = 0
-  ClientHeight = 272
+  ClientHeight = 280
   ClientWidth = 643
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,13 +11,6 @@ object frmMerge: TfrmMerge
   Font.Style = []
   Position = poMainFormCenter
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 238
-    Width = 633
-    Height = 4
-    Shape = bsTopLine
-  end
   object Image1: TImage
     Left = 8
     Top = 8

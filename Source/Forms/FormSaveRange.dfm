@@ -2,8 +2,8 @@ object frmSaveRange: TfrmSaveRange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 158
-  ClientWidth = 371
+  ClientHeight = 164
+  ClientWidth = 364
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,13 +12,6 @@ object frmSaveRange: TfrmSaveRange
   Font.Style = []
   Position = poMainFormCenter
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 111
-    Width = 353
-    Height = 4
-    Shape = bsTopLine
-  end
   object Image1: TImage
     Left = 8
     Top = 8
@@ -417,7 +410,7 @@ object frmSaveRange: TfrmSaveRange
   end
   object bOK: TBitBtn
     Left = 205
-    Top = 121
+    Top = 135
     Width = 75
     Height = 25
     Enabled = False
@@ -505,7 +498,7 @@ object frmSaveRange: TfrmSaveRange
   end
   object bCancel: TBitBtn
     Left = 286
-    Top = 121
+    Top = 135
     Width = 75
     Height = 25
     Cancel = True

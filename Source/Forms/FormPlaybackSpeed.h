@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -26,7 +26,6 @@ class TfrmPlaybackSpeed : public TForm
 {
 __published:	// IDE-managed Components
 	TImage *Image1;
-	TBevel *Bevel1;
 	TGroupBox *GroupBox1;
 	TLabel *Label1;
 	TLabel *lEquality;

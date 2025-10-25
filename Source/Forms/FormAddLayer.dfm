@@ -3,8 +3,8 @@ object Form3: TForm3
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Add Layer'
-  ClientHeight = 252
-  ClientWidth = 595
+  ClientHeight = 244
+  ClientWidth = 594
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,13 +13,6 @@ object Form3: TForm3
   Font.Style = []
   Position = poMainFormCenter
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 6
-    Top = 205
-    Width = 585
-    Height = 4
-    Shape = bsTopLine
-  end
   object Image1: TImage
     Left = 8
     Top = 8
@@ -419,14 +412,14 @@ object Form3: TForm3
   end
   object Label2: TLabel
     Left = 8
-    Top = 233
+    Top = 221
     Width = 3
     Height = 15
     Caption = '.'
   end
   object bOK: TBitBtn
     Left = 435
-    Top = 222
+    Top = 215
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -513,7 +506,7 @@ object Form3: TForm3
   end
   object bCancel: TBitBtn
     Left = 516
-    Top = 222
+    Top = 215
     Width = 75
     Height = 25
     Cancel = True

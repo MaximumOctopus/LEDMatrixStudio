@@ -2,8 +2,8 @@ object frmImportBitmap: TfrmImportBitmap
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 405
-  ClientWidth = 744
+  ClientHeight = 401
+  ClientWidth = 749
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,8 +27,8 @@ object frmImportBitmap: TfrmImportBitmap
     Caption = '.'
   end
   object bOK: TBitBtn
-    Left = 582
-    Top = 372
+    Left = 589
+    Top = 370
     Width = 75
     Height = 25
     Enabled = False
@@ -116,8 +116,8 @@ object frmImportBitmap: TfrmImportBitmap
     OnClick = bOKClick
   end
   object bCancel: TBitBtn
-    Left = 663
-    Top = 372
+    Left = 670
+    Top = 370
     Width = 75
     Height = 25
     Cancel = True

@@ -3,7 +3,7 @@ object frmCheckVersion: TfrmCheckVersion
   Top = 0
   BorderStyle = bsDialog
   Caption = 'LED Matrix Builder'
-  ClientHeight = 265
+  ClientHeight = 266
   ClientWidth = 490
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

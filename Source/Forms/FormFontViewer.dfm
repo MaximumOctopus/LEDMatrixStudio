@@ -24,7 +24,6 @@ object frmFontViewer: TfrmFontViewer
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitHeight = 286
     object bSelectFont: TLabel
       Left = 8
       Top = 15
@@ -60,8 +59,6 @@ object frmFontViewer: TfrmFontViewer
     Color = clWhite
     ParentBackground = False
     TabOrder = 1
-    ExplicitTop = 286
-    ExplicitWidth = 477
     object lCharacterValue: TLabel
       Left = 8
       Top = 9
@@ -110,7 +107,5 @@ object frmFontViewer: TfrmFontViewer
     Height = 292
     Align = alClient
     TabOrder = 2
-    ExplicitWidth = 332
-    ExplicitHeight = 286
   end
 end

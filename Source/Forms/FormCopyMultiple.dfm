@@ -13,16 +13,9 @@ object frmCopyMultiple: TfrmCopyMultiple
   Position = poMainFormCenter
   OnShow = FormShow
   TextHeight = 15
-  object Bevel1: TBevel
-    Left = 8
-    Top = 248
-    Width = 405
-    Height = 4
-    Shape = bsTopLine
-  end
   object Label4: TLabel
     Left = 8
-    Top = 235
+    Top = 264
     Width = 3
     Height = 15
     Caption = '.'

@@ -2,8 +2,8 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 217
-  ClientWidth = 416
+  ClientHeight = 221
+  ClientWidth = 418
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -406,13 +406,6 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
       00FF}
     Transparent = True
-  end
-  object Bevel1: TBevel
-    Left = 8
-    Top = 182
-    Width = 407
-    Height = 4
-    Shape = bsTopLine
   end
   object GroupBox1: TGroupBox
     Left = 88

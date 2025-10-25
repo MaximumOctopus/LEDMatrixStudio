@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2024
+//   (c) Paul Alan Freshney 2012-2025
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -297,6 +297,9 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		case NumberSize::k16bitSwap:
 			sbNumberSize16bitSwap->Down = true;
 			break;
+
+		default:
+			break;
 		}
 
 		sbNumberSize8bitClick(nullptr);
@@ -311,6 +314,9 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		case NumberSize::kRGB16bit:
 		case NumberSize::kRGB32bit:
 			sbNumberSizeRGB32bits->Down = true;
+			break;
+
+		default:
 			break;
 		}
 
@@ -355,6 +361,9 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 			break;
 		case RGBMode::kBRG:
 			sbBRG->Down = true;
+			break;
+
+		default:
 			break;
 		}
 
@@ -436,6 +445,9 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		break;
 	case NumberSize::kRGB8bit:
 		break;
+
+	default:
+		break;
 	}
 
 	// ===========================================================================
@@ -453,6 +465,9 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		break;
 	case RGBMode::kBRG:
 		sbBinaryBRG->Down = true;
+		break;
+
+	default:
 		break;
 	}
 
@@ -1373,6 +1388,9 @@ void TfrmExport::PreviewCode()
 				ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
 			}
 			break;
+
+		default:
+			break;
 		}
 
 		// ===================================================================
@@ -1862,6 +1880,9 @@ void TfrmExport::PopulateProfileList()
 			cbProfileList->Items->Add(GProfileHandler->ProfilesRGB3BPP[t].c_str());
 		}
 		break;
+
+	default:
+		break;
 	}
 
 	if (cbProfileList->Items->Count == 0)
@@ -1912,6 +1933,9 @@ void TfrmExport::AddExampleCode()
 	case ExportLanguage::kPython2Dim:
 	case ExportLanguage::kMicrochip:
 	case ExportLanguage::kPascal:
+		break;
+
+	default:
 		break;
 	}
 

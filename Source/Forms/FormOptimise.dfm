@@ -74,7 +74,6 @@ object frmOptimise: TfrmOptimise
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitWidth = 718
   end
   object Panel1: TPanel
     Left = 8
@@ -85,7 +84,6 @@ object frmOptimise: TfrmOptimise
     Color = clWhite
     ParentBackground = False
     TabOrder = 2
-    ExplicitHeight = 532
     object gbOutputOptions: TGroupBox
       Left = 8
       Top = 6

@@ -2,7 +2,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 192
+  ClientHeight = 196
   ClientWidth = 323
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -406,13 +406,6 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
       00FF}
     Transparent = True
-  end
-  object Bevel1: TBevel
-    Left = 8
-    Top = 158
-    Width = 313
-    Height = 4
-    Shape = bsTopLine
   end
   object GroupBox1: TGroupBox
     Left = 88
