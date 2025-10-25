@@ -54,7 +54,7 @@
  - Supports as many frames as you have memory!
    100k frames of RGB 64x64 requires ~3.7GB
    100k frames of RGB 16x16 requires ~370MB
-   (if you are really this many frames then get in touch and I'll look at adding frame compression and memory optimisation)
+   (if you really need this many frames then get in touch and I'll look at adding frame compression and memory optimisation)
  - Support for standard square/rectangular matrices, plus circular and hollow squares
  - Support for unlimited layers (2 will double RAM requirements, 3 will triple RAM requirements, etc.)
  - Supports single colour, bi-colour, 3 bits per pixel RGB, and full 24bit RGB matrices
@@ -145,6 +145,7 @@
 
 - Fixed a bug with exporting to RGB565 format.
 - Fixed a bug with Automation where split up/down doesn't work correctly
+- Fixed a bug with Optimisation filling all available RAM!
 
 A few minor tweaks.
 
