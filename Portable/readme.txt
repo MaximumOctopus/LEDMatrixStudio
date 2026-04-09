@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.20.28                                                 =
+ =  LED Matrix Studio v0.21.01                                                 =
  =                                                                             =
- =  October 25th 2025                                                          =
+ =  April 10th 2026                                                            =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -33,8 +33,8 @@
  could ever want.
 
  On the 11th of October 2023 I finally got around to starting the process of rewriting
- the application in C++. The Delphi version is now deprecated, and all future
- versions will be C++.
+ the application in C++. This took around three months. The Delphi version is now
+ deprecated, and all future versions will be continuing the C++ build.
  
  I've designed it to be as easy to use as possible. Click New and select
  the size and type of matrix you need.
@@ -51,6 +51,7 @@
  Features:
  
  - Supports a matrix with up to 1024x1024 pixels!
+ - [NEW] Supports a layout of arbitrary pixels that can mimic your real-world projects (Freeform)
  - Supports as many frames as you have memory!
    100k frames of RGB 64x64 requires ~3.7GB
    100k frames of RGB 16x16 requires ~370MB
@@ -140,6 +141,18 @@
 
  Please consider sending it to me so that I may include it with
  future updates.
+
+== Updates for 0.21.01 beta ============================================
+
+- Added a new mode, Freeform, which removes the need for LED grids. You can now
+  add pixels to the canvas in any position you like. This makes it much easier to
+  replicate your real-world projects that might make use of several different types
+  of LED device.
+  
+  This is currently in beta so please let me know if you see any bugs or have any
+  suggestions! Undo/redo, and some draw and file IO operations are curerntly unavailable.
+ 
+- A few minor tweaks and fixes.
 
 == Updates for 0.20.28 beta ============================================
 
