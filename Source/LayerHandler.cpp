@@ -16,14 +16,18 @@
 
 LayerHandler::LayerHandler()
 {
-	Layer *layer = new Layer(GLanguageHandler->Text[kBottomLayer]);
+	//Layer *layer = new Layer(GLanguageHandler->Text[kBottomLayer]);
 
-	Layers.push_back(layer);
+	//Layers.push_back(layer);
 }
 
 
 LayerHandler::~LayerHandler()
 {
+	for (int t = 0; t < Layers.size(); t++)
+	{
+        delete Layers[t];
+	}
 }
 
 

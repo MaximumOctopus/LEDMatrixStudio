@@ -750,8 +750,6 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 
 	miSave->Enabled                    = normal_true;
 	miSaveAs->Enabled                  = normal_true;
-	miSaveSingleFrame->Enabled         = normal_true;
-	miSaveRange->Enabled               = normal_true;
 	miCodeTemplates->Enabled           = normal_true;
 
 	miLockAll->Enabled                 = normal_true;
@@ -822,6 +820,10 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 		miExportAnimationToBitmap->Enabled = normal_true;
 		miExportToGIF->Enabled             = normal_true;
 
+		miSaveSingleFrame->Enabled         = normal_true;
+		miSaveRange->Enabled               = normal_true;
+		miSaveAsFont->Enabled              = normal_true;
+
 		miPopoutPreview->Enabled     	   = normal_true;
 
 		miFlip->Enabled              = normal_true;
@@ -844,6 +846,10 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	else
 	{
 		miImportInToCurrent->Enabled       = false;
+		miSaveSingleFrame->Enabled         = false;
+		miSaveRange->Enabled               = false;
+		miSaveAsFont->Enabled              = false;
+
 		miExport->Enabled                  = false;
 		miExportToBitmap->Enabled          = false;
 		miExportAnimationToBitmap->Enabled = false;

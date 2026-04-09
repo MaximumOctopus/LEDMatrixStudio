@@ -818,8 +818,8 @@
                     </VFOLDER>
                     <VFOLDER ID="{B3168827-5173-466D-8404-6A47CEC1E411}" name="Frames"/>
                     <VFOLDER ID="{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}" name="Language"/>
-                    <VFOLDER ID="{56D1A25A-677A-4C26-A749-238C89982E20}" name="Layers"/>
                     <VFOLDER ID="{59D8F81A-3793-4AF0-8F81-350350408376}" name="Matrix">
+                        <VFOLDER ID="{56D1A25A-677A-4C26-A749-238C89982E20}" name="Layers"/>
                         <VFOLDER ID="{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}" name="Storage"/>
                     </VFOLDER>
                     <VFOLDER ID="{D25BDCAA-D26F-4E27-ABD0-BBEFF4D49947}" name="Optimisation"/>

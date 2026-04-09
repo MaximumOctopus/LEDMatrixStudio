@@ -180,12 +180,12 @@
     <VirtualFolder ID="{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}"/>
     <File Path="LanguageHandler.cpp"/>
     <File Path="LanguageHandler.h"/>
+    <VirtualFolder ID="{59D8F81A-3793-4AF0-8F81-350350408376}"/>
     <VirtualFolder ID="{56D1A25A-677A-4C26-A749-238C89982E20}"/>
     <File Path="Layer.cpp"/>
     <File Path="Layer.h"/>
     <File Path="LayerHandler.cpp"/>
     <File Path="LayerHandler.h"/>
-    <VirtualFolder ID="{59D8F81A-3793-4AF0-8F81-350350408376}"/>
     <VirtualFolder ID="{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}"/>
     <File Path="FreeformHandler.cpp"/>
     <File Path="FreeformHandler.h"/>
