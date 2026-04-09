@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -15,7 +15,8 @@
 
 #include <vector>
 
-#include "matrix.h"
+#include "FreeformHandler.h"
+#include "MatrixGrid.h"
 
 
 class Layer
@@ -24,14 +25,21 @@ private:
 
 public:
 
-	std::vector<Matrix*> Cells;
+	std::vector<MatrixGrid*> Cells;         // for Grid projects
+	FreeformHandler* Freeform = nullptr;    // for Freeform projects (only ONE frame per PROJECT)
+//    GridHandler* Grid = nullptr;
 
 	std::wstring Name = L"";
 	bool Locked = false;
 	bool Visible = true;
 
-	Layer(std::wstring name)
-	{
-		Name = name;
-	}
+	Layer(std::wstring);
+    ~Layer();
+
+	void Clear(int, MatrixColourMode, int);
+	void ClearColour(int);
+
+	void ChangePixels(int, int);
+
+	int FindPixel(int, int, int);
 };

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -13,26 +13,15 @@
 
 #pragma once
 
-#include "MatrixConstants.h"
+//coming soon ;)
 
 
-class Font
+class GridHandler
 {
-
 public:
 
-	MatrixColourMode Mode = MatrixColourMode::kNone;
+	GridHandler();
+	~GridHandler();
 
-	std::wstring Name = L"";
-
-	int *Data = nullptr;
-	int Start[96];
-	int End[96];
-
-	Font();
-	~Font();
-
-	void Clear();
-
-	bool Load(const std::wstring, const std::wstring);
+	
 };

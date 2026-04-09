@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -22,7 +22,8 @@
 	enum class MirrorMode { kOff = 0, kHorizontal, kVertical };
 	enum class SoftwareMode { kAnimation = 0, kFont };
 
-	enum class MatrixMode { kNone = 0, kMono, kBiSequential, kBiBitplanes, kRGB, kRGB3BPP };
+    enum class MatrixDrawMode { kGrid = 0, kFreeform };
+	enum class MatrixColourMode { kNone = 0, kMono, kBiSequential, kBiBitplanes, kRGB, kRGB3BPP };
 
 	enum class PixelShape { kSquare = 0, kCircle, kRoundRect };
 	enum class BrushSize  { kSmall = 0, kMedium, kLarge, kBigLarge, kSuperLarge };
@@ -34,19 +35,21 @@
 	enum class LoadMode { kNew = 0, kAppend, kMergeBottomPriority, kMergeTopPriority, kMergeNewLayer, kMergeCurrentLayer };
 
 	enum class LoadData { kUnknown = 0,
-					  kLoadBlockStartHeader, kLoadBlockStartIgnoredPixel, kLoadBlockBegin, kLoadBlockEnd, kLoadBlockBeginLayout, kLoadBlockEndLayout, kLoadBlockStartColours,
-					  kLoadHeaderSource, kLoadHeaderSourceLSB, kLoadHeaderSourceDirection, kLoadHeaderPadMode, kLoadHeaderHexFormat, kLoadHeaderHexOutput, kLoadHeaderBrackets,
-					  kLoadHeaderDataSource, kLoadHeaderOrientation, kLoadHeaderScanDirection, kLoadHeaderLSB, kLoadHeaderLanguage, kLoadHeaderNumberFormat, kLoadHeaderNumberSize, kLoadHeaderLineContent, kLoadHeaderLineCount, kLoadHeaderRGBMode, kLoadHeaderRGBChangePixels, kLoadHeaderRGBChangeColour, kLoadHeaderOptimise,
-					  kLoadHeaderMatrixComment, kLoadHeaderRGBBackground, kLoadHeaderASCIIIndex, kLoadHeaderAutomationFile,
-					  kLoadHeaderRGBBrightness,
-					  kLoadHeaderEnd,
-					  kLoadHeaderPreviewEnabled, kLoadHeaderPreviewSize, kLoadHeaderPreviewView, kLoadHeaderPreviewVoid, kLoadHeaderPreviewOffset, kLoadHeaderPreviewOffsetDir, kLoadHeaderPreviewIncRadially,
-					  kLoadHeaderLayerCount,
-					  kLoadMatrixWidth, kLoadMatrixHeight, kLoadMatrixData, kLoadMatrixLocked,
-					  kLoadIgnoredPixelData,
-					  kLoadLayoutName, kLoadLayoutWidth, kLoadLayoutHeight, kLoadLayoutLocked,
-					  kLoadColoursCustom, kLoadColoursDraw0, kLoadColoursDraw1, kLoadColoursDraw2, kLoadColoursPaletteHistory,
-					  kLoadHeaderBinaryData };
+						  kLoadBlockStartHeader, kLoadBlockStartIgnoredPixel, kLoadBlockBegin, kLoadBlockEnd, kLoadBlockBeginLayout, kLoadBlockEndLayout, kLoadBlockStartColours,
+						  kLoadHeaderSource, kLoadHeaderSourceLSB, kLoadHeaderSourceDirection, kLoadHeaderPadMode, kLoadHeaderHexFormat, kLoadHeaderHexOutput, kLoadHeaderBrackets,
+						  kLoadHeaderDataSource, kLoadHeaderOrientation, kLoadHeaderScanDirection, kLoadHeaderLSB, kLoadHeaderLanguage, kLoadHeaderNumberFormat, kLoadHeaderNumberSize, kLoadHeaderLineContent, kLoadHeaderLineCount, kLoadHeaderRGBMode, kLoadHeaderRGBChangePixels, kLoadHeaderRGBChangeColour, kLoadHeaderOptimise,
+						  kLoadHeaderMatrixComment, kLoadHeaderRGBBackground, kLoadHeaderASCIIIndex, kLoadHeaderAutomationFile,
+						  kLoadHeaderRGBBrightness,
+						  kLoadHeaderEnd,
+						  kLoadHeaderPreviewEnabled, kLoadHeaderPreviewSize, kLoadHeaderPreviewView, kLoadHeaderPreviewVoid, kLoadHeaderPreviewOffset, kLoadHeaderPreviewOffsetDir, kLoadHeaderPreviewIncRadially,
+						  kLoadHeaderLayerCount,
+						  kLoadMatrixWidth, kLoadMatrixHeight, kLoadMatrixData, kLoadMatrixLocked,
+						  kLoadIgnoredPixelData,
+						  kLoadLayoutName, kLoadLayoutWidth, kLoadLayoutHeight, kLoadLayoutLocked,
+						  kLoadColoursCustom, kLoadColoursDraw0, kLoadColoursDraw1, kLoadColoursDraw2, kLoadColoursPaletteHistory,
+						  kLoadHeaderBinaryData,
+						  kLoadPixelX, kLoadPixelY, kLoadPixelOrder, kLoadPixelColour, kLoadPixelGroup, kLoadBlockStartFrames, kLoadFrameLocked
+						};
 
 	enum class HexFormat { kEnabled = 0, kDisabled };
 	enum class HexPrefix { kNone = 0, kDollar, kZeroX, kAmpersand };
@@ -105,35 +108,35 @@
 	static const int kEffectRotateCW             = 0;
 	static const int kEffectRotateACW            = 1;
 
-	static const std::wstring CDrawModes[] = { L"Draw", L"Filled box", L"Empty box", L"Line", L"Font", L"Empty Circle", L"Filled circle", L"Random brush",
+	static const std::wstring kDrawModes[] = { L"Draw", L"Filled box", L"Empty box", L"Line", L"Font", L"Empty Circle", L"Filled circle", L"Random brush",
 											   L"Multi-draw", L"Colour picker", L"Copy brush", L"Paste brush", L"Gradient brush",
 											   L"Flood fill",
 											   L"Spiral", L"Ring", L"Split ring", L"Petals", L"Grid", L"Pyramid", L"Left triangle", L"Right triangle" };
 
 
-	static const int customShapeNone          = 0;
-	static const int customShapeCircle        = 1;
-	static const int customShapeJustBorders   = 2;
-	static const int customShapeTriangle      = 3;
+	static const int kCustomShapeNone          = 0;
+	static const int kCustomShapeCircle        = 1;
+	static const int kCustomShapeJustBorders   = 2;
+	static const int kCustomShapeTriangle      = 3;
 
-	static const int previewPixelSizeAuto     = -1;
+	static const int kPreviewPixelSizeAuto     = -1;
 
-	static const int CRoundRectCoeff          = 4;
+	static const int kRoundRectCoeff          = 4;
 
-	static const int CTopOffset               = 4;
-	static const int CLeftOffset              = 4;
+	static const int kTopOffset               = 4;
+	static const int kLeftOffset              = 4;
 
-	static const int lsbLeft             	  = 0;
-	static const int lsbRight            	  = 1;
+	static const int kLSBLeft             	  = 0;
+	static const int kLSBRight            	  = 1;
 
-	static const int scanColTopToBottom 	  = 0;
-	static const int scanColBottomToTop  	  = 1;
-	static const int scanColAltDownUp    	  = 2;
-	static const int scanColAltUpDown    	  = 3;
+	static const int kScanColTopToBottom 	  = 0;
+	static const int kScanColBottomToTop  	  = 1;
+	static const int kScanColAltDownUp    	  = 2;
+	static const int kScanColAltUpDown    	  = 3;
 
-    static const int FontCharacterCount       = 96;
+	static const int kFontCharacterCount      = 96;
 
-	static const unsigned __int64 powers[] = {
+	static const unsigned __int64 kPowers[] = {
 		1UL,2UL,4UL,8UL,16UL,32UL,64UL,128UL,
 		256UL,512UL,1024UL,2048UL,4096UL,8192UL,16384UL,32768UL,
 		65536UL, 131072UL, 262144UL, 524288UL, 1048576UL, 2097152UL, 4194304UL, 8388608UL,
@@ -144,18 +147,18 @@
 		72057594037927936UL, 144115188075855872UL, 288230376151711744UL, 576460752303423488UL, 1152921504606846976UL, 2305843009213693952UL, 4611686018427387904UL, 9223372036854775808UL
 	};
 
-	static const unsigned __int64 powers16[] = {
+	static const unsigned __int64 kPowers16[] = {
 		1UL, 16UL, 256UL, 4096UL, 65536UL, 1048576UL, 16777216UL, 268435456UL,
 		4294967296UL, 68719476736UL, 1099511627776UL, 17592186044416UL,
 		281474976710656UL, 4503599627370496UL, 72057594037927936UL, 1152921504606846976UL
 	};
 
 											//  black,   grey,    green,   purple,  red,     white,   dark grey,
-	static const int backgroundColours[] = { 0x000000, 0xAAAAAA, 0x006600, 0x770077, 0x002288, 0xffffff, 0x333333 };
+	static const int kBackgroundColours[] = { 0x000000, 0xAAAAAA, 0x006600, 0x770077, 0x002288, 0xffffff, 0x333333 };
 
-	static const int previewSizes[] = { 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50 };
+	static const int kPreviewSizes[] = { 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30, 40, 50 };
 
-	static const int previewVoids[] = { 10, 15, 20, 25, 30, 40, 50 };
+	static const int kPreviewVoids[] = { 10, 15, 20, 25, 30, 40, 50 };
 
 
 
@@ -164,30 +167,30 @@
 	static const int DefaultPatternParameterMin[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  1,  0,  1,  1,  2,  1,  1,  1 };
 	static const int DefaultPatternParameterMax[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64,  0, 64, 64, 64, 64, 64, 64 };
 
-	static const int CDisplayClear  = 0;
+	static const int kDisplayClear  = 0;
 
-	static const int CMouseLeft     = 1;
-	static const int CMouseMiddle   = 2;
-	static const int CMouseRight    = 3;
+	static const int kMouseLeft     = 1;
+	static const int kMouseMiddle   = 2;
+	static const int kMouseRight    = 3;
 
-	static const int CDisplayMarker = 4;
-	static const int CLightBoxShade = 5;
+	static const int kDisplayMarker = 4;
+	static const int kLightBoxShade = 5;
 
-	static const int CPermanentLayer = 0;
+	static const int kPermanentLayer = 0;
 
-	static const int CMOMCurrentOnly        = 0;
-	static const int CMOMCurrentFrameLayers = 1;
-	static const int CMOMCurrentLayerFrames = 2;
-	static const int CMOMAll                = 3;
+	static const int kMOMCurrentOnly        = 0;
+	static const int kMOMCurrentFrameLayers = 1;
+	static const int kMOMCurrentLayerFrames = 2;
+	static const int kMOMAll                = 3;
 
-	static const int CZeroDegrees = 0;
-	static const int C45Degrees =  45;
-	static const int C90Degrees =  90;
-	static const int C135Degrees = 135;
-	static const int C180Degrees = 180;
-	static const int C225Degrees = 225;
-	static const int C270Degrees = 270;
-	static const int C315Degrees = 315;
+	static const int kZeroDegrees = 0;
+	static const int k45Degrees =  45;
+	static const int k90Degrees =  90;
+	static const int k135Degrees = 135;
+	static const int k180Degrees = 180;
+	static const int k225Degrees = 225;
+	static const int k270Degrees = 270;
+	static const int k315Degrees = 315;
 
 
 namespace ConstantsHelper
@@ -198,8 +201,9 @@ namespace ConstantsHelper
 
 	PixelShape PixelShapeFromInt(int ps);
 
-	std::wstring MatrixModeAsString(MatrixMode mode);
-	int MatrixModeAsInt(MatrixMode mode);
-	MatrixMode MatrixModeFromInt(int mm);
-	std::wstring MatrixModeAsStringFromInt(int mm);
+	std::wstring MatrixDrawModeAsString(MatrixDrawMode);
+	std::wstring MatrixModeAsString(MatrixColourMode);
+	int MatrixModeAsInt(MatrixColourMode);
+	MatrixColourMode MatrixModeFromInt(int);
+	std::wstring MatrixModeAsStringFromInt(int);
 }

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -173,11 +173,11 @@ namespace ExportUtility
 			{
 				if (direction == 0)
 				{
-					total += (powers[column]);
+					total += (kPowers[column]);
 				}
 				else
 				{
-					total += (powers[width - column]);
+					total += (kPowers[width - column]);
 				}
 			}
 		}
@@ -203,11 +203,11 @@ namespace ExportUtility
 			{
 				if (direction == 0)
 				{
-					total += (powers[row]);
+					total += (kPowers[row]);
 				}
 				else
 				{
-					total += (powers[height - row]);
+					total += (kPowers[height - row]);
 				}
 			}
 		}
@@ -523,7 +523,7 @@ namespace ExportUtility
 		std::wstring cc = GetCommentCharacter(teo.Code.Language);
 
 		output.push_back(cc + L"=================================================================");
-		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2025");
+		output.push_back(cc + L"LED Matrix Studio - (c) Paul A Freshney 2026");
 		output.push_back(cc);
 		output.push_back(cc + L"https://github.com/MaximumOctopus/LEDMatrixStudio");
 		output.push_back(cc);
@@ -554,7 +554,8 @@ namespace ExportUtility
 
 		if (!simple)
 		{
-			if (teo.ExportMode == ExportSource::kAnimation)
+			if (teo.ExportMode == ExportSource::kAnimationGrid ||
+			    teo.ExportMode == ExportSource::kAnimationFreeform)
 			{
 				if (teo.FontMode)
 				{
@@ -571,14 +572,17 @@ namespace ExportUtility
 						output.push_back(cc + GLanguageHandler->Text[kAnimationFrame] + L" #" + std::to_wstring(teo.Code.StartFrame + 1) + L" " + GLanguageHandler->Text[kTo] + L" #" + std::to_wstring(teo.Code.EndFrame + 1));
 					}
 
-					if (teo.Code.Source == ReadSource::kRows)
+					if (teo.ExportMode == ExportSource::kAnimationGrid)
 					{
-						output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
-					}
-					else
-					{
-						output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #L" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
-					}
+						if (teo.Code.Source == ReadSource::kRows)
+						{
+							output.push_back(cc + GLanguageHandler->Text[kRows] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
+						}
+						else
+						{
+							output.push_back(cc + GLanguageHandler->Text[kColumns] + L" #" + std::to_wstring(teo.Code.SelectiveStart) + L" - #" + std::to_wstring(teo.Code.SelectiveEnd));
+						}
+                    }
 				}
 			}
 		}
@@ -592,10 +596,15 @@ namespace ExportUtility
 		output.push_back(cc);
 
 		output.push_back(GetSource(teo.Code.Language, teo.Code.Source));
-		output.push_back(GetLineContent(teo, true));
 		output.push_back(GetLSB(teo, true));
-		output.push_back(GetOrientation(teo, true));
-		output.push_back(GetScanDirection(teo, true));
+		output.push_back(GetLineContent(teo, true));
+
+		if (teo.ExportMode == ExportSource::kAnimationGrid ||
+			teo.ExportMode == ExportSource::kUserMemoriesGrid)
+		{
+			output.push_back(GetOrientation(teo, true));
+			output.push_back(GetScanDirection(teo, true));
+		}
 
 		if (teo.Code.RGBEnabled)
 		{

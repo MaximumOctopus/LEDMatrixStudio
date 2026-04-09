@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -71,9 +71,9 @@ namespace ColourUtility
 
 				for (int t = 0; t < 16; t++)
 				{
-					if ((xT & powers[t]) == powers[t])
+					if ((xT & kPowers[t]) == kPowers[t])
 					{
-						total += powers[15 - t];
+						total += kPowers[15 - t];
 					}
 				}
 
@@ -129,9 +129,9 @@ namespace ColourUtility
 
 			for (int t = 0; t < 24; t++)
 			{
-				if ((xT & powers[t]) == powers[t])
+				if ((xT & kPowers[t]) == kPowers[t])
 				{
-					total += total + powers[31 - t];
+					total += kPowers[31 - t];
 				}
 			}
 
@@ -459,5 +459,24 @@ namespace ColourUtility
 		if (b < 0) b = 0;
 
 		return (b << 16) + (g << 8) + r;
+	}
+
+
+	int ContrastColour(int RGB)
+	{
+		int r = (RGB & 0x0000ff);         // Windows colour structure = BGR
+		int b = (RGB & 0xff0000) >> 16;
+		int g = (RGB & 0x00ff00) >> 8;
+
+		double rd = (double)r * 0.299;
+		double gd = (double)g * 0.587;
+		double bd = (double)b * 0.114;
+
+		if (rd + gd + bd < 128)
+		{
+			return 0xffffff;
+		}
+
+		return 0x000000;
 	}
 }

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -20,15 +20,17 @@
 
 namespace FileUtility
 {
+	enum class FileBlock { kNone, kHeader, kIgnoredPixels, kMatrixData, kLayer, kColours, kFrames };
+
 	// ===========================================================================
 	// LED Matrix Studio files
 	// ===========================================================================
 
-	LoadData LoadDataParameterType(const std::wstring, bool, bool, bool, bool, bool);
+	LoadData LoadDataParameterType(const std::wstring, FileBlock);
 
 	// ===========================================================================
 
-	MatrixMode GetMatrixModeFromFileChunk(const wchar_t);
+	MatrixColourMode GetMatrixModeFromFileChunk(const wchar_t);
 
 	bool SaveVector(const std::wstring, const std::vector<std::wstring>&);
 }

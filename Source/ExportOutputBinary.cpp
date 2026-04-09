@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -68,7 +68,7 @@ namespace ExportOutputBinary
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
+		for (int frame = teo.Binary.StartFrame; frame <= teo.Binary.EndFrame; frame++)
 		{
 			for (int i = 0; i < MatrixDataCount; i++)
 			{
@@ -79,7 +79,7 @@ namespace ExportOutputBinary
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
-					dataout = BinaryExportRowData(matrix, teo, t, y);
+					dataout = BinaryExportRowData(matrix, teo, frame, y);
 
 					for (int i = 0; i < dataout.Count; i++)
 					{
@@ -96,7 +96,7 @@ namespace ExportOutputBinary
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
-					dataout = BinaryExportColumnData(matrix, teo, t, x);
+					dataout = BinaryExportColumnData(matrix, teo, frame, x);
 
 					for (int i = 0; i < dataout.Count; i++)
 					{
@@ -149,7 +149,7 @@ namespace ExportOutputBinary
 					}
 				}
 
-				BinaryAddContentByFrame(teo, op, t, output);
+				BinaryAddContentByFrame(teo, op, frame, output);
 			}
 
 			// ===========================================================================
@@ -226,7 +226,7 @@ namespace ExportOutputBinary
 				}
 				}
 
-				BinaryAddContentByFrame(teo, op, t, output);
+				BinaryAddContentByFrame(teo, op, frame, output);
 			}
 		}
 
@@ -269,7 +269,7 @@ namespace ExportOutputBinary
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
+		for (int frame = teo.Binary.StartFrame; frame <= teo.Binary.EndFrame; frame++)
 		{
 			for (int i = 0; i < MatrixDataCount; i++)
 			{
@@ -280,7 +280,7 @@ namespace ExportOutputBinary
 			{
 				for (int y = 0; y < matrix->Details.Height; y++)
 				{
-					dataout = BinaryExportRowDataRGB(matrix, teo, t, y);
+					dataout = BinaryExportRowDataRGB(matrix, teo, frame, y);
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
@@ -292,7 +292,7 @@ namespace ExportOutputBinary
 			{
 				for (int x = 0; x < matrix->Details.Width; x++)
 				{
-					dataout = BinaryExportColumnDataRGB(matrix, teo, t, x);
+					dataout = BinaryExportColumnDataRGB(matrix, teo, frame, x);
 
 					MatrixData[x] = baaProcessUnique(dataout.Data[0]);
 
@@ -317,7 +317,7 @@ namespace ExportOutputBinary
 						s += MatrixData[y];
 					}
 
-					BinaryAddContentByFrame(teo, s, t, output);
+					BinaryAddContentByFrame(teo, s, frame, output);
 				}
 				else
 				{
@@ -328,7 +328,7 @@ namespace ExportOutputBinary
 						s += MatrixData[y];
 					}
 
-					BinaryAddContentByFrame(teo, s, t, output);
+					BinaryAddContentByFrame(teo, s, frame, output);
 				}
 			}
 
@@ -352,7 +352,7 @@ namespace ExportOutputBinary
 							s += MatrixData[x];
 						}
 
-						BinaryAddContentByFrame(teo, s, t, output);
+						BinaryAddContentByFrame(teo, s, frame, output);
 					}
 					else
 					{
@@ -363,7 +363,7 @@ namespace ExportOutputBinary
 							s += MatrixData[x];
 						}
 
-						BinaryAddContentByFrame(teo, s, t, output);
+						BinaryAddContentByFrame(teo, s, frame, output);
 					}
 					break;
 				}
@@ -393,7 +393,7 @@ namespace ExportOutputBinary
 		// =========================================================================
 		// =========================================================================
 
-		for (int t = teo.Binary.StartFrame; t <= teo.Binary.EndFrame; t++)
+		for (int frame = teo.Binary.StartFrame; frame <= teo.Binary.EndFrame; frame++)
 		{
 			for (int i = 0; i < MatrixDataCount; i++)
 			{
@@ -402,16 +402,16 @@ namespace ExportOutputBinary
 
             if (teo.Binary.Source == ReadSource::kRows)
 			{
-				dataout = BinaryExportFrameDataByRowRGB3bpp(matrix, teo, t);
+				dataout = BinaryExportFrameDataByRowRGB3bpp(matrix, teo, frame);
 			}
 			else if (teo.Binary.Source == ReadSource::kColumns)
 			{
-				dataout = BinaryExportFrameDataByColumnRGB3bpp(matrix, teo, t);
+				dataout = BinaryExportFrameDataByColumnRGB3bpp(matrix, teo, frame);
             }
 
 			entrycount += dataout.Count;
 
-			BinaryAddContentByFrame(teo, dataout.Data[0], t, output);
+			BinaryAddContentByFrame(teo, dataout.Data[0], frame, output);
 		}
 
 		return true;
@@ -438,12 +438,13 @@ namespace ExportOutputBinary
 
 		ScanDirection direction = teo.Binary.Direction;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		// ===========================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -454,10 +455,10 @@ namespace ExportOutputBinary
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+			break;
 		}
 
 		// ===========================================================================
@@ -476,11 +477,11 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
                         }
 					}
 
@@ -513,11 +514,11 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
                         }
 					}
 
@@ -565,12 +566,13 @@ namespace ExportOutputBinary
 		std::wstring output = L"";
 		ScanDirection direction = teo.Binary.Direction;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -581,10 +583,10 @@ namespace ExportOutputBinary
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+			break;
 		}
 
 		// ===================================================================
@@ -680,17 +682,17 @@ namespace ExportOutputBinary
 		std::wstring output = L"";
 		ScanDirection direction = teo.Code.Direction;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		BitCounting bc;
 
 		auto baaBitStream = [&output, &teo](BitCounting &bc, int pixel, int test) -> void
 		{
-			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+			unsigned _int64 p = kPowers[bc.highbit - bc.bitcounter];
 
 			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 			{
-				p = powers[bc.bitcounter];
+				p = kPowers[bc.bitcounter];
 			}
 
 			if ((pixel & test) == test)
@@ -708,8 +710,9 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -719,13 +722,12 @@ namespace ExportOutputBinary
 				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
-            }
+			}
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+			break;
 		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
-		}
-
 
 		if (direction == ScanDirection::kRowLeftToRight)
 		{
@@ -787,7 +789,7 @@ namespace ExportOutputBinary
 		InternalArray ia;
 		ia.Clear();
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		int bitcounter = 0;
 		int dataindex  = 0;
@@ -804,8 +806,9 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -816,10 +819,10 @@ namespace ExportOutputBinary
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+			break;
 		}
 
 		// ===================================================================
@@ -838,11 +841,11 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
                         }
 					}
 
@@ -875,11 +878,11 @@ namespace ExportOutputBinary
 					{
 						if (teo.Binary.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
 						}
 					}
 
@@ -923,7 +926,7 @@ namespace ExportOutputBinary
 
 	DataOut BinaryExportColumnDataRGB(TheMatrix *matrix, ExportOptions teo, int frame, int col)
 	{
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		DataOut dataout;
 		std::wstring output = L"";
@@ -931,8 +934,9 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -943,10 +947,10 @@ namespace ExportOutputBinary
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+			break;
 		}
 
 		// ===================================================================
@@ -1041,17 +1045,17 @@ namespace ExportOutputBinary
 		std::wstring output = L"";
 		ScanDirection direction = teo.Code.Direction;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		BitCounting bc;
 
 		auto baaBitStream = [&output, &teo](BitCounting &bc, int pixel, int test) -> void
 		{
-			unsigned _int64 p = powers[bc.highbit - bc.bitcounter];
+			unsigned _int64 p = kPowers[bc.highbit - bc.bitcounter];
 
 			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 			{
-				p = powers[bc.bitcounter];
+				p = kPowers[bc.bitcounter];
 			}
 
 			if ((pixel & test) == test)
@@ -1069,8 +1073,9 @@ namespace ExportOutputBinary
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -1080,11 +1085,11 @@ namespace ExportOutputBinary
 				matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
 
 				selectedmatrix = matrix->MatrixMerge;
-            }
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			}
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+            break;
 		}
 
 		if (direction == ScanDirection::kColTopToBottom)
@@ -1139,7 +1144,7 @@ namespace ExportOutputBinary
 	}
 
 
-	std::wstring BinaryGetRowData(Matrix *matrix, bool hexmode, int direction, int frame, int row)
+	std::wstring BinaryGetRowData(MatrixGrid *matrix, bool hexmode, int direction, int frame, int row)
 	{
 		std::wstring output = L"";
 		unsigned __int64 total = 0;
@@ -1150,11 +1155,11 @@ namespace ExportOutputBinary
 			{
 				if (direction == 0)
 				{
-					total += powers[x];
+					total += kPowers[x];
 				}
 				else
 				{
-					total += powers[matrix->Width - x];
+					total += kPowers[matrix->Width - x];
                 }
 			}
 		}
@@ -1168,7 +1173,7 @@ namespace ExportOutputBinary
 	}
 
 
-	std::wstring BinaryGetColumnData(Matrix *matrix, bool hexmode, int direction, int frame, int col)
+	std::wstring BinaryGetColumnData(MatrixGrid *matrix, bool hexmode, int direction, int frame, int col)
 	{
 		std::wstring output = L"";
 		unsigned __int64 total = 0;
@@ -1179,11 +1184,11 @@ namespace ExportOutputBinary
 			{
 				if (direction == 0)
 				{
-					total += powers[y];
+					total += kPowers[y];
 				}
 				else
 				{
-					total += powers[matrix->Height - y];
+					total += kPowers[matrix->Height - y];
                 }
 			}
 		}
@@ -1194,6 +1199,256 @@ namespace ExportOutputBinary
 		}
 
 		return std::to_wstring(total);
+	}
+
+
+	bool BinaryCreateExportFreeformRGB(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount, std::vector<std::wstring> &unique_items)
+	{
+		auto baaProcessUnique = [unique_items](const std::wstring s) -> std::wstring
+		{
+			if (unique_items.size() == 0)
+			{
+				return s;
+			}
+			else
+			{
+				std::wstring m = s;
+
+				for (int t = 0; t < unique_items.size(); t++)
+				{
+					m = Utility::ReplaceString(m, unique_items[t], std::to_wstring(t));
+				}
+
+				return m;
+			}
+		};
+
+		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+
+		std::wstring MatrixData[MatrixDataCount];
+
+		DataOut dataout;
+		std::wstring s = L"";
+
+		entrycount = 0;
+
+		teo.DataPadding = L"";
+
+		// =========================================================================
+		// =========================================================================
+
+		for (int frame = teo.Binary.StartFrame; frame <= teo.Binary.EndFrame; frame++)
+		{
+			for (int i = 0; i < MatrixDataCount; i++)
+			{
+				MatrixData[i] = L"";
+			}
+
+			dataout = BinaryExportPixelsRGB(matrix, teo, frame);
+
+			MatrixData[frame] = baaProcessUnique(dataout.Data[0]);
+
+			entrycount += dataout.Count;
+
+			BinaryAddContentByFrame(teo, MatrixData[frame], frame, output);
+		}
+
+		return true;
+	}
+
+
+	bool BinaryCreateExportFreeformRGB3bpp(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount)
+	{
+		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+
+		std::wstring MatrixData[MatrixDataCount];
+
+		DataOut dataout;
+		std::wstring s = L"";
+
+		entrycount = 0;
+
+		teo.DataPadding = L"";
+
+		// =========================================================================
+		// =========================================================================
+
+		for (int frame = teo.Binary.StartFrame; frame <= teo.Binary.EndFrame; frame++)
+		{
+			for (int i = 0; i < MatrixDataCount; i++)
+			{
+				MatrixData[i] = L"";
+			}
+
+			dataout = BinaryExportPixelsRGB3bpp(matrix, teo, frame);
+
+			entrycount += dataout.Count;
+
+			BinaryAddContentByFrame(teo, dataout.Data[0], frame, output);
+		}
+
+		return true;
+	}
+
+
+    DataOut BinaryExportPixelsRGB(TheMatrix *matrix, ExportOptions teo, int frame)
+	{
+		DataOut dataout;
+		std::wstring output = L"";
+
+		std::vector<int> Colours;
+
+		// ===================================================================
+
+		switch (teo.ExportMode)
+		{
+		case ExportSource::kAnimationFreeform:
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				{
+					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+				}
+			}
+			else
+			{
+				//matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				//selectedmatrix = matrix->MatrixMerge; to do
+			}
+			break;
+		case ExportSource::kUserMemoriesFreeform:
+			for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+			{
+				Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+			}
+			break;
+		}
+
+		// ===================================================================
+
+		for (int pixel = 0; pixel < Colours.size(); pixel++)
+		{
+			int pixel_value = Colours[pixel];
+
+			switch (teo.Binary.Size)
+			{
+			case NumberSize::kRGB8bit:
+				if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
+				{
+					pixel_value = teo.Binary.RGBChangeColour;
+				}
+
+				output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Binary, L"", L" ");
+
+				dataout.Count += 3;
+				break;
+			case NumberSize::kRGB32bit:
+				if (teo.Binary.RGBChangePixels && pixel_value == matrix->RGBBackground)
+				{
+					pixel_value = teo.Binary.RGBChangeColour;
+				}
+
+				output += IntToHex(ColourUtility::RGBConvertTo32(pixel_value, teo.Binary.RGBFormat, teo.Binary.LSB, teo.Binary.RGBBrightness), 8);
+
+				output += L" ";
+
+				dataout.Count++;
+				break;
+			}
+		}
+
+		// ===========================================================================
+
+		dataout.Data[0] = output;
+
+		return dataout;
+	}
+
+
+	DataOut BinaryExportPixelsRGB3bpp(TheMatrix *matrix, ExportOptions teo, int frame)
+	{
+		DataOut dataout;
+		dataout.Clear();
+		std::wstring output = L"";
+
+		std::vector<int> Colours;
+		BitCounting bc;
+
+		auto baaBitStream = [&output, &teo](BitCounting &bc, int pixel, int test) -> void
+		{
+			unsigned _int64 p = kPowers[bc.highbit - bc.bitcounter];
+
+			if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
+			{
+				p = kPowers[bc.bitcounter];
+			}
+
+			if ((pixel & test) == test)
+			{
+				bc.databyte += p;
+			}
+
+			if (bc.Next())
+			{
+				output += IntToHex(bc.databyte, 2) + L" ";
+
+				bc.Reset();
+			}
+		};
+
+		// ===================================================================
+
+		switch (teo.ExportMode)
+		{
+		case ExportSource::kAnimationFreeform:
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				{
+					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+				}
+			}
+			else
+			{
+				//matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				//selectedmatrix = matrix->MatrixMerge; to do
+			}
+			break;
+		case ExportSource::kUserMemoriesFreeform:
+			for (int pixel = 0; pixel < matrix->MatrixUserFF[frame].size(); pixel++)
+			{
+				Colours.push_back(matrix->MatrixUserFF[frame][pixel]);
+			}
+			break;
+		}
+
+		bc.SetDirection(_BitCountDirectionDown, 7);
+
+		for (int pixel = 0; pixel < Colours.size(); pixel++)
+		{
+			int pixel_value = Colours[pixel];
+
+			baaBitStream(bc, pixel_value, 4);
+			baaBitStream(bc, pixel_value, 2);
+			baaBitStream(bc, pixel_value, 1);
+		}
+
+		if (!bc.IsStartingPosition())
+		{
+			output += IntToHex(bc.databyte, 2) + L" ";
+
+			bc.outputcount++;
+		}
+
+		// ===================================================================
+
+		dataout.Count = bc.outputcount;
+
+		dataout.Data[0] = output;
+
+		return dataout;
 	}
 
 

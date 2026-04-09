@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -33,6 +33,7 @@
 #include "Utility.h"
 
 #include "FormAbout.h"
+#include "FormAddShape.h"
 #include "FormAutomate.h"
 #include "FormCheckVersion.h"
 #include "FormColourChange.h"
@@ -161,9 +162,9 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 	}
 
 	GSystemSettings->RGBBackground    = thematrix->RGBBackground;
-	GSystemSettings->LEDRGBColours[1] = thematrix->LEDRGBColours[CMouseLeft];
-	GSystemSettings->LEDRGBColours[2] = thematrix->LEDRGBColours[CMouseMiddle];
-	GSystemSettings->LEDRGBColours[3] = thematrix->LEDRGBColours[CMouseRight];
+	GSystemSettings->LEDRGBColours[1] = thematrix->LEDRGBColours[kMouseLeft];
+	GSystemSettings->LEDRGBColours[2] = thematrix->LEDRGBColours[kMouseMiddle];
+	GSystemSettings->LEDRGBColours[3] = thematrix->LEDRGBColours[kMouseRight];
 
 	if (miPixelAuto->Checked)
 	{
@@ -228,15 +229,29 @@ void __fastcall TfrmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
 {
 	int tick = GetTickCount();
 
-	if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key == VK_BACK)	// backspace, 1 column
+	if (thematrix->Render.Action.Mode == ActionMode::kFont && Key == VK_BACK)	// backspace, 1 column
 	{
-		thematrix->DeleteFontCharacter(GetSelectedFrame());
+		if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
+		{
+			thematrix->DeleteFontCharacter(GetSelectedFrame());
+        }
 	}
-	else if (thematrix->Render.Draw.Mode == DrawMode::kFont && Key > 31 && tick - LastTick >= 300)
+	else if (thematrix->Render.Action.Mode == ActionMode::kFont && Key > 31 && tick - LastTick >= 300)
 	{
 		LastTick = tick;
 
-		thematrix->DrawFontCharacter(Key - 32, GetSelectedFrame());
+		if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
+		{
+			thematrix->DrawFontCharacter(Key - 32, GetSelectedFrame());
+		}
+		else
+		{
+			thematrix->AddFontCharacter(Key - 32, GetSelectedFrame());
+		}
+	}
+	else if (Key == L'=' && thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+	{
+		thematrix->AddPixel(OldMouseX, OldMouseY);
 	}
 	else if (Key == VK_RETURN || Key == VK_ESCAPE)
 	{
@@ -253,8 +268,11 @@ void __fastcall TfrmMain::FormMouseMove(TObject *Sender, TShiftState Shift, int 
 	statusMain->SimpleText = __SimpleTextFull.c_str();
 	lPixelColour->Caption  = L"";
 
-	OldMouseX = -1;
-	OldMouseY = -1;
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
+	{
+		OldMouseX = -1;
+		OldMouseY = -1;
+	}
 }
 
 
@@ -263,7 +281,7 @@ void __fastcall TfrmMain::FormMouseWheelDown(TObject *Sender, TShiftState Shift,
 {
 	if (Shift.Contains(ssCtrl))
 	{
-		int sp = thematrix->Render.Draw.Parameter;
+		int sp = thematrix->Render.Action.Parameter;
 
 		if (sp > 1)                                 // do not allow a value of one or some draw modes will run forever!
 		{
@@ -298,7 +316,7 @@ void __fastcall TfrmMain::FormMouseWheelUp(TObject *Sender, TShiftState Shift, T
 {
 	if (Shift.Contains(ssCtrl))
 	{
-		int sp = thematrix->Render.Draw.Parameter;
+		int sp = thematrix->Render.Action.Parameter;
 
 		thematrix->SetShapeParameter(sp + 1);
 	}
@@ -467,20 +485,21 @@ void TfrmMain::ConfigureControls()
 
 	pRGB_3BPP->Left = 0;
 
-	DrawData dd;
+	ActionData dd;
 
-	sbCopy->Tag                       = dd.DrawModeToInt(DrawMode::kCopy);
-	sbFilledRectangle->Tag            = dd.DrawModeToInt(DrawMode::kFilledBox);
-	sbFrame->Tag                      = dd.DrawModeToInt(DrawMode::kEmptyBox);
-	sbEmptyCircle->Tag                = dd.DrawModeToInt(DrawMode::kEmptyCircle);
-	sbFilledCircle->Tag               = dd.DrawModeToInt(DrawMode::kFilledCircle);
-	sbLine->Tag                       = dd.DrawModeToInt(DrawMode::kLine);
-	sbFont->Tag                       = dd.DrawModeToInt(DrawMode::kFont);
-	sbGradientBrush->Tag              = dd.DrawModeToInt(DrawMode::kGradientBrush);
-	sbMultiDraw->Tag                  = dd.DrawModeToInt(DrawMode::kMulti);
-	sbFloodFill->Tag                  = dd.DrawModeToInt(DrawMode::kFloodFill);
-	sbRandomDraw->Tag                 = dd.DrawModeToInt(DrawMode::kRandom);
-	sbPicker->Tag                     = dd.DrawModeToInt(DrawMode::kPicker);
+	sbCopy->Tag                       = dd.DrawModeToInt(ActionMode::kCopy);
+	sbFilledRectangle->Tag            = dd.DrawModeToInt(ActionMode::kFilledBox);
+	sbFrame->Tag                      = dd.DrawModeToInt(ActionMode::kEmptyBox);
+	sbEmptyCircle->Tag                = dd.DrawModeToInt(ActionMode::kEmptyCircle);
+	sbFilledCircle->Tag               = dd.DrawModeToInt(ActionMode::kFilledCircle);
+	sbLine->Tag                       = dd.DrawModeToInt(ActionMode::kLine);
+	sbFont->Tag                       = dd.DrawModeToInt(ActionMode::kFont);
+	sbGradientBrush->Tag              = dd.DrawModeToInt(ActionMode::kGradientBrush);
+	sbMultiDraw->Tag                  = dd.DrawModeToInt(ActionMode::kMulti);
+	sbFloodFill->Tag                  = dd.DrawModeToInt(ActionMode::kFloodFill);
+	sbRandomDraw->Tag                 = dd.DrawModeToInt(ActionMode::kRandom);
+	sbPicker->Tag                     = dd.DrawModeToInt(ActionMode::kPicker);
+	sbMovePixel->Tag                  = dd.DrawModeToInt(ActionMode::kMovePixel);
 }
 
 
@@ -601,26 +620,11 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	miPasteSpecial->Enabled      = normal_true;
 	miBrushActions->Enabled      = normal_true;
 
-	miPopoutPreview->Enabled     = normal_true;
-
 	sbClear->Enabled             = normal_true;
 	sbFlip->Enabled              = normal_true;
 	sbMirror->Enabled            = normal_true;
 	sbInvert->Enabled            = normal_true;
-	miFlip->Enabled              = normal_true;
-	miMirror->Enabled            = normal_true;
-	miInvert->Enabled            = normal_true;
-	miFlipAllFrames->Enabled     = normal_true;
-	miMirrorAllFrames->Enabled   = normal_true;
-	miInvertAllFrames->Enabled   = normal_true;
-	sbScrollLeft->Enabled        = normal_true;
-	sbScrollRight->Enabled       = normal_true;
-	sbScrollUp->Enabled          = normal_true;
-	sbScrollDown->Enabled        = normal_true;
-	miShiftLeft->Enabled         = normal_true;
-	miShiftRight->Enabled        = normal_true;
-	miShiftUp->Enabled           = normal_true;
-	miShiftDown->Enabled         = normal_true;
+
 	miAddComment->Enabled        = normal_true;
 
 	// bit of hack for when ignored pixel mode active :)
@@ -717,38 +721,37 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	sbPatternRightTriangle->Enabled    = normal_true;
 
 	miMouseMode->Enabled               = normal_true;
-	miNewBrush->Enabled                = normal_true;
-	miDrawCopy->Enabled                = normal_true;
-	miFilledRectangle->Enabled         = normal_true;
-	miFrame->Enabled                   = normal_true;
-	miEmptyCircle->Enabled             = normal_true;
-	miFilledCircle->Enabled            = normal_true;
-	miLine->Enabled                    = normal_true;
-	miMultiDraw->Enabled               = normal_true;
-	miFloodFill->Enabled               = normal_true;
-	miFont->Enabled                    = normal_true;
 
-	miPatternSpiral->Enabled           = normal_true;
-	miPatternCircle->Enabled           = normal_true;
-	miPatternSplitRing->Enabled        = normal_true;
-	miPatternPetals->Enabled           = normal_true;
-	miPatternGrid->Enabled             = normal_true;
-	miPatternPyramid->Enabled          = normal_true;
-	miPatternLeftTriangle->Enabled     = normal_true;
-	miPatternRightTriangle->Enabled    = normal_true;
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
+	{
+		miNewBrush->Enabled                = normal_true;
+		miDrawCopy->Enabled                = normal_true;
+		miFilledRectangle->Enabled         = normal_true;
+		miFrame->Enabled                   = normal_true;
+		miEmptyCircle->Enabled             = normal_true;
+		miFilledCircle->Enabled            = normal_true;
+		miLine->Enabled                    = normal_true;
+		miMultiDraw->Enabled               = normal_true;
+		miFloodFill->Enabled               = normal_true;
+		miFont->Enabled                    = normal_true;
 
-	miAppend->Enabled                  = normal_true;
-	miMerge->Enabled                   = normal_true;
+		miPatternSpiral->Enabled           = normal_true;
+		miPatternCircle->Enabled           = normal_true;
+		miPatternSplitRing->Enabled        = normal_true;
+		miPatternPetals->Enabled           = normal_true;
+		miPatternGrid->Enabled             = normal_true;
+		miPatternPyramid->Enabled          = normal_true;
+		miPatternLeftTriangle->Enabled     = normal_true;
+		miPatternRightTriangle->Enabled    = normal_true;
+
+		miAppend->Enabled                  = normal_true;
+		miMerge->Enabled                   = normal_true;
+	}
 
 	miSave->Enabled                    = normal_true;
 	miSaveAs->Enabled                  = normal_true;
 	miSaveSingleFrame->Enabled         = normal_true;
 	miSaveRange->Enabled               = normal_true;
-	miImportInToCurrent->Enabled       = normal_true;
-	miExport->Enabled                  = normal_true;
-	miExportToBitmap->Enabled          = normal_true;
-	miExportAnimationToBitmap->Enabled = normal_true;
-	miExportToGIF->Enabled             = normal_true;
 	miCodeTemplates->Enabled           = normal_true;
 
 	miLockAll->Enabled                 = normal_true;
@@ -766,7 +769,6 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	miClearAllFrames->Enabled          = normal_true;
 	miClearAllFramesLayer->Enabled     = normal_true;
 
-	miAutomate->Enabled                = normal_true;
 	miOptimiseData->Enabled            = normal_true;
 
 	miChangeColoursFrame->Enabled      = normal_true;
@@ -780,36 +782,91 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 
 	miCountColours->Enabled            = normal_true;
 
-	if (thematrix->Details.Mode == MatrixMode::kMono)
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		sbGradient->Enabled               = normal_false;
-		miClearAllFramesGradient->Enabled = normal_false;
-		miGradientFillFrame->Enabled      = normal_false;
-		sbRandomDraw->Enabled             = normal_false;
-		miGradientAllFrames->Enabled      = normal_false;
-		sbPicker->Enabled                 = normal_false;
-		sbGradientBrush->Enabled          = normal_false;
+		if (thematrix->Details.ColourMode == MatrixColourMode::kMono)
+		{
+			sbGradient->Enabled               = normal_false;
+			miClearAllFramesGradient->Enabled = normal_false;
+			miGradientFillFrame->Enabled      = normal_false;
+			sbRandomDraw->Enabled             = normal_false;
+			miGradientAllFrames->Enabled      = normal_false;
+			sbPicker->Enabled                 = normal_false;
+			sbGradientBrush->Enabled          = normal_false;
 
-		miGradient->Enabled               = normal_false;
-		miRandomDraw->Enabled             = normal_false;
-		miPicker->Enabled                 = normal_false;
-		miGradientBrush->Enabled          = normal_false;
+			miGradient->Enabled               = normal_false;
+			miRandomDraw->Enabled             = normal_false;
+			miPicker->Enabled                 = normal_false;
+			miGradientBrush->Enabled          = normal_false;
+		}
+		else
+		{
+			sbGradient->Enabled               = normal_true;
+			miClearAllFramesGradient->Enabled = normal_true;
+			miGradientFillFrame->Enabled      = normal_true;
+			sbRandomDraw->Enabled             = normal_true;
+			miGradientAllFrames->Enabled      = normal_true;
+			sbGradientBrush->Enabled          = normal_true;
+
+			miGradient->Enabled               = normal_true;
+			miRandomDraw->Enabled             = normal_true;
+			miPicker->Enabled                 = normal_true;
+			miGradientBrush->Enabled          = normal_true;
+
+			sbPicker->Enabled                 = thematrix->Details.ColourMode == MatrixColourMode::kRGB;
+		}
+
+		miImportInToCurrent->Enabled       = normal_true;
+		miExport->Enabled                  = normal_true;
+		miExportToBitmap->Enabled          = normal_true;
+		miExportAnimationToBitmap->Enabled = normal_true;
+		miExportToGIF->Enabled             = normal_true;
+
+		miPopoutPreview->Enabled     	   = normal_true;
+
+		miFlip->Enabled              = normal_true;
+		miMirror->Enabled            = normal_true;
+		miInvert->Enabled            = normal_true;
+		miFlipAllFrames->Enabled     = normal_true;
+		miMirrorAllFrames->Enabled   = normal_true;
+		miInvertAllFrames->Enabled   = normal_true;
+		sbScrollLeft->Enabled        = normal_true;
+		sbScrollRight->Enabled       = normal_true;
+		sbScrollUp->Enabled          = normal_true;
+		sbScrollDown->Enabled        = normal_true;
+		miShiftLeft->Enabled         = normal_true;
+		miShiftRight->Enabled        = normal_true;
+		miShiftUp->Enabled           = normal_true;
+		miShiftDown->Enabled         = normal_true;
+
+		miAutomate->Enabled                = normal_true;
 	}
 	else
 	{
-		sbGradient->Enabled               = normal_true;
-		miClearAllFramesGradient->Enabled = normal_true;
-		miGradientFillFrame->Enabled      = normal_true;
-		sbRandomDraw->Enabled             = normal_true;
-		miGradientAllFrames->Enabled      = normal_true;
-		sbGradientBrush->Enabled          = normal_true;
+		miImportInToCurrent->Enabled       = false;
+		miExport->Enabled                  = false;
+		miExportToBitmap->Enabled          = false;
+		miExportAnimationToBitmap->Enabled = false;
+		miExportToGIF->Enabled             = false;
 
-		miGradient->Enabled               = normal_true;
-		miRandomDraw->Enabled             = normal_true;
-		miPicker->Enabled                 = normal_true;
-		miGradientBrush->Enabled          = normal_true;
+		miPopoutPreview->Enabled     	   = false;
 
-		sbPicker->Enabled                 = thematrix->Details.Mode == MatrixMode::kRGB;
+		miFlip->Enabled              	   = false;
+		miMirror->Enabled            	   = false;
+		miInvert->Enabled            	   = false;
+		miFlipAllFrames->Enabled     	   = false;
+		miMirrorAllFrames->Enabled   	   = false;
+		miInvertAllFrames->Enabled   	   = false;
+		sbScrollLeft->Enabled       	   = false;
+		sbScrollRight->Enabled             = false;
+		sbScrollUp->Enabled            	   = false;
+		sbScrollDown->Enabled        	   = false;
+		miShiftLeft->Enabled         	   = false;
+		miShiftRight->Enabled        	   = false;
+		miShiftUp->Enabled           	   = false;
+		miShiftDown->Enabled         	   = false;
+
+		miAutomate->Enabled                = false;
 	}
 }
 
@@ -818,12 +875,12 @@ void TfrmMain::ConfigureOpenDialog(int mode)
 {
 	switch (mode)
 	{
-	case CLoadProject:
+	case kLoadProject:
 		odMain->DefaultExt = L".leds";
-		odMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioProjects] + L" (*.leds)|*.leds");
+		odMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioProjects] + L" (*.leds;*.leds2)|*.leds;*.leds2");
 		odMain->InitialDir = GSystemSettings->App.LastLoadLocation.c_str();
 		break;
-	case CLoadIgnorePixels:
+	case kLoadIgnorePixels:
 		odMain->DefaultExt = L".ledsip";
 		odMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioIgnorePixelFiles] + L" (*.ledsip)|*.ledsip");
 		odMain->InitialDir = GSystemSettings->App.LastLoadLocation.c_str();
@@ -836,18 +893,26 @@ void TfrmMain::ConfigureSaveDialog(int mode)
 {
 	switch (mode)
 	{
-	case CSaveProject:
+	case kSaveProject:
 		sdMain->InitialDir = GSystemSettings->App.LastSaveLocation.c_str();
-		sdMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioProjects] + L" (*.leds)|*.leds");
-		sdMain->DefaultExt = L".leds";
+		if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
+		{
+			sdMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioProjects] + L" (*.leds)|*.leds");
+			sdMain->DefaultExt = L".leds";
+		}
+		else
+		{
+			sdMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioProjects] + L" (*.leds2)|*.leds2");
+			sdMain->DefaultExt = L".leds2";
+		}
 		break;
-	case CSaveFont:
+	case kSaveFont:
 		sdMain->DefaultExt = L".ledsfont";
 		sdMain->FileName   = Utility::WS2US(L"font_" + std::to_wstring(thematrix->Details.Width) + L"x" + std::to_wstring(thematrix->Details.Height));
 		sdMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioFont] + L" (*.ledsfont)|*.ledsfont");
 		sdMain->InitialDir = ExtractFilePath(Application->ExeName) + "fonts\\";
 		break;
-	case CSaveIgnorePixels:
+	case kSaveIgnorePixels:
 		sdMain->DefaultExt = L".ledsip";
 		sdMain->Filter     = Utility::WS2US(GLanguageHandler->Text[kLEDMatrixStudioIgnorePixelFiles] + L" (*.ledsip)|*.ledsip");
 		sdMain->InitialDir = GSystemSettings->App.LastLoadLocation.c_str();
@@ -948,30 +1013,30 @@ void __fastcall TfrmMain::PaletteColourOver(int colour)
 
 void __fastcall TfrmMain::PaletteColourSelected(int button, int colour)
 {
-	if (thematrix->Details.Mode == MatrixMode::kRGB)
+	if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 	{
 		switch (button)
 		{
 		case 0:
 			sSelectionLMB->Brush->Color = TColor(colour);
 
-			thematrix->LEDRGBColours[CMouseLeft]   = colour;
+			thematrix->LEDRGBColours[kMouseLeft]   = colour;
 			break;
 		case 1:
 			sSelectionMMB->Brush->Color = TColor(colour);
 
-			thematrix->LEDRGBColours[CMouseMiddle] = colour;
+			thematrix->LEDRGBColours[kMouseMiddle] = colour;
 			break;
 		case  2:
 			sSelectionRMB->Brush->Color = TColor(colour);
 
-			thematrix->LEDRGBColours[CMouseRight]  = colour;
+			thematrix->LEDRGBColours[kMouseRight]  = colour;
 			break;
 		}
 
-		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
-										 thematrix->LEDRGBColours[CMouseMiddle],
-										 thematrix->LEDRGBColours[CMouseRight]);
+		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[kMouseLeft],
+										 thematrix->LEDRGBColours[kMouseMiddle],
+										 thematrix->LEDRGBColours[kMouseRight]);
 
 		GenerateShades(colour);
 	}
@@ -1005,6 +1070,26 @@ void __fastcall TfrmMain::MatrixOnChange(TheMatrix *Sender)
 	{
 		tbFrames->Max = thematrix->GetFrameCount(); // last frame available
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
+
+		if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+		{
+			int index = thematrix->GetCurrentPixel();
+
+			if (index >= 0)
+			{
+				MatrixPixel *pixel = thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->Pixels[index];
+
+				sbFreeformSetOrder->Tag = index;
+				eFreeformOrder->Text = pixel->Order;
+			}
+
+            UpdatePixelGroupList();
+		}
+
+		if (thematrix->Render.Action.Mode == ActionMode::kFont)
+		{
+            UpdatePixelGroupList();
+		}
 	}
 
 	miUndo->Enabled = thematrix->CanUndo;
@@ -1080,22 +1165,22 @@ void __fastcall TfrmMain::MatrixOnNewFrameDisplayed(TheMatrix *Sender)
 
 void __fastcall TfrmMain::MatrixOnColourChange(TheMatrix *Sender)
 {
-	switch (thematrix->Details.Mode)
+	switch (thematrix->Details.ColourMode)
 	{
-	case MatrixMode::kNone:
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kNone:
+	case MatrixColourMode::kMono:
+	case MatrixColourMode::kBiSequential:
+	case MatrixColourMode::kBiBitplanes:
 		break;
-	case MatrixMode::kRGB:
-		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseLeft]);
-		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseMiddle]);
-		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseRight]);
+	case MatrixColourMode::kRGB:
+		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseLeft]);
+		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseMiddle]);
+		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseRight]);
 		break;
-	case MatrixMode::kRGB3BPP:
-		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[CMouseLeft]]);
-		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[CMouseMiddle]]);
-		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[CMouseRight]]);
+	case MatrixColourMode::kRGB3BPP:
+		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[kMouseLeft]]);
+		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[kMouseMiddle]]);
+		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[thematrix->LEDRGBColours[kMouseRight]]);
 		break;
 	}
 }
@@ -1115,55 +1200,68 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 	OldMouseX = x;
 	OldMouseY = y;
 
-	if (x >= 0 && y >= 0 && x < thematrix->Details.Width && y < thematrix->Details.Height)
+	switch (thematrix->Details.DrawMode)
 	{
-		switch (thematrix->Details.Mode)
+	case MatrixDrawMode::kGrid:
+		if (x >= 0 && y >= 0 && x < thematrix->Details.Width && y < thematrix->Details.Height)
 		{
-		case MatrixMode::kRGB:
-		{
-			std::wstring caption = L"X: " + std::to_wstring(x + 1) +
-								   L"  Y: " + std::to_wstring(y + 1) +
-								   L"  " + GLanguageHandler->Text[kData] +
-								   L": " + GSystemSettings->App.HexPrefix;
-
-			 statusMain->SimpleText = caption.c_str() +
-									  IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
-			 break;
-		}
-		case MatrixMode::kRGB3BPP:
-		{
-			std::wstring caption = L"X: " + std::to_wstring(x + 1) +
-								   L"  Y: " + std::to_wstring(y + 1) +
-								   L"  " + GLanguageHandler->Text[kData] +
-								   L": " + GSystemSettings->App.HexPrefix;
-
-			statusMain->SimpleText = caption.c_str() +
-									 IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
-			break;
-		}
-
-		default:
-			statusMain->SimpleText = IntToStr(x) + L", " + IntToStr(y);
-		}
-
-		if (lPixelColour->Visible)
-		{
-			if (thematrix->Details.Mode == MatrixMode::kRGB)
+			switch (thematrix->Details.ColourMode)
 			{
-				std::wstring caption =  GSystemSettings->App.HexPrefix +
-									   IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6).c_str() +
-									   L" (" +
-									   ColourUtility::RGBConvertToSplit(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGBSimple, 100, NumberFormat::kDecimal, L"", L" ", ColourSpace::kRGB32) +
-									   L")";
-
-				lPixelColour->Caption = caption.c_str();
-			}
-			else
+			case MatrixColourMode::kRGB:
 			{
-				lPixelColour->Caption = GSystemSettings->App.HexPrefix.c_str() +
-									   IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
+				std::wstring caption = L"X: " + std::to_wstring(x + 1) +
+									   L"  Y: " + std::to_wstring(y + 1) +
+									   L"  " + GLanguageHandler->Text[kData] +
+									   L": " + GSystemSettings->App.HexPrefix;
+
+				 statusMain->SimpleText = caption.c_str() +
+										  IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
+				 break;
+			}
+			case MatrixColourMode::kRGB3BPP:
+			{
+				std::wstring caption = L"X: " + std::to_wstring(x + 1) +
+									   L"  Y: " + std::to_wstring(y + 1) +
+									   L"  " + GLanguageHandler->Text[kData] +
+									   L": " + GSystemSettings->App.HexPrefix;
+
+				statusMain->SimpleText = caption.c_str() +
+										 IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
+				break;
+			}
+
+			default:
+				statusMain->SimpleText = IntToStr(x) + L", " + IntToStr(y);
+			}
+
+			if (lPixelColour->Visible)
+			{
+				if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
+				{
+					std::wstring caption =  GSystemSettings->App.HexPrefix +
+										   IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6).c_str() +
+										   L" (" +
+										   ColourUtility::RGBConvertToSplit(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGBSimple, 100, NumberFormat::kDecimal, L"", L" ", ColourSpace::kRGB32) +
+										   L")";
+
+					lPixelColour->Caption = caption.c_str();
+				}
+				else
+				{
+					lPixelColour->Caption = GSystemSettings->App.HexPrefix.c_str() +
+										   IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
+				}
 			}
 		}
+		break;
+	case MatrixDrawMode::kFreeform:
+	{
+		std::wstring caption = L"X: " + std::to_wstring(x) +
+							   L"  Y: " + std::to_wstring(y);
+
+		statusMain->SimpleText = caption.c_str();
+		break;
+    }
 	}
 }
 
@@ -1372,6 +1470,8 @@ void TfrmMain::SetGuiLanguageText()
 	miPreviousFrame->Caption = GLanguageHandler->Text[kPreviousFrame].c_str();
 	miNextFrame->Caption = GLanguageHandler->Text[kNextFrame].c_str();
 	miGridToggle->Caption = GLanguageHandler->Text[kGrid].c_str();
+	miViewShowPixelGroup->Caption = GLanguageHandler->Text[kShowPixelGroup].c_str();
+	miViewShowPixelOrder->Caption = GLanguageHandler->Text[kShowPixelOrder].c_str();
 	//
 	Preview1->Caption = GLanguageHandler->Text[kPreview].c_str();
 	miPreview->Caption = GLanguageHandler->Text[kPreview].c_str();
@@ -1486,6 +1586,8 @@ void TfrmMain::SetGuiLanguageText()
 	Checkforupdates1->Caption = Utility::WS2US(GLanguageHandler->Text[kCheckForUpdates] + L"...");
 	Website1->Caption = GLanguageHandler->Text[kWebsite].c_str();
 	miAbout->Caption = Utility::WS2US(GLanguageHandler->Text[kAbout] + L" :)");
+	//
+	bFreeformSelectGroup->Caption = GLanguageHandler->Text[kSelect].c_str();
 }
 
 
@@ -1572,22 +1674,22 @@ void TfrmMain::PlaybackCommand(int command)
 {
 	switch (command)
 	{
-	case CAnimPlayStart:
+	case kAnimPlayStart:
 		PlaybackStart();
 		break;
-	case CAnimPlayStop:
+	case kAnimPlayStop:
 		PlaybackStop();
 		break;
-	case CAnimFirstFrame:
+	case kAnimFirstFrame:
 		PlaybackFirstFrame();
 		break;
-	case CAnimPreviousFrame:
+	case kAnimPreviousFrame:
 		PlaybackPreviousFrame();
 		break;
-	case CAnimNextFrame:
+	case kAnimNextFrame:
 		PlaybackNextFrame();
 		break;
-	case CAnimLastFrame:
+	case kAnimLastFrame:
 		PlaybackLastFrame();
 		break;
 	}
@@ -1826,7 +1928,7 @@ void TfrmMain::BuildPresetMenu()
 #pragma region Menu_File
 void __fastcall TfrmMain::miSaveAsClick(TObject *Sender)
 {
-	ConfigureSaveDialog(CSaveProject);
+	ConfigureSaveDialog(kSaveProject);
 
 	if (sdMain->Execute())
 	{
@@ -1910,18 +2012,19 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 			switch (frmImportBitmap->ImportMode)
 			{
 				case ImportColourMode::kMono:
-					GSystemSettings->Project.Mode = MatrixMode::kMono;
+					GSystemSettings->Project.ColourMode = MatrixColourMode::kMono;
 					break;
 				case ImportColourMode::kRGB:
-					GSystemSettings->Project.Mode = MatrixMode::kRGB;
+					GSystemSettings->Project.ColourMode = MatrixColourMode::kRGB;
 					break;
 				case ImportColourMode::kRGB3bpp:
-					GSystemSettings->Project.Mode = MatrixMode::kRGB3BPP;
+					GSystemSettings->Project.ColourMode = MatrixColourMode::kRGB3BPP;
 					break;
 			}
 
-			thematrix->NewMatrix(GSystemSettings->Project.Mode,
-								 GSystemSettings->Project.Special, CTopOffset, CLeftOffset,
+			thematrix->NewMatrix(MatrixDrawMode::kGrid,
+								 GSystemSettings->Project.ColourMode,
+								 GSystemSettings->Project.Special, kTopOffset, kLeftOffset,
 								 frmImportBitmap->FrameWidth, frmImportBitmap->FrameHeight,
 								 GSystemSettings->Project.PixelSize, GSystemSettings->Project.Shape,
 								 miGridToggle->Checked, false, true,
@@ -2021,13 +2124,13 @@ void __fastcall TfrmMain::miImportInToCurrentClick(TObject *Sender)
 		bPlayAnimationClick(bStopAnimation);
 	 }
 
-	ConfigureOpenDialog(CLoadProject);
+	ConfigureOpenDialog(kLoadProject);
 
 	if (odMain->Execute())
 	{
 		ImportData ted = thematrix->ImportLEDMatrixDataSingleFrame(odMain->FileName.c_str());
 
-		GSystemSettings->Project.Mode = ted.Mode;
+		GSystemSettings->Project.ColourMode = ted.ColourMode;
 
 		ChangeMatrixType();
 	}
@@ -2043,7 +2146,7 @@ void __fastcall TfrmMain::miAppendClick(TObject *Sender)
 
 	// =======================================================================
 
-	ConfigureOpenDialog(CLoadProject);
+	ConfigureOpenDialog(kLoadProject);
 
 	if (odMain->Execute())
 	{
@@ -2095,7 +2198,7 @@ void __fastcall TfrmMain::miMergeClick(TObject *Sender)
 
 void __fastcall TfrmMain::miSaveSingleFrameClick(TObject *Sender)
 {
-	ConfigureSaveDialog(CSaveProject);
+	ConfigureSaveDialog(kSaveProject);
 
 	if (GSystemSettings->App.DataFilename.empty())
 	{
@@ -2115,7 +2218,7 @@ void __fastcall TfrmMain::miSaveSingleFrameClick(TObject *Sender)
 	{
 		ImportData ted;
 
-		ted.Mode = GSystemSettings->Project.Mode;
+		ted.ColourMode = GSystemSettings->Project.ColourMode;
 
 		thematrix->SaveSingleFrame(sdMain->FileName.c_str(), ted, tbFrames->Position);
 	}
@@ -2150,13 +2253,13 @@ void __fastcall TfrmMain::miSaveRangeClick(TObject *Sender)
 
 void __fastcall TfrmMain::miSaveAsFontClick(TObject *Sender)
 {
-	ConfigureSaveDialog(CSaveFont);
+	ConfigureSaveDialog(kSaveFont);
 
 	// =======================================================================
 
 	if (sdMain->Execute())
 	{
-		if (thematrix->Details.Mode == MatrixMode::kRGB)
+		if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 		{
 			thematrix->SaveAsRGBFont(sdMain->FileName.c_str());
 		}
@@ -2479,7 +2582,7 @@ void __fastcall TfrmMain::Black1Click(TObject *Sender)
 {
 	TMenuItem *mi = (TMenuItem*)Sender;
 
-	SystemSetBackgroundColour(backgroundColours[mi->Tag]);
+	SystemSetBackgroundColour(kBackgroundColours[mi->Tag]);
 }
 
 
@@ -2496,13 +2599,13 @@ void __fastcall TfrmMain::miASCIIStartCodeClick(TObject *Sender)
 
 void __fastcall TfrmMain::miPreviousFrameClick(TObject *Sender)
 {
-	PlaybackCommand(CAnimPreviousFrame);
+	PlaybackCommand(kAnimPreviousFrame);
 }
 
 
 void __fastcall TfrmMain::miNextFrameClick(TObject *Sender)
 {
-	PlaybackCommand(CAnimNextFrame);
+	PlaybackCommand(kAnimNextFrame);
 }
 
 
@@ -2511,6 +2614,32 @@ void __fastcall TfrmMain::miGridToggleClick(TObject *Sender)
 	miGridToggle->Checked = !miGridToggle->Checked;
 
 	thematrix->ChangeGrid(miGridToggle->Checked);
+}
+
+
+void __fastcall TfrmMain::miViewShowPixelGroupClick(TObject *Sender)
+{
+	miViewShowPixelGroup->Checked = !miViewShowPixelGroup->Checked;
+
+	if (miViewShowPixelGroup->Checked && miViewShowPixelOrder->Checked)
+	{
+		miViewShowPixelOrder->Checked = false;
+	}
+
+	thematrix->SetGroupOrderDisplay(miViewShowPixelGroup->Checked, false);
+}
+
+
+void __fastcall TfrmMain::miViewShowPixelOrderClick(TObject *Sender)
+{
+	miViewShowPixelOrder->Checked = !miViewShowPixelOrder->Checked;
+
+	if (miViewShowPixelGroup->Checked && miViewShowPixelOrder->Checked)
+	{
+		miViewShowPixelGroup->Checked = false;
+	}
+
+	thematrix->SetGroupOrderDisplay(false, miViewShowPixelOrder->Checked);
 }
 
 
@@ -2555,7 +2684,7 @@ void __fastcall TfrmMain::miPreviewx1Click(TObject *Sender)
 	{
 		TMenuItem *mi = (TMenuItem*)Sender;
 
-		thematrix->SetPreviewBoxSize(previewSizes[mi->Tag]);
+		thematrix->SetPreviewBoxSize(kPreviewSizes[mi->Tag]);
 
 		SyncPreviewSize(mi->Tag);
 
@@ -2580,7 +2709,7 @@ void __fastcall TfrmMain::miPreviewVoid10Click(TObject *Sender)
 {
 	TMenuItem *mi = (TMenuItem*)Sender;
 
-	thematrix->SetPreviewVoid(previewVoids[mi->Tag]);
+	thematrix->SetPreviewVoid(kPreviewVoids[mi->Tag]);
 
 	SyncPreviewVoid(mi->Tag);
 
@@ -2599,28 +2728,28 @@ void __fastcall TfrmMain::miRadialOffset45Click(TObject *Sender)
 	switch (mi->Tag)
 	{
 	case 0:
-		offset = CZeroDegrees;
+		offset = kZeroDegrees;
 		break;
 	case 1:
-		offset = C45Degrees;
+		offset = k45Degrees;
 		break;
 	case 2:
-		offset = C90Degrees;
+		offset = k90Degrees;
 		break;
 	case 3:
-		offset = C135Degrees;
+		offset = k135Degrees;
 		break;
 	case 4:
-		offset = C180Degrees;
+		offset = k180Degrees;
 		break;
 	case 5:
-		offset = C225Degrees;
+		offset = k225Degrees;
 		break;
 	case 6:
-		offset = C270Degrees;
+		offset = k270Degrees;
 		break;
 	case 7:
-		offset = C315Degrees;
+		offset = k315Degrees;
 		break;
 	}
 
@@ -2706,6 +2835,17 @@ void __fastcall TfrmMain::miClearAllFramesClick(TObject *Sender)
 }
 
 
+void __fastcall TfrmMain::miRemoveAllPixelsClick(TObject *Sender)
+{
+	if (MessageDlg(Utility::WS2US(GLanguageHandler->Text[kRemoveAllPixels] +
+				   L"\n\n" +
+				   GLanguageHandler->Text[kAreYouSure]), mtWarning, mbYesNo, 0) == mrYes)
+	{
+		thematrix->RemoveAllPixels();
+	}
+}
+
+
 void __fastcall TfrmMain::miClearAllFramesGradientClick(TObject *Sender)
 {
 	if (MessageDlg(Utility::WS2US(GLanguageHandler->Text[kClearAllFramesQ] +
@@ -2723,25 +2863,25 @@ void __fastcall TfrmMain::miClearAllFramesGradientClick(TObject *Sender)
 
 void __fastcall TfrmMain::miFlipAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(kEffectFlipAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectFlipAll, kMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miMirrorAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(kEffectMirrorAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectMirrorAll, kMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miInvertAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(kEffectInvertAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectInvertAll, kMOMCurrentLayerFrames);
 }
 
 
 void __fastcall TfrmMain::miGradientAllFramesClick(TObject *Sender)
 {
-	thematrix->PerformEffectController(kEffectGradientAll, CMOMCurrentLayerFrames);
+	thematrix->PerformEffectController(kEffectGradientAll, kMOMCurrentLayerFrames);
 }
 
 
@@ -2783,7 +2923,7 @@ void __fastcall TfrmMain::miClearAllIgnoredPixelsClick(TObject *Sender)
 
 void __fastcall TfrmMain::miSaveIgnoredPixelsAsPatternClick(TObject *Sender)
 {
-	ConfigureSaveDialog(CSaveIgnorePixels);
+	ConfigureSaveDialog(kSaveIgnorePixels);
 
 	if (sdMain->Execute())
 	{
@@ -2794,7 +2934,7 @@ void __fastcall TfrmMain::miSaveIgnoredPixelsAsPatternClick(TObject *Sender)
 
 void __fastcall TfrmMain::miLoadIgnoredPixelsAsPatternClick(TObject *Sender)
 {
-	ConfigureOpenDialog(CLoadIgnorePixels);
+	ConfigureOpenDialog(kLoadIgnorePixels);
 
 	if (odMain->Execute())
 	{
@@ -2973,7 +3113,16 @@ void __fastcall TfrmMain::miMemoryR1Click(TObject *Sender)
 
 void __fastcall TfrmMain::miExportUserMemoriesClick(TObject *Sender)
 {
-	OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kUserMemories, thematrix->Details.Mode);
+	ExportSource es = ExportSource::kUserMemoriesGrid;
+
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+	{
+		es = ExportSource::kUserMemoriesFreeform;
+	}
+
+	GSystemSettings->App.LastExport.ExportMode = es;
+
+	OpenExportData(thematrix, GSystemSettings->App.LastExport, thematrix->Details.ColourMode);
 }
 
 
@@ -3061,7 +3210,9 @@ void __fastcall TfrmMain::witter1Click(TObject *Sender)
 void __fastcall TfrmMain::RenderMode1Click(TObject *Sender)
 {
 	#if _DEBUG
-	ShowMessage(ConstantsHelper::MatrixModeAsString(thematrix->Details.Mode).c_str());
+	std::wstring config = ConstantsHelper::MatrixDrawModeAsString(thematrix->Details.DrawMode) + L"; " +
+						  ConstantsHelper::MatrixModeAsString(thematrix->Details.ColourMode);
+	ShowMessage(config.c_str());
 	#endif
 }
 
@@ -3077,8 +3228,15 @@ void __fastcall TfrmMain::MonoColours1Click(TObject *Sender)
 void __fastcall TfrmMain::CurrentLayerFrame1Click(TObject *Sender)
 {
 	#if _DEBUG
-	ShowMessage(IntToStr(thematrix->GetCurrentLayer()) + L" / " + IntToStr(thematrix->GetCurrentFrame()) + L" (" +
-				IntToStr(thematrix->GetLayerCount()) + L" / " + IntToStr(thematrix->GetFrameCount()) + L")");
+	std::wstring output = std::to_wstring(thematrix->GetCurrentLayer()) + L" / " + std::to_wstring(thematrix->GetCurrentFrame()) + L" (" +
+						  std::to_wstring(thematrix->GetLayerCount()) + L" / " + std::to_wstring(thematrix->GetFrameCount()) + L")";
+
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+	{
+		output += L"; pixels " + std::to_wstring(thematrix->GetPixelCount());
+	}
+
+	ShowMessage(output.c_str());
 	#endif
 }
 
@@ -3111,6 +3269,19 @@ void __fastcall TfrmMain::miDrawTestPatternClick(TObject *Sender)
 {
 	#if _DEBUG
     thematrix->TestSignal();
+	#endif
+}
+
+
+void __fastcall TfrmMain::N69Click(TObject *Sender)
+{
+	#if _DEBUG
+	miViewShowPixelGroup->Checked = false;
+	miViewShowPixelOrder->Checked = false;
+
+	thematrix->SetGroupOrderDisplay(false, false);
+
+	thematrix->Render.ShowFrameCount = true;
 	#endif
 }
 #pragma end_region
@@ -3174,7 +3345,7 @@ void __fastcall TfrmMain::miAutomateClick(TObject *Sender)
 	ai.FrameMax     = tbFrames->Max;
 	ai.Width        = thematrix->Details.Width;
 	ai.Height       = thematrix->Details.Height;
-	ai.Mode         = thematrix->Details.Mode;
+	ai.Mode         = thematrix->Details.ColourMode;
 
 	RGBPaletteColours rgbpc;
 
@@ -3252,7 +3423,8 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 		if (!ps.Valid) return;
 
-		GSystemSettings->Project.Mode             = ps.Mode;
+        GSystemSettings->Project.DrawMode         = ps.DrawMode;
+		GSystemSettings->Project.ColourMode       = ps.ColourMode;
 		GSystemSettings->Project.Width            = ps.Width;
 		GSystemSettings->Project.Height           = ps.Height;
 		GSystemSettings->Project.Clear            = ps.Clear;
@@ -3265,7 +3437,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		tbFrames->Max                  = ps.Special;
 		frmPreviewPopout->tbFrames->Max  = tbFrames->Max;
 
-		GSystemSettings->App.LastExport.clear(GSystemSettings->Project.Mode == MatrixMode::kRGB);
+		GSystemSettings->App.LastExport.clear(GSystemSettings->Project.ColourMode == MatrixColourMode::kRGB);
 
 		ChangeMatrixType();
 	}
@@ -3301,7 +3473,8 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	sColour0->Brush->Color = TColor(GSystemSettings->Project.Background);
 
-	thematrix->NewMatrix(GSystemSettings->Project.Mode, GSystemSettings->Project.Special, CTopOffset, CLeftOffset, mw, mh,
+	thematrix->NewMatrix(GSystemSettings->Project.DrawMode, GSystemSettings->Project.ColourMode,
+						 GSystemSettings->Project.Special, kTopOffset, kLeftOffset, mw, mh,
 						 GSystemSettings->Project.PixelSize, GSystemSettings->Project.Shape, miGridToggle->Checked, false, GSystemSettings->Project.Clear,
 						 GSystemSettings->Project.Background);
 
@@ -3316,7 +3489,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
     {
 		if (miFontMode->Checked)
 		{
-			tbFrames->Max = FontCharacterCount;
+			tbFrames->Max = kFontCharacterCount;
 		}
 		else
 		{
@@ -3334,7 +3507,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	// ===========================================================================
 
-	OldMatrixMode = GSystemSettings->Project.Mode;
+	OldMatrixMode = GSystemSettings->Project.ColourMode;
 
 	ClearCurrentProjectFileName();
 	GSystemSettings->App.LastAutomationFileName = L"";
@@ -3347,7 +3520,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 
 	Screen->Cursor = crDefault;
 
-	GSystemSettings->RecalculatePadding(thematrix->Details.Mode, thematrix->Details.Width, thematrix->Details.Height);
+	GSystemSettings->RecalculatePadding(thematrix->Details.ColourMode, thematrix->Details.Width, thematrix->Details.Height);
 	MatrixOnChange(nullptr);
 	MatrixOnLayerChange(nullptr);
 
@@ -3372,7 +3545,7 @@ void __fastcall TfrmMain::sbOpenClick(TObject *Sender)
 
 	// =======================================================================
 
-	ConfigureOpenDialog(CLoadProject);
+	ConfigureOpenDialog(kLoadProject);
 
 	if (odMain->Execute())
 	{
@@ -3416,7 +3589,16 @@ void __fastcall TfrmMain::sbSaveClick(TObject *Sender)
 
 void __fastcall TfrmMain::sbExportClick(TObject *Sender)
 {
-	OpenExportData(thematrix, GSystemSettings->App.LastExport, ExportSource::kAnimation, thematrix->Details.Mode);
+	ExportSource es = ExportSource::kAnimationGrid;
+
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+	{
+		es = ExportSource::kAnimationFreeform;
+	}
+
+	GSystemSettings->App.LastExport.ExportMode = es;
+
+	OpenExportData(thematrix, GSystemSettings->App.LastExport, thematrix->Details.ColourMode);
 
 	if (GSystemSettings->App.LastExport.Valid)
 	{
@@ -3502,11 +3684,11 @@ void TfrmMain::FrameEffect(int id)
 
 	if (FrameLayerPanel->GetSyncAll())
 	{
-		thematrix->PerformEffectController(effect, CMOMCurrentFrameLayers);
+		thematrix->PerformEffectController(effect, kMOMCurrentFrameLayers);
 	}
 	else
 	{
-		thematrix->PerformEffectController(effect, CMOMCurrentOnly);
+		thematrix->PerformEffectController(effect, kMOMCurrentOnly);
 	}
 }
 
@@ -3539,13 +3721,20 @@ void TfrmMain::ScrollFrame(int scroll_mode)
 		break;
 	}
 
-	if (FrameLayerPanel->GetSyncAll())
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		thematrix->PerformScrollController(direction, CMOMCurrentFrameLayers);
+		if (FrameLayerPanel->GetSyncAll())
+		{
+			thematrix->PerformScrollController(direction, kMOMCurrentFrameLayers);
+		}
+		else
+		{
+			thematrix->PerformScrollController(direction, kMOMCurrentOnly);
+		}
 	}
 	else
 	{
-		thematrix->PerformScrollController(direction, CMOMCurrentOnly);
+		thematrix->PerformFreeformEffect(direction);
 	}
 }
 
@@ -3573,11 +3762,11 @@ void TfrmMain::RotateFrame(int direction)
 
 	if (FrameLayerPanel->GetSyncAll())
 	{
-		thematrix->RotateFrameController(rdirection, CMOMCurrentFrameLayers);
+		thematrix->RotateFrameController(rdirection, kMOMCurrentFrameLayers);
 	}
 	else
 	{
-		thematrix->RotateFrameController(rdirection, CMOMCurrentOnly);
+		thematrix->RotateFrameController(rdirection, kMOMCurrentOnly);
 	}
 }
 
@@ -3638,36 +3827,36 @@ void __fastcall TfrmMain::bLockFrameClick(TObject *Sender)
 #pragma region Toolbar_Drawing_Tools
 void TfrmMain::SetDrawingMode(int drawingmode)
 {
-	thematrix->Render.Draw.SetModeFromInt(drawingmode);
-	thematrix->Render.Draw.Point       = CDrawPointNone;
-	thematrix->Render.Draw.Coords[0].X = -1;
-	thematrix->Render.Draw.Coords[0].Y = -1;
+	thematrix->Render.Action.SetModeFromInt(drawingmode);
+	thematrix->Render.Action.Point       = CDrawPointNone;
+	thematrix->Render.Action.Coords[0].X = -1;
+	thematrix->Render.Action.Coords[0].Y = -1;
 
-	if (thematrix->Render.Draw.IsSinglePointMode(thematrix->Render.Draw.Mode))
+	if (thematrix->Render.Action.IsSinglePointMode(thematrix->Render.Action.Mode))
 	{
-		thematrix->Render.Draw.SinglePoint  = true;
+		thematrix->Render.Action.SinglePoint  = true;
 
-		thematrix->Render.Draw.Parameter    = DefaultPatternParameter[drawingmode];
-  		thematrix->Render.Draw.ParameterMax = DefaultPatternParameterMax[drawingmode];
+		thematrix->Render.Action.Parameter    = DefaultPatternParameter[drawingmode];
+  		thematrix->Render.Action.ParameterMax = DefaultPatternParameterMax[drawingmode];
 
-		if (thematrix->Details.Mode == MatrixMode::kRGB || thematrix->Details.Mode == MatrixMode::kRGB3BPP)
+		if (thematrix->Details.ColourMode == MatrixColourMode::kRGB || thematrix->Details.ColourMode == MatrixColourMode::kRGB3BPP)
 		{
-			thematrix->Render.Draw.Colour = 0xFF8822;  // ensures something is drawn as we move before clicking
+			thematrix->Render.Action.Colour = 0xFF8822;  // ensures something is drawn as we move before clicking
 		}
 		else
 		{
-			thematrix->Render.Draw.Colour = 1;         // ensures something is drawn as we move before clicking
+			thematrix->Render.Action.Colour = 1;         // ensures something is drawn as we move before clicking
 		}
 	}
 	else
 	{
-		thematrix->Render.Draw.SinglePoint  = false;
+		thematrix->Render.Action.SinglePoint  = false;
 
-		thematrix->Render.Draw.Parameter    = 0;
-		thematrix->Render.Draw.ParameterMax = 0;
+		thematrix->Render.Action.Parameter    = 0;
+		thematrix->Render.Action.ParameterMax = 0;
 	}
 
-	if (thematrix->Render.Draw.Mode == DrawMode::kGradientBrush)
+	if (thematrix->Render.Action.Mode == ActionMode::kGradientBrush)
 	{
 		iMMBGradient->Visible = true;
 	}
@@ -3676,9 +3865,11 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 		ToggleGradient(GradientOption::kOff, false);
 	}
 
-	thematrix->Render.Draw.CopyPos.X = 0;
-	thematrix->Render.Draw.CopyPos.Y = 0;
-	thematrix->Render.Draw.Special   = tbFrames->Max;
+	bFreeformSelectGroup->Enabled = (thematrix->Render.Action.Mode == ActionMode::kMovePixel);
+
+	thematrix->Render.Action.CopyPos.X = 0;
+	thematrix->Render.Action.CopyPos.Y = 0;
+	thematrix->Render.Action.Special   = tbFrames->Max;
 
 	UpdateDrawModeCaption(drawingmode);
 
@@ -3701,7 +3892,7 @@ void __fastcall TfrmMain::sbNewBrushClick(TObject *Sender)
 	std::vector<std::wstring> Brush;
 	int lRow;
 
-	lMatrixSettings.Mode = thematrix->Details.Mode;
+	lMatrixSettings.Mode       = thematrix->Details.ColourMode;
 	lMatrixSettings.Width      = thematrix->Details.Width;
 	lMatrixSettings.Height     = thematrix->Details.Height;
 
@@ -3723,13 +3914,13 @@ void __fastcall TfrmMain::sbNewBrushClick(TObject *Sender)
 			thematrix->StringToRow(true, Brush[row], -1, row, 0, false);
 		}
 
-		thematrix->Render.Draw.Point       = CDrawPointNone;
-		thematrix->Render.Draw.Mode        = DrawMode::kPaste;
-		thematrix->Render.Draw.Coords[0].X = -1;
-		thematrix->Render.Draw.Coords[0].Y = -1;
+		thematrix->Render.Action.Point       = CDrawPointNone;
+		thematrix->Render.Action.Mode        = ActionMode::kPaste;
+		thematrix->Render.Action.Coords[0].X = -1;
+		thematrix->Render.Action.Coords[0].Y = -1;
 
-		thematrix->Render.Draw.CopyPos.X   = newbrush.Width;
-		thematrix->Render.Draw.CopyPos.Y   = newbrush.Height;
+		thematrix->Render.Action.CopyPos.X   = newbrush.Width;
+		thematrix->Render.Action.CopyPos.Y   = newbrush.Height;
 	}
 }
 
@@ -3778,17 +3969,17 @@ void __fastcall TfrmMain::cbMirrorModeChange(TObject *Sender)
 void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y)
 {
-	DrawMode dm = thematrix->Render.Draw.Mode;
+	ActionMode dm = thematrix->Render.Action.Mode;
 
-	thematrix->Render.Draw.Mode = DrawMode::kNone;
+	thematrix->Render.Action.Mode = ActionMode::kNone;
 
 	TShape *shape = (TShape*)Sender;
 
-	switch (thematrix->Details.Mode)
+	switch (thematrix->Details.ColourMode)
 	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kMono:
+	case MatrixColourMode::kBiSequential:
+	case MatrixColourMode::kBiBitplanes:
 		if (Button == mbLeft)
 		{
 			int colour = shape->Tag;
@@ -3815,7 +4006,7 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 										 sSelectionMMB->Tag,
 										 sSelectionRMB->Tag);
 		break;
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 	{
 		colorDialog->Color = shape->Brush->Color;
 
@@ -3833,15 +4024,15 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 			}
 			else if (Sender == sSelectionLMB)
 			{
-				thematrix->LEDRGBColours[CMouseLeft] = colorDialog->Color;
+				thematrix->LEDRGBColours[kMouseLeft] = colorDialog->Color;
 			}
 			else if (Sender == sSelectionMMB)
 			{
-				thematrix->LEDRGBColours[CMouseMiddle] = colorDialog->Color;
+				thematrix->LEDRGBColours[kMouseMiddle] = colorDialog->Color;
 			}
 			else if (Sender == sSelectionRMB)
 			{
-				thematrix->LEDRGBColours[CMouseRight]  = colorDialog->Color;
+				thematrix->LEDRGBColours[kMouseRight]  = colorDialog->Color;
 			}
 
 			if (Sender == sColour0)
@@ -3861,14 +4052,14 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 										 sSelectionRMB->Brush->Color);
 		break;
 	}
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		break;
 
 	default:
 		break;
 	}
 
-	thematrix->Render.Draw.Mode = dm;
+	thematrix->Render.Action.Mode = dm;
 }
 #pragma end_region
 
@@ -3877,13 +4068,13 @@ void __fastcall TfrmMain::sColour3MouseDown(TObject *Sender, TMouseButton Button
 void __fastcall TfrmMain::sRGBPalette1MouseDown(TObject *Sender, TMouseButton Button,
 		  TShiftState Shift, int X, int Y)
 {
-	if (thematrix->Details.Mode == MatrixMode::kRGB)
+	if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 	{
 		TShape *shape = (TShape*)Sender;
 
 		int index = shape->Tag;
 
-		if (thematrix->Render.Draw.Mode == DrawMode::kPicker || Shift.Contains(ssCtrl))
+		if (thematrix->Render.Action.Mode == ActionMode::kPicker || Shift.Contains(ssCtrl))
 		{
 		  	colorDialog->Color = shape->Brush->Color;
 
@@ -3898,24 +4089,24 @@ void __fastcall TfrmMain::sRGBPalette1MouseDown(TObject *Sender, TMouseButton Bu
 			{
 				sSelectionLMB->Brush->Color          = _RGBPalette[index]->Brush->Color;
 
-				thematrix->LEDRGBColours[CMouseLeft] = _RGBPalette[index]->Brush->Color;
+				thematrix->LEDRGBColours[kMouseLeft] = _RGBPalette[index]->Brush->Color;
 			}
 			else if (Shift.Contains(ssMiddle))
 			{
 				sSelectionMMB->Brush->Color            = _RGBPalette[index]->Brush->Color;
 
-				thematrix->LEDRGBColours[CMouseMiddle] = _RGBPalette[index]->Brush->Color;
+				thematrix->LEDRGBColours[kMouseMiddle] = _RGBPalette[index]->Brush->Color;
 			}
 			else if (Shift.Contains(ssRight))
 			{
 				sSelectionRMB->Brush->Color            = _RGBPalette[index]->Brush->Color;
 
-				thematrix->LEDRGBColours[CMouseRight]  = _RGBPalette[index]->Brush->Color;
+				thematrix->LEDRGBColours[kMouseRight]  = _RGBPalette[index]->Brush->Color;
 			}
 
-			thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
-										   thematrix->LEDRGBColours[CMouseMiddle],
-										   thematrix->LEDRGBColours[CMouseRight]);
+			thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[kMouseLeft],
+											 thematrix->LEDRGBColours[kMouseMiddle],
+											 thematrix->LEDRGBColours[kMouseRight]);
 
 			FramePalettePanel->AddToHistory(shape->Brush->Color);
 
@@ -3941,7 +4132,7 @@ void __fastcall TfrmMain::sRGBPalette1MouseMove(TObject *Sender, TShiftState Shi
 void __fastcall TfrmMain::sShade1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y)
 {
-	if (thematrix->Details.Mode == MatrixMode::kRGB)
+	if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 	{
 		TShape *shape = (TShape*)Sender;
 
@@ -3951,26 +4142,26 @@ void __fastcall TfrmMain::sShade1MouseDown(TObject *Sender, TMouseButton Button,
 		{
 			sSelectionLMB->Brush->Color = colour;
 
-			thematrix->LEDRGBColours[CMouseLeft] = colour;
+			thematrix->LEDRGBColours[kMouseLeft] = colour;
 		}
 		else if (Shift.Contains(ssMiddle))
 		{
 			sSelectionMMB->Brush->Color = colour;
 
-			thematrix->LEDRGBColours[CMouseMiddle] = colour;
+			thematrix->LEDRGBColours[kMouseMiddle] = colour;
 		}
 		else if (Shift.Contains(ssRight))
 		{
 			sSelectionRMB->Brush->Color = colour;
 
-			thematrix->LEDRGBColours[CMouseRight] = colour;
+			thematrix->LEDRGBColours[kMouseRight] = colour;
 		}
 
-		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
-										 thematrix->LEDRGBColours[CMouseMiddle],
-										 thematrix->LEDRGBColours[CMouseRight]);
+		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[kMouseLeft],
+										 thematrix->LEDRGBColours[kMouseMiddle],
+										 thematrix->LEDRGBColours[kMouseRight]);
 
-        FramePalettePanel->AddToHistory(shape->Brush->Color);
+		FramePalettePanel->AddToHistory(shape->Brush->Color);
 
 		if (shape->Tag != 999)
 		{
@@ -3983,7 +4174,7 @@ void __fastcall TfrmMain::sShade1MouseDown(TObject *Sender, TMouseButton Button,
 void __fastcall TfrmMain::sRGB3pp1MouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
 		  int X, int Y)
 {
-	if (thematrix->Details.Mode == MatrixMode::kRGB3BPP)
+	if (thematrix->Details.ColourMode == MatrixColourMode::kRGB3BPP)
 	{
 		TShape *shape = (TShape*)Sender;
 
@@ -3993,24 +4184,24 @@ void __fastcall TfrmMain::sRGB3pp1MouseDown(TObject *Sender, TMouseButton Button
 		{
 			sSelectionLMB->Brush->Color = shape->Brush->Color;
 
-			thematrix->LEDRGBColours[CMouseLeft] = colour;
+			thematrix->LEDRGBColours[kMouseLeft] = colour;
 		}
 		else if (Shift.Contains(ssMiddle))
 		{
 			sSelectionMMB->Brush->Color = shape->Brush->Color;
 
-			thematrix->LEDRGBColours[CMouseMiddle] = colour;
+			thematrix->LEDRGBColours[kMouseMiddle] = colour;
 		}
 		else if (Shift.Contains(ssRight))
 		{
 			sSelectionRMB->Brush->Color = shape->Brush->Color;
 
-			thematrix->LEDRGBColours[CMouseRight] = colour;
+			thematrix->LEDRGBColours[kMouseRight] = colour;
 		}
 
-		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
-										 thematrix->LEDRGBColours[CMouseMiddle],
-										 thematrix->LEDRGBColours[CMouseRight]);
+		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[kMouseLeft],
+										 thematrix->LEDRGBColours[kMouseMiddle],
+										 thematrix->LEDRGBColours[kMouseRight]);
 	}
 }
 
@@ -4020,6 +4211,101 @@ void __fastcall TfrmMain::tbFramesTracking(TObject *Sender)
 	SetFrameCaption(GetSelectedFrame());
 
 	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
+}
+#pragma end_region
+
+
+#pragma region Toolbar_Freeform
+void __fastcall TfrmMain::sbFreeformAddShapeClick(TObject *Sender)
+{
+	TfrmAddShape *frmAddShape = new TfrmAddShape(Application);
+
+	if (frmAddShape->ShowModal() == mrOk)
+	{
+		thematrix->AddPixelShape(frmAddShape->SelectedShape, frmAddShape->SelectedDirection,
+								 frmAddShape->SelectedSizeX, frmAddShape->SelectedSizeY, frmAddShape->SelectedPixels,
+								 frmAddShape->SelectedX, frmAddShape->SelectedY, frmAddShape->SelectedColour);
+	}
+
+	frmAddShape->Free();
+}
+void __fastcall TfrmMain::sbFreeformAddClick(TObject *Sender)
+{
+	thematrix->AddPixel(20, 20);
+}
+
+
+void __fastcall TfrmMain::sbFreeformDeleteClick(TObject *Sender)
+{
+	thematrix->DeletePixel();
+}
+
+
+void __fastcall TfrmMain::sbFreeformSetOrderClick(TObject *Sender)
+{
+	int new_order = eFreeformOrder->Text.ToIntDef(-1);
+
+	if (new_order != -1)
+	{
+		thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->SetOrder(sbFreeformSetOrder->Tag, new_order);
+	}
+}
+
+
+void __fastcall TfrmMain::sbFreeformSetOrderSwapClick(TObject *Sender)
+{
+	int new_order = eFreeformOrder->Text.ToIntDef(-1);
+
+	if (new_order != -1)
+	{
+		thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->SetOrderSwap(sbFreeformSetOrder->Tag, new_order);
+	}
+}
+
+
+void __fastcall TfrmMain::cbApplyToGroupClick(TObject *Sender)
+{
+	thematrix->Render.ApplyToGroup = cbApplyToGroup->Checked;
+}
+
+
+void TfrmMain::UpdatePixelGroupList()
+{
+	int maxgroup = thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->NextGroupId;
+
+	cbFreeformGroup->Items->Clear();
+
+	for (int t = 0; t < maxgroup; t++)
+	{
+		cbFreeformGroup->Items->Add(IntToStr(t));
+	}
+
+	if (cbFreeformGroup->Items->Count == 0)
+	{
+        cbFreeformGroup->Items->Add(L"0");
+	}
+
+	cbFreeformGroup->ItemIndex = 0;
+}
+
+
+void __fastcall TfrmMain::bFreeformSelectGroupClick(TObject *Sender)
+{
+	int group = cbFreeformGroup->Text.ToInt();
+
+    thematrix->SelectInGroup(group);
+}
+
+
+void __fastcall TfrmMain::sbFreeformDrawOrderClick(TObject *Sender)
+{
+	thematrix->Render.Action.Mode = ActionMode::kDrawOrder;
+	thematrix->NewOrder = 0;
+
+	miViewShowPixelGroup->Checked = false;
+	miViewShowPixelOrder->Checked = true;
+
+	thematrix->SetGroupOrderDisplay(false, true);
 }
 #pragma end_region
 
@@ -4172,19 +4458,20 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 
 	GSystemSettings->App.LastExport.clear(false);
 
-	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, LoadMode::kNew, -1);
+	ImportData ted = thematrix->LoadProject(file_name, GSystemSettings->App.LastExport, LoadMode::kNew, -1);
 
 	// =======================================================================
 
 	if (ted.ImportOk)
 	{
-		GSystemSettings->Project.Mode    = ted.Mode;
+		GSystemSettings->Project.DrawMode   = ted.DrawMode;
+		GSystemSettings->Project.ColourMode = ted.ColourMode;
 		ChangeMatrixType();
 
 		GSystemSettings->Project.Width = ted.NewWidth;
 		GSystemSettings->Project.Height = ted.NewHeight;
 
-		tbFrames->Max                  = thematrix->GetFrameCount();
+		tbFrames->Max                   = thematrix->GetFrameCount();
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 		sbBuildClick(Load1);
@@ -4194,13 +4481,13 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 
 		if (ted.Colours.HasData)
 		{
-			sSelectionLMB->Brush->Color = TColor(ted.Colours.DrawColours[CMouseLeft]);
-			sSelectionMMB->Brush->Color = TColor(ted.Colours.DrawColours[CMouseMiddle]);
-			sSelectionRMB->Brush->Color = TColor(ted.Colours.DrawColours[CMouseRight]);
+			sSelectionLMB->Brush->Color = TColor(ted.Colours.DrawColours[kMouseLeft]);
+			sSelectionMMB->Brush->Color = TColor(ted.Colours.DrawColours[kMouseMiddle]);
+			sSelectionRMB->Brush->Color = TColor(ted.Colours.DrawColours[kMouseRight]);
 
-			thematrix->LEDRGBColours[CMouseLeft]   = TColor(ted.Colours.DrawColours[CMouseLeft]);
-			thematrix->LEDRGBColours[CMouseMiddle] = TColor(ted.Colours.DrawColours[CMouseMiddle]);
-			thematrix->LEDRGBColours[CMouseRight]  = TColor(ted.Colours.DrawColours[CMouseRight]);
+			thematrix->LEDRGBColours[kMouseLeft]   = TColor(ted.Colours.DrawColours[kMouseLeft]);
+			thematrix->LEDRGBColours[kMouseMiddle] = TColor(ted.Colours.DrawColours[kMouseMiddle]);
+			thematrix->LEDRGBColours[kMouseRight]  = TColor(ted.Colours.DrawColours[kMouseRight]);
 
 			thematrix->SetMouseButtonColours(sSelectionLMB->Brush->Color,
 										   sSelectionMMB->Brush->Color,
@@ -4225,16 +4512,21 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 
 		// ===========================================================================
 
-		switch (ted.Mode)
+		switch (ted.ColourMode)
 		{
-		case MatrixMode::kNone:
-		case MatrixMode::kMono:
-		case MatrixMode::kBiSequential:
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kNone:
+		case MatrixColourMode::kMono:
+		case MatrixColourMode::kBiSequential:
+		case MatrixColourMode::kBiBitplanes:
 			break;
-		case MatrixMode::kRGB:
-		case MatrixMode::kRGB3BPP:
+		case MatrixColourMode::kRGB:
+		case MatrixColourMode::kRGB3BPP:
 			sColour0->Brush->Color = TColor(ted.BackgroundColour);
+
+			if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
+			{
+                UpdatePixelGroupList();
+			}
             break;
 		}
 
@@ -4292,7 +4584,7 @@ bool TfrmMain::AppendFromFileName(const std::wstring file_name)
 
 	GSystemSettings->App.LastExport.clear(false);
 
-	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, LoadMode::kAppend, -1);
+	ImportData ted = thematrix->LoadProjectGrid(file_name, GSystemSettings->App.LastExport, LoadMode::kAppend, -1);
 
 	if (ted.ImportOk)
 	{
@@ -4322,7 +4614,7 @@ bool TfrmMain::MergeFromFileName(const std::wstring file_name, int start_frame, 
 
 	GSystemSettings->App.LastExport.clear(false);
 
-	ImportData ted = thematrix->LoadLEDMatrixData(file_name, GSystemSettings->App.LastExport, merge_mode, start_frame);
+	ImportData ted = thematrix->LoadProjectGrid(file_name, GSystemSettings->App.LastExport, merge_mode, start_frame);
 
 	if (ted.ImportOk)
 	{
@@ -4359,7 +4651,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 
 	if (ted.ImportOk)
 	{
-		GSystemSettings->Project.Mode = ted.Mode;
+		GSystemSettings->Project.ColourMode = ted.ColourMode;
 		ChangeMatrixType();
 
 		GSystemSettings->Project.Width = ted.NewWidth;
@@ -4435,7 +4727,7 @@ void TfrmMain::SetSimpleExport(ExportOptions teo)
 void TfrmMain::BuildImportData(ImportData &id, int start_frame, int end_frame)
 {
 	id.PadMode                   = GSystemSettings->App.PadMode;
-	id.Mode                      = thematrix->Details.Mode;
+	id.ColourMode                = thematrix->Details.ColourMode;
 	id.ASCIIIndex                = GSystemSettings->App.ASCIIIndex;
 	id.MaxFrames                 = tbFrames->Max;
 	id.AutomationFileName        = GSystemSettings->App.LastAutomationFileName;
@@ -4457,9 +4749,9 @@ ProjectColours TfrmMain::GetColours()
 {
 	ProjectColours pc;
 
-	pc.DrawColours[CMouseLeft]   = sSelectionLMB->Brush->Color;
-	pc.DrawColours[CMouseMiddle] = sSelectionMMB->Brush->Color;
-	pc.DrawColours[CMouseRight]  = sSelectionRMB->Brush->Color;
+	pc.DrawColours[kMouseLeft]   = sSelectionLMB->Brush->Color;
+	pc.DrawColours[kMouseMiddle] = sSelectionMMB->Brush->Color;
+	pc.DrawColours[kMouseRight]  = sSelectionRMB->Brush->Color;
 
 	for (int t = 0; t < 16; t++)
 	{
@@ -4477,14 +4769,77 @@ ProjectColours TfrmMain::GetColours()
 
 void TfrmMain::ChangeMatrixType()
 {
+	ConfigureForColourMode(GSystemSettings->Project.ColourMode);
+
+	ConfigureForDrawMode(GSystemSettings->Project.DrawMode);
+
+	// ===========================================================================
+
+	thematrix->ChangeMatrixMode(GSystemSettings->Project.DrawMode, GSystemSettings->Project.ColourMode);
+
+	SetupMatrixColours();
+
+	GSystemSettings->RecalculatePadding(thematrix->Details.ColourMode, thematrix->Details.Width, thematrix->Details.Height);
+
+	// ===========================================================================
+
+	switch (thematrix->Details.ColourMode)
+	{
+	case MatrixColourMode::kMono:
+		if (sbGradient->Tag == 1)
+		{
+			ToggleGradient(GradientOption::kOff, true);
+		}
+
+		sbGradient->Enabled               = false;
+		miClearAllFramesGradient->Enabled = false;
+		sbRandomDraw->Enabled             = false;
+		miGradientAllFrames->Enabled      = false;
+		sbPicker->Enabled                 = false;
+		break;
+	case MatrixColourMode::kBiSequential:
+	case MatrixColourMode::kBiBitplanes:
+	case MatrixColourMode::kRGB3BPP:
+		if (sbGradient->Tag == 1)
+		{
+			ToggleGradient(GradientOption::kVertical, false);
+		}
+
+		sbGradient->Enabled              = true;
+		miClearAllFramesGradient->Enabled = true;
+		sbRandomDraw->Enabled            = true;
+		miGradientAllFrames->Enabled     = true;
+		sbPicker->Enabled                = false;
+		break;
+	case MatrixColourMode::kRGB:
+		if (sbGradient->Tag == 1)
+		{
+			ToggleGradient(GradientOption::kVertical, true);
+		}
+
+		sbPicker->Enabled = true;
+
+		iMMBGradient->Visible = false;
+		break;
+
+	default:
+		break;
+	}
+
+	FormResize(nullptr);
+}
+
+
+void TfrmMain::ConfigureForColourMode(MatrixColourMode mcm)
+{
 	bool statusMouseButtonSelect = false;
 	bool statusColourSelect0 = false;
 	bool statusColourSelect123 = false;
 	bool statusBackground = false;
 
-	switch (GSystemSettings->Project.Mode)
+	switch (mcm)
 	{
-	case MatrixMode::kMono:
+	case MatrixColourMode::kMono:
 		pRGB_3BPP->Visible       = false;
 		statusBackground        = false;
 		statusMouseButtonSelect = false;
@@ -4493,7 +4848,7 @@ void TfrmMain::ChangeMatrixType()
 		pCurrentColours->Visible = false;
 		panelRGBPalette->Visible = false;
 		break;
-	case MatrixMode::kBiSequential:
+	case MatrixColourMode::kBiSequential:
 		pRGB_3BPP->Visible       = false;
 		statusBackground        = false;
 		statusMouseButtonSelect = true;
@@ -4502,7 +4857,7 @@ void TfrmMain::ChangeMatrixType()
 		pCurrentColours->Visible = true;
 		panelRGBPalette->Visible = false;
 		break;
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kBiBitplanes:
 		pRGB_3BPP->Visible       = false;
 		statusBackground        = false;
 		statusMouseButtonSelect = true;
@@ -4511,7 +4866,7 @@ void TfrmMain::ChangeMatrixType()
 		pCurrentColours->Visible = true;
 		panelRGBPalette->Visible = false;
 		break;
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		pRGB_3BPP->Visible       = false;
 		statusBackground        = true;
 		statusMouseButtonSelect = true;
@@ -4520,7 +4875,7 @@ void TfrmMain::ChangeMatrixType()
 		pCurrentColours->Visible = true;
 		panelRGBPalette->Visible = true;
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		pRGB_3BPP->Visible       = true;
 		statusBackground        = true;
 		statusMouseButtonSelect = true;
@@ -4536,7 +4891,7 @@ void TfrmMain::ChangeMatrixType()
 		statusColourSelect0     = false;
 		statusColourSelect123   = false;
 
-		GSystemSettings->Project.Mode = MatrixMode::kMono;
+		GSystemSettings->Project.ColourMode = MatrixColourMode::kMono;
 	}
 
 	lBackground->Visible     = statusBackground;
@@ -4554,61 +4909,66 @@ void TfrmMain::ChangeMatrixType()
 	iColoursLeft->Visible    = statusMouseButtonSelect;
 	iColoursMiddle->Visible  = statusMouseButtonSelect;
 	iColoursRight->Visible   = statusMouseButtonSelect;
+}
 
-	// ===========================================================================
 
-	thematrix->ChangeMatrixMode(GSystemSettings->Project.Mode);
+void TfrmMain::ConfigureForDrawMode(MatrixDrawMode mdm)
+{
+	bool uienabled = true;
 
-	SetupMatrixColours();
-
-	GSystemSettings->RecalculatePadding(thematrix->Details.Mode, thematrix->Details.Width, thematrix->Details.Height);
-
-	// ===========================================================================
-
-	switch (thematrix->Details.Mode)
+	if (mdm == MatrixDrawMode::kGrid)
 	{
-	case MatrixMode::kMono:
-		if (sbGradient->Tag == 1)
-		{
-			ToggleGradient(GradientOption::kOff, true);
-		}
+		panelTools->Visible = true;
+		panelMiddle->Visible = true;
+		panelFreeform->Visible = false;
 
-		sbGradient->Enabled               = false;
-		miClearAllFramesGradient->Enabled = false;
-		sbRandomDraw->Enabled             = false;
-		miGradientAllFrames->Enabled      = false;
-		sbPicker->Enabled                 = false;
-		break;
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
-	case MatrixMode::kRGB3BPP:
-		if (sbGradient->Tag == 1)
-		{
-			ToggleGradient(GradientOption::kVertical, false);
-		}
+		miAutomate->Enabled = true;
+	}
+	else
+	{
+		panelTools->Visible = false;
+		panelMiddle->Visible = false;
+		panelFreeform->Visible = true;
 
-		sbGradient->Enabled              = true;
-		miClearAllFramesGradient->Enabled = true;
-		sbRandomDraw->Enabled            = true;
-		miGradientAllFrames->Enabled     = true;
-		sbPicker->Enabled                = false;
-		break;
-	case MatrixMode::kRGB:
-		if (sbGradient->Tag == 1)
-		{
-			ToggleGradient(GradientOption::kVertical, true);
-		}
+		miAutomate->Enabled = false;
 
-		sbPicker->Enabled = true;
-
-		iMMBGradient->Visible = false;
-		break;
-
-	default:
-		break;
+		uienabled = false;
 	}
 
-	FormResize(nullptr);
+	miImportFromBitmap->Enabled = uienabled;
+	miImportFromGIF->Enabled = uienabled;
+	miImportInToCurrent->Enabled = uienabled;
+	miAppend->Enabled = uienabled;
+	miMerge->Enabled = uienabled;
+	miSaveAsFont->Enabled = uienabled;
+	miExportToBitmap->Enabled = uienabled;
+	miExportAnimationToBitmap->Enabled = uienabled;
+	miExportToGIF->Enabled = uienabled;
+	miFontMode->Enabled = uienabled;
+
+	miFlipAllFrames->Enabled = uienabled;
+	miMirrorAllFrames->Enabled = uienabled;
+	miInvertAllFrames->Enabled = uienabled;
+	miGradientAllFrames->Enabled = uienabled;
+	miIgnoredPixels->Enabled = uienabled;
+	miFadeFirstLast->Enabled = uienabled;
+
+	miPreview->Enabled = uienabled;
+	PreviewSize1->Enabled = uienabled;
+	miPreviewView->Enabled = uienabled;
+	PreviewVoidRadial1->Enabled = uienabled;
+	Previewoffsetradialsemicircle1->Enabled = uienabled;
+	miPopoutPreview->Enabled = uienabled;
+	miPreviewAllowDrawing->Enabled = uienabled;
+
+    miRemoveAllPixels->Enabled = !uienabled;
+
+	miClearAllFramesGradient->Enabled = uienabled;
+	miGradientFillFrame->Enabled = uienabled;
+	miGradientLoad->Enabled = uienabled;
+	miGradientSave->Enabled = uienabled;
+
+    bLightbox->Enabled = uienabled;
 }
 
 
@@ -4678,24 +5038,42 @@ void TfrmMain::UpdateMemoryUsage()
 {
 	int size = thematrix->CalculateMemoryUsage();
 
-	std::wstring dimensions = std::to_wstring(thematrix->Details.Width) + L" x " + std::to_wstring(thematrix->Details.Height);
-
 	std::wstring caption = L"";
 
-	if (size < 32768)
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		caption = dimensions + L", " + std::to_wstring(size) + L" " + GLanguageHandler->Text[kBytes];
-	}
-	else if (size < 1048576)
-	{
-		caption = dimensions + L", " + FloatToStrF((size / 1024), ffFixed, 7, 3).c_str() + L" KB";
+		std::wstring dimensions = std::to_wstring(thematrix->Details.Width) + L" x " + std::to_wstring(thematrix->Details.Height);
+
+		if (size < 32768)
+		{
+			caption = dimensions + L", " + std::to_wstring(size) + L" " + GLanguageHandler->Text[kBytes];
+		}
+		else if (size < 1048576)
+		{
+			caption = dimensions + L", " + FloatToStrF((size / 1024), ffFixed, 7, 3).c_str() + L" KB";
+		}
+		else
+		{
+			caption = dimensions + L", " + FloatToStrF((size / 1048576), ffFixed, 7, 3).c_str() + L" MB";
+		}
 	}
 	else
 	{
-		caption = dimensions + L", " + FloatToStrF((size / 1048576), ffFixed, 7, 3).c_str() + L" MB";
+		if (size < 32768)
+		{
+			caption = std::to_wstring(size) + L" " + GLanguageHandler->Text[kBytes];
+		}
+		else if (size < 1048576)
+		{
+			caption = FloatToStrF((size / 1024), ffFixed, 7, 3) + L" KB";
+		}
+		else
+		{
+			caption = FloatToStrF((size / 1048576), ffFixed, 7, 3) + L" MB";
+		}
 	}
 
-	caption += L" (" + ConstantsHelper::MatrixModeAsString(thematrix->Details.Mode) + L")";
+	caption += L" (" + ConstantsHelper::MatrixModeAsString(thematrix->Details.ColourMode) + L")";
 
 	lMemoryUsage->Caption = caption.c_str();
 
@@ -4707,14 +5085,15 @@ void TfrmMain::UpdateData()
 {
 	if (!sbClear->Enabled || !pQuickData->Visible) return;
 
-	DataOutDisplay dod;
-
-	if (thematrix->Details.Mode != MatrixMode::kRGB &&
-		thematrix->Details.Mode != MatrixMode::kRGB3BPP)
+	if (thematrix->Details.DrawMode == MatrixDrawMode::kGrid &&
+		thematrix->Details.ColourMode != MatrixColourMode::kRGB &&
+		thematrix->Details.ColourMode != MatrixColourMode::kRGB3BPP)
 	{
-		switch (thematrix->Details.Mode)
+		DataOutDisplay dod;
+
+		switch (thematrix->Details.ColourMode)
 		{
-		case MatrixMode::kMono:
+		case MatrixColourMode::kMono:
 			dod = ExportMonoBi::SimpleExportMono(thematrix,
 												 GetSelectedFrame(),
 												 FrameQuickData->GetLSB(),
@@ -4724,7 +5103,7 @@ void TfrmMain::UpdateData()
 												 FrameQuickData->GetCombineNybbles(),
 												 pQuickData->Visible);
 			break;
-		case MatrixMode::kBiSequential:	// bicolour, sequential bits
+		case MatrixColourMode::kBiSequential:	// bicolour, sequential bits
 			dod = ExportMonoBi::SimpleExportBiSequential(thematrix,
 												 GetSelectedFrame(),
 												 FrameQuickData->GetLSB(),
@@ -4733,7 +5112,7 @@ void TfrmMain::UpdateData()
 												 FrameQuickData->GetHex(),
 												 pQuickData->Visible);
 			break;
-		case MatrixMode::kBiBitplanes:	// bicolour, bitplanes
+		case MatrixColourMode::kBiBitplanes:	// bicolour, bitplanes
 			dod = ExportMonoBi::SimpleExportBiBitplanes(thematrix,
 												 GetSelectedFrame(),
 												 FrameQuickData->GetLSB(),
@@ -4791,7 +5170,7 @@ void TfrmMain::SetupMatrixColours()
 {
 	for (int colour = 0; colour < 6; colour++)
 	{
-		if (GSystemSettings->Project.Mode == MatrixMode::kMono)
+		if (GSystemSettings->Project.ColourMode == MatrixColourMode::kMono)
 		{
 			thematrix->LEDColours[colour] = thematrix->LEDColoursSingle[colour];
 		}
@@ -4801,34 +5180,34 @@ void TfrmMain::SetupMatrixColours()
 		}
 	}
 
-	switch (GSystemSettings->Project.Mode)
+	switch (GSystemSettings->Project.ColourMode)
 	{
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		sColour0->Brush->Color = TColor(thematrix->RGBBackground);
 
-		if (thematrix->LEDRGBColours[CMouseLeft] < 10 &&
-			thematrix->LEDRGBColours[CMouseMiddle] < 10 &&
-			thematrix->LEDRGBColours[CMouseRight] < 10)
+		if (thematrix->LEDRGBColours[kMouseLeft] < 10 &&
+			thematrix->LEDRGBColours[kMouseMiddle] < 10 &&
+			thematrix->LEDRGBColours[kMouseRight] < 10)
 		{
-			thematrix->LEDRGBColours[CMouseLeft]   = 0x000000ff;
-			thematrix->LEDRGBColours[CMouseMiddle] = 0x00ff0000;
-			thematrix->LEDRGBColours[CMouseRight]  = 0x00000000;
+			thematrix->LEDRGBColours[kMouseLeft]   = 0x000000ff;
+			thematrix->LEDRGBColours[kMouseMiddle] = 0x00ff0000;
+			thematrix->LEDRGBColours[kMouseRight]  = 0x00000000;
 		}
 
-		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseLeft]);
-		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseMiddle]);
-		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGBColours[CMouseRight]);
+		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseLeft]);
+		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseMiddle]);
+		sSelectionRMB->Brush->Color = TColor(thematrix->LEDRGBColours[kMouseRight]);
 
-		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[CMouseLeft],
-										 thematrix->LEDRGBColours[CMouseMiddle],
-										 thematrix->LEDRGBColours[CMouseRight]);
+		thematrix->SetMouseButtonColours(thematrix->LEDRGBColours[kMouseLeft],
+										 thematrix->LEDRGBColours[kMouseMiddle],
+										 thematrix->LEDRGBColours[kMouseRight]);
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		sColour0->Brush->Color      = TColor(thematrix->RGBBackground);
 
-		thematrix->LEDRGBColours[CMouseLeft]   = 4; // red
-		thematrix->LEDRGBColours[CMouseMiddle] = 2; // green
-		thematrix->LEDRGBColours[CMouseRight]  = 0; // black
+		thematrix->LEDRGBColours[kMouseLeft]   = 4; // red
+		thematrix->LEDRGBColours[kMouseMiddle] = 2; // green
+		thematrix->LEDRGBColours[kMouseRight]  = 0; // black
 
 		sSelectionLMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[4]);
 		sSelectionMMB->Brush->Color = TColor(thematrix->LEDRGB3BPPColours[2]);
@@ -4849,15 +5228,15 @@ void TfrmMain::SetupMatrixColours()
 										 sSelectionRMB->Tag);
 	}
 
-	sColour1->Brush->Color = TColor(thematrix->LEDColours[CMouseLeft]);
-	sColour2->Brush->Color = TColor(thematrix->LEDColours[CMouseMiddle]);
-	sColour3->Brush->Color = TColor(thematrix->LEDColours[CMouseRight]);
+	sColour1->Brush->Color = TColor(thematrix->LEDColours[kMouseLeft]);
+	sColour2->Brush->Color = TColor(thematrix->LEDColours[kMouseMiddle]);
+	sColour3->Brush->Color = TColor(thematrix->LEDColours[kMouseRight]);
 }
 
 
 void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 {
-	if (thematrix->Details.Mode == MatrixMode::kMono)
+	if (thematrix->Details.ColourMode == MatrixColourMode::kMono)
 	{
 		iMMBGradient->Visible  = false;
 		sSelectionMMB->Visible = false;
@@ -4897,14 +5276,14 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 
 				if (thematrix->GetPreviewActive())
 				{
-					MatrixGradient[t]->	Left = CLeftOffset + ((thematrix->Details.Width + 1) * GSystemSettings->Project.PixelSize) + (thematrix->Details.Width * thematrix->GetPreviewBoxSize()) + 25;
+					MatrixGradient[t]->	Left = kLeftOffset + ((thematrix->Details.Width + 1) * GSystemSettings->Project.PixelSize) + (thematrix->Details.Width * thematrix->GetPreviewBoxSize()) + 25;
 				}
 				else
 				{
-					MatrixGradient[t]->	Left = CLeftOffset + ((thematrix->Details.Width + 1) * GSystemSettings->Project.PixelSize);
+					MatrixGradient[t]->	Left = kLeftOffset + ((thematrix->Details.Width + 1) * GSystemSettings->Project.PixelSize);
 				}
 
-				MatrixGradient[t]->	Top  = CTopOffset + (t * GSystemSettings->Project.PixelSize);
+				MatrixGradient[t]->	Top = kTopOffset + (t * GSystemSettings->Project.PixelSize);
 
 				if (MatrixGradient[t]->Width != GSystemSettings->Project.PixelSize + 1)
 				{
@@ -4920,7 +5299,7 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 
 				if (clear_gradient)
 				{
-					if (thematrix->Details.Mode == MatrixMode::kRGB)
+					if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 					{
 						thematrix->Render.Gradient.IY[t] = thematrix->RGBBackground;
 					}
@@ -4951,8 +5330,8 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 				MatrixGradient[t]->Tag         = t;
 				MatrixGradient[t]->OnMouseDown = OnGradientClick;
 
-				MatrixGradient[t]->Left = CLeftOffset + (t * GSystemSettings->Project.PixelSize);
-				MatrixGradient[t]->Top  = CTopOffset + ((thematrix->Details.Height + 1) * GSystemSettings->Project.PixelSize);
+				MatrixGradient[t]->Left = kLeftOffset + (t * GSystemSettings->Project.PixelSize);
+				MatrixGradient[t]->Top  = kTopOffset + ((thematrix->Details.Height + 1) * GSystemSettings->Project.PixelSize);
 
 				if (MatrixGradient[t]->Width != GSystemSettings->Project.PixelSize + 1)
 				{
@@ -4968,7 +5347,7 @@ void TfrmMain::ToggleGradient(GradientOption go, bool clear_gradient)
 
 				if (clear_gradient)
 				{
-					if (thematrix->Details.Mode == MatrixMode::kRGB)
+					if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 					{
 						thematrix->Render.Gradient.IX[t] = thematrix->RGBBackground;
 					}
@@ -5158,8 +5537,8 @@ void TfrmMain::UpdateGradientColours()
 	case GradientOption::kVertical:
 		for (int t = 0; t < thematrix->Details.Height; t++)
 		{
-			if (thematrix->Details.Mode == MatrixMode::kBiSequential ||
-				thematrix->Details.Mode == MatrixMode::kBiBitplanes)
+			if (thematrix->Details.ColourMode == MatrixColourMode::kBiSequential ||
+				thematrix->Details.ColourMode == MatrixColourMode::kBiBitplanes)
 			{
 				MatrixGradient[t]->Brush->Color = TColor(thematrix->LEDColours[thematrix->Render.Gradient.IY[t]]);
 			}
@@ -5172,8 +5551,8 @@ void TfrmMain::UpdateGradientColours()
 	case GradientOption::kHorizontal:
 		for (int t = 0; t < thematrix->Details.Width; t++)
 		{
-			if (thematrix->Details.Mode == MatrixMode::kBiSequential ||
-				thematrix->Details.Mode == MatrixMode::kBiBitplanes)
+			if (thematrix->Details.ColourMode == MatrixColourMode::kBiSequential ||
+				thematrix->Details.ColourMode == MatrixColourMode::kBiBitplanes)
 			{
 				MatrixGradient[t]->Brush->Color = TColor(thematrix->LEDColours[thematrix->Render.Gradient.IX[t]]);
 			}
@@ -5309,14 +5688,14 @@ void __fastcall TfrmMain::OnGradientClick(TObject *Sender, TMouseButton Button, 
 {
 	TShape *shape = (TShape*)Sender;
 
-	switch (thematrix->Details.Mode)
+	switch (thematrix->Details.ColourMode)
 	{
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		puGradientRGB->Tag = shape->Tag;
 
 		puGradientRGB->Popup(Left + shape->Left + 10, Top + pCanvas->Top + shape->Top + 20);
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		puGradientRGB_3BPP->Tag = shape->Tag;
 
 		puGradientRGB_3BPP->Popup(Left + shape->Left + 10, Top + pCanvas->Top + shape->Top + 20);
@@ -5436,35 +5815,35 @@ void TfrmMain::SetPreview(int size, ViewShape view, int voidsize, int offset, bo
 
 	switch (offset)
 	{
-	case CZeroDegrees:
+	case kZeroDegrees:
 		miRadialOffset45Click(miRadialOffset0);
 		break;
 	case 1:
-	case C45Degrees:
+	case k45Degrees:
 		miRadialOffset45Click(miRadialOffset45);
 		break;
 	case 2:
-	case C90Degrees:
+	case k90Degrees:
 		miRadialOffset45Click(miRadialOffset90);
 		break;
 	case 3:
-	case C135Degrees:
+	case k135Degrees:
 		miRadialOffset45Click(miRadialOffset135);
 		break;
 	case 4:
-	case C180Degrees:
+	case k180Degrees:
 		miRadialOffset45Click(miRadialOffset180);
 		break;
 	case 5:
-	case C225Degrees:
+	case k225Degrees:
 		miRadialOffset45Click(miRadialOffset225);
 		break;
 	case 6:
-	case C270Degrees:
+	case k270Degrees:
 		miRadialOffset45Click(miRadialOffset270);
 		break;
 	case 7:
-	case C315Degrees:
+	case k315Degrees:
 		miRadialOffset45Click(miRadialOffset315);
 		break;
 
@@ -5515,9 +5894,9 @@ void TfrmMain::SetFromSettings()
 	}
 
 	thematrix->RGBBackground               = GSystemSettings->RGBBackground;
-	thematrix->LEDRGBColours[CMouseLeft]   = GSystemSettings->LEDRGBColours[1];
-	thematrix->LEDRGBColours[CMouseMiddle] = GSystemSettings->LEDRGBColours[2];
-	thematrix->LEDRGBColours[CMouseRight]  = GSystemSettings->LEDRGBColours[3];
+	thematrix->LEDRGBColours[kMouseLeft]   = GSystemSettings->LEDRGBColours[1];
+	thematrix->LEDRGBColours[kMouseMiddle] = GSystemSettings->LEDRGBColours[2];
+	thematrix->LEDRGBColours[kMouseRight]  = GSystemSettings->LEDRGBColours[3];
 
 	// ===========================================================================
 
@@ -5818,7 +6197,7 @@ void __fastcall TfrmMain::miPresetSaveCurrentClick(TObject *Sender)
 		mpp.Width      = thematrix->Details.Width;
 		mpp.Height     = thematrix->Details.Height;
 		mpp.PixelSize  = sbPixelSize->Tag;
-		mpp.Mode       = thematrix->Details.Mode;
+		mpp.Mode       = thematrix->Details.ColourMode;
 		mpp.PixelShape = sbPixelShape->Tag;
 
 		GPresetHandler->Save(GSystemSettings->App.LMSFilePath + L"presets\\" + s + L".ledspreset", mpp);
@@ -6012,7 +6391,7 @@ void __fastcall TfrmMain::pCanvasMouseDown(TObject *Sender, TMouseButton Button,
 void __fastcall TfrmMain::pCanvasMouseMove(TObject *Sender, TShiftState Shift, int X,
 		  int Y)
 {
-	FormMouseMove(nullptr, {}, 0, 0);
+	FormMouseMove(nullptr, {}, X, Y);
 }
 
 
@@ -6079,7 +6458,7 @@ void __fastcall TfrmMain::SelectPreset(TObject *Sender)
 
 void TfrmMain::LoadPreset(const std::wstring file_name)
 {
-	MatrixMode mode = MatrixMode::kMono; // default matrix type if none specified in file
+	MatrixColourMode mode = MatrixColourMode::kMono; // default matrix type if none specified in file
 
 	// ===========================================================================
 
@@ -6111,7 +6490,7 @@ void TfrmMain::LoadPreset(const std::wstring file_name)
 
 	// =======================================================================
 
-	GSystemSettings->Project.Mode = mode;
+	GSystemSettings->Project.ColourMode = mode;
 	ChangeMatrixType();
 
 	// =======================================================================

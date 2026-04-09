@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -22,17 +22,18 @@
 #include "ExportOptions.h"
 #include "FileConstants.h"
 #include "Font.h"
+#include "FreeformHandler.h"
 #include "Gradient.h"
 #include "ImportData.h"
 #include "LanguageConstants.h"
 #include "LanguageHandler.h"
 #include "Layer.h"
-#include "Matrix.h"
+#include "MatrixGrid.h"
 #include "MatrixConstants.h"
 #include "MatrixIgnored.h"
 #include "PreviewSettings.h"
 
-#define _FrameTimer 1
+#define _FrameTimer 0
 
 extern LanguageHandler *GLanguageHandler;
 
@@ -47,7 +48,8 @@ struct MatrixDetails
 {
 	bool Available = false;
 
-	MatrixMode Mode;
+	MatrixDrawMode DrawMode = MatrixDrawMode::kGrid;
+	MatrixColourMode ColourMode = MatrixColourMode::kNone;
 
 	int Width = 0;	// actual width of matrix in pixels
 	int Height = 0;	// actual height of matrix in pixels
@@ -64,6 +66,10 @@ struct MatrixRendering
 	int PixelSizeZ = 1;
 	PixelShape Shape = PixelShape::kSquare;
 	BrushSize Brush = BrushSize::kSmall;
+	bool ShowPixelOrder = false;
+	bool ShowPixelGroup = false;
+	bool ApplyToGroup = false;
+    bool ShowFrameCount = false;
 
 	TPoint TopLeft = { 0,  0 };		// index of the top left pixel (on screen) in x and y direction
 									// used when matrix is larger than display
@@ -74,7 +80,7 @@ struct MatrixRendering
 
 	MatrixGradient Gradient;
 
-	DrawData Draw;
+	ActionData Action;
 };
 
 
@@ -84,7 +90,7 @@ private:
 
 	bool Busy = false;
 
-	Matrix *DisplayBuffer = nullptr;
+	MatrixGrid *DisplayBuffer = nullptr;
 
 	TPaintBox *PaintBox = nullptr;
 	TPaintBox *PreviewBox = nullptr;
@@ -104,6 +110,7 @@ private:
 
 	int CurrentFrame = 0;
 	int CurrentLayer = 0;
+	int CurrentPixel = -1;
 	int LightBox = 0;
 	int RandomCoeff = 30;
 	bool IgnoredPixelsMode = false;
@@ -128,7 +135,12 @@ private:
 
 	void InitPreviewBox(TComponent*, TWinControl*, bool);
 
-	int GetPixelFrom(MatrixMode MatrixFormat, MatrixMode ImportFormat, int Pixel, int Background);
+	ImportData LoadProjectFreeform(const std::wstring, ExportOptions&, LoadMode, int);
+
+	bool SaveAnimationGrid(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
+   	bool SaveAnimationFreeform(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
+
+	int GetPixelFrom(MatrixColourMode MatrixFormat, MatrixColourMode ImportFormat, int Pixel, int Background);
 
 	void EnsureLayerCoherence();
 	bool AreLayersIdentical(int Layer1, int Layer2, int Frame);
@@ -152,6 +164,10 @@ private:
 	void __fastcall Shape1MouseMoveRGB(TObject *Sender, TShiftState Shift, int X, int Y);
 	void __fastcall Shape1MouseUpRGB(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
 
+	void __fastcall ClickPixelRGBFF(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+	void __fastcall Shape1MouseMoveRGBFF(TObject *Sender, TShiftState Shift, int X, int Y);
+	void __fastcall Shape1MouseUpRGBFF(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+
 	void __fastcall ClickPixelIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
 	void __fastcall Shape1MouseMoveIgnoredPixel(TObject *Sender, TShiftState Shift, int X, int Y);
 	void __fastcall Shape1MouseUpIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
@@ -172,8 +188,12 @@ private:
 
 	void __fastcall PaintBoxUpdate(TObject *Sender);
 	void __fastcall PaintBoxUpdateRGB(TObject *Sender);
+	void __fastcall PaintBoxUpdateRGBFF(TObject *Sender);
 	void __fastcall PaintBoxUpdateRGB_3BPP(TObject *Sender);
 	void __fastcall PaintBoxUpdateIgnoredPixel(TObject *Sender);
+
+	void ColourPixel(int);
+	void ColourPixelMulti(int);
 
 	void DrawWithBrush(int Index, int x, int y);
 	void DrawWithBrushMulti(int Index, int x, int y);
@@ -206,7 +226,7 @@ public:
 	std::function<void(TheMatrix*)> OnNewFrameDisplayed;
 	std::function<void(TheMatrix*)> OnColourChange;
 	std::function<void(TheMatrix*)> OnNew3bppColours;
-	std::function<void(int, int)> OnMouseOver;
+	std::function<void(int, int)> OnMouseOver;              // X and Y refer to the grid x/y when in kGrid draw mode, otherwise x/y pixel positions on the canvas
 	std::function<void(int, int)> OnPreviewMouseDown;
 	// use this to send debug data from the component to screen or file based on your needs
 	std::function<void(TheMatrix*, const std::wstring)> OnDebugEvent;
@@ -239,23 +259,30 @@ public:
 								 0x0000FFFF, // 110
 								 0x00FFFFFF }; // 111
 
-   	int RGBBackground = 0x000000;
+	int RGBBackground = 0x000000;
+
+	//LayerHandler *Layers;
 
 	std::vector<Layer*> MatrixLayers;
-	std::vector<Matrix*> MatrixUser;
+	std::vector<MatrixGrid*> MatrixUser;
+	std::vector<int> MatrixUserFF[10];
 
-	Matrix *MatrixBackup;
-	Matrix *MatrixCopy;
+	MatrixGrid *MatrixBackup;
+	MatrixGrid *MatrixCopy;
 	MatrixIgnored *MatrixIgnoredLayout;
-	Matrix *MatrixRender;
-	Matrix *MatrixMerge;
+	MatrixGrid *MatrixRender;
+	MatrixGrid *MatrixMerge;
+
+	std::vector<int> PixelFrameColours;
 
 	TheMatrix(TComponent*, TWinControl*);
-    ~TheMatrix();
+	~TheMatrix();
+
+	int NewOrder = 0;
 
    	void SetMatrixReadOnly(bool);
 
-	void NewMatrix(MatrixMode,
+	void NewMatrix(MatrixDrawMode, MatrixColourMode,
 				   int, int, int, int, int, int,
 				   PixelShape,
 				   bool, bool, bool,
@@ -270,7 +297,7 @@ public:
 	void ChangeZoomUI(int);
 	void ChangePixelShape(PixelShape);
 	void SetPixelBrush(BrushSize);
-	void ChangeMatrixMode(MatrixMode);
+	void ChangeMatrixMode(MatrixDrawMode, MatrixColourMode);
 
 	void SetAutomateMode(bool);
 	void SetSoftwareMode(SoftwareMode);
@@ -309,15 +336,25 @@ public:
 	void SaveIgnoredPixels(const std::wstring);
 	void ToggleIgnoredPixels(bool);
 
+	void AddPixel(int, int);
+	void DeletePixel();
+	void SelectInGroup(int);
+    void PerformFreeformEffect(int);
+
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
 	void ClearFrame(int);
 	void ClearAllMatrixData(bool, int, int);
+    void RemoveAllPixels();
 	void WipeAllFramesCurrentLayer();
 	void WipeAllFramesAllLayers();
 
 	void ClearAllFramesGradient(int);
 	void GradientFillFrame();
+
+	// =========================================================================
+
+	void AddPixelShape(int, int, int, int, int, int, int, int);
 
 	// =========================================================================
 
@@ -377,6 +414,7 @@ public:
 	void SetCurrentLayer(int);
 	void SetLightBox(int);
 	void ChangeGrid(bool);
+    void SetGroupOrderDisplay(bool, bool);
 	void SetIgnoredPixelsMode(bool);
 
 	void RefreshCurrentFrame();
@@ -385,6 +423,7 @@ public:
 
 	void FadeFirstToLast();
 
+    void AddFontCharacter(int, int);
 	void DrawFontCharacter(int, int);
 	void DeleteFontCharacter(int);
 	void LoadTextToolFont(const std::wstring, const std::wstring);
@@ -406,7 +445,8 @@ public:
 	void SaveAsRGBFont(const std::wstring);
 	void SaveSingleFrame(const std::wstring, ImportData, int);
 
-	ImportData LoadLEDMatrixData(const std::wstring, ExportOptions&, LoadMode, int);
+	ImportData LoadProject(const std::wstring, ExportOptions&, LoadMode, int);
+	ImportData LoadProjectGrid(const std::wstring, ExportOptions&, LoadMode, int);
 
 	ImportData ImportFromGIF(const std::wstring);
 	void ExportToGIF(const std::wstring, int, int, int, int);
@@ -478,13 +518,15 @@ public:
     int GradientBrushCount();
 
 	int GetFrameCount();
+    int GetPixelCount();
 	bool GetIgnoredPixelsMode();
 	SoftwareMode GetSoftwareMode();
 
 	int GetAutoPixelSize(int, int, int);
 
-	int GetCurrentFrame();
 	int GetCurrentLayer();
+	int GetCurrentFrame();
+	int GetCurrentPixel();
 
 	bool GetPreviewActive();
 	int GetPreviewBoxSize();

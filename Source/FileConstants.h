@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -40,6 +40,8 @@
 	static const std::wstring kFileHeaderFontRGB = L"fontRGB";
 	static const std::wstring kFileHeaderHeader = L"header";
 	static const std::wstring kFileHeaderLayer = L"layer";
+	static const std::wstring kFileHeaderFreeformLayer = L"layerfreeform";
+	static const std::wstring kFileHeaderFreeformFrame = L"framefreeform";
 
 	static const std::wstring kFramePrefixMono = L"frame";
 	static const std::wstring kFramePrefixBiSequential = L"frame2";
@@ -107,6 +109,12 @@
 	static const wchar_t kAnimRowData = L'r';
 	static const wchar_t kAnimFrameLocked = L'p';
 
+	static const wchar_t kAnimPixelX = L'x';
+	static const wchar_t kAnimPixelY = L'y';
+	static const wchar_t kAnimPixelOrder = L'o';
+	static const wchar_t kAnimPixelColour = L'c';
+	static const wchar_t kAnimPixelGroup = L'g';
+
 	static const wchar_t kAnimIgnoredPixelData = L'p';
 
 	static const wchar_t kAnimBrushColours = L'c';
@@ -167,6 +175,12 @@
 	static const std::wstring kAnimLayerWidthF = L"w:";
 	static const std::wstring kAnimLayerHeightF = L"h:";
 	static const std::wstring kAnimLayerLockedF = L"l:";
+
+	static const std::wstring kAnimPixelXF = L"x:";
+	static const std::wstring kAnimPixelYF = L"y:";
+	static const std::wstring kAnimPixelOrderF = L"o:";
+	static const std::wstring kAnimPixelColourF = L"c:";
+	static const std::wstring kAnimPixelGroupF = L"g:";
 
 	static const std::wstring kAnimWidthF = L"w:";
 	static const std::wstring kAnimHeightF = L"h:";

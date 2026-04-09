@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -29,7 +29,7 @@ struct MatrixPreset
 	int PixelSize = 0;
 	int PixelShape = 0;
 
-	MatrixMode Mode = MatrixMode::kNone;
+	MatrixColourMode Mode = MatrixColourMode::kNone;
 	std::wstring MatrixModeText = L"";
 	int MatrixModeTag = 0;
 

@@ -103,7 +103,7 @@ __published:	// IDE-managed Components
 	TComboBox *cbRotateAngle;
 	TComboBox *cbRotateCount;
 	TBitBtn *bLockFrame;
-	TPanel *paneTools;
+	TPanel *panelTools;
 	TSpeedButton *sbMouseMode;
 	TSpeedButton *sbFilledRectangle;
 	TSpeedButton *sbLine;
@@ -654,6 +654,33 @@ __published:	// IDE-managed Components
 	TMenuItem *miPreviewAllowDrawing;
 	TMenuItem *N66;
 	TMenuItem *miHideIgnoredPixels;
+	TPanel *panelFreeform;
+	TBevel *Bevel22;
+	TSpeedButton *sbFreeformAdd;
+	TSpeedButton *sbFreeformDelete;
+	TSpeedButton *sbMouseModeFreeform;
+	TSpeedButton *sbMovePixel;
+	TEdit *eFreeformOrder;
+	TSpeedButton *sbFreeformSetOrder;
+	TSpeedButton *sbFontFreeform;
+	TSpeedButton *sbFreeformSetOrderSwap;
+	TSpeedButton *sbFreeformAddShape;
+	TBevel *Bevel23;
+	TBevel *Bevel24;
+	TSpeedButton *sbPickerFreeform;
+	TMenuItem *miRemoveAllPixels;
+	TMenuItem *N67;
+	TMenuItem *miViewShowPixelOrder;
+	TMenuItem *miViewShowPixelGroup;
+	TCheckBox *cbApplyToGroup;
+	TComboBox *cbFreeformGroup;
+	TBitBtn *bFreeformSelectGroup;
+	TBevel *Bevel25;
+	TSpeedButton *sbFreeformDrawOrder;
+	TSpeedButton *sbFreeformColoursLeft;
+	TSpeedButton *sbFreeformColoursRight;
+	TMenuItem *N68;
+	TMenuItem *N69;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -826,24 +853,36 @@ __published:	// IDE-managed Components
 	void __fastcall miDrawTestPatternClick(TObject *Sender);
 	void __fastcall miPreviewAllowDrawingClick(TObject *Sender);
 	void __fastcall miHideIgnoredPixelsClick(TObject *Sender);
+	void __fastcall sbFreeformAddClick(TObject *Sender);
+	void __fastcall sbFreeformDeleteClick(TObject *Sender);
+	void __fastcall sbFreeformSetOrderClick(TObject *Sender);
+	void __fastcall sbFreeformSetOrderSwapClick(TObject *Sender);
+	void __fastcall sbFreeformAddShapeClick(TObject *Sender);
+	void __fastcall miRemoveAllPixelsClick(TObject *Sender);
+	void __fastcall miViewShowPixelOrderClick(TObject *Sender);
+	void __fastcall miViewShowPixelGroupClick(TObject *Sender);
+	void __fastcall cbApplyToGroupClick(TObject *Sender);
+	void __fastcall bFreeformSelectGroupClick(TObject *Sender);
+	void __fastcall sbFreeformDrawOrderClick(TObject *Sender);
+	void __fastcall N69Click(TObject *Sender);
 
 private:
 
 	void __fastcall WmDropFiles(TWMDropFiles& Message);
 
-	static const int CAnimPlayStart     = 0;
-	static const int CAnimPlayStop      = 1;
-	static const int CAnimFirstFrame    = 2;
-	static const int CAnimPreviousFrame = 3;
-	static const int CAnimNextFrame     = 4;
-	static const int CAnimLastFrame     = 5;
+	static const int kAnimPlayStart     = 0;
+	static const int kAnimPlayStop      = 1;
+	static const int kAnimFirstFrame    = 2;
+	static const int kAnimPreviousFrame = 3;
+	static const int kAnimNextFrame     = 4;
+	static const int kAnimLastFrame     = 5;
 
-	static const int CLoadProject       = 0;
-	static const int CLoadIgnorePixels  = 1;
+	static const int kLoadProject       = 0;
+	static const int kLoadIgnorePixels  = 1;
 
-	static const int CSaveProject       = 0;
-	static const int CSaveFont          = 1;
-	static const int CSaveIgnorePixels  = 2;
+	static const int kSaveProject       = 0;
+	static const int kSaveFont          = 1;
+	static const int kSaveIgnorePixels  = 2;
 
 	TheMatrix *thematrix = nullptr;
 
@@ -854,7 +893,7 @@ private:
 	TframeSimpleExport *FrameQuickData;
 	TframeUndos *FrameUndoPanel;
 
-	MatrixMode OldMatrixMode = MatrixMode::kNone;
+	MatrixColourMode OldMatrixMode = MatrixColourMode::kNone;
 	int OldMouseX = -1;
 	int OldMouseY = -1;
 
@@ -889,6 +928,12 @@ private:
 	void ManageUIControls(bool, bool);
 
 	int GetSelectedFrame();
+
+	// -- setup --------------------------------------------------------------
+
+	void ChangeMatrixType();
+	void ConfigureForColourMode(MatrixColourMode);
+	void ConfigureForDrawMode(MatrixDrawMode);
 
 	// -- language -----------------------------------------------------------
 
@@ -943,11 +988,12 @@ private:
 	void SetFrameCaption(int);
 	void UpdateDisplay(int);
 
-	// -- misc, to organise
+	// -- freeform
+    void UpdatePixelGroupList();
 
+	// -- misc, to organise
 	void BuildImportData(ImportData&, int, int);
 	ProjectColours GetColours();
-	void ChangeMatrixType();
 	void SetCurrentProjectFileName(const std::wstring);
 	void ClearCurrentProjectFileName();
 	void SetupMatrixColours();

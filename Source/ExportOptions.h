@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -25,7 +25,7 @@
 	enum class InputOrientation { kTopBottomLeftRight = 0, kBottomTopRightLeft, kSure24x16 };
 	enum class RGBMode { kRGB = 0, kBGR, kGRB, kBRG, kRGBSimple };
 	enum class LeastSignificantBit { kTopLeft = 0, kBottomRight };
-	enum class ExportSource { kNone = 0, kAnimation, kUserMemories };
+	enum class ExportSource { kNone = 0, kAnimationGrid, kAnimationFreeform, kUserMemoriesGrid, kUserMemoriesFreeform };
 	enum class ExportLanguage { kCSV = 0, kPICAXE, kC1Dim, kC2Dim, kCFastLED, kPython1Dim, kPython2Dim, kMicrochip, kPascal, kSpecial };
 	enum class LineContent { kRowCol = 0, kFrame, kBytes };
 	enum class BinaryFileContents { kEntireAnimation = 0, kSingleFrame };

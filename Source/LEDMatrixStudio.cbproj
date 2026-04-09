@@ -379,6 +379,13 @@
             <DependentOn>Forms\FormAddLayer.h</DependentOn>
             <BuildOrder>39</BuildOrder>
         </CppCompile>
+        <CppCompile Include="Forms\FormAddShape.cpp">
+            <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
+            <Form>frmAddShape</Form>
+            <FormType>dfm</FormType>
+            <DependentOn>Forms\FormAddShape.h</DependentOn>
+            <BuildOrder>111</BuildOrder>
+        </CppCompile>
         <CppCompile Include="Forms\FormAutomate.cpp">
             <VirtualFolder>{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}</VirtualFolder>
             <Form>frmAutomate</Form>
@@ -567,6 +574,14 @@
             <DependentOn>Frames\FrameUndoPanel.h</DependentOn>
             <BuildOrder>54</BuildOrder>
         </CppCompile>
+        <CppCompile Include="FreeformHandler.cpp">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>109</BuildOrder>
+        </CppCompile>
+        <None Include="FreeformHandler.h">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>108</BuildOrder>
+        </None>
         <CppCompile Include="Gradient.cpp">
             <VirtualFolder>{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}</VirtualFolder>
             <BuildOrder>70</BuildOrder>
@@ -574,6 +589,14 @@
         <None Include="Gradient.h">
             <VirtualFolder>{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}</VirtualFolder>
             <BuildOrder>69</BuildOrder>
+        </None>
+        <CppCompile Include="GridHandler.cpp">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>109</BuildOrder>
+        </CppCompile>
+        <None Include="GridHandler.h">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>110</BuildOrder>
         </None>
         <None Include="ImportData.h">
             <VirtualFolder>{F6C631D4-8C0D-4A46-86CA-FB5DC4A6C85F}</VirtualFolder>
@@ -591,9 +614,21 @@
             <VirtualFolder>{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}</VirtualFolder>
             <BuildOrder>17</BuildOrder>
         </None>
+        <CppCompile Include="Layer.cpp">
+            <VirtualFolder>{56D1A25A-677A-4C26-A749-238C89982E20}</VirtualFolder>
+            <BuildOrder>110</BuildOrder>
+        </CppCompile>
         <None Include="Layer.h">
             <VirtualFolder>{56D1A25A-677A-4C26-A749-238C89982E20}</VirtualFolder>
             <BuildOrder>52</BuildOrder>
+        </None>
+        <CppCompile Include="LayerHandler.cpp">
+            <VirtualFolder>{56D1A25A-677A-4C26-A749-238C89982E20}</VirtualFolder>
+            <BuildOrder>113</BuildOrder>
+        </CppCompile>
+        <None Include="LayerHandler.h">
+            <VirtualFolder>{56D1A25A-677A-4C26-A749-238C89982E20}</VirtualFolder>
+            <BuildOrder>112</BuildOrder>
         </None>
         <CppCompile Include="LEDMatrixStudio.cpp">
             <BuildOrder>0</BuildOrder>
@@ -608,14 +643,6 @@
             <DependentOn>main.h</DependentOn>
             <BuildOrder>2</BuildOrder>
         </CppCompile>
-        <CppCompile Include="Matrix.cpp">
-            <VirtualFolder>{59D8F81A-3793-4AF0-8F81-350350408376}</VirtualFolder>
-            <BuildOrder>93</BuildOrder>
-        </CppCompile>
-        <None Include="Matrix.h">
-            <VirtualFolder>{59D8F81A-3793-4AF0-8F81-350350408376}</VirtualFolder>
-            <BuildOrder>57</BuildOrder>
-        </None>
         <CppCompile Include="MatrixConstants.cpp">
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>91</BuildOrder>
@@ -624,12 +651,20 @@
             <VirtualFolder>{59A4C417-2BCB-4284-8C0E-3086BD4ED96C}</VirtualFolder>
             <BuildOrder>5</BuildOrder>
         </None>
+        <CppCompile Include="MatrixGrid.cpp">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>107</BuildOrder>
+        </CppCompile>
+        <None Include="MatrixGrid.h">
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
+            <BuildOrder>106</BuildOrder>
+        </None>
         <CppCompile Include="MatrixIgnored.cpp">
-            <VirtualFolder>{59D8F81A-3793-4AF0-8F81-350350408376}</VirtualFolder>
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
             <BuildOrder>61</BuildOrder>
         </CppCompile>
         <None Include="MatrixIgnored.h">
-            <VirtualFolder>{59D8F81A-3793-4AF0-8F81-350350408376}</VirtualFolder>
+            <VirtualFolder>{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}</VirtualFolder>
             <BuildOrder>56</BuildOrder>
         </None>
         <CppCompile Include="Optimisation.cpp">
@@ -712,35 +747,36 @@
             <VirtualFolder>{C5810643-8BAE-47EE-89D3-AE0284B78BAF}</VirtualFolder>
             <BuildOrder>62</BuildOrder>
         </None>
-        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
-        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
-        <FormResources Include="Frames\FramePalettePanel.dfm"/>
-        <FormResources Include="Frames\FrameQuickData.dfm"/>
-        <FormResources Include="Forms\FormNewProject.dfm"/>
-        <FormResources Include="Forms\FormOptimise.dfm"/>
-        <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
-        <FormResources Include="Forms\FormImportBitmap.dfm"/>
-        <FormResources Include="Forms\FormMerge.dfm"/>
-        <FormResources Include="Forms\FormNewBrush.dfm"/>
-        <FormResources Include="Forms\FormPreferences.dfm"/>
-        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
-        <FormResources Include="Frames\FrameFontPanel.dfm"/>
-        <FormResources Include="Frames\FrameGradientPanel.dfm"/>
         <FormResources Include="Forms\FormPreviewPopout.dfm"/>
         <FormResources Include="Forms\FormSaveRange.dfm"/>
         <FormResources Include="Forms\FormSetIgnoredPixels.dfm"/>
+        <FormResources Include="Forms\FormPreferences.dfm"/>
+        <FormResources Include="Forms\FormNewProject.dfm"/>
+        <FormResources Include="Forms\FormOptimise.dfm"/>
+        <FormResources Include="Forms\FormPlaybackSpeed.dfm"/>
+        <FormResources Include="Frames\FramePalettePanel.dfm"/>
+        <FormResources Include="Frames\FrameQuickData.dfm"/>
+        <FormResources Include="Frames\FrameUndoPanel.dfm"/>
+        <FormResources Include="Frames\FrameLayerPanel.dfm"/>
+        <FormResources Include="Forms\FormToggleLockStatus.dfm"/>
+        <FormResources Include="Frames\FrameFontPanel.dfm"/>
+        <FormResources Include="Frames\FrameGradientPanel.dfm"/>
         <FormResources Include="main.dfm"/>
-        <FormResources Include="Forms\FormAddLayer.dfm"/>
-        <FormResources Include="Forms\FormAutomate.dfm"/>
-        <FormResources Include="Forms\FormCheckVersion.dfm"/>
-        <FormResources Include="Forms\FormAbout.dfm"/>
         <FormResources Include="Forms\FormColourChange.dfm"/>
-        <FormResources Include="Forms\FormExportCode.dfm"/>
-        <FormResources Include="Forms\FormExportGIF.dfm"/>
-        <FormResources Include="Forms\FormFontViewer.dfm"/>
         <FormResources Include="Forms\FormCopyMultiple.dfm"/>
         <FormResources Include="Forms\FormDeleteMultiple.dfm"/>
+        <FormResources Include="Forms\FormCheckVersion.dfm"/>
+        <FormResources Include="Forms\FormAddLayer.dfm"/>
+        <FormResources Include="Forms\FormAddShape.dfm"/>
+        <FormResources Include="Forms\FormAutomate.dfm"/>
+        <FormResources Include="Forms\FormImportBitmap.dfm"/>
+        <FormResources Include="Forms\FormMerge.dfm"/>
+        <FormResources Include="Forms\FormNewBrush.dfm"/>
+        <FormResources Include="Forms\FormFontViewer.dfm"/>
         <FormResources Include="Forms\FormExport.dfm"/>
+        <FormResources Include="Forms\FormExportCode.dfm"/>
+        <FormResources Include="Forms\FormExportGIF.dfm"/>
+        <FormResources Include="Forms\FormAbout.dfm"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -777,20 +813,22 @@
                     <VFOLDER ID="{A34D92FB-81A8-4EA9-90A4-4B39F15C0A6B}" name="Forms">
                         <VFOLDER ID="{B69CFCA8-11C8-4D26-A6B3-1CDD01D0451C}" name="Export"/>
                         <VFOLDER ID="{F528C4EB-71EB-4ED3-8C1E-3E2CECAA759E}" name="Frames"/>
-                        <VFOLDER ID="{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}" name="Layers"/>
                         <VFOLDER ID="{A852E3B1-A2BB-4811-AC0B-8FCC0BF46E60}" name="Import"/>
+                        <VFOLDER ID="{EE9AA166-D746-4029-8E51-2EDCFDA01C8D}" name="Layers"/>
                     </VFOLDER>
                     <VFOLDER ID="{B3168827-5173-466D-8404-6A47CEC1E411}" name="Frames"/>
                     <VFOLDER ID="{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}" name="Language"/>
                     <VFOLDER ID="{56D1A25A-677A-4C26-A749-238C89982E20}" name="Layers"/>
-                    <VFOLDER ID="{59D8F81A-3793-4AF0-8F81-350350408376}" name="Matrix"/>
+                    <VFOLDER ID="{59D8F81A-3793-4AF0-8F81-350350408376}" name="Matrix">
+                        <VFOLDER ID="{178ACA2A-7989-48EE-B1FF-1FC96EE2F2FF}" name="Storage"/>
+                    </VFOLDER>
                     <VFOLDER ID="{D25BDCAA-D26F-4E27-ABD0-BBEFF4D49947}" name="Optimisation"/>
                     <VFOLDER ID="{3794FFCE-8617-4039-8A89-1761AEE45ACF}" name="Registry"/>
                     <VFOLDER ID="{C5810643-8BAE-47EE-89D3-AE0284B78BAF}" name="Utility"/>
                 </VFOLDERS>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k280.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp280.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k290.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp290.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="4">

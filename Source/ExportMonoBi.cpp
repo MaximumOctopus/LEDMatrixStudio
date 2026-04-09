@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -18,7 +18,6 @@
 #include "ExportMonoBi.h"
 #include "ExportUtility.h"
 #include "Formatting.h"
-#include "Matrix.h"
 #include "SystemSettings.h"
 #include "Utility.h"
 
@@ -137,7 +136,8 @@ namespace ExportMonoBi
 
 		if (teo.Code.IncludePreamble)
 		{
-			if (teo.ExportMode == ExportSource::kAnimation)
+			if (teo.ExportMode == ExportSource::kAnimationGrid ||
+				teo.ExportMode == ExportSource::kAnimationFreeform)
 			{
 				cdescription = GLanguageHandler->Text[kFrame];
 			}
@@ -177,11 +177,11 @@ namespace ExportMonoBi
 		// ===================================================================
 		// ===================================================================
 
-		for (int t = teo.Code.StartFrame; t <= teo.Code.EndFrame; t++)
+		for (int frame = teo.Code.StartFrame; frame <= teo.Code.EndFrame; frame++)
 		{
 			if (teo.Code.Language == ExportLanguage::kCFastLED)
 			{
-				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, t));
+				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, frame));
 			}
 
 			// ===============================================================
@@ -196,7 +196,7 @@ namespace ExportMonoBi
 				case ReadSource::kRows:
 					for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 					{
-						tdo = ExportRowData(matrix, teo, t, y, spacingstring);
+						tdo = ExportRowData(matrix, teo, frame, y, spacingstring);
 
 						for (int i = 0; i < tdo.Count; i++)
 						{
@@ -213,7 +213,7 @@ namespace ExportMonoBi
 				case ReadSource::kColumns:
 					for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
 					{
-						tdo = ExportColumnData(matrix, teo, t, x, spacingstring);
+						tdo = ExportColumnData(matrix, teo, frame, x, spacingstring);
 
 						for (int i = 0; i < tdo.Count; i++)
 						{
@@ -279,7 +279,7 @@ namespace ExportMonoBi
 							{
 								if (!op.empty())
 								{
-									output.push_back(baaAddContentBySize(op, t, rc));
+									output.push_back(baaAddContentBySize(op, frame, rc));
                                 }
 
 								lc = 0;
@@ -311,7 +311,7 @@ namespace ExportMonoBi
 				case LineContent::kRowCol:
 					break;
 				case LineContent::kFrame:
-					ExportUtility::AddContentByFrame(teo, op, t, output);
+					ExportUtility::AddContentByFrame(teo, op, frame, output);
                     break;
 				case LineContent::kBytes:
 
@@ -321,7 +321,7 @@ namespace ExportMonoBi
 					case ExportLanguage::kPython2Dim:
 						if (!op.empty())
 						{
-							output.push_back(baaAddContentBySize(op, t, -1));
+							output.push_back(baaAddContentBySize(op, frame, -1));
                         }
 
 						op = L"";
@@ -385,7 +385,7 @@ namespace ExportMonoBi
 								{
 									if (!op.empty())
 									{
-										output.push_back(baaAddContentBySize(op, t, rc));
+										output.push_back(baaAddContentBySize(op, frame, rc));
                                     }
 
 									lc = 0;
@@ -448,7 +448,7 @@ namespace ExportMonoBi
 				case LineContent::kRowCol:
 					break;
 				case LineContent::kFrame:
-					ExportUtility::AddContentByFrame(teo, op, t, output);
+					ExportUtility::AddContentByFrame(teo, op, frame, output);
 					break;
 				case LineContent::kBytes:
 					switch (teo.Code.Language)
@@ -457,7 +457,7 @@ namespace ExportMonoBi
 					case ExportLanguage::kPython2Dim:
 						if (!op.empty())
 						{
-							output.push_back(baaAddContentBySize(op, t, -1));
+							output.push_back(baaAddContentBySize(op, frame, -1));
 						}
 
 						op = L"";
@@ -514,7 +514,7 @@ namespace ExportMonoBi
 		InternalArray ia;
 		ia.Clear();
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		std::wstring s = L"";
 		DataOut dataout;
@@ -534,8 +534,9 @@ namespace ExportMonoBi
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -546,10 +547,10 @@ namespace ExportMonoBi
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+            break;
 		}
 
 		// ===================================================================
@@ -568,11 +569,11 @@ namespace ExportMonoBi
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
 						}
 					}
 
@@ -603,11 +604,11 @@ namespace ExportMonoBi
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
 						}
 					}
 
@@ -657,7 +658,7 @@ namespace ExportMonoBi
 		ia.Clear();
 		DataOut dataout;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		for (int x = 0; x < _DataOutDataMax; x++)
 		{
@@ -675,8 +676,9 @@ namespace ExportMonoBi
 
 		// ===================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -687,10 +689,10 @@ namespace ExportMonoBi
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+            break;
 		}
 
 		// ===================================================================
@@ -709,11 +711,11 @@ namespace ExportMonoBi
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
 						}
 					}
 
@@ -744,11 +746,11 @@ namespace ExportMonoBi
 					{
 						if (teo.Code.LSB == LeastSignificantBit::kTopLeft)
 						{
-							ia.Data[dataindex] += powers[bitcounter];
+							ia.Data[dataindex] += kPowers[bitcounter];
 						}
 						else
 						{
-							ia.Data[dataindex] += powers[bits - bitcounter];
+							ia.Data[dataindex] += kPowers[bits - bitcounter];
 						}
 					}
 
@@ -808,11 +810,11 @@ namespace ExportMonoBi
 				{
 					if (sourceLSB == 0)
 					{
-						mydata += powers[x];
+						mydata += kPowers[x];
 					}
 					else
 					{
-						mydata += (powers[matrix->Details.Width - x - 1]);
+						mydata += (kPowers[matrix->Details.Width - x - 1]);
                     }
 				}
 			}
@@ -830,11 +832,11 @@ namespace ExportMonoBi
 				{
 					if (sourceLSB == 0)
 					{
-						mydata += (powers[y]);
+						mydata += (kPowers[y]);
 					}
 					else
 					{
-						mydata += (powers[matrix->Details.Height - y - 1]);
+						mydata += (kPowers[matrix->Details.Height - y - 1]);
 					}
 				}
 			}
@@ -1117,14 +1119,14 @@ namespace ExportMonoBi
 					case 0:
 						break;
 					case 1:
-						bitplane = bitplane + (powers[x]);
+						bitplane = bitplane + (kPowers[x]);
 						break;
 					case 2:
-						bitplane = bitplane + (powers[x + (matrix->Details.Width - 1)]);
+						bitplane = bitplane + (kPowers[x + (matrix->Details.Width - 1)]);
 						break;
 					case 3:
-						bitplane = bitplane + (powers[x]);
-						bitplane = bitplane + (powers[x + (matrix->Details.Width - 1)]);
+						bitplane = bitplane + (kPowers[x]);
+						bitplane = bitplane + (kPowers[x + (matrix->Details.Width - 1)]);
 						break;
 					}
 				}
@@ -1135,14 +1137,14 @@ namespace ExportMonoBi
 					case 0:
 						break;
 					case 1:
-						bitplane = bitplane + (powers[matrix->Details.Width - x - 1]);
+						bitplane = bitplane + (kPowers[matrix->Details.Width - x - 1]);
 						break;
 					case 2:
-						bitplane = bitplane + (powers[matrix->Details.Width - x - 1 + (matrix->Details.Width - 1)]);
+						bitplane = bitplane + (kPowers[matrix->Details.Width - x - 1 + (matrix->Details.Width - 1)]);
 						break;
 					case 3:
-						bitplane = bitplane + (powers[matrix->Details.Width - x - 1]);
-						bitplane = bitplane + (powers[matrix->Details.Width - x - 1 + (matrix->Details.Width - 1)]);
+						bitplane = bitplane + (kPowers[matrix->Details.Width - x - 1]);
+						bitplane = bitplane + (kPowers[matrix->Details.Width - x - 1 + (matrix->Details.Width - 1)]);
 						break;
 					}
 				}
@@ -1164,14 +1166,14 @@ namespace ExportMonoBi
 					case 0:
 						break;
 					case 1:
-						bitplane = bitplane + (powers[y]);
+						bitplane = bitplane + (kPowers[y]);
 						break;
 					case 2:
-						bitplane = bitplane + (powers[y + (matrix->Details.Height - 1)]);
+						bitplane = bitplane + (kPowers[y + (matrix->Details.Height - 1)]);
 						break;
 					case 3:
-						bitplane = bitplane + (powers[y]);
-						bitplane = bitplane + (powers[y + (matrix->Details.Height - 1)]);
+						bitplane = bitplane + (kPowers[y]);
+						bitplane = bitplane + (kPowers[y + (matrix->Details.Height - 1)]);
 						break;
 					}
 				}
@@ -1182,14 +1184,14 @@ namespace ExportMonoBi
 					case 0:
 						break;
 					case 1:
-						bitplane = bitplane + (powers[matrix->Details.Height - y - 1]);
+						bitplane = bitplane + (kPowers[matrix->Details.Height - y - 1]);
 						break;
 					case 2:
-						bitplane = bitplane + (powers[matrix->Details.Height - y - 1 + (matrix->Details.Height - 1)]);
+						bitplane = bitplane + (kPowers[matrix->Details.Height - y - 1 + (matrix->Details.Height - 1)]);
 						break;
 					case 3:
-						bitplane = bitplane + (powers[matrix->Details.Height - y - 1]);
-						bitplane = bitplane + (powers[matrix->Details.Height - y - 1 + (matrix->Details.Height - 1)]);
+						bitplane = bitplane + (kPowers[matrix->Details.Height - y - 1]);
+						bitplane = bitplane + (kPowers[matrix->Details.Height - y - 1 + (matrix->Details.Height - 1)]);
 						break;
 					}
                 }

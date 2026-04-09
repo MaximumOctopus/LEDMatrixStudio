@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -452,7 +452,7 @@ void SystemSettings::BuildLanguageList(const std::wstring path)
 }
 
 
-void SystemSettings::RecalculatePadding(MatrixMode mm, int width, int height)
+void SystemSettings::RecalculatePadding(MatrixColourMode mm, int width, int height)
 {
 	switch (App.PadMode)
 	{
@@ -462,7 +462,7 @@ void SystemSettings::RecalculatePadding(MatrixMode mm, int width, int height)
 
 		App.SetPadModeHexColFromHeight(height);
 
-		if (mm != MatrixMode::kNone && mm != MatrixMode::kMono)
+		if (mm != MatrixColourMode::kNone && mm != MatrixColourMode::kMono)
 		{
 			App.PadModeHexRow = App.PadModeHexRow * 2;
 			App.PadModeHexCol = App.PadModeHexCol * 2;

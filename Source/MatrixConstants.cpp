@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -58,19 +58,32 @@ namespace ConstantsHelper
         return 1;
 	}
 
-    std::wstring MatrixModeAsString(MatrixMode mode)
+	std::wstring MatrixDrawModeAsString(MatrixDrawMode mode)
 	{
 		switch (mode)
 		{
-		case MatrixMode::kMono:
+		case MatrixDrawMode::kGrid:
+			return L"Grid";
+		case MatrixDrawMode::kFreeform:
+			return L"Freeform";
+		}
+
+        return L"Unknown";
+	}
+
+	std::wstring MatrixModeAsString(MatrixColourMode mode)
+	{
+		switch (mode)
+		{
+		case MatrixColourMode::kMono:
 			return GLanguageHandler->Text[kSingleColour];
-		case MatrixMode::kBiSequential:
+		case MatrixColourMode::kBiSequential:
 			return GLanguageHandler->Text[kBiColourSequential];
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kBiBitplanes:
 			return GLanguageHandler->Text[kBiColourBitplanes];
-		case MatrixMode::kRGB:
+		case MatrixColourMode::kRGB:
 			return GLanguageHandler->Text[kRGB];
-		case MatrixMode::kRGB3BPP:
+		case MatrixColourMode::kRGB3BPP:
 			return GLanguageHandler->Text[kRGB3BPP];
 
 		default:
@@ -79,19 +92,19 @@ namespace ConstantsHelper
 	}
 
 
-	int MatrixModeAsInt(MatrixMode mode)
+	int MatrixModeAsInt(MatrixColourMode mode)
 	{
 		switch (mode)
 		{
-		case MatrixMode::kMono:
+		case MatrixColourMode::kMono:
 			return 0;
-		case MatrixMode::kBiSequential:
+		case MatrixColourMode::kBiSequential:
 			return 1;
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kBiBitplanes:
 			return 2;
-		case MatrixMode::kRGB:
+		case MatrixColourMode::kRGB:
 			return 3;
-		case MatrixMode::kRGB3BPP:
+		case MatrixColourMode::kRGB3BPP:
 			return 4;
 
 		default:
@@ -100,23 +113,23 @@ namespace ConstantsHelper
 	}
 
 
-	MatrixMode MatrixModeFromInt(int mm)
+	MatrixColourMode MatrixModeFromInt(int mm)
 	{
 		switch (mm)
 		{
 		case 0:
-			return MatrixMode::kMono;
+			return MatrixColourMode::kMono;
 		case 1:
-			return MatrixMode::kBiSequential;
+			return MatrixColourMode::kBiSequential;
 		case 2:
-			return MatrixMode::kBiBitplanes;
+			return MatrixColourMode::kBiBitplanes;
 		case 3:
-			return MatrixMode::kRGB;
+			return MatrixColourMode::kRGB;
 		case 4:
-			return MatrixMode::kRGB3BPP;
+			return MatrixColourMode::kRGB3BPP;
 
 		default:
-			return MatrixMode::kMono;
+			return MatrixColourMode::kMono;
 		}
 	}
 

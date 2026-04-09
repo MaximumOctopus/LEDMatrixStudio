@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -72,7 +72,7 @@ bool Font::Load(const std::wstring file_name, const std::wstring name)
 			int LastData  = -1;
 			bool headermode = true;
 
-			Mode = MatrixMode::kRGB;
+			Mode = MatrixColourMode::kRGB;
 
 			while (std::getline(file, s))
 			{
@@ -189,7 +189,7 @@ bool Font::Load(const std::wstring file_name, const std::wstring name)
 		}
 		else	// could do with seeking to beginning of file
 		{
-			Mode = MatrixMode::kMono;
+			Mode = MatrixColourMode::kMono;
 			int frame = 0;
 
             while (std::getline(file, s))
@@ -217,7 +217,7 @@ bool Font::Load(const std::wstring file_name, const std::wstring name)
 
 									for (int p = 0; p < 8; p++)
 									{
-										if ((byte & powers[p]) == powers[p])
+										if ((byte & kPowers[p]) == kPowers[p])
 										{
 											Data[(frame * 64) + (p * 8) + colid] = 1;
 										}

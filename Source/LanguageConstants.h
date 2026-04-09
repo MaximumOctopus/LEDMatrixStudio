@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -571,5 +571,10 @@
 	static const int kAreYouSureYouWantToClearThePalette = 555;
 	static const int kAllowDrawing = 556;
 	static const int kHideIgnoredPixels = 557;
-	static const int kLanguageConstantCount = 558;
+	static const int kFreeform = 558;
+	static const int kRemoveAllPixels = 559;
+	static const int kShowPixelGroup = 560;
+	static const int kShowPixelOrder = 561;
+
+	static const int kLanguageConstantCount = 561;
 

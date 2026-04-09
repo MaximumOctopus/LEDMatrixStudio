@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -87,7 +87,8 @@ struct ImportData
 	HexFormat FormatHex = HexFormat::kDisabled;
 	HexPrefix OutputHex = HexPrefix::kNone;
 	BracketStyle Brackets = BracketStyle::kNone;
-	MatrixMode Mode = MatrixMode::kNone;
+	MatrixDrawMode DrawMode = MatrixDrawMode::kGrid;
+	MatrixColourMode ColourMode = MatrixColourMode::kNone;
 	int NewWidth = 8;
 	int NewHeight = 8;
 	int NewFrames = 1;

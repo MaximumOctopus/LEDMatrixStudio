@@ -38,4 +38,6 @@ namespace ColourUtility
 	int DarkenRGB(int);
 
 	int RandomColour(int, int);
+
+    int ContrastColour(int);
 }

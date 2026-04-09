@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -13,26 +13,25 @@
 
 #pragma once
 
-#include "MatrixConstants.h"
+#include <vector>
+
+#include "Layer.h"
+
+// coming soon ;)
 
 
-class Font
+class LayerHandler
 {
-
 public:
 
-	MatrixColourMode Mode = MatrixColourMode::kNone;
+	int Width = 0;
+    int Height = 0;
+    //MatrixDrawMode DrawMode = MatrixDrawMode::kGrid;
 
-	std::wstring Name = L"";
+	std::vector<Layer*> Layers;
 
-	int *Data = nullptr;
-	int Start[96];
-	int End[96];
+	LayerHandler();
+	~LayerHandler();
 
-	Font();
-	~Font();
-
-	void Clear();
-
-	bool Load(const std::wstring, const std::wstring);
+    bool AddLayerSilent(const std::wstring);
 };

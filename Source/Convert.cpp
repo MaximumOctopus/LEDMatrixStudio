@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -29,7 +29,7 @@ namespace Convert
 		{
 			if (s[t] == L'1')
 			{
-				value += powers[i];
+				value += kPowers[i];
 			}
 
 			i++;
@@ -55,7 +55,7 @@ namespace Convert
 				digit = s[i] - 55;
 			}
 
-			total += digit * powers16[s.length() - i - 1];
+			total += digit * kPowers16[s.length() - i - 1];
 		}
 
 		return total;
@@ -101,7 +101,7 @@ namespace Convert
 
 		for (int i = 0; i <= ns; i++)
 		{
-			if ((number & powers[i]) == powers[i])
+			if ((number & kPowers[i]) == kPowers[i])
 			{
 				s[ns - i] = L'1';
 			}

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -65,6 +65,7 @@ namespace ExportRGB
 					s += data;
 					break;
 				case LineContent::kBytes:
+					s += data; // to do
 					break;
 			}
 		};
@@ -94,13 +95,17 @@ namespace ExportRGB
 
 		if (teo.Code.IncludePreamble)
 		{
-			if (teo.ExportMode == ExportSource::kAnimation)
+			switch (teo.ExportMode)
 			{
+			case ExportSource::kAnimationGrid:
 				cdescription = GLanguageHandler->Text[kFrame];
-			}
-			else
-			{
+				break;
+			case ExportSource::kUserMemoriesGrid:
 				cdescription = GLanguageHandler->Text[kMemory];
+				break;
+
+			default:
+                cdescription = L"ERROR!!!";
 			}
 
 			// =========================================================================
@@ -127,11 +132,11 @@ namespace ExportRGB
 		// ===================================================================
 		// ===================================================================
 
-		for (int t = teo.Code.StartFrame; t <= teo.Code.EndFrame; t++)
+		for (int frame = teo.Code.StartFrame; frame <= teo.Code.EndFrame; frame++)
 		{
 			if (teo.Code.Language == ExportLanguage::kCFastLED)
 			{
-				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, t));
+				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, frame));
 			}
 
 			// =========================================================================
@@ -145,7 +150,7 @@ namespace ExportRGB
 			{
 				for (int y = teo.Code.SelectiveStart - 1; y < teo.Code.SelectiveEnd; y++)
 				{
-					dataout = ExportRowDataRGB(matrix, prefix, teo, t, y, spacingstring);
+					dataout = ExportRowDataRGB(matrix, prefix, teo, frame, y, spacingstring);
 
 					MatrixData[y] = baaProcessUnique(dataout.Data[0]);
 
@@ -156,7 +161,7 @@ namespace ExportRGB
 			{
 				for (int x = teo.Code.SelectiveStart - 1; x < teo.Code.SelectiveEnd; x++)
 				{
-					dataout = ExportColumnDataRGB(matrix, prefix, teo, t, x, spacingstring);
+					dataout = ExportColumnDataRGB(matrix, prefix, teo, frame, x, spacingstring);
 
 					MatrixData[x] = baaProcessUnique(dataout.Data[0]);
 
@@ -189,7 +194,7 @@ namespace ExportRGB
 
 				if (teo.Code.Content == LineContent::kFrame)
 				{
-					ExportUtility::AddContentByFrame(teo, s, t, output);
+					ExportUtility::AddContentByFrame(teo, s, frame, output);
 				}
 			}
 
@@ -223,7 +228,7 @@ namespace ExportRGB
 
 					if (teo.Code.Content == LineContent::kFrame)
 					{
-						ExportUtility::AddContentByFrame(teo, s, t, output);
+						ExportUtility::AddContentByFrame(teo, s, frame, output);
 					}
 					break;
 				}
@@ -261,12 +266,13 @@ namespace ExportRGB
 		ScanDirection direction = teo.Code.Direction;
         std::wstring output = L"";
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		// ===========================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -277,10 +283,10 @@ namespace ExportRGB
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+            break;
 		}
 
 		// ===========================================================================
@@ -391,12 +397,13 @@ namespace ExportRGB
 		std::wstring output = L"";
 		ScanDirection direction = teo.Code.Direction;
 
-		Matrix *selectedmatrix;
+		MatrixGrid *selectedmatrix;
 
 		// ===========================================================================
 
-		if (teo.ExportMode == ExportSource::kAnimation)
+		switch (teo.ExportMode)
 		{
+		case ExportSource::kAnimationGrid:
 			if (matrix->MatrixLayers.size() == 1)
 			{
 				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
@@ -407,10 +414,10 @@ namespace ExportRGB
 
 				selectedmatrix = matrix->MatrixMerge;
 			}
-		}
-		else
-		{
-			selectedmatrix = matrix->MatrixUser[frame];
+			break;
+		case ExportSource::kUserMemoriesGrid:
+			selectedmatrix = static_cast<MatrixGrid*>(matrix->MatrixUser[frame]);
+            break;
 		}
 
 		// ===========================================================================
@@ -503,6 +510,242 @@ namespace ExportRGB
 						break;
 					}
 				}
+			}
+		}
+
+		// ===========================================================================
+
+		dataout.Data[0] = output;
+
+		return dataout;
+	}
+
+
+	bool CreateExportFreeformRGB(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount, std::vector<std::wstring> &unique_items)
+	{
+		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+
+		std::wstring MatrixData[MatrixDataCount];
+
+		std::vector<int> Colours;
+		std::wstring s = L"";
+
+		auto baaProcessUnique = [unique_items](const std::wstring s) -> std::wstring
+		{
+			if (unique_items.size() == 0)
+			{
+				return s;
+			}
+			else
+			{
+				std::wstring m = s;
+
+				for (int t = 0; t < unique_items.size(); t++)
+				{
+					m = Utility::ReplaceString(m, unique_items[t], std::to_wstring(t));
+				}
+
+				return m;
+			}
+		};
+
+		auto baaUpdateOutput = [teo, &output, &s](const std::wstring &data) -> void
+		{
+			switch (teo.Code.Content)
+			{
+				case LineContent::kFrame:
+					s += data;
+					break;
+				case LineContent::kBytes:
+                    s += data; // to do
+					break;
+			}
+		};
+
+		entrycount = 0; // total of all entries added to data variable in output
+
+		std::wstring vartype = L"";
+		std::wstring spacingstring = L"";
+		std::wstring prefix = ExportUtility::GetNumberFormat(teo.Code.Language, teo.Code.Format);
+		std::wstring cdescription = L"";
+		DataOut dataout;
+
+		// ===========================================================================
+
+		if (teo.Code.CleanMode)
+		{
+			spacingstring = L" ";
+
+			teo.Code.Language  = ExportLanguage::kSpecial;
+		}
+		else
+		{
+			spacingstring = L", ";
+		}
+
+		// ===========================================================================
+
+		if (teo.Code.IncludePreamble)
+		{
+			if (teo.ExportMode == ExportSource::kAnimationFreeform)
+			{
+				cdescription = GLanguageHandler->Text[kFrame];
+			}
+			else
+			{
+				cdescription = GLanguageHandler->Text[kMemory];
+			}
+
+			// =========================================================================
+
+			ExportUtility::GetPreamble(teo, output, false, matrix->Details.Comment);
+
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
+			output.push_back(L"");
+		}
+
+		// ===================================================================
+		// ===================================================================
+		// ===================================================================
+
+		vartype = ExportUtility::GetSingleVariableStatement(teo.Code.Language, teo.Code.Size);
+
+		if (vartype != L"")
+		{
+			output.push_back(vartype);
+		}
+
+		teo.DataPadding = ExportUtility::GetPadding(teo.Code.Language, vartype.length());
+
+		// ===================================================================
+		// ===================================================================
+
+		for (int frame = teo.Code.StartFrame; frame <= teo.Code.EndFrame; frame++)
+		{
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
+			{
+				output.push_back(ExportUtility::GetVariableIDFrameIn(teo.Code.Language, frame));
+			}
+
+			// =========================================================================
+
+			for (int i = 0; i < MatrixDataCount; i++)
+			{
+				MatrixData[i] = L"";
+			}
+
+			dataout = ExportPixelDataRGB(matrix, prefix, teo, frame, spacingstring);
+
+			MatrixData[frame] = baaProcessUnique(dataout.Data[0]);
+
+			entrycount += dataout.Count;
+
+			s = L"";
+
+			for (int p = 0; p < MatrixDataCount; p++)
+			{
+				baaUpdateOutput(MatrixData[p]);
+			}
+
+			if (teo.Code.Content == LineContent::kFrame)
+			{
+				ExportUtility::AddContentByFrame(teo, s, frame, output);
+			}
+
+			if (teo.Code.Language == ExportLanguage::kCFastLED)
+			{
+				output.push_back(ExportUtility::GetVariableIDFrameOut(teo.Code.Language));
+
+				output.push_back(L"");
+			}
+		}
+
+		// =========================================================================
+
+		ExportUtility::AddEnding(output, teo);
+
+		if (teo.Code.IncludePreamble)
+		{
+			ExportUtility::GetSpacerLine(teo.Code.Language, output);
+		}
+
+        return true;
+	}
+
+
+	DataOut ExportPixelDataRGB(TheMatrix *matrix, const std::wstring prefix, ExportOptions teo, int frame, const std::wstring spacingchar)
+	{
+		DataOut dataout;
+		dataout.Count = 0;
+		std::wstring output = L"";
+
+		std::vector<int> Colours;
+
+		// ===========================================================================
+
+		switch (teo.ExportMode)
+		{
+		case ExportSource::kAnimationFreeform:
+			if (matrix->MatrixLayers.size() == 1)
+			{
+				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				{
+					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+				}
+			}
+			else
+			{
+				//matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
+
+				//selectedmatrix = matrix->MatrixMerge; to do
+			}
+			break;
+		case ExportSource::kUserMemoriesFreeform:
+			for (int pixel = 0; pixel < matrix->MatrixUserFF[frame].size(); pixel++)
+			{
+				Colours.push_back(matrix->MatrixUserFF[frame][frame]);
+			}
+			break;
+		}
+
+		// ===========================================================================
+
+		for (int pixel = 0; pixel < Colours.size(); pixel++)
+		{
+			int pixel_value = Colours[pixel];
+
+			if (teo.Code.RGBChangePixels && pixel_value == matrix->RGBBackground)
+			{
+				pixel_value = teo.Code.RGBChangeColour;
+			}
+
+			switch (teo.Code.Size)
+			{
+			case NumberSize::kRGB8bit:
+				output += ColourUtility::RGBConvertToSplit(pixel_value, teo.Code, prefix, spacingchar);
+
+				dataout.Count += 3;
+				break;
+
+			case NumberSize::kRGB16bit:
+				output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo16(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.ColourSpaceRGB, teo.Code.RGBBrightness));
+
+				output += spacingchar;
+
+				dataout.Count++;
+				break;
+
+			case NumberSize::kRGB32bit:
+				output += prefix + ColourUtility::RGBColourNumberFormat(teo.Code.Format, teo.NybblesFromNumberSize(), ColourUtility::RGBConvertTo32(pixel_value, teo.Code.RGBFormat, teo.Code.LSB, teo.Code.RGBBrightness));
+
+				output += spacingchar;
+
+				dataout.Count++;
+				break;
+
+			default:
+				output += L" UNKNOWN Code.Size ";
+				break;
 			}
 		}
 

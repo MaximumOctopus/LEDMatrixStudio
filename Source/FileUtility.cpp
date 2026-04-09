@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -21,7 +21,7 @@
 // LED Matrix Studio files
 // ===========================================================================
 
-LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermode, bool matrixmode, bool ignoredpixelmode, bool layermode, bool coloursmode)
+LoadData FileUtility::LoadDataParameterType(const std::wstring s, FileBlock block)
 {
 	if (s.find(L"{header") != std::wstring::npos)
 		return LoadData::kLoadBlockStartHeader;
@@ -29,6 +29,8 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 		return LoadData::kLoadBlockStartIgnoredPixel;
 	else if (s.find(L"{colours") != std::wstring::npos)
 		return LoadData::kLoadBlockStartColours;
+	else if (s.find(L"{framefreeform") != std::wstring::npos)
+		return LoadData::kLoadBlockStartFrames;
 	else if (s[0] == kDataBlockStart)
 		return LoadData::kLoadBlockBegin;
 	else if (s[0] == kDataBlockEnd)
@@ -37,8 +39,10 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 		return LoadData::kLoadBlockBeginLayout;
 	else if (s[0] == L']')
 		return LoadData::kLoadBlockEndLayout;
-	else if (headermode)
+
+	switch (block)
 	{
+	case FileBlock::kHeader:
 		switch (s[0])
 		{
 		case kAnimDataSource:
@@ -116,17 +120,15 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 		case kAnimBlockEnd:
 			return LoadData::kLoadHeaderEnd;
 		}
-	}
-	else if (ignoredpixelmode)
-	{
+		break;
+	case FileBlock::kIgnoredPixels:
 		switch (s[0])
 		{
 		case kAnimIgnoredPixelData:
 			return LoadData::kLoadIgnoredPixelData;
 		}
-	}
-	else if (matrixmode)
-	{
+		break;
+	case FileBlock::kMatrixData:
 		switch (s[0])
 		{
 		case kAnimWidth:
@@ -137,10 +139,19 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 			return LoadData::kLoadMatrixData;
 		case kAnimFrameLocked:
 			return LoadData::kLoadMatrixLocked;
+		case kAnimPixelX:
+			return LoadData::kLoadPixelX;
+		case kAnimPixelY:
+			return LoadData::kLoadPixelY;
+		case kAnimPixelOrder:
+			return LoadData::kLoadPixelOrder;
+		case kAnimPixelColour:
+			return LoadData::kLoadPixelColour;
+		case kAnimPixelGroup:
+			return LoadData::kLoadPixelGroup;
 		}
-	}
-	else if (layermode)
-	{
+		break;
+	case FileBlock::kLayer:
 		switch (s[0])
 		{
 		case kAnimLayerName:
@@ -152,9 +163,8 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 		case kAnimLayerLocked:
 			return LoadData::kLoadLayoutLocked;
 		}
-	}
-	else if (coloursmode)
-	{
+		break;
+	case FileBlock::kColours:
 		switch (s[0])
 		{
 		case kAnimColoursCustom:
@@ -167,7 +177,15 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 			return LoadData::kLoadColoursDraw2;
 		case kAnimColoursPaletteHistory:
 			return LoadData::kLoadColoursPaletteHistory;
+        }
+		break;
+	case FileBlock::kFrames:
+		switch (s[0])
+		{
+		case kAnimFrameLocked:
+			return LoadData::kLoadFrameLocked;
 		}
+		break;
 	}
 
 	return LoadData::kUnknown;
@@ -177,21 +195,21 @@ LoadData FileUtility::LoadDataParameterType(const std::wstring s, bool headermod
 // ===========================================================================
 
 
-MatrixMode FileUtility::GetMatrixModeFromFileChunk(const wchar_t c)
+MatrixColourMode FileUtility::GetMatrixModeFromFileChunk(const wchar_t c)
 {
 	switch (c)
 	{
 	case L'2':
-		return MatrixMode::kBiSequential;
+		return MatrixColourMode::kBiSequential;
 	case L'3':
-		return MatrixMode::kBiBitplanes;
+		return MatrixColourMode::kBiBitplanes;
 	case L'4':
-		return MatrixMode::kRGB;
+		return MatrixColourMode::kRGB;
 	case L'5':
-		return MatrixMode::kRGB3BPP;
+		return MatrixColourMode::kRGB3BPP;
 	}
 
-	return MatrixMode::kMono;
+	return MatrixColourMode::kMono;
 }
 
 

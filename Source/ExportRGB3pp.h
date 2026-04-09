@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -36,4 +36,8 @@ namespace ExportRGB3BPP
 
 	DataOut ExportColumnDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring, int);
 	DataOut ExportRowDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, int, const std::wstring, int);
+
+	bool CreateExportFreeformRGB3BPP(TheMatrix *matrix, ExportOptions, std::vector<std::wstring> &, int&, std::vector<std::wstring> &);
+
+	DataOut ExportPixelDataRGB3BPP(TheMatrix *matrix, const std::wstring, ExportOptions, int, const std::wstring, int);
 }

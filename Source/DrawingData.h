@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -19,7 +19,7 @@ static const int CDrawPointFirst = 1;
 static const int CDrawPointLast = 2;
 
 
-enum class DrawMode { kNone = 0,
+enum class ActionMode { kNone = 0,
 					  kFilledBox, kEmptyBox,
 					  kLine, kFont,
 					  kEmptyCircle, kFilledCircle,
@@ -28,14 +28,15 @@ enum class DrawMode { kNone = 0,
 					  kGradientBrush,
 					  kFloodFill,
 					  kSpiral, kRing, kSplitRing, kPetals, kGrid, kPyramid, kLeftTriangle, kRightTriangle,
-					  kLeftAngleLine, kRightAngleLine };
+					  kLeftAngleLine, kRightAngleLine,
+					  kMovePixel, kDrawOrder };
 
 enum class DrawPoint { kNone, kFirst, kLast };
 
 
-struct DrawData
+struct ActionData
 {
-	DrawMode Mode = DrawMode::kNone;
+	ActionMode Mode = ActionMode::kNone;
 	int Point = CDrawPointNone;
 	int	Colour = 0x00000000;
 	TPoint Coords[2] = { { -1, -1 } , { -1, -1 } };
@@ -51,7 +52,7 @@ struct DrawData
 
 	void Clear()
 	{
-		Mode = DrawMode::kNone;
+		Mode = ActionMode::kNone;
 
         Reset();
 	}
@@ -65,19 +66,19 @@ struct DrawData
         CopyPos = { -1, -1 };
 	}
 
-	bool IsSinglePointMode(DrawMode mode)
+	bool IsSinglePointMode(ActionMode mode)
 	{
 		switch (mode)
 		{
-		case DrawMode::kFloodFill:
-		case DrawMode::kSpiral:
-		case DrawMode::kRing:
-		case DrawMode::kSplitRing:
-		case DrawMode::kPetals:
-		case DrawMode::kGrid:
-		case DrawMode::kPyramid:
-		case DrawMode::kLeftTriangle:
-		case DrawMode::kRightTriangle:
+		case ActionMode::kFloodFill:
+		case ActionMode::kSpiral:
+		case ActionMode::kRing:
+		case ActionMode::kSplitRing:
+		case ActionMode::kPetals:
+		case ActionMode::kGrid:
+		case ActionMode::kPyramid:
+		case ActionMode::kLeftTriangle:
+		case ActionMode::kRightTriangle:
 			return true;
 
 		default:
@@ -92,126 +93,137 @@ struct DrawData
 		switch (m)
 		{
 		case 0:
-			Mode = DrawMode::kNone;
+			Mode = ActionMode::kNone;
 			break;
 		case 1:
-			Mode = DrawMode::kFilledBox;
+			Mode = ActionMode::kFilledBox;
             break;
 		case 2:
-			Mode = DrawMode::kEmptyBox;
+			Mode = ActionMode::kEmptyBox;
 			break;
 		case 3:
-			Mode = DrawMode::kLine;
+			Mode = ActionMode::kLine;
 			break;
 		case 4:
-			Mode = DrawMode::kFont;
+			Mode = ActionMode::kFont;
 			break;
 		case 5:
-			Mode = DrawMode::kEmptyCircle;
+			Mode = ActionMode::kEmptyCircle;
 			break;
 		case 6:
-			Mode = DrawMode::kFilledCircle;
+			Mode = ActionMode::kFilledCircle;
 			break;
 		case 7:
-			Mode = DrawMode::kRandom;
+			Mode = ActionMode::kRandom;
 			break;
 		case 8:
-			Mode = DrawMode::kMulti;
+			Mode = ActionMode::kMulti;
 			break;
 		case 9:
-			Mode = DrawMode::kPicker;
+			Mode = ActionMode::kPicker;
 			break;
 		case 10:
-			Mode = DrawMode::kCopy;
+			Mode = ActionMode::kCopy;
 			break;
 		case 11:
-			Mode = DrawMode::kPaste;
+			Mode = ActionMode::kPaste;
 			break;
 		case 12:
-			Mode = DrawMode::kGradientBrush;
+			Mode = ActionMode::kGradientBrush;
 			break;
 		case 13:
-			Mode = DrawMode::kFloodFill;
+			Mode = ActionMode::kFloodFill;
 			break;
 		case 14:
-			Mode = DrawMode::kSpiral;
+			Mode = ActionMode::kSpiral;
 			break;
 		case 15:
-			Mode = DrawMode::kRing;
+			Mode = ActionMode::kRing;
 			break;
 		case 16:
-			Mode = DrawMode::kSplitRing;
+			Mode = ActionMode::kSplitRing;
 			break;
 		case 17:
-			Mode = DrawMode::kPetals;
+			Mode = ActionMode::kPetals;
 			break;
 		case 18:
-			Mode = DrawMode::kGrid;
+			Mode = ActionMode::kGrid;
 			break;
 		case 19:
-			Mode = DrawMode::kPyramid;
+			Mode = ActionMode::kPyramid;
 			break;
 		case 20:
-			Mode = DrawMode::kLeftTriangle;
+			Mode = ActionMode::kLeftTriangle;
 			break;
 		case 21:
-			Mode = DrawMode::kRightTriangle;
+			Mode = ActionMode::kRightTriangle;
+			break;
+		case 22:
+			Mode = ActionMode::kLeftAngleLine;
+			break;
+		case 23:
+			Mode = ActionMode::kRightAngleLine;
+			break;
+		case 24:
+			Mode = ActionMode::kMovePixel;
 			break;
 		}
 	}
 
-	int DrawModeToInt(DrawMode dm)
+	int DrawModeToInt(ActionMode dm)
 		{
 		switch (dm)
 		{
-		case DrawMode::kNone:
+		case ActionMode::kNone:
 			return 0;
-		case DrawMode::kFilledBox:
+		case ActionMode::kFilledBox:
 			return 1;
-		case DrawMode::kEmptyBox:
+		case ActionMode::kEmptyBox:
 			return 2;
-		case DrawMode::kLine:
+		case ActionMode::kLine:
 			return 3;
-		case DrawMode::kFont:
+		case ActionMode::kFont:
 			return 4;
-		case DrawMode::kEmptyCircle:
+		case ActionMode::kEmptyCircle:
 			return 5;
-		case DrawMode::kFilledCircle:
+		case ActionMode::kFilledCircle:
 			return 6;
-		case DrawMode::kRandom:
+		case ActionMode::kRandom:
 			return 7;
-		case DrawMode::kMulti:
+		case ActionMode::kMulti:
 			return 8;
-		case DrawMode::kPicker:
+		case ActionMode::kPicker:
 			return 9;
-		case DrawMode::kCopy:
+		case ActionMode::kCopy:
 			return 10;
-		case DrawMode::kPaste:
+		case ActionMode::kPaste:
 			return 11;
-		case DrawMode::kGradientBrush:
+		case ActionMode::kGradientBrush:
 			return 12;
-		case DrawMode::kFloodFill:
+		case ActionMode::kFloodFill:
 			return 13;
-		case DrawMode::kSpiral:
+		case ActionMode::kSpiral:
 			return 14;
-		case DrawMode::kRing:
+		case ActionMode::kRing:
 			return 15;
-		case DrawMode::kSplitRing:
+		case ActionMode::kSplitRing:
 			return 16;
-		case DrawMode::kPetals:
+		case ActionMode::kPetals:
 			return 17;
-		case DrawMode::kGrid:
+		case ActionMode::kGrid:
 			return 18;
-		case DrawMode::kPyramid:
+		case ActionMode::kPyramid:
 			return 19;
-		case DrawMode::kLeftTriangle:
+		case ActionMode::kLeftTriangle:
 			return 20;
-		case DrawMode::kRightTriangle:
+		case ActionMode::kRightTriangle:
 			return 21;
-		case DrawMode::kLeftAngleLine:
+		case ActionMode::kLeftAngleLine:
 			return 22;
-		case DrawMode::kRightAngleLine:
+		case ActionMode::kRightAngleLine:
 			return 23;
+		case ActionMode::kMovePixel:
+			return 24;
 		}
 
 		return 0;

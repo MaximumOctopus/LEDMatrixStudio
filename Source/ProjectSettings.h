@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -20,7 +20,8 @@ struct ProjectSettings
 {
 	bool Valid;
 
-	MatrixMode Mode = MatrixMode::kMono;
+    MatrixDrawMode DrawMode = MatrixDrawMode::kGrid;
+	MatrixColourMode ColourMode = MatrixColourMode::kMono;
 	int Width = 0;
 	int Height = 0;
 	bool Clear = false;
@@ -58,26 +59,26 @@ struct ProjectSettings
 		switch (i)
 		{
 		case 0:
-			Mode = MatrixMode::kNone;
+			ColourMode = MatrixColourMode::kNone;
 			break;
 		case 1:
-			Mode = MatrixMode::kMono;
+			ColourMode = MatrixColourMode::kMono;
 			break;
 		case 2:
-			Mode = MatrixMode::kBiSequential;
+			ColourMode = MatrixColourMode::kBiSequential;
 			break;
 		case 3:
-			Mode = MatrixMode::kBiBitplanes;
+			ColourMode = MatrixColourMode::kBiBitplanes;
 			break;
 		case 4:
-			Mode = MatrixMode::kRGB;
+			ColourMode = MatrixColourMode::kRGB;
 			break;
 		case 5:
-			Mode = MatrixMode::kRGB3BPP;
+			ColourMode = MatrixColourMode::kRGB3BPP;
 			break;
 
 		default:
-			Mode = MatrixMode::kNone;
+			ColourMode = MatrixColourMode::kNone;
 		}
 	}
 
@@ -99,19 +100,19 @@ struct ProjectSettings
 
 	int MatrixModeToInt()
 	{
-		switch (Mode)
+		switch (ColourMode)
 		{
-		case MatrixMode::kNone:
+		case MatrixColourMode::kNone:
 			return 0;
-		case MatrixMode::kMono:
+		case MatrixColourMode::kMono:
 			return 1;
-		case MatrixMode::kBiSequential:
+		case MatrixColourMode::kBiSequential:
 			return 2;
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kBiBitplanes:
 			return 3;
-		case MatrixMode::kRGB:
+		case MatrixColourMode::kRGB:
 			return 4;
-		case MatrixMode::kRGB3BPP:
+		case MatrixColourMode::kRGB3BPP:
 			return 5;
 		}
 
