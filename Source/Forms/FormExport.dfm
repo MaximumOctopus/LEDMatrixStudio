@@ -448,9 +448,9 @@ object frmExport: TfrmExport
         TabOrder = 0
         object gbSource: TGroupBox
           Left = 15
-          Top = 8
+          Top = 149
           Width = 185
-          Height = 257
+          Height = 121
           Caption = '.'
           TabOrder = 0
           object sbDataRows: TSpeedButton
@@ -472,34 +472,6 @@ object frmExport: TfrmExport
             Caption = '.'
             OnClick = cbDirectionChange
           end
-          object lFrame: TLabel
-            Left = 16
-            Top = 120
-            Width = 3
-            Height = 15
-            Caption = '.'
-          end
-          object Label2: TLabel
-            Left = 87
-            Top = 142
-            Width = 11
-            Height = 15
-            Caption = 'to'
-          end
-          object lSelectiveOutput: TLabel
-            Left = 16
-            Top = 172
-            Width = 3
-            Height = 15
-            Caption = '.'
-          end
-          object Label9: TLabel
-            Left = 87
-            Top = 194
-            Width = 11
-            Height = 15
-            Caption = 'to'
-          end
           object cbDirection: TComboBox
             Left = 16
             Top = 55
@@ -517,52 +489,6 @@ object frmExport: TfrmExport
             Style = csDropDownList
             TabOrder = 1
             OnChange = cbOptimiseClick
-          end
-          object eFrameStart: TEdit
-            Left = 16
-            Top = 141
-            Width = 55
-            Height = 23
-            TabOrder = 2
-            Text = '1'
-            OnExit = cbOptimiseClick
-          end
-          object eFrameEnd: TEdit
-            Left = 113
-            Top = 139
-            Width = 55
-            Height = 23
-            TabOrder = 3
-            Text = '1'
-            OnExit = cbOptimiseClick
-          end
-          object cbOptimise: TCheckBox
-            Left = 16
-            Top = 220
-            Width = 166
-            Height = 17
-            Caption = '.'
-            TabOrder = 4
-            OnClick = cbOptimiseClick
-          end
-          object eSelectiveStart: TEdit
-            Left = 16
-            Top = 191
-            Width = 55
-            Height = 23
-            ParentCustomHint = False
-            TabOrder = 5
-            Text = '1'
-            OnExit = cbOptimiseClick
-          end
-          object eSelectiveEnd: TEdit
-            Left = 113
-            Top = 191
-            Width = 55
-            Height = 23
-            TabOrder = 6
-            Text = '1'
-            OnExit = cbOptimiseClick
           end
         end
         object gbLSB: TGroupBox
@@ -751,7 +677,7 @@ object frmExport: TfrmExport
         end
         object gbRGB: TGroupBox
           Left = 15
-          Top = 381
+          Top = 372
           Width = 185
           Height = 160
           Caption = '.'
@@ -905,6 +831,88 @@ object frmExport: TfrmExport
           ModalResult = 1
           TabOrder = 9
           OnClick = bResetCodeClick
+        end
+        object gbSelection: TGroupBox
+          Left = 15
+          Top = 8
+          Width = 185
+          Height = 138
+          Caption = 'Selection'
+          TabOrder = 10
+          object Label2: TLabel
+            Left = 83
+            Top = 34
+            Width = 11
+            Height = 15
+            Caption = 'to'
+          end
+          object Label9: TLabel
+            Left = 83
+            Top = 84
+            Width = 11
+            Height = 15
+            Caption = 'to'
+          end
+          object lFrame: TLabel
+            Left = 16
+            Top = 18
+            Width = 3
+            Height = 15
+            Caption = '.'
+          end
+          object lSelectiveOutput: TLabel
+            Left = 16
+            Top = 60
+            Width = 3
+            Height = 15
+            Caption = '.'
+          end
+          object eFrameStart: TEdit
+            Left = 16
+            Top = 31
+            Width = 55
+            Height = 23
+            TabOrder = 0
+            Text = '1'
+            OnExit = cbOptimiseClick
+          end
+          object eFrameEnd: TEdit
+            Left = 107
+            Top = 31
+            Width = 55
+            Height = 23
+            TabOrder = 1
+            Text = '1'
+            OnExit = cbOptimiseClick
+          end
+          object eSelectiveEnd: TEdit
+            Left = 107
+            Top = 81
+            Width = 55
+            Height = 23
+            TabOrder = 2
+            Text = '1'
+            OnExit = cbOptimiseClick
+          end
+          object eSelectiveStart: TEdit
+            Left = 16
+            Top = 81
+            Width = 55
+            Height = 23
+            ParentCustomHint = False
+            TabOrder = 3
+            Text = '1'
+            OnExit = cbOptimiseClick
+          end
+          object cbOptimise: TCheckBox
+            Left = 16
+            Top = 110
+            Width = 163
+            Height = 17
+            Caption = '.'
+            TabOrder = 4
+            OnClick = cbOptimiseClick
+          end
         end
       end
       object Panel4: TPanel

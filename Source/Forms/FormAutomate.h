@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -38,7 +38,7 @@ struct AutomationInput
 	int Width = 0;
 	int Height = 0;
 
-	MatrixMode Mode = MatrixMode::kNone;
+	MatrixColourMode Mode = MatrixColourMode::kNone;
 };
 
 
@@ -189,7 +189,7 @@ private:	// User declarations
 
 	std::vector<std::wstring> CustomBrush[2];
 
-	MatrixMode aiMode;
+	MatrixColourMode aiMode;
 	int aiWidth = 0;
 	int aiHeight = 0;
 

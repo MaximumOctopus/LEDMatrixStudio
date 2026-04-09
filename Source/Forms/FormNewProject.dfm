@@ -377,6 +377,90 @@ object frmNewProject: TfrmNewProject
         end
       end
     end
+    object tsFreeform: TTabSheet
+      Caption = '.'
+      ImageIndex = 2
+      object gbFreeform: TGroupBox
+        Left = 10
+        Top = 14
+        Width = 167
+        Height = 85
+        Caption = '.'
+        TabOrder = 0
+        object sBackgroundFreeform: TShape
+          Left = 105
+          Top = 54
+          Width = 21
+          Height = 19
+          OnMouseDown = sBackgroundMouseDown
+        end
+        object lBackgroundFreeform: TLabel
+          Left = 13
+          Top = 56
+          Width = 3
+          Height = 15
+          Caption = '.'
+        end
+        object cbMatrixTypeFreeform: TComboBox
+          Left = 13
+          Top = 20
+          Width = 144
+          Height = 23
+          Hint = 'Number of frames'
+          Style = csDropDownList
+          TabOrder = 0
+          OnChange = cbMatrixTypeChange
+        end
+        object GroupBox3: TGroupBox
+          Left = 24
+          Top = -63
+          Width = 273
+          Height = 57
+          Caption = 'Matrtix Options'
+          TabOrder = 1
+          object Label15: TLabel
+            Left = 203
+            Top = 23
+            Width = 9
+            Height = 18
+            Caption = 'X'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -15
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+          end
+          object ComboBox16: TComboBox
+            Left = 219
+            Top = 20
+            Width = 41
+            Height = 23
+            Hint = 'Select matrix height'
+            Style = csDropDownList
+            TabOrder = 0
+          end
+          object ComboBox17: TComboBox
+            Left = 155
+            Top = 20
+            Width = 42
+            Height = 23
+            Hint = 'Select matrix width'
+            Style = csDropDownList
+            TabOrder = 1
+          end
+          object ComboBox18: TComboBox
+            Left = 15
+            Top = 20
+            Width = 132
+            Height = 23
+            Hint = 'Number of frames'
+            Style = csDropDownList
+            TabOrder = 2
+          end
+        end
+      end
+    end
     object tsFromPreset: TTabSheet
       Caption = '.'
       ImageIndex = 1

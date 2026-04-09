@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -48,12 +48,14 @@ __fastcall TfrmFontViewer::TfrmFontViewer(TComponent* Owner)
 
 	FontMatrix = new TheMatrix(this, pFont);
 
-	FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+	FontMatrix->NewMatrix(MatrixDrawMode::kGrid,
+	                      MatrixColourMode::kMono,
+						  1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 
 	FontMatrix->LEDColours[0] = 0x00ffffff;
 	FontMatrix->LEDColours[1] = 0x00000000;
 
-	FontMatrix->Render.Draw.Colour = 1;
+	FontMatrix->Render.Action.Colour = 1;
 	FontMatrix->RGBBackground = 0x00FFFFFF;
 
 	SetGuiLanguageText();
@@ -102,8 +104,8 @@ void __fastcall TfrmFontViewer::tbFontChange(TObject *Sender)
 	{
 		FontMatrix->ClearCurrentFrame();
 
-		FontMatrix->Render.Draw.Coords[0].X = 0;
-		FontMatrix->Render.Draw.Coords[0].Y = 7;
+		FontMatrix->Render.Action.Coords[0].X = 0;
+		FontMatrix->Render.Action.Coords[0].Y = 7;
 
 		FontMatrix->DrawFontCharacter(tbFont->Position - 32, 0);
 
@@ -118,14 +120,18 @@ void __fastcall TfrmFontViewer::cbRGBModeClick(TObject *Sender)
 {
 	if (cbRGBMode->Checked)
 	{
-		FontMatrix->NewMatrix(MatrixMode::kRGB, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+		FontMatrix->NewMatrix(MatrixDrawMode::kGrid,
+							  MatrixColourMode::kRGB,
+							  1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 	}
 	else
 	{
-		FontMatrix->NewMatrix(MatrixMode::kMono, 1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
+		FontMatrix->NewMatrix(MatrixDrawMode::kGrid,
+							  MatrixColourMode::kMono,
+							  1, 6, 5, 8, 8, 25, PixelShape::kSquare, true, true, true, 0x00000000);
 	}
 
-	FontMatrix->Render.Draw.Colour = 1;
+	FontMatrix->Render.Action.Colour = 1;
 
 	cbFontsChange(nullptr);
 }

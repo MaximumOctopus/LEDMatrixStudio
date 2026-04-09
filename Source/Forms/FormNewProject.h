@@ -88,6 +88,16 @@ __published:	// IDE-managed Components
 	TComboBox *ComboBox12;
 	TMemo *mHelp;
 	TColorDialog *cdNewProject;
+	TTabSheet *tsFreeform;
+	TGroupBox *gbFreeform;
+	TShape *sBackgroundFreeform;
+	TLabel *lBackgroundFreeform;
+	TComboBox *cbMatrixTypeFreeform;
+	TGroupBox *GroupBox3;
+	TLabel *Label15;
+	TComboBox *ComboBox16;
+	TComboBox *ComboBox17;
+	TComboBox *ComboBox18;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall bOKClick(TObject *Sender);
 	void __fastcall cbCustomShapeChange(TObject *Sender);
@@ -103,7 +113,7 @@ private:
 
 	void SetGUILanguageText();
 
-	void UpdateHelp(MatrixMode);
+	void UpdateHelp(MatrixColourMode);
 
     void BuildPresetList();
 

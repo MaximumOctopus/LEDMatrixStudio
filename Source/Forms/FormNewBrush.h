@@ -35,7 +35,7 @@ struct MatrixSettings
 	int Width = 0;
 	int Height = 0;
 
-	MatrixMode Mode = MatrixMode::kNone;
+	MatrixColourMode Mode = MatrixColourMode::kNone;
 };
 
 struct NewBrush

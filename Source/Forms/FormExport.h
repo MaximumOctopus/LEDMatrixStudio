@@ -49,17 +49,8 @@ __published:	// IDE-managed Components
 	TGroupBox *gbSource;
 	TSpeedButton *sbDataRows;
 	TSpeedButton *sbDataColumns;
-	TLabel *lFrame;
-	TLabel *Label2;
-	TLabel *lSelectiveOutput;
-	TLabel *Label9;
 	TComboBox *cbDirection;
 	TComboBox *cbScanDirection;
-	TEdit *eFrameStart;
-	TEdit *eFrameEnd;
-	TCheckBox *cbOptimise;
-	TEdit *eSelectiveStart;
-	TEdit *eSelectiveEnd;
 	TGroupBox *gbLSB;
 	TSpeedButton *sbLSBLeft;
 	TSpeedButton *sbLSBRight;
@@ -148,6 +139,16 @@ __published:	// IDE-managed Components
 	TColorDialog *cdExport;
 	TBitBtn *bResetCode;
 	TBitBtn *bResetBinary;
+	TGroupBox *gbSelection;
+	TEdit *eFrameStart;
+	TLabel *Label2;
+	TEdit *eFrameEnd;
+	TEdit *eSelectiveEnd;
+	TLabel *Label9;
+	TEdit *eSelectiveStart;
+	TCheckBox *cbOptimise;
+	TLabel *lFrame;
+	TLabel *lSelectiveOutput;
 	void __fastcall shapeBackgroundPixelsMouseDown(TObject *Sender, TMouseButton Button,
           TShiftState Shift, int X, int Y);
 	void __fastcall sbRGBClick(TObject *Sender);
@@ -178,7 +179,12 @@ private:
 	std::vector<std::wstring> Output;
 
 	void CreateExportOptions();
+	void CreateExportOptionsGrid();
+	void CreateExportOptionsFreeform();
+
 	void CreateBinaryExportOptions();
+	void CreateBinaryExportOptionsGrid();
+	void CreateBinaryExportOptionsFreeform();
 
 	void ToggleControlStatus(bool);
 
@@ -208,7 +214,7 @@ public:
 	bool IsUpdating = false;
 
 	std::wstring ProfileExtension = L"";
-	MatrixMode Mode = MatrixMode::kNone;
+	MatrixColourMode Mode = MatrixColourMode::kNone;
 	int LastRow = 0;
 	int MaxFrameCount = 0;
 	int PixelCount = 0;
@@ -227,7 +233,7 @@ public:
 
 //---------------------------------------------------------------------------
 
-void OpenExportData(TheMatrix*, ExportOptions&, ExportSource, MatrixMode);
+void OpenExportData(TheMatrix*, ExportOptions&, MatrixColourMode);
 
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmExport *frmExport;

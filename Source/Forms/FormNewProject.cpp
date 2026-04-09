@@ -1,4 +1,15 @@
-
+// ===================================================================
+//
+//   (c) Paul Alan Freshney 2012-2026
+//   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
+//
+//   https://github.com/MaximumOctopus/LEDMatrixStudio
+//
+//   https://maximumoctopus.hashnode.dev/
+//
+//   C++ Rewrite October 11th 2023
+//
+// ===================================================================
 
 #include <vcl.h>
 #pragma hdrstop
@@ -32,7 +43,7 @@ ProjectSettings OpenNewProject(ProjectSettings &OldProjectSettings, bool appstat
 	ProjectSettings NewProjectSettings;
 
 	NewProjectSettings.Valid = false;
-	NewProjectSettings.Mode = MatrixMode::kMono;
+	NewProjectSettings.ColourMode = MatrixColourMode::kMono;
 	NewProjectSettings.Width = -1;
 	NewProjectSettings.Height = -1;
 	NewProjectSettings.Clear = false;
@@ -82,8 +93,10 @@ void TfrmNewProject::SetGUILanguageText()
 {
 	Caption = GLanguageHandler->Text[kCreate].c_str();
 
+	tsFreeform->Caption = GLanguageHandler->Text[kFreeform].c_str();
 	tsCustom->Caption = GLanguageHandler->Text[kCustom].c_str();
 
+	gbFreeform->Caption = GLanguageHandler->Text[kMatrixOptions].c_str();
 	gbMatrixOptions->Caption = GLanguageHandler->Text[kMatrixOptions].c_str();
 
 	for (int t = 0; t < 5; t++)
@@ -91,8 +104,11 @@ void TfrmNewProject::SetGUILanguageText()
 		cbMatrixType->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(t).c_str());
 	}
 
-	cbMatrixType->ItemIndex = 0;
+	cbMatrixTypeFreeform->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(3).c_str());
+	cbMatrixTypeFreeform->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(4).c_str());
 
+	cbMatrixType->ItemIndex = 0;
+	cbMatrixTypeFreeform->ItemIndex = 0;
 
 	cbCustomShape->Items->Add(GLanguageHandler->Text[kNoCustomShape].c_str());
 	cbCustomShape->Items->Add(GLanguageHandler->Text[kCircle].c_str());
@@ -105,13 +121,13 @@ void TfrmNewProject::SetGUILanguageText()
 	rbAll->Caption = GLanguageHandler->Text[kAll].c_str();
 	Label11->Caption = GLanguageHandler->Text[kBorder].c_str();
 
+	lBackgroundFreeform->Caption = GLanguageHandler->Text[kBackground].c_str();
 
 	tsFromPreset->Caption = GLanguageHandler->Text[kFromPreset].c_str();
 
 	Label6->Caption = GLanguageHandler->Text[kType].c_str();
 	Label7->Caption = GLanguageHandler->Text[kWidth].c_str();
 	Label9->Caption = GLanguageHandler->Text[kHeight].c_str();
-
 
 	gbPixelShape->Caption = GLanguageHandler->Text[kPixelShape].c_str();
 
@@ -120,7 +136,6 @@ void TfrmNewProject::SetGUILanguageText()
 	Label5->Caption = GLanguageHandler->Text[kAnimationFrames].c_str();
 
 	cbClearAll->Caption = GLanguageHandler->Text[kClearAllAnimationData].c_str();
-
 
 	bOK->Caption = GLanguageHandler->Text[kCreate].c_str();
 	bCancel->Caption = GLanguageHandler->Text[kCancel].c_str();
@@ -196,23 +211,40 @@ void TfrmNewProject::SetTo(ProjectSettings &ps)
 {
 	ps.Valid = true;
 
-	if (pcNew->ActivePageIndex == 0)
+	switch (pcNew->ActivePageIndex)
 	{
+	case 0:
+		ps.DrawMode = MatrixDrawMode::kGrid;
 		ps.MatrixModeFromInt(cbMatrixType->ItemIndex + 1);
 		ps.Width = cbWidth->Text.ToInt();
 		ps.Height = cbHeight->Text.ToInt();
-	}
-	else
-	{
+		ps.Background = sBackground->Brush->Color;
+		break;
+	case 1:
+		ps.DrawMode = MatrixDrawMode::kFreeform;
+		if (cbMatrixTypeFreeform->ItemIndex == 0)
+		{
+			ps.ColourMode = MatrixColourMode::kRGB;
+		}
+		else
+		{
+			ps.ColourMode = MatrixColourMode::kRGB3BPP;
+		}
+		ps.Width = 100; // to do
+		ps.Height = 100;    // to do
+       	ps.Background = sBackgroundFreeform->Brush->Color;
+		break;
+	case 2:
+		ps.DrawMode = MatrixDrawMode::kGrid;
 		ps.MatrixModeFromInt(lPresetType->Tag - 1);
 		ps.Width = lPresetWidth->Caption.ToInt();
 		ps.Height = lPresetHeight->Caption.ToInt();
+		ps.Background = sBackground->Brush->Color;
+		break;
 	}
 
 	ps.CustomShapeFromInt(cbCustomShape->ItemIndex);
 	ps.CustomShapeParam = cbCustomShapeParam->ItemIndex;
-
-	ps.Background = sBackground->Brush->Color;
 
 	ps.Clear = cbClearAll->Checked;
 	ps.Special = cbFrames->Text.ToInt();
@@ -276,13 +308,13 @@ void __fastcall TfrmNewProject::cbCustomShapeChange(TObject *Sender)
 
 	switch (cbCustomShape->ItemIndex)
 	{
-	case customShapeNone:
+	case kCustomShapeNone:
 		cbCustomShapeParam->Items->Add(GLanguageHandler->Text[kNA].c_str());
 		break;
-	case customShapeCircle:
+	case kCustomShapeCircle:
 		cbCustomShapeParam->Items->Add(GLanguageHandler->Text[kNA].c_str());
 		break;
-	case customShapeJustBorders:
+	case kCustomShapeJustBorders:
 	{
 		int width = cbWidth->Text.ToInt();
 		int height = cbWidth->Text.ToInt();
@@ -296,7 +328,7 @@ void __fastcall TfrmNewProject::cbCustomShapeChange(TObject *Sender)
 
 		break;
 	}
-	case customShapeTriangle:
+	case kCustomShapeTriangle:
 		cbCustomShapeParam->Items->Add(GLanguageHandler->Text[kNA].c_str());
         break;
 	}
@@ -409,26 +441,26 @@ void __fastcall TfrmNewProject::sBackgroundMouseDown(TObject *Sender, TMouseButt
 }
 
 
-void TfrmNewProject::UpdateHelp(MatrixMode mode)
+void TfrmNewProject::UpdateHelp(MatrixColourMode mode)
 {
 	switch (mode)
 	{
-	case MatrixMode::kNone:
+	case MatrixColourMode::kNone:
 		mHelp->Text = L"Error, no mode selected?!";
 		break;
-	case MatrixMode::kMono:
+	case MatrixColourMode::kMono:
 		mHelp->Text = GLanguageHandler->Text[kNPModeMono].c_str();
 		break;
-	case MatrixMode::kBiSequential:
+	case MatrixColourMode::kBiSequential:
 		mHelp->Text = GLanguageHandler->Text[kNPModeBiSequential].c_str();
 		break;
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kBiBitplanes:
 		mHelp->Text = GLanguageHandler->Text[kNPModeBiBitplane].c_str();
 		break;
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		mHelp->Text = GLanguageHandler->Text[kNPModeRGB].c_str();
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		mHelp->Text = GLanguageHandler->Text[kNPModeRGB3BPP].c_str();
 		break;
 	}

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -64,11 +64,11 @@ void __fastcall TfrmSetIgnoredPixels::cbCustomShapeChange(TObject *Sender)
 
 	switch (cbCustomShape->ItemIndex)
 	{
-	case customShapeNone:
-	case customShapeCircle:
+	case kCustomShapeNone:
+	case kCustomShapeCircle:
 		cbCustomShapeParam->Items->Add(GLanguageHandler->Text[kNA].c_str());
 		break;
-	case customShapeJustBorders:
+	case kCustomShapeJustBorders:
 		int c = std::floor(std::min(MatrixWidth, MatrixHeight) / 2);
 
 		for (int t = 1; t <= c; t++)

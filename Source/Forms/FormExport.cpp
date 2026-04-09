@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -45,7 +45,7 @@ extern SystemSettings *GSystemSettings;
 #pragma resource "*.dfm"
 TfrmExport *frmExport;
 
-void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, ExportSource source, MatrixMode mode) // mode = 0 (animation), 1 = (user memories)
+void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, MatrixColourMode mode) // mode = 0 (animation), 1 = (user memories)
 {
 	TfrmExport *frmExport = new TfrmExport(Application);
 
@@ -53,14 +53,7 @@ void OpenExportData(TheMatrix *thematrix, ExportOptions &ieo, ExportSource sourc
 
 	frmExport->Mode = mode;
 
-	frmExport->InternalEO.ExportMode   = source;
-
-	if (frmExport->InternalEO.ExportMode == ExportSource::kNone)
-	{
-		frmExport->InternalEO.ExportMode = ExportSource::kAnimation;
-
-		ieo.ExportMode = ExportSource::kAnimation;
-	}
+	frmExport->InternalEO.ExportMode = ieo.ExportMode;
 
 	frmExport->InternalEO.Code.IncludePreamble = true;
 
@@ -91,7 +84,8 @@ __fastcall TfrmExport::TfrmExport(TComponent* Owner)
 	IsUpdating = false;
 	LastScrollValue = 0;
 
-	if (InternalEO.ExportMode == ExportSource::kUserMemories)
+	if (InternalEO.ExportMode == ExportSource::kUserMemoriesGrid ||
+     	InternalEO.ExportMode == ExportSource::kUserMemoriesFreeform)
 	{
 		lFrame->Caption = L"User Memories";
 	}
@@ -159,15 +153,18 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 {
 	switch (Mode)
 	{
-	case MatrixMode::kNone:
+	case MatrixColourMode::kNone:
 		break;
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kMono:
+	case MatrixColourMode::kBiSequential:
+	case MatrixColourMode::kBiBitplanes:
+		gbSource->Visible = true;
+
 		ProfileExtension = L"ledsexport";
+
 		gbNumberGrouping->Top = gbNumberGroupingRGB->Top;
 		break;
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		gbNumberGrouping->Visible = false;
 		gbNumberGroupingBinary->Visible = false;
 
@@ -183,9 +180,32 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 		gbBinaryColourSpaceRGB->Visible = true;
 		gbBinaryColourSpaceRGB->Top = 415;
 
-		ProfileExtension = L"ledsexportrgb";
+		if (ieo.ExportMode == ExportSource::kAnimationGrid ||
+			ieo.ExportMode == ExportSource::kUserMemoriesGrid)
+		{
+			gbSource->Visible = true;
+
+			sbOutputRow->Enabled = true;
+
+			ProfileExtension = L"ledsexportrgb";
+		}
+		else if (ieo.ExportMode == ExportSource::kAnimationFreeform ||
+				 ieo.ExportMode == ExportSource::kUserMemoriesFreeform)
+		{
+			gbSource->Visible = false;
+
+			sbOutputRow->Enabled = false;
+			sbOutputFrame->Down = true;
+
+			gbEachLine->Top = 149;
+			gbRGB->Top = 245;
+
+			ProfileExtension = L"ledsexportrgbff";
+		}
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
+		gbSource->Visible = true;
+
 		gbNumberGrouping->Visible = false;
 		gbNumberGroupingBinary->Visible = false;
 
@@ -198,7 +218,8 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 		break;
 	}
 
-	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+     	InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
 		SetMaxFrameCount(matrix->GetFrameCount()); 	// anim
 	}
@@ -337,6 +358,8 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 		sbOutputBytes->Down = true;
 		break;
 	}
+
+    if (!sbOutputRow->Enabled) sbOutputFrame->Down = true;
 
 	cbDirectionChange(nullptr);
 
@@ -507,6 +530,20 @@ void TfrmExport::BuildFromProfile(ExportOptions eeo)
 
 void TfrmExport::CreateExportOptions()
 {
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+		InternalEO.ExportMode == ExportSource::kUserMemoriesGrid)
+	{
+		CreateExportOptionsGrid();
+	}
+	else
+	{
+		CreateExportOptionsFreeform();
+	}
+}
+
+
+void TfrmExport::CreateExportOptionsGrid()
+{
 	if (cbOptimise->Checked)
 	{
 		InternalEO.Code.IncludePreamble = false;
@@ -520,7 +557,292 @@ void TfrmExport::CreateExportOptions()
 
 	// =======================================================================
 
-	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid)
+	{
+		InternalEO.Code.StartFrame = eFrameStart->Text.ToInt() - 1;
+		InternalEO.Code.EndFrame   = eFrameEnd->Text.ToInt() - 1;
+	}
+	else
+	{
+		InternalEO.Code.StartFrame = eFrameStart->Text.ToInt() - 1;
+		InternalEO.Code.EndFrame   = eFrameEnd->Text.ToInt() - 1;
+	}
+
+	// =======================================================================
+
+	int se = 0;
+	int ss = eSelectiveStart->Text.ToIntDef(1);
+
+	if (sbDataRows->Down)
+	{
+		se = eSelectiveEnd->Text.ToIntDef(matrix->Details.Height);
+
+		if (se < 1 || se > matrix->Details.Height)
+		{
+			se = matrix->Details.Height;
+		}
+	}
+	else
+	{
+		se = eSelectiveEnd->Text.ToIntDef(matrix->Details.Width);
+
+		if (se < 1 || se > matrix->Details.Width)
+		{
+			se = matrix->Details.Width;
+		}
+	}
+
+	InternalEO.Code.SelectiveStart = ss;
+	InternalEO.Code.SelectiveEnd   = se;
+
+	// =======================================================================
+
+	if (sbDataRows->Down)
+	{
+		InternalEO.Code.Source = ReadSource::kRows;
+	}
+	else
+	{
+		InternalEO.Code.Source = ReadSource::kColumns;
+	}
+
+	// =======================================================================
+
+	InternalEO.OrientationFromInt(cbDirection->ItemIndex);
+
+	// =======================================================================
+
+	InternalEO.ScanDirectionFromInt(InternalEO.Code.Source, cbScanDirection->ItemIndex);
+
+	// =======================================================================
+
+	if (sbLSBLeft->Down)
+	{
+		InternalEO.Code.LSB = LeastSignificantBit::kTopLeft;
+	}
+	else
+	{
+		InternalEO.Code.LSB = LeastSignificantBit::kBottomRight;
+	}
+
+	// =======================================================================
+
+	InternalEO.LanguageFromInt(cbLanguageFormat->ItemIndex);
+
+	InternalEO.Examples = cbIncludeExample->Checked;
+
+	// =======================================================================
+
+	if (gbNumberFormat->Visible)
+	{
+		if (sbNumberDecimal->Down)
+		{
+			InternalEO.Code.Format = NumberFormat::kDecimal;
+		}
+		else if (sbNumberBinary->Down)
+		{
+			InternalEO.Code.Format = NumberFormat::kBinary;
+		}
+		else
+		{
+			InternalEO.Code.Format = NumberFormat::kHex;
+		}
+	}
+	else
+	{
+		InternalEO.Code.Format = NumberFormat::kHex;
+	}
+
+	// =======================================================================
+
+	if (gbNumberGrouping->Visible)
+	{
+		if (sbNumberSize8bit->Down)
+		{
+			InternalEO.Code.Size = NumberSize::k8Bit;
+		}
+		else if (sbNumberSize16bit->Down)
+		{
+			InternalEO.Code.Size = NumberSize::k16bit;
+		}
+		else if (sbNumberSize32bit->Down)
+		{
+			InternalEO.Code.Size = NumberSize::k32bit;
+		}
+		else if (sbNumberSize8bitSwap->Down)
+		{
+			InternalEO.Code.Size = NumberSize::k8bitSwap;
+		}
+		else if (sbNumberSize16bitSwap->Down)
+		{
+			InternalEO.Code.Size = NumberSize::k16bitSwap;
+		}
+	}
+	else
+	{
+		if (sbNumberSizeRGB8bits->Down)
+		{
+			InternalEO.Code.Size = NumberSize::kRGB8bit;
+		}
+		else if (sbNumberSizeRGB32bits->Down)
+		{
+			InternalEO.Code.Size = NumberSize::kRGB32bit;
+		}
+		else
+		{
+			InternalEO.Code.Size = NumberSize::kRGB32bit;
+		}
+	}
+
+	// =======================================================================
+
+	if (sbOutputRow->Down)
+	{
+		InternalEO.Code.Content = LineContent::kRowCol;
+	}
+	else if (sbOutputFrame->Down)
+	{
+		InternalEO.Code.Content = LineContent::kFrame;
+	}
+	else if (sbOutputBytes->Down)
+	{
+		InternalEO.Code.Content = LineContent::kBytes;
+	}
+
+	// =======================================================================
+
+	if (gbRGB->Visible)
+	{
+		InternalEO.Code.RGBEnabled = true;
+
+		if (sbRGB->Down)
+		{
+			InternalEO.Code.RGBFormat = RGBMode::kRGB;
+		}
+		else if (sbBGR->Down)
+		{
+			InternalEO.Code.RGBFormat = RGBMode::kBGR;
+		}
+		else if (sbGRB->Down)
+		{
+			InternalEO.Code.RGBFormat = RGBMode::kGRB;
+		}
+		else if (sbBRG->Down)
+		{
+			InternalEO.Code.RGBFormat  = RGBMode::kBRG;
+		}
+
+		InternalEO.Code.RGBChangePixels = cbChangeBackgroundPixels->Checked;
+		InternalEO.Code.RGBChangeColour = shapeBackgroundPixels->Brush->Color;
+
+		InternalEO.Code.RGBBrightness   = groupBoxRGBBrightness->Text.ToIntDef(100);
+
+		if (sbCSRGB32->Down)
+		{
+			InternalEO.Code.ColourSpaceRGB = ColourSpace::kRGB32;
+			//InternalEO.Code.Size     = NumberSize::kRGB32bit;
+		}
+		else
+		{
+			InternalEO.Code.ColourSpaceRGB = ColourSpace::kRGB565;
+			InternalEO.Code.Size     = NumberSize::kRGB16bit;
+		}
+	}
+	else
+	{
+		InternalEO.Code.RGBEnabled = false;
+	}
+
+	// =======================================================================
+
+	InternalEO.Code.LineCount = cbLineCount->Text.ToInt();
+
+	// =======================================================================
+	//   binary file specific options
+	// =======================================================================
+
+	if (sbBinaryDataRows->Down)
+	{
+		InternalEO.Binary.Source = ReadSource::kRows;
+	}
+	else
+	{
+		InternalEO.Binary.Source = ReadSource::kColumns;
+	}
+
+	// =======================================================================
+
+	InternalEO.BinaryOrientationFromInt(cbBinaryDirection->ItemIndex);
+
+	// =======================================================================
+
+	InternalEO.BinaryScanDirectionFromInt(InternalEO.Binary.Source, cbBinaryScanDirection->ItemIndex);
+
+	// =======================================================================
+
+	if (sbBinaryLSBLeft->Down)
+	{
+		InternalEO.Binary.LSB = LeastSignificantBit::kTopLeft;
+	}
+	else
+	{
+		InternalEO.Binary.LSB = LeastSignificantBit::kBottomRight;
+	}
+
+	// =======================================================================
+
+	if (gbBinaryRGB->Visible)
+	{
+		if (sbBinaryRGB->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kRGB;
+		}
+		else if (sbBinaryBGR->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kBGR;
+		}
+		else if (sbBinaryGRB->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kGRB;
+		}
+		else if (sbBinaryBRG->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kBRG;
+		}
+
+		InternalEO.Binary.RGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
+		InternalEO.Binary.RGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
+
+		InternalEO.Binary.RGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
+
+		if (sbBCSRGB32->Down)
+		{
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB32;
+		}
+		else
+		{
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB565;
+		}
+	}
+}
+
+
+void TfrmExport::CreateExportOptionsFreeform()
+{
+	if (cbOptimise->Checked)
+	{
+		InternalEO.Code.IncludePreamble = false;
+		InternalEO.Code.CleanMode       = true;
+	}
+	else
+	{
+		InternalEO.Code.IncludePreamble = true;
+		InternalEO.Code.CleanMode       = false;
+	}
+
+	// =======================================================================
+
+	if (InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
 		InternalEO.Code.StartFrame = eFrameStart->Text.ToInt() - 1;
 		InternalEO.Code.EndFrame   = eFrameEnd->Text.ToInt() - 1;
@@ -792,13 +1114,185 @@ void TfrmExport::CreateExportOptions()
 
 void TfrmExport::CreateBinaryExportOptions()
 {
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+		InternalEO.ExportMode == ExportSource::kUserMemoriesGrid)
+	{
+		CreateBinaryExportOptionsGrid();
+	}
+	else
+	{
+		CreateBinaryExportOptionsFreeform();
+	}
+}
+
+
+void TfrmExport::CreateBinaryExportOptionsGrid()
+{
 	//  eeo.Language     := -1; // none
 	InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;  // process in frames
 	InternalEO.Binary.Format = NumberFormat::kHex;   // always in hex format
 
 	// =========================================================================
 
-	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid)
+	{
+		InternalEO.Binary.StartFrame = eBinaryFrameStart->Text.ToInt() - 1;
+		InternalEO.Binary.EndFrame   = eBinaryFrameEnd->Text.ToInt() - 1;
+	}
+	else
+	{
+		InternalEO.Binary.StartFrame = eBinaryFrameStart->Text.ToInt() - 1;
+		InternalEO.Binary.EndFrame   = eBinaryFrameEnd->Text.ToInt() - 1;
+	}
+
+	// =========================================================================
+
+	int se = 0;
+	int ss = eBinarySelectiveStart->Text.ToIntDef(1);
+
+	if (sbDataRows->Down)
+	{
+		se = eBinarySelectiveEnd->Text.ToIntDef(matrix->Details.Height);
+
+		if (se < 1 || se > matrix->Details.Height)
+		{
+			se = matrix->Details.Height;
+		}
+	}
+	else
+	{
+		se = eBinarySelectiveEnd->Text.ToIntDef(matrix->Details.Width);
+
+		if (se < 1 || se > matrix->Details.Width)
+		{
+			se = matrix->Details.Width;
+		}
+	}
+
+	InternalEO.Binary.SelectiveStart = ss;
+	InternalEO.Binary.SelectiveEnd   = se;
+
+	// =========================================================================
+
+	if (sbBinaryDataRows->Down)
+	{
+		InternalEO.Binary.Source = ReadSource::kRows;
+	}
+	else
+	{
+		InternalEO.Binary.Source = ReadSource::kColumns;
+	}
+
+	// =========================================================================
+
+	InternalEO.BinaryOrientationFromInt(cbBinaryDirection->ItemIndex);
+
+	// =========================================================================
+
+	InternalEO.BinaryScanDirectionFromInt(InternalEO.Binary.Source, cbBinaryScanDirection->ItemIndex);
+
+	// =========================================================================
+
+	if (sbBinaryLSBLeft->Down)
+	{
+		InternalEO.Binary.LSB = LeastSignificantBit::kTopLeft;
+	}
+	else
+	{
+		InternalEO.Binary.LSB = LeastSignificantBit::kBottomRight;
+	}
+
+	// =========================================================================
+
+	if (gbNumberGroupingBinary->Visible)
+	{
+		if (sbBinaryNumberSize8bit->Down)
+		{
+			InternalEO.Binary.Size = NumberSize::k8Bit;
+		}
+		else if (sbBinaryNumberSize8bitSwap->Down)
+		{
+			InternalEO.Binary.Size = NumberSize::k8bitSwap;
+		}
+		else if (sbBinaryNumberSize16bitSwap->Down)
+		{
+			InternalEO.Binary.Size = NumberSize::k16bitSwap;
+		}
+		else
+		{
+			InternalEO.Binary.Size = NumberSize::kRGB8bit;
+		}
+	}
+
+	if (gbNumberGroupingBinaryRGB->Visible)
+	{
+        InternalEO.Binary.Size = NumberSize::kRGB8bit;
+	}
+
+	// =========================================================================
+
+	if (gbBinaryRGB->Visible)
+	{
+		InternalEO.Binary.RGBEnabled = true;
+
+		if (sbBinaryRGB->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kRGB;
+		}
+		else if (sbBinaryBGR->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kBGR;
+		}
+		else if (sbBinaryGRB->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kGRB;
+		}
+		else if (sbBinaryBRG->Down)
+		{
+			InternalEO.Binary.RGBFormat = RGBMode::kBRG;
+		}
+
+		InternalEO.Binary.RGBChangePixels = cbBinaryChangeBackgroundPixels->Checked;
+		InternalEO.Binary.RGBChangeColour = shapeBinaryBackgroundPixels->Brush->Color;
+
+		InternalEO.Binary.RGBBrightness   = groupBoxBinaryRGBBrightness->Text.ToIntDef(100);
+
+		if (sbBCSRGB32->Down)
+		{
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB32;
+		}
+		else
+		{
+			InternalEO.Binary.ColourSpaceRGB = ColourSpace::kRGB565;
+		}
+	}
+	else
+	{
+		InternalEO.Binary.RGBEnabled = false;
+	}
+
+	// =======================================================================
+
+	if (rbSaveAnimation->Checked)
+	{
+		InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;
+	}
+	else
+	{
+		InternalEO.Binary.Content = BinaryFileContents::kSingleFrame;
+	}
+}
+
+
+void TfrmExport::CreateBinaryExportOptionsFreeform()
+{
+	//  eeo.Language     := -1; // none
+	InternalEO.Binary.Content = BinaryFileContents::kEntireAnimation;  // process in frames
+	InternalEO.Binary.Format = NumberFormat::kHex;   // always in hex format
+
+	// =========================================================================
+
+	if (InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
 		InternalEO.Binary.StartFrame = eBinaryFrameStart->Text.ToInt() - 1;
 		InternalEO.Binary.EndFrame   = eBinaryFrameEnd->Text.ToInt() - 1;
@@ -1162,7 +1656,8 @@ void TfrmExport::PreviewBinary()
 	int endframelimit = 0;
     int entrycount = 0;
 
-	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+		InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
 		endframelimit = matrix->GetFrameCount();
 	}
@@ -1215,7 +1710,7 @@ void TfrmExport::PreviewBinary()
 		}
 		else
 		{
-			if (Mode == MatrixMode::kRGB3BPP)
+			if (Mode == MatrixColourMode::kRGB3BPP)
 			{
 				ExportOutputBinary::BinaryCreateExportAnimationRGB3bpp(matrix, InternalEO, IOutput, entrycount);
 			}
@@ -1299,7 +1794,8 @@ void TfrmExport::PreviewCode()
 	int endframelimit = 0;
 	int entrycount = 0;
 
-	if (InternalEO.ExportMode == ExportSource::kAnimation)
+	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+	    InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
 		endframelimit = matrix->GetFrameCount();
 	}
@@ -1335,9 +1831,9 @@ void TfrmExport::PreviewCode()
 
 		switch (Mode)
 		{
-		case MatrixMode::kMono:
-		case MatrixMode::kBiSequential:
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kMono:
+		case MatrixColourMode::kBiSequential:
+		case MatrixColourMode::kBiBitplanes:
 			if (cbOptimise->Checked)
 			{
 				ExportMonoBi::CreateExportAnimation(matrix, InternalEO, Output, entrycount, Unique);
@@ -1354,38 +1850,54 @@ void TfrmExport::PreviewCode()
 				ExportMonoBi::CreateExportAnimation(matrix, InternalEO, Output, entrycount, Unique);
 			}
 			break;
-		case MatrixMode::kRGB:
-			if (cbOptimise->Checked)
+		case MatrixColourMode::kRGB:
+			if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+				InternalEO.ExportMode == ExportSource::kUserMemoriesGrid)
 			{
-				ExportRGB::CreateExportAnimationRGB(matrix, InternalEO, Output, entrycount, Unique);
-
-				if (!Optimiser::OptimiseData(matrix, InternalEO, Output))
+				if (cbOptimise->Checked)
 				{
-					ClearForRetry();
+					ExportRGB::CreateExportAnimationRGB(matrix, InternalEO, Output, entrycount, Unique);
 
+					if (!Optimiser::OptimiseData(matrix, InternalEO, Output))
+					{
+						ClearForRetry();
+
+						ExportRGB::CreateExportAnimationRGB(matrix, InternalEO, Output, entrycount, Unique);
+					}
+				}
+				else
+				{
 					ExportRGB::CreateExportAnimationRGB(matrix, InternalEO, Output, entrycount, Unique);
 				}
 			}
 			else
 			{
-				ExportRGB::CreateExportAnimationRGB(matrix, InternalEO, Output, entrycount, Unique);
+				ExportRGB::CreateExportFreeformRGB(matrix, InternalEO, Output, entrycount, Unique);
 			}
 			break;
-		case MatrixMode::kRGB3BPP:
-			if (cbOptimise->Checked)
+		case MatrixColourMode::kRGB3BPP:
+			if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
+				InternalEO.ExportMode == ExportSource::kUserMemoriesGrid)
 			{
-				ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
-
-				if (!Optimiser::OptimiseData(matrix, InternalEO, Output))
+				if (cbOptimise->Checked)
 				{
-					ClearForRetry();
+					ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
 
+					if (!Optimiser::OptimiseData(matrix, InternalEO, Output))
+					{
+						ClearForRetry();
+
+						ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
+					}
+				}
+				else
+				{
 					ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
 				}
 			}
 			else
 			{
-				ExportRGB3BPP::CreateExportAnimationRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
+				ExportRGB3BPP::CreateExportFreeformRGB3BPP(matrix, InternalEO, Output, entrycount, Unique);
 			}
 			break;
 
@@ -1860,21 +2372,21 @@ void TfrmExport::PopulateProfileList()
 
 	switch (Mode)
 	{
-	case MatrixMode::kMono:
-	case MatrixMode::kBiSequential:
-	case MatrixMode::kBiBitplanes:
+	case MatrixColourMode::kMono:
+	case MatrixColourMode::kBiSequential:
+	case MatrixColourMode::kBiBitplanes:
 		for (int t = 0; t < GProfileHandler->Profiles.size(); t++)
 		{
 			cbProfileList->Items->Add(GProfileHandler->Profiles[t].c_str());
 		}
 		break;
-	case MatrixMode::kRGB:
+	case MatrixColourMode::kRGB:
 		for (int t = 0; t < GProfileHandler->ProfilesRGB.size(); t++)
 		{
 			cbProfileList->Items->Add(GProfileHandler->ProfilesRGB[t].c_str());
 		}
 		break;
-	case MatrixMode::kRGB3BPP:
+	case MatrixColourMode::kRGB3BPP:
 		for (int t = 0; t < GProfileHandler->ProfilesRGB3BPP.size(); t++)
 		{
 			cbProfileList->Items->Add(GProfileHandler->ProfilesRGB3BPP[t].c_str());

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -60,12 +60,13 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 
 	// =======================================================================
 
-	if (frmNewBrush->Settings.Mode != MatrixMode::kRGB)
+	if (frmNewBrush->Settings.Mode != MatrixColourMode::kRGB)
 	{
 		frmNewBrush->pRGBPalette->Visible = false;
 	}
 
-	frmNewBrush->MatrixAutomate->NewMatrix(frmNewBrush->Settings.Mode, 1,
+	frmNewBrush->MatrixAutomate->NewMatrix(MatrixDrawMode::kGrid,
+										   frmNewBrush->Settings.Mode, 1,
 										   4, 4,
 										   frmNewBrush->Settings.Width, frmNewBrush->Settings.Height,
 										   25, PixelShape::kSquare, true, false, true, 0x00000000);
@@ -87,7 +88,7 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 	frmNewBrush->MatrixAutomate->LEDColours[0]   = 0x00ffffff;
 	frmNewBrush->MatrixAutomate->LEDColours[1]   = 0x00000000;
 
-	frmNewBrush->MatrixAutomate->Render.Draw.Colour = 1;
+	frmNewBrush->MatrixAutomate->Render.Action.Colour = 1;
 	frmNewBrush->MatrixAutomate->RGBBackground   = 0x00000000;
 
 	// =======================================================================
@@ -143,7 +144,7 @@ void __fastcall TfrmNewBrush::FormDestroy(TObject *Sender)
 
 void __fastcall TfrmNewBrush::FormShow(TObject *Sender)
 {
-	if (MatrixAutomate->Details.Mode != MatrixMode::kRGB)
+	if (MatrixAutomate->Details.ColourMode != MatrixColourMode::kRGB)
 	{
 		clbMain->Enabled    = false;
 		bAddColour->Enabled = false;
@@ -825,11 +826,10 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 		// ===========================================================================
 
 		int row = 0;
-		bool headermode = false;
-		bool coloursmode = false;
-		bool matrixmode = false;
 
-		MatrixMode ImportMode = MatrixMode::kMono;
+		FileUtility::FileBlock block = FileUtility::FileBlock::kNone;
+
+		MatrixColourMode ImportMode = MatrixColourMode::kMono;
 
 		bool ValidMatrix = true;
 
@@ -855,10 +855,10 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 
 					std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
-					switch (FileUtility::LoadDataParameterType(s, headermode, matrixmode, false, false, coloursmode))
+					switch (FileUtility::LoadDataParameterType(s, block))
 					{
 					case LoadData::kLoadBlockStartHeader:
-						headermode = true;
+						block = FileUtility::FileBlock::kHeader;
 						break;
 					case LoadData::kLoadBlockBegin:
 						row = 0;
@@ -866,41 +866,38 @@ void TfrmNewBrush::LoadBrush(const std::wstring file_name)
 						switch (v[v.length() - 1])
 						{
 						case L'2':
-							ImportMode = MatrixMode::kBiSequential;
+							ImportMode = MatrixColourMode::kBiSequential;
 							break;
 						case L'3':
-							ImportMode = MatrixMode::kBiBitplanes;
+							ImportMode = MatrixColourMode::kBiBitplanes;
 							break;
 						case L'4':
-							ImportMode = MatrixMode::kRGB;
+							ImportMode = MatrixColourMode::kRGB;
 							break;
 						case L'5':
-							ImportMode = MatrixMode::kRGB3BPP;
+							ImportMode = MatrixColourMode::kRGB3BPP;
 							break;
 
 						default:
-							ImportMode = MatrixMode::kMono;
+							ImportMode = MatrixColourMode::kMono;
 						}
 
-						if (ImportMode != MatrixAutomate->Details.Mode)
+						if (ImportMode != MatrixAutomate->Details.ColourMode)
 						{
 							ValidMatrix = false;
 						}
 
-						headermode = false;
-						matrixmode = true;
+						block = FileUtility::FileBlock::kMatrixData;
 						break;
 					case LoadData::kLoadBlockEnd:
 						break;
 
 					case LoadData::kLoadBlockStartColours:
-						coloursmode = true;
-						headermode  = false;
-						matrixmode  = false;
+						block = FileUtility::FileBlock::kColours;
 						break;
 
 					case LoadData::kLoadColoursCustom:
-						if (coloursmode)
+						if (block == FileUtility::FileBlock::kColours)
 						{
 							int colour = stoi(v);
 
@@ -968,21 +965,21 @@ void TfrmNewBrush::SaveBrush(const std::wstring file_name)
 
 		// ===================================================================
 
-		switch (MatrixAutomate->Details.Mode)
+		switch (MatrixAutomate->Details.ColourMode)
 		{
-		case MatrixMode::kMono:
+		case MatrixColourMode::kMono:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixMono + L"\n");
 			break;
-		case MatrixMode::kBiSequential:
+		case MatrixColourMode::kBiSequential:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixBiSequential + L"\n");
 			break;
-		case MatrixMode::kBiBitplanes:
+		case MatrixColourMode::kBiBitplanes:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixBiBitPlanes + L"\n");
 			break;
-		case MatrixMode::kRGB:
+		case MatrixColourMode::kRGB:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixRGB + L"\n");
 			break;
-		case MatrixMode::kRGB3BPP:
+		case MatrixColourMode::kRGB3BPP:
 			file << Formatting::to_utf8(L"{" + kBrushPrefixRGB3BPP + L"\n");
 			break;
 
