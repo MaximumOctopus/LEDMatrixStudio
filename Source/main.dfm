@@ -2611,6 +2611,7 @@ object frmMain: TfrmMain
     end
   end
   object miMain: TMainMenu
+    AutoHotkeys = maManual
     AutoLineReduction = maManual
     Images = ilMenu
     Left = 728
@@ -4947,6 +4948,7 @@ object frmMain: TfrmMain
       000000000000}
   end
   object puPresets: TPopupMenu
+    AutoHotkeys = maManual
     Images = ilMain
     Left = 928
     object Presets1: TMenuItem
@@ -4968,6 +4970,7 @@ object frmMain: TfrmMain
     end
   end
   object puPixelSize: TPopupMenu
+    AutoHotkeys = maManual
     Left = 984
     object PixelSize1: TMenuItem
       Caption = '.'
@@ -5044,6 +5047,7 @@ object frmMain: TfrmMain
     end
   end
   object puFonts: TPopupMenu
+    AutoHotkeys = maManual
     Left = 880
     object MenuItem1: TMenuItem
       Caption = '.'
@@ -5072,6 +5076,7 @@ object frmMain: TfrmMain
     end
   end
   object puAnimationSpeed: TPopupMenu
+    AutoHotkeys = maManual
     Left = 952
     Top = 56
     object Playbackspeed1: TMenuItem
@@ -5186,6 +5191,7 @@ object frmMain: TfrmMain
     Top = 56
   end
   object puGradient: TPopupMenu
+    AutoHotkeys = maManual
     Left = 792
     Top = 65528
     object miGradientColour0: TMenuItem
@@ -5209,6 +5215,7 @@ object frmMain: TfrmMain
     end
   end
   object puGradients: TPopupMenu
+    AutoHotkeys = maManual
     Left = 824
     object MenuItem3: TMenuItem
       Caption = '.'
@@ -5229,6 +5236,7 @@ object frmMain: TfrmMain
     end
   end
   object puPixelShape: TPopupMenu
+    AutoHotkeys = maManual
     Left = 1104
     object MenuItem5: TMenuItem
       Caption = '.'
@@ -5262,6 +5270,7 @@ object frmMain: TfrmMain
     end
   end
   object puBrushSize: TPopupMenu
+    AutoHotkeys = maManual
     Left = 1216
     object MenuItem8: TMenuItem
       Caption = '.'
@@ -5302,6 +5311,7 @@ object frmMain: TfrmMain
     end
   end
   object puGradientRGB: TPopupMenu
+    AutoHotkeys = maManual
     OnPopup = puGradientRGBPopup
     Left = 1008
     Top = 56
@@ -5326,6 +5336,7 @@ object frmMain: TfrmMain
     end
   end
   object puRandom: TPopupMenu
+    AutoHotkeys = maManual
     Left = 1160
     object MenuItem10: TMenuItem
       Caption = '.'
@@ -5374,6 +5385,7 @@ object frmMain: TfrmMain
     Top = 160
   end
   object puPreview: TPopupMenu
+    AutoHotkeys = maManual
     Left = 1040
     object Previewsize2: TMenuItem
       Caption = '.'
@@ -5570,6 +5582,7 @@ object frmMain: TfrmMain
     Top = 260
   end
   object puGradientRGB_3BPP: TPopupMenu
+    AutoHotkeys = maManual
     Left = 1112
     Top = 56
     object miGradientRGB3BPP1: TMenuItem

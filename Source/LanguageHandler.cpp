@@ -36,7 +36,11 @@ bool LanguageHandler::LoadLanguage(const std::wstring LanguageId)
 {
 	std::wstring path = ExtractFilePath(Application->ExeName).c_str();
 
-	std::wifstream file(path + L"language\\" + LanguageId + L".txt");
+	std::wifstream file;
+
+	file.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t, 0x10ffff, std::consume_header>));
+
+	file.open(path + L"language\\" + LanguageId + L".txt");
 
 	if (file)
 	{

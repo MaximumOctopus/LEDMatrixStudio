@@ -1083,7 +1083,7 @@ void __fastcall TfrmMain::MatrixOnChange(TheMatrix *Sender)
 
 			if (index >= 0)
 			{
-				MatrixPixel *pixel = thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->Pixels[index];
+				MatrixPixel *pixel = thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[index];
 
 				sbFreeformSetOrder->Tag = index;
 				eFreeformOrder->Text = pixel->Order;
@@ -1221,7 +1221,7 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 									   L": " + GSystemSettings->App.HexPrefix;
 
 				 statusMain->SimpleText = caption.c_str() +
-										  IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
+										  IntToHex(ColourUtility::RGBConvertTo32(thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
 				 break;
 			}
 			case MatrixColourMode::kRGB3BPP:
@@ -1232,7 +1232,7 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 									   L": " + GSystemSettings->App.HexPrefix;
 
 				statusMain->SimpleText = caption.c_str() +
-										 IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
+										 IntToHex(thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
 				break;
 			}
 
@@ -1245,9 +1245,9 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 				if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 				{
 					std::wstring caption =  GSystemSettings->App.HexPrefix +
-										   IntToHex(ColourUtility::RGBConvertTo32(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6).c_str() +
+										   IntToHex(ColourUtility::RGBConvertTo32(thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6).c_str() +
 										   L" (" +
-										   ColourUtility::RGBConvertToSplit(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGBSimple, 100, NumberFormat::kDecimal, L"", L" ", ColourSpace::kRGB32) +
+										   ColourUtility::RGBConvertToSplit(thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], RGBMode::kRGBSimple, 100, NumberFormat::kDecimal, L"", L" ", ColourSpace::kRGB32) +
 										   L")";
 
 					lPixelColour->Caption = caption.c_str();
@@ -1255,7 +1255,7 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 				else
 				{
 					lPixelColour->Caption = GSystemSettings->App.HexPrefix.c_str() +
-										   IntToHex(thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
+										   IntToHex(thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Cells[GetSelectedFrame()]->Grid[y * thematrix->Details.Width + x], 2);
 				}
 			}
 		}
@@ -1895,7 +1895,7 @@ void TfrmMain::BuildLanguageMenu()
 			mi->Caption   = GSystemSettings->Languages[t].c_str();
 			mi->RadioItem = true;
 			mi->AutoCheck = true;
-			mi->Tag       = 0;
+			mi->Tag       = t;
 			mi->OnClick   = LanguageClick;
 
 			miLanguage->Add(mi);
@@ -4253,7 +4253,7 @@ void __fastcall TfrmMain::sbFreeformSetOrderClick(TObject *Sender)
 
 	if (new_order != -1)
 	{
-		thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->SetOrder(sbFreeformSetOrder->Tag, new_order);
+		thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->SetOrder(sbFreeformSetOrder->Tag, new_order);
 	}
 }
 
@@ -4264,7 +4264,7 @@ void __fastcall TfrmMain::sbFreeformSetOrderSwapClick(TObject *Sender)
 
 	if (new_order != -1)
 	{
-		thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->SetOrderSwap(sbFreeformSetOrder->Tag, new_order);
+		thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->SetOrderSwap(sbFreeformSetOrder->Tag, new_order);
 	}
 }
 
@@ -4277,7 +4277,7 @@ void __fastcall TfrmMain::cbApplyToGroupClick(TObject *Sender)
 
 void TfrmMain::UpdatePixelGroupList()
 {
-	int maxgroup = thematrix->MatrixLayers[thematrix->GetCurrentLayer()]->Freeform->NextGroupId;
+	int maxgroup = thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->NextGroupId;
 
 	cbFreeformGroup->Items->Clear();
 
@@ -5497,9 +5497,9 @@ void __fastcall TfrmMain::miGradientColour0Click(TObject *Sender)
 
 	for (int column = 0; column < thematrix->Details.Width; column++)
 	{
-		if (thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
+		if (thematrix->Data->Layers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
 		{
-			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
+			thematrix->Data->Layers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
 		}
 	}
 
@@ -6219,9 +6219,9 @@ void __fastcall TfrmMain::miGradientRGB3BPP1Click(TObject *Sender)
 
 	for (int column = 0; column < thematrix->Details.Width; column++)
 	{
-		if (thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
+		if (thematrix->Data->Layers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] != 0)
 		{
-			thematrix->MatrixLayers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
+			thematrix->Data->Layers[0]->Cells[GetSelectedFrame()]->Grid[puGradient->Tag * thematrix->Details.Width + column] = mi->Tag;
 		}
 	}
 
@@ -6405,7 +6405,7 @@ void __fastcall TfrmMain::LanguageClick(TObject *Sender)
 {
 	TMenuItem *mi = (TMenuItem*)Sender;
 
-	GSystemSettings->App.Language = mi->Caption;
+	GSystemSettings->App.Language = GSystemSettings->Languages[mi->Tag];
 }
 
 
