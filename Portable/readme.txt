@@ -142,6 +142,10 @@
  Please consider sending it to me so that I may include it with
  future updates.
 
+== Updates for 0.21.02 beta ============================================
+
+- Fixed language loading bug (now correctly loads Chinese).
+
 == Updates for 0.21.01 beta ============================================
 
 - Added a new mode, Freeform, which removes the need for LED grids. You can now
