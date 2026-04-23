@@ -49,7 +49,7 @@ void __fastcall TframeLayers::sbLayersRenameClick(TObject *Sender)
 
 		if (!name.empty())
 		{
-			ParentMatrix->SetLayerName(name, sgLayers->RowCount - 1 - sgLayers->Selection.Top);
+			ParentMatrix->Data->SetLayerName(name, sgLayers->RowCount - 1 - sgLayers->Selection.Top);
 		}
 	}
 }
@@ -71,9 +71,9 @@ void __fastcall TframeLayers::sbAddNewLayerClick(TObject *Sender)
 {
 	std::vector<std::wstring> layers;
 
-	for (int t = 0; t < ParentMatrix->GetLayerCount(); t++)
+	for (int t = 0; t < ParentMatrix->Data->GetLayerCount(); t++)
 	{
-		layers.push_back(ParentMatrix->GetLayerName(t));
+		layers.push_back(ParentMatrix->Data->GetLayerName(t));
 	}
 
 	AddObject ao = OpenAddLayer(layers);
@@ -117,7 +117,7 @@ void __fastcall TframeLayers::sgLayersClick(TObject *Sender)
 		sbLayerDown->Enabled = true;
 	}
 
-	if (ParentMatrix->GetCurrentLayer() == ParentMatrix->GetLayerCount() - 1)
+	if (ParentMatrix->GetCurrentLayer() == ParentMatrix->Data->GetLayerCount() - 1)
 	{
 		sbLayerUp->Enabled = false;
 	}
@@ -159,13 +159,13 @@ void __fastcall TframeLayers::sgLayersSelectCell(TObject *Sender, int ACol, int 
 		{
 			sgLayers->Cells[ACol][ARow] = L"";
 
-			ParentMatrix->UnlockLayer(layer);
+			ParentMatrix->Data->UnlockLayer(layer);
 		}
 		else
 		{
 			sgLayers->Cells[ACol][ARow] = L"L";
 
-			ParentMatrix->LockLayer(layer);
+			ParentMatrix->Data->LockLayer(layer);
 		}
 	}
 }
@@ -190,13 +190,13 @@ void TframeLayers::SetGuiLanguageText()
 
 void TframeLayers::UpdateLayerTable()
 {
-	int count = ParentMatrix->GetLayerCount();
+	int count = ParentMatrix->Data->GetLayerCount();
 
 	sgLayers->RowCount = count + 1;
 
 	for (int t = 0; t < count; t++)
 	{
-		sgLayers->Cells[CCellName][1 + count - 1 - t] = ParentMatrix->GetLayerName(t).c_str();
+		sgLayers->Cells[CCellName][1 + count - 1 - t] = ParentMatrix->Data->GetLayerName(t).c_str();
 
 		if (ParentMatrix->IsVisible(t))
 		{
@@ -216,7 +216,7 @@ void TframeLayers::UpdateLayerTable()
 			}
 		}
 
-		if (ParentMatrix->IsLayerLocked(t))
+		if (ParentMatrix->Data->Layers[t]->Locked)
 		{
 			sgLayers->Cells[CCellLocked][1 + count - 1 - t] = L"L";
 		}
@@ -262,7 +262,7 @@ void TframeLayers::UpdateLayerTable()
 		sbLayerDown->Enabled = true;
 	}
 
-	if (ParentMatrix->GetCurrentLayer() == ParentMatrix->GetLayerCount() - 1)
+	if (ParentMatrix->GetCurrentLayer() == ParentMatrix->Data->GetLayerCount() - 1)
 	{
 		sbLayerUp->Enabled = false;
 	}
@@ -276,13 +276,13 @@ void TframeLayers::UpdateLayerTable()
 // updates the lock/visible status of currently available layers
 void TframeLayers::UpdateExisting()
 {
-	int count = ParentMatrix->GetLayerCount();
+	int count = ParentMatrix->Data->GetLayerCount();
 
 	sgLayers->RowCount = count + 1;
 
 	for (int t = 0; t < count; t++)
 	{
-		sgLayers->Cells[CCellName][1 + count - 1 - t] = ParentMatrix->GetLayerName(t).c_str();
+		sgLayers->Cells[CCellName][1 + count - 1 - t] = ParentMatrix->Data->GetLayerName(t).c_str();
 
 		if (ParentMatrix->IsVisible(t))
 		{
@@ -302,7 +302,7 @@ void TframeLayers::UpdateExisting()
 			}
 		}
 
-		if (ParentMatrix->IsLayerLocked(t))
+		if (ParentMatrix->Data->Layers[t]->Locked)
 		{
 			sgLayers->Cells[CCellLocked][1 + count - 1 - t] = L"L";
 		}

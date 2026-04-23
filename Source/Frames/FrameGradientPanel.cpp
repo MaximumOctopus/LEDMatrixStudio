@@ -81,13 +81,13 @@ void __fastcall TframeGradient::eRedKeyPress(TObject *Sender, System::WideChar &
 		{
 			switch (edit->Tag)
 			{
-			case CRed:
+			case kRed:
 				tbRed->Position   = value;
 				break;
-			case CGreen:
+			case kGreen:
 				tbGreen->Position = value;
 				break;
-			case CBlue:
+			case kBlue:
 				tbBlue->Position  = value;
 				break;
 			}
@@ -173,13 +173,13 @@ void __fastcall TframeGradient::tbRedChange(TObject *Sender)
 
 		switch (tb->Tag)
 		{
-		case CRed:
+		case kRed:
 			eRed->Text   = tb->Position;
 			break;
-		case CGreen:
+		case kGreen:
 			eGreen->Text = tb->Position;
 			break;
-		case CBlue:
+		case kBlue:
 			eBlue->Text  = tb->Position;
 			break;
 		}

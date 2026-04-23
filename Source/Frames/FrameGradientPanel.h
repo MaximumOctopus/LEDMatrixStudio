@@ -50,9 +50,9 @@ __published:	// IDE-managed Components
 	void __fastcall sbClearGradientClick(TObject *Sender);
 private:
 
-	static const int CRed = 0;
-	static const int CGreen = 1;
-	static const int CBlue  = 2;
+	static const int kRed = 0;
+	static const int kGreen = 1;
+	static const int kBlue  = 2;
 
     enum class LoadGradient { kUnknown = 0, kLoadBegin, kLoadEnd, kLoadData };
 
