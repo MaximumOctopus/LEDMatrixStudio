@@ -2,7 +2,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 196
+  ClientHeight = 195
   ClientWidth = 323
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,6 +10,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poMainFormCenter
   TextHeight = 15
   object Image1: TImage
     Left = 8
@@ -408,14 +409,14 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
     Transparent = True
   end
   object GroupBox1: TGroupBox
-    Left = 88
+    Left = 82
     Top = 8
     Width = 233
     Height = 137
     TabOrder = 0
     object Label1: TLabel
-      Left = 127
-      Top = 43
+      Left = 133
+      Top = 41
       Width = 16
       Height = 15
       Caption = 'ms'
@@ -427,18 +428,37 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
       Height = 15
       Caption = '.'
     end
+    object Label2: TLabel
+      Left = 133
+      Top = 70
+      Width = 19
+      Height = 15
+      Caption = 'FPS'
+    end
     object eSpeed: TEdit
-      Left = 64
-      Top = 40
+      Left = 70
+      Top = 38
       Width = 57
       Height = 23
+      Alignment = taRightJustify
       TabOrder = 0
       Text = '1'
+      OnExit = eSpeedExit
+    end
+    object eFPS: TEdit
+      Left = 70
+      Top = 67
+      Width = 57
+      Height = 23
+      Alignment = taRightJustify
+      TabOrder = 1
+      Text = '1'
+      OnExit = eFPSExit
     end
   end
   object bOK: TBitBtn
-    Left = 165
-    Top = 168
+    Left = 159
+    Top = 163
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -486,8 +506,8 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
     OnClick = bOKClick
   end
   object bCancel: TBitBtn
-    Left = 246
-    Top = 168
+    Left = 240
+    Top = 163
     Width = 75
     Height = 25
     Cancel = True
@@ -536,6 +556,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00FF00FFFF00FF
       FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
+    ModalResult = 2
     TabOrder = 2
   end
 end

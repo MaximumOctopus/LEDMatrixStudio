@@ -3,7 +3,7 @@ object frmCheckVersion: TfrmCheckVersion
   Top = 0
   BorderStyle = bsDialog
   Caption = 'LED Matrix Builder'
-  ClientHeight = 266
+  ClientHeight = 265
   ClientWidth = 490
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -39,7 +39,7 @@ object frmCheckVersion: TfrmCheckVersion
   end
   object bClose: TBitBtn
     Left = 424
-    Top = 240
+    Top = 241
     Width = 65
     Height = 25
     Glyph.Data = {
@@ -94,7 +94,7 @@ object frmCheckVersion: TfrmCheckVersion
     Left = 95
     Top = 238
     Width = 83
-    Height = 25
+    Height = 28
     Enabled = False
     TabOrder = 1
     OnClick = bHistoryClick
@@ -117,7 +117,7 @@ object frmCheckVersion: TfrmCheckVersion
     Left = 8
     Top = 238
     Width = 83
-    Height = 25
+    Height = 28
     Glyph.Data = {
       E6040000424DE604000000000000360000002800000014000000140000000100
       180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -283,6 +283,7 @@ object frmCheckVersion: TfrmCheckVersion
     end
   end
   object httpMain: TIdHTTP
+    IOHandler = IdSSLIOHandlerSocketOpenSSL1
     AllowCookies = False
     HandleRedirects = True
     ProxyParams.BasicAuthentication = False
@@ -301,5 +302,17 @@ object frmCheckVersion: TfrmCheckVersion
     Request.Ranges = <>
     HTTPOptions = [hoForceEncodeParams]
     Left = 312
+  end
+  object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
+    MaxLineAction = maException
+    Port = 0
+    DefaultPort = 0
+    SSLOptions.Method = sslvTLSv1_2
+    SSLOptions.SSLVersions = [sslvTLSv1_2]
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 296
+    Top = 216
   end
 end

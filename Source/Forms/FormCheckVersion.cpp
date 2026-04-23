@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -62,6 +62,8 @@ void __fastcall TfrmCheckVersion::FormShow(TObject *Sender)
 		UnicodeString s = httpMain->Get(__ApplicationVersionFileUrl);
 
 		std::wstring cat = s.c_str(); // means we can avoid all of the horrible unicodestring stuff ;)
+
+		Caption = s;
 
         auto pos = cat.find(L';');
 
@@ -141,3 +143,4 @@ void TfrmCheckVersion::SetGuiLanguageText()
 	bHistory->Caption = c.c_str();
 	bClose->Caption = GLanguageHandler->Text[kClose].c_str();
 }
+

@@ -76,3 +76,35 @@ void TfrmPlaybackSpeed::SetGuiLanguageText()
 	bOK->Caption = GLanguageHandler->Text[kOK].c_str();
 	bCancel->Caption = GLanguageHandler->Text[kCancel].c_str();
 }
+
+
+void __fastcall TfrmPlaybackSpeed::eSpeedExit(TObject *Sender)
+{
+	if (eSpeed->Text != L"")
+	{
+		int s = eSpeed->Text.ToIntDef(0);
+
+		if (s > 0)
+		{
+			int fps = (int)std::ceil(1000 / (double)s);
+
+			eFPS->Text = fps;
+		}
+	}
+}
+
+
+void __fastcall TfrmPlaybackSpeed::eFPSExit(TObject *Sender)
+{
+	if (eSpeed->Text != L"")
+	{
+		int s = eFPS->Text.ToIntDef(0);
+
+		if (s > 0)
+		{
+			int ms = (int)std::ceil(1000 / (double)s);
+
+			eSpeed->Text = ms;
+		}
+	}
+}

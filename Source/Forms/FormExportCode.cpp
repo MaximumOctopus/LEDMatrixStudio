@@ -244,7 +244,7 @@ void TfrmExportCode::LoadCode()
 		int totalentrycount = 0;
 
 		eeo.Code.StartFrame     = 1;
-		eeo.Code.EndFrame       = matrix->GetFrameCount();
+		eeo.Code.EndFrame       = matrix->Data->GetFrameCount();
 
 		if (eeo.Code.Source == ReadSource::kRows)
 		{
@@ -292,12 +292,12 @@ void TfrmExportCode::LoadCode()
 
 			if (Pos(L"{$LMS_FRAMES$}", Memo1->Text) != 0)
 			{
-				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES$}", IntToStr(matrix->GetFrameCount()), TReplaceFlags() << rfReplaceAll);
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES$}", IntToStr(matrix->Data->GetFrameCount()), TReplaceFlags() << rfReplaceAll);
 			}
 
 			if (Pos(L"{$LMS_FRAMES_MINUS_ONE$}", Memo1->Text) != 0)
 			{
-				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES_MINUS_ONE$}", IntToStr(matrix->GetFrameCount() - 1), TReplaceFlags() << rfReplaceAll);
+				Memo1->Text = StringReplace(Memo1->Text, L"{$LMS_FRAMES_MINUS_ONE$}", IntToStr(matrix->Data->GetFrameCount() - 1), TReplaceFlags() << rfReplaceAll);
 			}
 
 			if (Pos(L"{$LMS_BYTES$}", Memo1->Text) != 0)

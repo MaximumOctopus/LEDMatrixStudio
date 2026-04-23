@@ -221,7 +221,7 @@ void TfrmExport::BuildUI(ExportOptions ieo)
 	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
      	InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
-		SetMaxFrameCount(matrix->GetFrameCount()); 	// anim
+		SetMaxFrameCount(matrix->Data->GetFrameCount()); 	// anim
 	}
 	else
 	{
@@ -1659,7 +1659,7 @@ void TfrmExport::PreviewBinary()
 	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
 		InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
-		endframelimit = matrix->GetFrameCount();
+		endframelimit = matrix->Data->GetFrameCount();
 	}
 	else
 	{
@@ -1797,7 +1797,7 @@ void TfrmExport::PreviewCode()
 	if (InternalEO.ExportMode == ExportSource::kAnimationGrid ||
 	    InternalEO.ExportMode == ExportSource::kAnimationFreeform)
 	{
-		endframelimit = matrix->GetFrameCount();
+		endframelimit = matrix->Data->GetFrameCount();
 	}
 	else
 	{

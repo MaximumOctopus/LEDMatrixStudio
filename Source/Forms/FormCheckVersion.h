@@ -14,6 +14,12 @@
 #include <IdTCPConnection.hpp>
 #include <Vcl.Buttons.hpp>
 #include <Vcl.ExtCtrls.hpp>
+#include <IdIOHandler.hpp>
+#include <IdIOHandlerSocket.hpp>
+#include <IdIOHandlerStack.hpp>
+#include <IdSSL.hpp>
+#include <IdSSLOpenSSL.hpp>
+#include <IdAuthentication.hpp>
 //---------------------------------------------------------------------------
 class TfrmCheckVersion : public TForm
 {
@@ -37,6 +43,7 @@ __published:	// IDE-managed Components
 	TGroupBox *GroupBox1;
 	TLabel *lWhat;
 	TIdHTTP *httpMain;
+	TIdSSLIOHandlerSocketOpenSSL *IdSSLIOHandlerSocketOpenSSL1;
 	void __fastcall bWebsiteClick(TObject *Sender);
 	void __fastcall bHistoryClick(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);

@@ -49,6 +49,7 @@ public:
     int MatrixHeight = 0;
 };
 
+
 struct SetIgnoredPixels
 {
 	bool Process = false;

@@ -32,7 +32,11 @@ __published:	// IDE-managed Components
 	TEdit *eSpeed;
 	TBitBtn *bOK;
 	TBitBtn *bCancel;
+	TEdit *eFPS;
+	TLabel *Label2;
 	void __fastcall bOKClick(TObject *Sender);
+	void __fastcall eSpeedExit(TObject *Sender);
+	void __fastcall eFPSExit(TObject *Sender);
 private:
 
 	void SetGuiLanguageText();

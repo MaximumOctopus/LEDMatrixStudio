@@ -97,8 +97,11 @@ NewBrush OpenNewBrush(std::vector<std::wstring> &BrushData, MatrixSettings Brush
 	{
 		brush.Proceed = true;
 
-		brush.Width   = frmNewBrush->MatrixAutomate->RightBounds() + 1;
-		brush.Height  = frmNewBrush->MatrixAutomate->BottomBounds() + 1;
+		int CurrentLayer = frmNewBrush->MatrixAutomate->GetCurrentLayer();
+		int CurrentFrame = frmNewBrush->MatrixAutomate->GetCurrentFrame();
+
+		brush.Width   = frmNewBrush->MatrixAutomate->Data->RightBounds(CurrentLayer, CurrentFrame) + 1;
+		brush.Height  = frmNewBrush->MatrixAutomate->Data->BottomBounds(CurrentLayer, CurrentFrame) + 1;
 
 		BrushData.clear();
 

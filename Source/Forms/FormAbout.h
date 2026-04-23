@@ -30,6 +30,7 @@ __published:	// IDE-managed Components
 	TLabel *Label3;
 	TLabel *lVersion;
 	TShape *Shape1;
+	TImage *Image2;
 	void __fastcall lEmailClick(TObject *Sender);
 	void __fastcall lWebsiteClick(TObject *Sender);
 private:	// User declarations
