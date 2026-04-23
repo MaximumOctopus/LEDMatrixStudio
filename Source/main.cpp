@@ -106,7 +106,8 @@ void __fastcall TfrmMain::FormCreate(TObject *Sender)
 	thematrix->OnNewFrameDisplayed   = std::bind(MatrixOnNewFrameDisplayed, std::placeholders::_1);
 	thematrix->OnColourChange        = std::bind(MatrixOnColourChange, std::placeholders::_1);
 	thematrix->OnNew3bppColours      = std::bind(MatrixOnNew3bppColours, std::placeholders::_1);
-	thematrix->OnMouseOver           = std::bind(MatrixOnMouseOver, std::placeholders::_1, std::placeholders::_2);
+	thematrix->OnMouseOver           = std::bind(MatrixOnMouseOver, std::placeholders::_1, std::placeholders::_2);  // grid drawmode only
+	thematrix->OnMouseOverPixel      = std::bind(MatrixOnMouseOverPixel, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3); // freeform drawmode only
 	thematrix->OnPreviewMouseDown    = std::bind(MatrixOnPreviewMouseDown, std::placeholders::_1, std::placeholders::_2);
 	thematrix->OnDebugEvent          = std::bind(MatrixOnDebug, std::placeholders::_1, std::placeholders::_2);
 
@@ -543,6 +544,13 @@ void TfrmMain::InitFrames()
 	FrameQuickData->Align          = alClient;
 	FrameQuickData->OnChange       = std::bind(QuickDataChange, std::placeholders::_1);
 	FrameQuickData->SetGuiLanguageText();
+
+	FramePixelPanel = new TframePixel(this);
+	FramePixelPanel->Parent        = pPixelPanel;
+	FramePixelPanel->Align         = alClient;
+	FramePixelPanel->OnNewX        = std::bind(OnPixelChangeX, std::placeholders::_1);
+	FramePixelPanel->OnNewY        = std::bind(OnPixelChangeY, std::placeholders::_1);
+	FramePixelPanel->OnNewGroup    = std::bind(OnPixelChangeGroup, std::placeholders::_1);
 }
 
 
@@ -688,11 +696,11 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	}
 	else
 	{
-		bDeleteFrame->Enabled           = (thematrix->GetFrameCount() > 1);
-		bDeleteMultipleFrames->Enabled  = (thematrix->GetFrameCount() > 1);
+		bDeleteFrame->Enabled           = (thematrix->Data->GetFrameCount() > 1);
+		bDeleteMultipleFrames->Enabled  = (thematrix->Data->GetFrameCount() > 1);
 
-		miDeleteFrame->Enabled          = (thematrix->GetFrameCount() > 1);
-		miDeleteMultipleFrames->Enabled = (thematrix->GetFrameCount() > 1);
+		miDeleteFrame->Enabled          = (thematrix->Data->GetFrameCount() > 1);
+		miDeleteMultipleFrames->Enabled = (thematrix->Data->GetFrameCount() > 1);
 	}
 
 	bLightbox->Enabled                 = normal_true;
@@ -707,7 +715,15 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 	sbLine->Enabled                    = normal_true;
 	sbMultiDraw->Enabled               = normal_true;
 	sbFloodFill->Enabled               = normal_true;
-	sbFont->Enabled                    = normal_true;
+
+	if (GFontHandler->Fonts.size() != 0)
+	{
+		sbFont->Enabled                    = normal_true;
+	}
+	else
+	{
+		sbFont->Enabled                    = false;
+	}
 
 	cbMirrorMode->Enabled              = normal_true;
 
@@ -842,6 +858,9 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 		miShiftDown->Enabled         = normal_true;
 
 		miAutomate->Enabled                = normal_true;
+
+		miAutoOrderPixels->Enabled         = false;
+		miPixelsToolbar->Enabled           = false;
 	}
 	else
 	{
@@ -873,6 +892,18 @@ void TfrmMain::ManageUIControls(bool shouldoverride, bool setto)
 		miShiftDown->Enabled         	   = false;
 
 		miAutomate->Enabled                = false;
+
+		miAutoOrderPixels->Enabled         = true;
+		miPixelsToolbar->Enabled           = true;
+
+		if (GFontHandler->Fonts.size() != 0)
+		{
+			sbFontFreeform->Enabled        = true;
+		}
+		else
+		{
+			sbFontFreeform->Enabled        = false;
+		}
 	}
 }
 
@@ -995,7 +1026,7 @@ void __fastcall TfrmMain::OnLayerMenuItem(int item)
 	{
 	case 1:
 		if (MessageDlg(Utility::WS2US(GLanguageHandler->Text[kClearLayer] + L" \"" +
-					   thematrix->GetLayerName(thematrix->GetCurrentLayer()) +
+					   thematrix->Data->GetLayerName(thematrix->GetCurrentLayer()) +
 					   L"\"?\n\n" +
 					   GLanguageHandler->Text[kThisCannotBeUndone]), mtWarning, mbYesNo, 0) == mrYes)
 			thematrix->ClearCurrentLayer();
@@ -1066,15 +1097,50 @@ void __fastcall TfrmMain::OnUndoSelected(int undo)
 #pragma end_region
 
 
+#pragma region FramePixel_EventCallbacks
+void __fastcall TfrmMain::OnPixelChangeX(int x)
+{
+	if (FramePixelPanel->SelectedPixelId != -1)
+	{
+		thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[FramePixelPanel->SelectedPixelId]->X = x;
+
+		thematrix->Refresh();
+	}
+}
+
+
+void __fastcall TfrmMain::OnPixelChangeY(int y)
+{
+	if (FramePixelPanel->SelectedPixelId != -1)
+	{
+		thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[FramePixelPanel->SelectedPixelId]->Y = y;
+
+		thematrix->Refresh();
+	}
+}
+
+
+void __fastcall TfrmMain::OnPixelChangeGroup(int group)
+{
+	if (FramePixelPanel->SelectedPixelId != -1)
+	{
+		thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[FramePixelPanel->SelectedPixelId]->Group = group;
+
+        thematrix->Refresh();
+	}
+}
+#pragma end_region
+
+
 #pragma region Matrix_EventCallbacks
 void __fastcall TfrmMain::MatrixOnChange(TheMatrix *Sender)
 {
-	if (thematrix->GetFrameCount() == 0)
+	if (thematrix->Data->GetFrameCount() == 0)
 	{
 	}
 	else
 	{
-		tbFrames->Max = thematrix->GetFrameCount(); // last frame available
+		tbFrames->Max = thematrix->Data->GetFrameCount(); // last frame available
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 		if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
@@ -1131,10 +1197,10 @@ void __fastcall TfrmMain::MatrixOnDisplayBufferCopied(TheMatrix *Sender)
 
 void __fastcall TfrmMain::MatrixOnNewFrameDisplayed(TheMatrix *Sender)
 {
-	tbFrames->Max                  = thematrix->GetFrameCount();
+	tbFrames->Max                  = thematrix->Data->GetFrameCount();
 
-	bDeleteFrame->Enabled          = (thematrix->GetFrameCount() > 1);
-	bDeleteMultipleFrames->Enabled = (thematrix->GetFrameCount() > 1);
+	bDeleteFrame->Enabled          = (thematrix->Data->GetFrameCount() > 1);
+	bDeleteMultipleFrames->Enabled = (thematrix->Data->GetFrameCount() > 1);
 
 	if (thematrix->GetCurrentFrame() >= 0 &&
 		tbFrames->Position != thematrix->GetCurrentFrame() + 1)
@@ -1148,7 +1214,7 @@ void __fastcall TfrmMain::MatrixOnNewFrameDisplayed(TheMatrix *Sender)
 	SetFrameCaption(GetSelectedFrame());
 
 	// move to onnewframedisplayed
-	if (thematrix->IsLocked())
+	if (thematrix->Data->IsLocked(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame()))
 	{
 		bLockFrame->Tag = 1;
 	}
@@ -1164,7 +1230,7 @@ void __fastcall TfrmMain::MatrixOnNewFrameDisplayed(TheMatrix *Sender)
 
 	if (pUndoToolbar->Visible)
 	{
-		FrameUndoPanel->SetUndos(thematrix->GetUndoCount());
+		FrameUndoPanel->SetUndos(thematrix->Data->GetUndoCount(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame()));
 	}
 }
 
@@ -1260,14 +1326,97 @@ void __fastcall TfrmMain::MatrixOnMouseOver(int x, int y)
 			}
 		}
 		break;
+	}
+}
+
+
+void __fastcall TfrmMain::MatrixOnMouseOverPixel(int x, int y, int pixelindex)
+{
+	OldMouseX = x;
+	OldMouseY = y;
+
+	int colour = 0;
+
+	if (pixelindex != -1)
+	{
+		colour = thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[pixelindex]->Colours[GetSelectedFrame()];
+	}
+
+	switch (thematrix->Details.DrawMode)
+	{
 	case MatrixDrawMode::kFreeform:
 	{
-		std::wstring caption = L"X: " + std::to_wstring(x) +
-							   L"  Y: " + std::to_wstring(y);
+		switch (thematrix->Details.ColourMode)
+		{
+		case MatrixColourMode::kRGB:
+		{
+			std::wstring caption = L"X: " + std::to_wstring(x) +
+								   L"  Y: " + std::to_wstring(y);
 
-		statusMain->SimpleText = caption.c_str();
+			if (pixelindex != -1)
+			{
+				caption += L" :" +
+						   IntToHex(ColourUtility::RGBConvertTo32(colour, RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
+			}
+
+			statusMain->SimpleText = caption.c_str();
+			break;
+		}
+		case MatrixColourMode::kRGB3BPP:
+		{
+			std::wstring caption = L"X: " + std::to_wstring(x) +
+								   L"  Y: " + std::to_wstring(y);
+
+			if (pixelindex != -1)
+			{
+				caption += L" :" +
+						   IntToHex(ColourUtility::RGBConvertTo32(colour, RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
+			}
+
+			statusMain->SimpleText = caption.c_str();
+			break;
+		}
 		break;
+		}
+	}
     }
+
+	if (lPixelColour->Visible && pixelindex != -1)
+	{
+		if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
+		{
+			std::wstring caption = GSystemSettings->App.HexPrefix +
+								   IntToHex(ColourUtility::RGBConvertTo32(colour, RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6).c_str() +
+								   L" (" +
+								   ColourUtility::RGBConvertToSplit(colour, RGBMode::kRGBSimple, 100, NumberFormat::kDecimal, L"", L" ", ColourSpace::kRGB32) +
+								   L")";
+
+			lPixelColour->Caption = caption.c_str();
+		}
+		else
+		{
+			lPixelColour->Caption = GSystemSettings->App.HexPrefix.c_str() +
+									IntToHex(ColourUtility::RGBConvertTo32(colour, RGBMode::kRGB, LeastSignificantBit::kBottomRight, 100), 6);
+		}
+	}
+	else
+	{
+		lPixelColour->Visible = L"";
+	}
+
+	if (pPixelPanel->Visible)
+	{
+		if (pixelindex != -1)
+		{
+			MatrixPixel *mp = thematrix->Data->Layers[thematrix->GetCurrentLayer()]->Freeform->Pixels[pixelindex];
+
+			FramePixelPanel->SelectedPixelId = pixelindex;
+			FramePixelPanel->Build(mp->X, mp->Y, mp->Group, mp->Order);
+		}
+		else
+		{
+            FramePixelPanel->Disable();
+		}
 	}
 }
 
@@ -1461,6 +1610,7 @@ void TfrmMain::SetGuiLanguageText()
 	miShowAnimationToolbar->Caption = GLanguageHandler->Text[kShowAnimationToolbar].c_str();
 	miPaletteGradientToolbar->Caption = GLanguageHandler->Text[kPaletteGradientToolbar].c_str();
 	miQuickData->Caption = GLanguageHandler->Text[kQuickDataToolbar].c_str();
+    miPixelsToolbar->Caption = GLanguageHandler->Text[kPixelsToolbar].c_str();
 	miUndoToolbar->Caption = GLanguageHandler->Text[kUndoToolbar].c_str();
 	Backgroundcolour1->Caption = GLanguageHandler->Text[kWorkingAreaBackgroundColour].c_str();
 	miCustomBackground->Caption = GLanguageHandler->Text[kCustom].c_str();
@@ -1498,6 +1648,7 @@ void TfrmMain::SetGuiLanguageText()
 	Project1->Caption = GLanguageHandler->Text[kProject].c_str();
 	miClearAllFramesLayer->Caption = GLanguageHandler->Text[kClearAllFramesCurrentLayer].c_str();
 	miClearAllFrames->Caption = GLanguageHandler->Text[kClearAllFramesAllLayers].c_str();
+	miRemoveAllPixels->Caption = GLanguageHandler->Text[kRemoveAllPixels].c_str();
 	miClearAllFramesGradient->Caption = GLanguageHandler->Text[kClearAllFramesWithGradient].c_str();
 	miFlipAllFrames->Caption = GLanguageHandler->Text[kFlipAllFrames].c_str();
 	miMirrorAllFrames->Caption = GLanguageHandler->Text[kMirrorAllFrames].c_str();
@@ -1553,6 +1704,9 @@ void TfrmMain::SetGuiLanguageText()
 	miToggleLayoutPanel->Caption = GLanguageHandler->Text[kToggleLayoutPanel].c_str();
 	miClearLayer->Caption = GLanguageHandler->Text[kClearLayerAllFrames].c_str();
 	miFlattenLayers->Caption = GLanguageHandler->Text[kFlattenAllLayers].c_str();
+	miAutoOrderPixels->Caption = GLanguageHandler->Text[kAutoOrderPixels].c_str();
+	miAGPTLBR->Caption = GLanguageHandler->Text[kAutoOrderPixelsTLBR].c_str();
+	miAGPBRTL->Caption = GLanguageHandler->Text[kAutoOrderPixelsBRTL].c_str();
 	//
 	Colours1->Caption = GLanguageHandler->Text[kColours].c_str();
 	miChangeColoursFrame->Caption = Utility::WS2US(GLanguageHandler->Text[kChangeColoursInTheFrameLayer] + L"...");
@@ -1940,11 +2094,11 @@ void __fastcall TfrmMain::miSaveAsClick(TObject *Sender)
 	{
 		ImportData tid;
 
-		BuildImportData(tid, 0, thematrix->GetFrameCount() - 1);
+		BuildImportData(tid, 0, thematrix->Data->GetFrameCount() - 1);
 
 		if (thematrix->GetSoftwareMode() == SoftwareMode::kFont)
 		{
-			thematrix->SaveFont(sdMain->FileName.c_str(), tid, GSystemSettings->App.LastExport);
+			thematrix->Data->SaveFont(sdMain->FileName.c_str(), tid, GSystemSettings->App.LastExport, thematrix->Details.Comment, thematrix->MatrixIgnoredLayout);
 		}
 		else
 		{
@@ -2066,7 +2220,7 @@ void __fastcall TfrmMain::miImportFromBitmapClick(TObject *Sender)
 		{
 			ClearCurrentProjectFileName();
 
-			tbFrames->Max = thematrix->GetFrameCount();
+			tbFrames->Max = thematrix->Data->GetFrameCount();
 
 			if (thematrix->Details.Width <= 0 || thematrix->Details.Height <= 0)
 			{
@@ -2226,14 +2380,14 @@ void __fastcall TfrmMain::miSaveSingleFrameClick(TObject *Sender)
 
 		ted.ColourMode = GSystemSettings->Project.ColourMode;
 
-		thematrix->SaveSingleFrame(sdMain->FileName.c_str(), ted, tbFrames->Position);
+		thematrix->Data->SaveSingleFrame(sdMain->FileName.c_str(), ted, tbFrames->Position, thematrix->Details.Comment, thematrix->MatrixIgnoredLayout);
 	}
 }
 
 
 void __fastcall TfrmMain::miSaveRangeClick(TObject *Sender)
 {
-	SaveFrameRangeObject sfro = OpenFrameRange(thematrix->GetFrameCount());
+	SaveFrameRangeObject sfro = OpenFrameRange(thematrix->Data->GetFrameCount());
 
 	if (sfro.Process)
 	{
@@ -2267,11 +2421,11 @@ void __fastcall TfrmMain::miSaveAsFontClick(TObject *Sender)
 	{
 		if (thematrix->Details.ColourMode == MatrixColourMode::kRGB)
 		{
-			thematrix->SaveAsRGBFont(sdMain->FileName.c_str());
+			thematrix->Data->SaveAsRGBFont(sdMain->FileName.c_str());
 		}
 		else
 		{
-			thematrix->SaveAsTextToolFont(sdMain->FileName.c_str());
+			thematrix->Data->SaveAsTextToolFont(sdMain->FileName.c_str());
 		}
 	}
 }
@@ -2410,12 +2564,12 @@ void __fastcall TfrmMain::miCopyMultipleClick(TObject *Sender)
 {
 	std::vector<std::wstring> Layers;
 
-	for (int t = 0; t < thematrix->GetLayerCount(); t++)
+	for (int t = 0; t < thematrix->Data->GetLayerCount(); t++)
 	{
-		Layers.push_back(thematrix->GetLayerName(t));
+		Layers.push_back(thematrix->Data->GetLayerName(t));
 	}
 
-	CopyMultipleObject cpm = OpenCopyMultiple(thematrix->GetFrameCount(), Layers);
+	CopyMultipleObject cpm = OpenCopyMultiple(thematrix->Data->GetFrameCount(), Layers);
 
 	if (cpm.Process)
 	{
@@ -2564,13 +2718,19 @@ void __fastcall TfrmMain::miQuickDataClick(TObject *Sender)
 }
 
 
+void __fastcall TfrmMain::miPixelsToolbarClick(TObject *Sender)
+{
+	pPixelPanel->Visible = miPixelsToolbar->Checked;
+}
+
+
 void __fastcall TfrmMain::miUndoToolbarClick(TObject *Sender)
 {
 	pUndoToolbar->Visible = !pUndoToolbar->Visible;
 
 	if (pUndoToolbar->Visible)
 	{
-		FrameUndoPanel->SetUndos(thematrix->GetUndoCount());
+		FrameUndoPanel->SetUndos(thematrix->Data->GetUndoCount(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame()));
 	}
 }
 
@@ -2663,7 +2823,7 @@ void __fastcall TfrmMain::miFontModeClick(TObject *Sender)
 		thematrix->SetSoftwareMode(SoftwareMode::kAnimation);
 	}
 
-	tbFrames->Max = thematrix->GetFrameCount();
+	tbFrames->Max = thematrix->Data->GetFrameCount();
 	frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 	SetFrameCaption(GetSelectedFrame());
@@ -2963,13 +3123,13 @@ void __fastcall TfrmMain::miFadeFirstLastClick(TObject *Sender)
 
 void __fastcall TfrmMain::miUnlockAllClick(TObject *Sender)
 {
-	thematrix->LockUnLockRange(0, thematrix->GetFrameCount(), false);
+	thematrix->Data->LockUnLockRange(thematrix->GetCurrentLayer(), 0, thematrix->Data->GetFrameCount(), false);
 }
 
 
 void __fastcall TfrmMain::miLockAllClick(TObject *Sender)
 {
-	thematrix->LockUnLockRange(0, thematrix->GetFrameCount(), true);
+	thematrix->Data->LockUnLockRange(thematrix->GetCurrentLayer(), 0, thematrix->Data->GetFrameCount(), true);
 }
 
 
@@ -2979,7 +3139,7 @@ void __fastcall TfrmMain::miToggleLockStatusClick(TObject *Sender)
 
 	if (tlfro.Process)
 	{
-		thematrix->LockUnLockRange(tlfro.StartFrame, tlfro.EndFrame, tlfro.LockStatus);
+		thematrix->Data->LockUnLockRange(thematrix->GetCurrentLayer(), tlfro.StartFrame, tlfro.EndFrame, tlfro.LockStatus);
 	}
 }
 #pragma end_region
@@ -3030,6 +3190,14 @@ void __fastcall TfrmMain::miFlattenLayersClick(TObject *Sender)
 		thematrix->FlattenAllLayers();
 	}
 }
+
+
+void __fastcall TfrmMain::miAGPTLBRClick(TObject *Sender)
+{
+	TMenuItem *mi = (TMenuItem*)Sender;
+
+	thematrix->AutoOrderPixels(mi->Tag);
+}
 #pragma end_region
 
 
@@ -3038,7 +3206,7 @@ void __fastcall TfrmMain::miChangeColoursFrameClick(TObject *Sender)
 {
 	std::vector<int> Colours;
 
-	thematrix->GetFirst32Colours(Colours);
+	thematrix->Data->GetFirst32Colours(Colours);
 
 	ColourChange cco = OpenColourChange(Colours);
 
@@ -3066,7 +3234,7 @@ void __fastcall TfrmMain::Currentframe1Click(TObject *Sender)
 {
 	MessageDlg(Utility::WS2US(GLanguageHandler->Text[kUniqueColoursCurrentFrame] +
 			   L": " +
-			   std::to_wstring(thematrix->CountColoursFrame())), mtInformation, TMsgDlgButtons() << mbOK, 0);
+			   std::to_wstring(thematrix->Data->CountColoursFrame(thematrix->GetCurrentFrame()))), mtInformation, TMsgDlgButtons() << mbOK, 0);
 }
 
 
@@ -3074,7 +3242,7 @@ void __fastcall TfrmMain::Animation1Click(TObject *Sender)
 {
 	MessageDlg(Utility::WS2US(GLanguageHandler->Text[kUniqueColoursAnimation] +
 			   L": " +
-			   std::to_wstring(thematrix->CountColoursFrame())), mtInformation, TMsgDlgButtons() << mbOK, 0);
+			   std::to_wstring(thematrix->Data->CountColoursFrame(thematrix->GetCurrentFrame()))), mtInformation, TMsgDlgButtons() << mbOK, 0);
 }
 #pragma end_region
 
@@ -3235,11 +3403,11 @@ void __fastcall TfrmMain::CurrentLayerFrame1Click(TObject *Sender)
 {
 	#if _DEBUG
 	std::wstring output = std::to_wstring(thematrix->GetCurrentLayer()) + L" / " + std::to_wstring(thematrix->GetCurrentFrame()) + L" (" +
-						  std::to_wstring(thematrix->GetLayerCount()) + L" / " + std::to_wstring(thematrix->GetFrameCount()) + L")";
+						  std::to_wstring(thematrix->Data->GetLayerCount()) + L" / " + std::to_wstring(thematrix->Data->GetFrameCount()) + L")";
 
 	if (thematrix->Details.DrawMode == MatrixDrawMode::kFreeform)
 	{
-		output += L"; pixels " + std::to_wstring(thematrix->GetPixelCount());
+		output += L"; pixels " + std::to_wstring(thematrix->Data->GetPixelCount());
 	}
 
 	ShowMessage(output.c_str());
@@ -3343,7 +3511,7 @@ void __fastcall TfrmMain::miAutomateClick(TObject *Sender)
 	std::vector<std::wstring> layers;
 	std::vector<int> colours;
 
-	thematrix->GetFirst32Colours(colours);
+	thematrix->Data->GetFirst32Colours(colours);
 
 	AutomationInput ai;
 
@@ -3364,9 +3532,9 @@ void __fastcall TfrmMain::miAutomateClick(TObject *Sender)
 		rgbpc.History[t] = FramePalettePanel->RGBPaletteHistory[t]->Brush->Color;
 	}
 
-	for (int t = 0; t < thematrix->GetLayerCount(); t++)
+	for (int t = 0; t < thematrix->Data->GetLayerCount(); t++)
 	{
-		layers.push_back(thematrix->GetLayerName(t));
+		layers.push_back(thematrix->Data->GetLayerName(t));
 	}
 
 	if (OpenAutomate(ai, rgbpc, layers, colours, Automation) == mrOk)
@@ -3499,7 +3667,7 @@ void __fastcall TfrmMain::sbBuildClick(TObject *Sender)
 		}
 		else
 		{
-			tbFrames->Max = thematrix->GetFrameCount();
+			tbFrames->Max = thematrix->Data->GetFrameCount();
 		}
 
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
@@ -3577,11 +3745,11 @@ void __fastcall TfrmMain::sbSaveClick(TObject *Sender)
 	{
 		ImportData tid;
 
-		BuildImportData(tid, 0, thematrix->GetFrameCount() - 1);
+		BuildImportData(tid, 0, thematrix->Data->GetFrameCount() - 1);
 
 		if (thematrix->GetSoftwareMode() == SoftwareMode::kFont)
 		{
-			thematrix->SaveFont(GSystemSettings->App.DataFilename, tid, GSystemSettings->App.LastExport);
+			thematrix->Data->SaveFont(GSystemSettings->App.DataFilename, tid, GSystemSettings->App.LastExport, thematrix->Details.Comment, thematrix->MatrixIgnoredLayout);
 		}
 		else
 		{
@@ -3791,14 +3959,14 @@ void __fastcall TfrmMain::sbRotateAnyClick(TObject *Sender)
 
 	for (int t = 0; t <= cbRotateCount->ItemIndex + 1; t++)
 	{
-		if (t + origframe + 1 > thematrix->GetFrameCount())
+		if (t + origframe + 1 > thematrix->Data->GetFrameCount())
 		{
-			thematrix->InsertBlankFrameAt(thematrix->GetFrameCount());
+			thematrix->InsertBlankFrameAt(thematrix->Data->GetFrameCount());
 		}
 
 		// ===================================================================
 
-		thematrix->RotateFrameAnyAngle(t * byangle, t + origframe);
+		thematrix->Data->RotateFrameAnyAngle(t * byangle, thematrix->GetCurrentLayer(), t + origframe);
 	}
 
 	UpdateDisplay(-1);
@@ -3812,12 +3980,12 @@ void __fastcall TfrmMain::bLockFrameClick(TObject *Sender)
 	if (bLockFrame->Tag == 0)
 	{
 		bLockFrame->Tag = 1;
-		thematrix->LockCurrentFrame();
+		thematrix->Data->LockFrame(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame());
 	}
 	else
 	{
 		bLockFrame->Tag = 0;
-		thematrix->UnLockCurrentFrame();
+		thematrix->Data->UnLockFrame(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame());
 	}
 
 	bLockFrame->ImageIndex = 24 + bLockFrame->Tag;
@@ -4337,7 +4505,7 @@ void __fastcall TfrmMain::bAddFrameClick(TObject *Sender)
 
 	thematrix->InsertBlankFrameAt(tbFrames->Position);
 
-	tbFrames->Max = thematrix->GetFrameCount();
+	tbFrames->Max = thematrix->Data->GetFrameCount();
 	tbFrames->Position  = oldselectedframe + 1;
 
 	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
@@ -4355,7 +4523,7 @@ void __fastcall TfrmMain::bAddFrameCopyClick(TObject *Sender)
 
 	thematrix->InsertCopyFrameAt(tbFrames->Position - 1);
 
-	tbFrames->Max = thematrix->GetFrameCount();
+	tbFrames->Max = thematrix->Data->GetFrameCount();
 	tbFrames->Position  = oldselectedframe + 1;
 
 	thematrix->SetAndShowCurrentFrame(GetSelectedFrame());
@@ -4404,7 +4572,7 @@ void __fastcall TfrmMain::bDeleteFrameClick(TObject *Sender)
 
 void __fastcall TfrmMain::bDeleteMultipleFramesClick(TObject *Sender)
 {
-	DeleteMultipleObject dmo = OpenDeleteMultiple(thematrix->GetFrameCount());
+	DeleteMultipleObject dmo = OpenDeleteMultiple(thematrix->Data->GetFrameCount());
 
 	if (dmo.Process)
 	{
@@ -4415,9 +4583,9 @@ void __fastcall TfrmMain::bDeleteMultipleFramesClick(TObject *Sender)
 			thematrix->DeleteFrame(dmo.StartFrame);
 		}
 
-		if (tbFrames->Position > thematrix->GetFrameCount())
+		if (tbFrames->Position > thematrix->Data->GetFrameCount())
 		{
-			frame = thematrix->GetFrameCount();
+			frame = thematrix->Data->GetFrameCount();
 		}
 		else
 		{
@@ -4477,7 +4645,7 @@ bool TfrmMain::LoadFromFileName(const std::wstring file_name)
 		GSystemSettings->Project.Width = ted.NewWidth;
 		GSystemSettings->Project.Height = ted.NewHeight;
 
-		tbFrames->Max                   = thematrix->GetFrameCount();
+		tbFrames->Max                   = thematrix->Data->GetFrameCount();
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 		sbBuildClick(Load1);
@@ -4594,7 +4762,7 @@ bool TfrmMain::AppendFromFileName(const std::wstring file_name)
 
 	if (ted.ImportOk)
 	{
-		tbFrames->Max = thematrix->GetFrameCount();
+		tbFrames->Max = thematrix->Data->GetFrameCount();
 
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
@@ -4624,7 +4792,7 @@ bool TfrmMain::MergeFromFileName(const std::wstring file_name, int start_frame, 
 
 	if (ted.ImportOk)
 	{
-		tbFrames->Max = thematrix->GetFrameCount();
+		tbFrames->Max = thematrix->Data->GetFrameCount();
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 		UpdateMemoryUsage();
@@ -4663,7 +4831,7 @@ bool TfrmMain::LoadFromGIF(const std::wstring file_name)
 		GSystemSettings->Project.Width = ted.NewWidth;
 		GSystemSettings->Project.Height = ted.NewHeight;
 
-		tbFrames->Max                   = thematrix->GetFrameCount();
+		tbFrames->Max                   = thematrix->Data->GetFrameCount();
 		frmPreviewPopout->tbFrames->Max = tbFrames->Max;
 
 		sbBuildClick(Load1);
@@ -5042,7 +5210,7 @@ void TfrmMain::SetFrameCaption(int i)
 
 void TfrmMain::UpdateMemoryUsage()
 {
-	int size = thematrix->CalculateMemoryUsage();
+	int size = thematrix->Data->CalculateMemoryUsage();
 
 	std::wstring caption = L"";
 
@@ -5139,9 +5307,9 @@ void TfrmMain::UpdateData()
 
 void TfrmMain::UpdateDisplay(int new_frame_position)
 {
-	tbFrames->Max = thematrix->GetFrameCount();
+	tbFrames->Max = thematrix->Data->GetFrameCount();
 
-	bDeleteFrame->Enabled          = (thematrix->GetFrameCount() > 1);
+	bDeleteFrame->Enabled          = (thematrix->Data->GetFrameCount() > 1);
 	bDeleteMultipleFrames->Enabled = bDeleteFrame->Enabled;
 
 	miDeleteFrame->Enabled          = bDeleteFrame->Enabled;
@@ -5158,7 +5326,7 @@ void TfrmMain::UpdateDisplay(int new_frame_position)
 	SetFrameCaption(GetSelectedFrame());
 
 	// move to onnewframedisplayed
-	if (thematrix->IsLocked())
+	if (thematrix->Data->IsLocked(thematrix->GetCurrentLayer(), thematrix->GetCurrentFrame()))
 	{
 		bLockFrame->Tag = 1;
 	}
@@ -5397,51 +5565,51 @@ void __fastcall TfrmMain::miPlaybackSpeed3Click(TObject *Sender)
 	{
 	case 0:
 		timerAnimate->Interval = 2000;
-		hint += L"(2 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.5 FPS)";
 		break;
 	case 1:
 		timerAnimate->Interval = 1500;
-		hint += L"(1.5 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(0.66 FPS)";
 		break;
 	case 2:
 		timerAnimate->Interval = 1000;
-		hint += L"(1 " + GLanguageHandler->Text[kSecond] + L")";
+		hint += L"(1 FPS)";
 		break;
 	case 3:
 		timerAnimate->Interval = 500;
-		hint += L"(0.5 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(2 FPS)";
 		break;
 	case 4:
 		timerAnimate->Interval = 250;
-		hint += L"(0.25 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(4 FPS)";
 		break;
 	case 5:
 		timerAnimate->Interval = 200;
-		hint += L"(0.20 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(5 FPS)";
 		break;
 	case 6:
 		timerAnimate->Interval = 100;
-		hint += L"(0.1 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(10 FPS)";
 		break;
 	case 7:
 		timerAnimate->Interval = 50;
-		hint += L"(0.05 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(20 FPS)";
 		break;
 	case 8:
 		timerAnimate->Interval = 25;
-		hint += L"(0.025 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(40 FPS)";
 		break;
 	case 9:
 		timerAnimate->Interval = 20;
-		hint += L"(0.020 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(50 FPS)";
 		break;
 	case 10:
 		timerAnimate->Interval = 10;
-		hint += L"(0.01 " + GLanguageHandler->Text[kSeconds] + L")";
+		hint += L"(100 FPS)";
 		break;
 	case 20:
 		timerAnimate->Interval = GSystemSettings->App.CustomSpeed;
-		hint += L"(" + std::to_wstring(GSystemSettings->App.CustomSpeed) + L" ms";
+		hint += L"(" + std::to_wstring(GSystemSettings->App.CustomSpeed) + L" ms)";
 		break;
 	}
 
@@ -5462,7 +5630,6 @@ void __fastcall TfrmMain::Setcustomspeed1Click(TObject *Sender)
 		miPlaybackSpeedCustom->Caption = newcaption.c_str();
 	}
 }
-
 #pragma end_region
 
 
@@ -6171,7 +6338,7 @@ void __fastcall TfrmMain::timerAutosaveTimer(TObject *Sender)
 	{
 		ImportData ted;
 
-		BuildImportData(ted, 0, thematrix->GetFrameCount() - 1);
+		BuildImportData(ted, 0, thematrix->Data->GetFrameCount() - 1);
 
 		// ===================================================================
 

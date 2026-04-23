@@ -45,10 +45,10 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 	// =======================================================================
 
 	// calculate the size of the current animation after optimisation
-	int os = (thematrix->DataSizeBytes() * unique_items.size()) +
-			 ((thematrix->Details.Width * thematrix->Details.Height * thematrix->GetFrameCount()) * indexdatasize);
+	int os = (thematrix->Data->DataSizeBytes() * unique_items.size()) +
+			 ((thematrix->Details.Width * thematrix->Details.Height * thematrix->Data->GetFrameCount()) * indexdatasize);
 
-	if (os < thematrix->CalculateMemoryUsage())
+	if (os < thematrix->Data->CalculateMemoryUsage())
 	{
 		data.clear();
 
@@ -56,10 +56,10 @@ bool Optimiser::OptimiseData(TheMatrix *thematrix, ExportOptions teo, std::vecto
 
 		ExportUtility::GetSpacerLine(teo.Code.Language, data);
 
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(thematrix->CalculateMemoryUsage()) + L" bytes");
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"Unoptimised size: " + std::to_wstring(thematrix->Data->CalculateMemoryUsage()) + L" bytes");
 		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"  Optimised size: " + std::to_wstring(os) + L" bytes");
-		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(thematrix->CalculateMemoryUsage() - os) + L" bytes (" +
-										 std::to_wstring(std::round(((thematrix->CalculateMemoryUsage() - os) / thematrix->CalculateMemoryUsage()) * 100)) + L"%)");
+		data.push_back(ExportUtility::GetCommentCharacter(teo.Code.Language) + L"          Saving: " + std::to_wstring(thematrix->Data->CalculateMemoryUsage() - os) + L" bytes (" +
+										 std::to_wstring(std::round(((thematrix->Data->CalculateMemoryUsage() - os) / thematrix->Data->CalculateMemoryUsage()) * 100)) + L"%)");
 
 		ExportUtility::GetSpacerLine(teo.Code.Language, data);
 

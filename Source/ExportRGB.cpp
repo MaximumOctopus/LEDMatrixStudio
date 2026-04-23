@@ -273,9 +273,9 @@ namespace ExportRGB
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -404,9 +404,9 @@ namespace ExportRGB
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -523,7 +523,7 @@ namespace ExportRGB
 
 	bool CreateExportFreeformRGB(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount, std::vector<std::wstring> &unique_items)
 	{
-		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+		int MatrixDataCount = matrix->Data->Layers[0]->Freeform->Pixels.size();
 
 		std::wstring MatrixData[MatrixDataCount];
 
@@ -686,11 +686,11 @@ namespace ExportRGB
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationFreeform:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				for (int pixel = 0; pixel < matrix->Data->Layers[0]->Freeform->Pixels.size(); pixel++)
 				{
-					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+					Colours.push_back(matrix->Data->Layers[0]->Freeform->Pixels[pixel]->Colours[frame]);
 				}
 			}
 			else

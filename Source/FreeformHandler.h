@@ -29,10 +29,15 @@ public:
 class MatrixPixelHistory
 {
 public:
-	std::vector<int> Colours;
+	int X = 0;
+    int Y = 0;
+	int Colour = 0;
 
-	MatrixPixelHistory(std::vector<int> &colours)
+	MatrixPixelHistory(int x, int y, int colour)
 	{
+		X = x;
+		Y = y;
+		Colour = colour;
 	}
 };
 
@@ -46,7 +51,7 @@ public:
 	int X = 0;                              // remain static for each frame of the project
 	int Y = 0;                              //
 	int Order = 0;                          //
-	int Group = 0;                          // to do...
+	int Group = 0;                          //
 	int Contrast = 0;
 
 	std::vector<int> Colours;        		// one per frame of animation
@@ -72,6 +77,7 @@ public:
 		X = x;
 		Y = y;
 		Order = order;
+        Group = group;
 
 		for (int f = 0; f < frame_count; f++)
 		{
@@ -119,14 +125,12 @@ public:
 	void AddShapeRectangle(int, int, int, int, int, int);
 	void AddShapeRectangleFilled(int, int, int, int, int, int, int);
 
-	void AddToHistory();
-	void AddToHistory(MatrixPixelHistory&);
-	void AddToHistory(MatrixPixelHistory *m);
-
+	// == undo/redo
+    void UpdateHistory();
 	void Undo();
 	void Redo();
-
 	void SetFromUndo(int);
+	void ClearAllHistory();
 
 	void InsertBlankFrameAt(int, int);
 	void InsertCopyFrameAt(int, int);
@@ -136,6 +140,7 @@ public:
     void DeleteFrame(int);
 
 	void Sort();
+    void AutoOrderPixels(int);
 
 	void AddToSelection(int);
 	void Move(int, int, int);

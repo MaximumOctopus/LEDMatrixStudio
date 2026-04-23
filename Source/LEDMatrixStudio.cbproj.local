@@ -177,6 +177,10 @@
     <File Path="Frames\FrameUndoPanel.cpp"/>
     <File Path="Frames\FrameUndoPanel.dfm"/>
     <File Path="Frames\FrameUndoPanel.h"/>
+    <File Path="Frames\FramePixelPanel.cpp"/>
+    <File Path="Frames\FramePixelPanel.cpp"/>
+    <File Path="Frames\FramePixelPanel.dfm"/>
+    <File Path="Frames\FramePixelPanel.h"/>
     <VirtualFolder ID="{B36072AA-6D75-427F-B4BC-50A6F3C64C1D}"/>
     <File Path="LanguageHandler.cpp"/>
     <File Path="LanguageHandler.h"/>
@@ -195,6 +199,7 @@
     <File Path="MatrixGrid.h"/>
     <File Path="MatrixIgnored.cpp"/>
     <File Path="MatrixIgnored.h"/>
+    <File Path="MatrixDetails.h"/>
     <File Path="TheMatrix.cpp"/>
     <File Path="TheMatrix.h"/>
     <VirtualFolder ID="{D25BDCAA-D26F-4E27-ABD0-BBEFF4D49947}"/>
@@ -259,5 +264,11 @@
     <Transaction>2026/04/07 14:50:44.000.282,=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\File1.cpp</Transaction>
     <Transaction>2026/04/07 14:50:54.000.290,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\File1.h=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\LayerHandler.h</Transaction>
     <Transaction>2026/04/07 14:51:02.000.194,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\File1.cpp=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\LayerHandler.cpp</Transaction>
+    <Transaction>2026/04/12 17:49:52.000.167,=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\File1.h</Transaction>
+    <Transaction>2026/04/12 17:50:12.000.383,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\MatrixDetails.h=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\File1.h</Transaction>
+    <Transaction>2026/04/16 15:11:29.000.134,=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Unit1.cpp</Transaction>
+    <Transaction>2026/04/16 15:12:52.000.478,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Unit1.dfm=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Frames\FramePixelPanel.dfm</Transaction>
+    <Transaction>2026/04/16 15:12:52.000.478,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Unit1.cpp=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Frames\FramePixelPanel.cpp</Transaction>
+    <Transaction>2026/04/16 15:12:52.000.478,C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Unit1.h=C:\Users\iamru\Documents\Software Development\CBuilder\LEDMatrixStudio\Frames\FramePixelPanel.h</Transaction>
   </Transactions>
 </BorlandProject>

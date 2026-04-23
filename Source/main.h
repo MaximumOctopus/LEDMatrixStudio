@@ -35,6 +35,7 @@
 #include "FrameGradientPanel.h"
 #include "FrameLayerPanel.h"
 #include "FramePalettePanel.h"
+#include "FramePixelPanel.h"
 #include "FrameQuickData.h"
 #include "FrameUndoPanel.h"
 
@@ -681,6 +682,13 @@ __published:	// IDE-managed Components
 	TSpeedButton *sbFreeformColoursRight;
 	TMenuItem *N68;
 	TMenuItem *N69;
+	TMenuItem *N70;
+	TMenuItem *miAutoOrderPixels;
+	TMenuItem *miAGPTLBR;
+	TMenuItem *miAGPBRTL;
+	TPanel *pPixelPanel;
+	TPanel *Panel2;
+	TMenuItem *miPixelsToolbar;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -865,6 +873,8 @@ __published:	// IDE-managed Components
 	void __fastcall bFreeformSelectGroupClick(TObject *Sender);
 	void __fastcall sbFreeformDrawOrderClick(TObject *Sender);
 	void __fastcall N69Click(TObject *Sender);
+	void __fastcall miAGPTLBRClick(TObject *Sender);
+	void __fastcall miPixelsToolbarClick(TObject *Sender);
 
 private:
 
@@ -892,6 +902,7 @@ private:
 	TframePalette *FramePalettePanel;
 	TframeSimpleExport *FrameQuickData;
 	TframeUndos *FrameUndoPanel;
+	TframePixel *FramePixelPanel;
 
 	MatrixColourMode OldMatrixMode = MatrixColourMode::kNone;
 	int OldMouseX = -1;
@@ -1048,6 +1059,11 @@ private:
 	// frameundos callbacks
 	void __fastcall OnUndoSelected(int);
 
+	// framepixel callbacks
+	void __fastcall OnPixelChangeX(int);
+	void __fastcall OnPixelChangeY(int);
+	void __fastcall OnPixelChangeGroup(int);
+
 	// matrix callbacks
 	void __fastcall MatrixOnChange(TheMatrix*);
 	void __fastcall MatrixOnLayerChange(TheMatrix*);
@@ -1057,6 +1073,7 @@ private:
 	void __fastcall MatrixOnColourChange(TheMatrix*);
 	void __fastcall MatrixOnNew3bppColours(TheMatrix*);
 	void __fastcall MatrixOnMouseOver(int, int);
+    void __fastcall MatrixOnMouseOverPixel(int, int, int);
 	void __fastcall MatrixOnPreviewMouseDown(int, int);
 	void __fastcall MatrixOnDebug(TheMatrix*, const std::wstring s);
 

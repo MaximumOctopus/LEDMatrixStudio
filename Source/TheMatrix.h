@@ -28,6 +28,8 @@
 #include "LanguageConstants.h"
 #include "LanguageHandler.h"
 #include "Layer.h"
+#include "LayerHandler.h"
+#include "MatrixDetails.h"
 #include "MatrixGrid.h"
 #include "MatrixConstants.h"
 #include "MatrixIgnored.h"
@@ -40,48 +42,6 @@ extern LanguageHandler *GLanguageHandler;
 
 typedef void __fastcall (__closure *MouseOverEvent)(int, int);
 typedef void __fastcall (__closure *DebugEvent)(std::wstring);
-
-enum class MergeFrameMode { kRetainGridValue = 0, kConvertForRender, kConvertForFileOutput };
-
-
-struct MatrixDetails
-{
-	bool Available = false;
-
-	MatrixDrawMode DrawMode = MatrixDrawMode::kGrid;
-	MatrixColourMode ColourMode = MatrixColourMode::kNone;
-
-	int Width = 0;	// actual width of matrix in pixels
-	int Height = 0;	// actual height of matrix in pixels
-
-	bool Grid = false;
-
-	std::wstring Comment = L"";
-};
-
-
-struct MatrixRendering
-{
-	int PixelSize = 1;
-	int PixelSizeZ = 1;
-	PixelShape Shape = PixelShape::kSquare;
-	BrushSize Brush = BrushSize::kSmall;
-	bool ShowPixelOrder = false;
-	bool ShowPixelGroup = false;
-	bool ApplyToGroup = false;
-    bool ShowFrameCount = false;
-
-	TPoint TopLeft = { 0,  0 };		// index of the top left pixel (on screen) in x and y direction
-									// used when matrix is larger than display
-	TPoint BottomRight = { 0, 0 };	//
-									// used when matrix is larger than display
-
-	TPoint ViewWindow = { 0, 0, };	// width and height, in pixels, of the display
-
-	MatrixGradient Gradient;
-
-	ActionData Action;
-};
 
 
 class TheMatrix
@@ -137,13 +97,7 @@ private:
 
 	ImportData LoadProjectFreeform(const std::wstring, ExportOptions&, LoadMode, int);
 
-	bool SaveAnimationGrid(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
-   	bool SaveAnimationFreeform(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
-
 	int GetPixelFrom(MatrixColourMode MatrixFormat, MatrixColourMode ImportFormat, int Pixel, int Background);
-
-	void EnsureLayerCoherence();
-	bool AreLayersIdentical(int Layer1, int Layer2, int Frame);
 
 	void CopyCurrentFrameToDrawBuffer();
 	void CopyDrawBufferToCurrentFrame();
@@ -227,6 +181,7 @@ public:
 	std::function<void(TheMatrix*)> OnColourChange;
 	std::function<void(TheMatrix*)> OnNew3bppColours;
 	std::function<void(int, int)> OnMouseOver;              // X and Y refer to the grid x/y when in kGrid draw mode, otherwise x/y pixel positions on the canvas
+	std::function<void(int, int, int)> OnMouseOverPixel;          // X and Y refer to the grid x/y when in kGrid draw mode, otherwise x/y pixel positions on the canvas
 	std::function<void(int, int)> OnPreviewMouseDown;
 	// use this to send debug data from the component to screen or file based on your needs
 	std::function<void(TheMatrix*, const std::wstring)> OnDebugEvent;
@@ -248,8 +203,8 @@ public:
 	int LEDColoursSingle[6]; 	// used as backups only
 	int LEDColoursBi[6];	 	// used as backups only
 
-	int LEDColours[6] = {0xffffff, 0, 0, 0, 0};			// currently being displayed
 	int LEDRGBColours[4];		// background, lmb, mmb, rmb
+	int LEDColours[6] = {0xffffff, 0, 0, 0, 0};			// currently being displayed
 	int LEDRGB3BPPColours[8] = { 0x00000000, // 000
 								 0x00FF0000, // 001
 								 0x0000FF00, // 010
@@ -261,9 +216,8 @@ public:
 
 	int RGBBackground = 0x000000;
 
-	//LayerHandler *Layers;
+	LayerHandler *Data;
 
-	std::vector<Layer*> MatrixLayers;
 	std::vector<MatrixGrid*> MatrixUser;
 	std::vector<int> MatrixUserFF[10];
 
@@ -339,7 +293,8 @@ public:
 	void AddPixel(int, int);
 	void DeletePixel();
 	void SelectInGroup(int);
-    void PerformFreeformEffect(int);
+	void PerformFreeformEffect(int);
+	void AutoOrderPixels(int);
 
 	void ClearCurrentFrame();
 	void ClearCurrentLayer();
@@ -359,30 +314,17 @@ public:
 	// =========================================================================
 
 	void PerformEffectController(int, int);
-	void PerformEffect(int, int, int);
 
 	void PerformScrollController(int, int);
-	void PerformScroll(int, int, int);
-
-	void PerformSplitScroll(int, int, int);
-
-	void PerformAlternateScroll(int, int, int);
 
 	void RotateFrameController(int, int);
-	void RotateFrame(int, int, int);
 
 	void PerformWipeOnCurrentFrame(int, bool );
 	void PerformRevealOnCurrentFrame(int, int, int &);
-	void PerformScrollOnCopyFrame(int );
 	void PerformColumnScrollOnCurrentFrame(int , int , bool);
 	void PerformRowScrollOnCurrentFrame(int , int , bool);
-    void RotateFrameAllLayersAnyAngle(double, int);
-	void RotateFrameAnyAngle(double, int);
 
 	// =========================================================================
-
-	void ScrollRow(int, int, int, int);
-	void ScrollColumn(int, int, int, int);
 
 	void RotateCopyBrush(int);
 	void PerformEffectOnBrush(int);
@@ -399,15 +341,6 @@ public:
 	void AddFrameMultiple(int, int);
 
 	void DeleteFrame(int);
-
-	bool IsThisFrameLocked(int, int);
-	bool IsLocked();
-	void UnLockCurrentFrame();
-	void LockCurrentFrame();
-	void LockUnLockRange(int, int, bool);
-	void LockLayer(int);
-	void UnlockLayer(int);
-	bool IsLayerLocked(int);
 
 //	void SetCurrentFrame(int);
 	void SetAndShowCurrentFrame(int);
@@ -440,17 +373,13 @@ public:
 	bool ExportAnimationToBitmap(const std::wstring);
 
 	bool SaveAnimation(const std::wstring, ImportData&, ExportOptions&, ProjectColours&);
-	void SaveFont(const std::wstring, ImportData&, ExportOptions&);
-	void SaveAsTextToolFont(const std::wstring);
-	void SaveAsRGBFont(const std::wstring);
-	void SaveSingleFrame(const std::wstring, ImportData, int);
 
 	ImportData LoadProject(const std::wstring, ExportOptions&, LoadMode, int);
 	ImportData LoadProjectGrid(const std::wstring, ExportOptions&, LoadMode, int);
 
 	ImportData ImportFromGIF(const std::wstring);
 	void ExportToGIF(const std::wstring, int, int, int, int);
-
+	
 	void ClearUserBuffers();
 	void CopyToUserBuffer(int);
 	void RestoreFromUserBuffer(int);
@@ -463,18 +392,12 @@ public:
 
 	void Undo();
 	void Redo();
-	int GetUndoCount();
 	void SetFromUndo(int Undo);
 
 	bool CanUndo();
 	bool CanRedo();
 
-	int  CalculateMemoryUsage();
-	int  DataSizeBytes();
-
 	void Refresh();
-
-	int GetTotalUndos();
 
 	void Automate(ActionObject&);
 	void AutomationActionExecute(ActionObject&, int);
@@ -487,11 +410,7 @@ public:
 	void FloodFill(int, int, int);
 	void DoFill(int, int, int);
 
-	int GetLayerCount();
-	std::wstring GetLayerName(int);
-	void SetLayerName(const std::wstring, int);
 	bool AddLayer(const std::wstring);
-	bool AddLayerSilent(const std::wstring);
 	bool AddLayerAsCopy(const std::wstring, int);
 	bool DeleteLayer(int);
 	void ClearCurrentLayerAllFrames();
@@ -504,21 +423,12 @@ public:
 
 	void __fastcall OnPreviewBoxCanvasResize(TObject *Sender);
 
-	int RightBounds();
-	int BottomBounds();
-
-	int CountColoursFrame();
-	int CountColoursAnimation();
-	void GetFirst32Colours(std::vector<int> &);
-
 	void BuildMergedFrame(int, MergeFrameMode);
 
 	void ClearGradient();
 	void AddGradient(int);
     int GradientBrushCount();
 
-	int GetFrameCount();
-    int GetPixelCount();
 	bool GetIgnoredPixelsMode();
 	SoftwareMode GetSoftwareMode();
 

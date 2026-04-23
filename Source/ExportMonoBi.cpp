@@ -537,9 +537,9 @@ namespace ExportMonoBi
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -679,9 +679,9 @@ namespace ExportMonoBi
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -806,7 +806,7 @@ namespace ExportMonoBi
 
 			for (int x = 0; x < matrix->Details.Width; x++)
 			{
-				if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
+				if (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
 				{
 					if (sourceLSB == 0)
 					{
@@ -828,7 +828,7 @@ namespace ExportMonoBi
 
 			for (int y = 0; y < matrix->Details.Height; y++)
 			{
-				if (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
+				if (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x] == 1)
 				{
 					if (sourceLSB == 0)
 					{
@@ -980,11 +980,11 @@ namespace ExportMonoBi
 			{
 				if (sourceLSB == 0)
 				{
-					temp += ColourUtility::BiColoursLSBLeft[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
+					temp += ColourUtility::BiColoursLSBLeft[matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
 				}
 				else
 				{
-					temp += ColourUtility::BiColoursLSBRight[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + (matrix->Details.Width - x - 1)]];
+					temp += ColourUtility::BiColoursLSBRight[matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + (matrix->Details.Width - x - 1)]];
 				}
 			}
 
@@ -999,11 +999,11 @@ namespace ExportMonoBi
 			{
 				if (sourceLSB == 0)
 				{
-					temp = temp + ColourUtility::BiColoursLSBLeft[matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
+					temp = temp + ColourUtility::BiColoursLSBLeft[matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x]];
 				}
 				else
 				{
-					temp = temp + ColourUtility::BiColoursLSBRight[matrix->MatrixLayers[0]->Cells[frame]->Grid[(matrix->Details.Height - y - 1) * matrix->Details.Width + x]];
+					temp = temp + ColourUtility::BiColoursLSBRight[matrix->Data->Layers[0]->Cells[frame]->Grid[(matrix->Details.Height - y - 1) * matrix->Details.Width + x]];
 				}
 			}
 
@@ -1114,7 +1114,7 @@ namespace ExportMonoBi
 			{
 				if (sourceLSB == 0)
 				{
-					switch (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
+					switch (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
 					{
 					case 0:
 						break;
@@ -1132,7 +1132,7 @@ namespace ExportMonoBi
 				}
 				else
 				{
-					switch (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
+					switch (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
 					{
 					case 0:
 						break;
@@ -1161,7 +1161,7 @@ namespace ExportMonoBi
 			{
 				if (sourceLSB == 0)
 				{
-					switch (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
+					switch (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
 					{
 					case 0:
 						break;
@@ -1179,7 +1179,7 @@ namespace ExportMonoBi
 				}
 				else
 				{
-					switch (matrix->MatrixLayers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
+					switch (matrix->Data->Layers[0]->Cells[frame]->Grid[y * matrix->Details.Width + x])
 					{
 					case 0:
 						break;

@@ -25,6 +25,8 @@
     enum class MatrixDrawMode { kGrid = 0, kFreeform };
 	enum class MatrixColourMode { kNone = 0, kMono, kBiSequential, kBiBitplanes, kRGB, kRGB3BPP };
 
+    enum class MergeFrameMode { kRetainGridValue = 0, kConvertForRender, kConvertForFileOutput };
+
 	enum class PixelShape { kSquare = 0, kCircle, kRoundRect };
 	enum class BrushSize  { kSmall = 0, kMedium, kLarge, kBigLarge, kSuperLarge };
 

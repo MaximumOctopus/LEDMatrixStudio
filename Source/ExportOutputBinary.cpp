@@ -445,9 +445,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -573,9 +573,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -713,9 +713,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -809,9 +809,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -937,9 +937,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -1076,9 +1076,9 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationGrid:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				selectedmatrix = matrix->MatrixLayers[0]->Cells[frame];
+				selectedmatrix = matrix->Data->Layers[0]->Cells[frame];
 			}
 			else
 			{
@@ -1223,7 +1223,7 @@ namespace ExportOutputBinary
 			}
 		};
 
-		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+		int MatrixDataCount = matrix->Data->Layers[0]->Freeform->Pixels.size();
 
 		std::wstring MatrixData[MatrixDataCount];
 
@@ -1259,7 +1259,7 @@ namespace ExportOutputBinary
 
 	bool BinaryCreateExportFreeformRGB3bpp(TheMatrix *matrix, ExportOptions teo, std::vector<std::wstring> &output, int &entrycount)
 	{
-		int MatrixDataCount = matrix->MatrixLayers[0]->Freeform->Pixels.size();
+		int MatrixDataCount = matrix->Data->Layers[0]->Freeform->Pixels.size();
 
 		std::wstring MatrixData[MatrixDataCount];
 
@@ -1303,11 +1303,11 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationFreeform:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				for (int pixel = 0; pixel < matrix->Data->Layers[0]->Freeform->Pixels.size(); pixel++)
 				{
-					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+					Colours.push_back(matrix->Data->Layers[0]->Freeform->Pixels[pixel]->Colours[frame]);
 				}
 			}
 			else
@@ -1318,9 +1318,9 @@ namespace ExportOutputBinary
 			}
 			break;
 		case ExportSource::kUserMemoriesFreeform:
-			for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+			for (int pixel = 0; pixel < matrix->Data->Layers[0]->Freeform->Pixels.size(); pixel++)
 			{
-				Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+				Colours.push_back(matrix->Data->Layers[0]->Freeform->Pixels[pixel]->Colours[frame]);
 			}
 			break;
 		}
@@ -1402,11 +1402,11 @@ namespace ExportOutputBinary
 		switch (teo.ExportMode)
 		{
 		case ExportSource::kAnimationFreeform:
-			if (matrix->MatrixLayers.size() == 1)
+			if (matrix->Data->Layers.size() == 1)
 			{
-				for (int pixel = 0; pixel < matrix->MatrixLayers[0]->Freeform->Pixels.size(); pixel++)
+				for (int pixel = 0; pixel < matrix->Data->Layers[0]->Freeform->Pixels.size(); pixel++)
 				{
-					Colours.push_back(matrix->MatrixLayers[0]->Freeform->Pixels[pixel]->Colours[frame]);
+					Colours.push_back(matrix->Data->Layers[0]->Freeform->Pixels[pixel]->Colours[frame]);
 				}
 			}
 			else

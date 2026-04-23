@@ -23,6 +23,30 @@ bool sortByOrder(const MatrixPixel* lhs, const MatrixPixel* rhs)
 }
 
 
+// order by x/y coordinate from 0,0 to bottom right location
+bool sortByXYDesc(const MatrixPixel* lhs, const MatrixPixel* rhs)
+{
+	if (lhs->Y != rhs->Y)
+	{
+		return (lhs->Y < rhs->Y);
+	}
+
+	return (lhs->X < rhs->X);
+}
+
+
+// order by x/y coordinate from bottom right to 0,0
+bool sortByXYAsc(const MatrixPixel* lhs, const MatrixPixel* rhs)
+{
+	if (lhs->Y != rhs->Y)
+	{
+		return (lhs->Y > rhs->Y);
+	}
+
+	return (lhs->X > rhs->X);
+}
+
+
 FreeformHandler::FreeformHandler()
 {
 	FreeformFrame *fff = new FreeformFrame();
@@ -351,39 +375,28 @@ void FreeformHandler::AddShapeRectangleFilled(int sizex, int sizey, int directio
 }
 
 
-void FreeformHandler::AddToHistory()
-{
-}
-
-
-void FreeformHandler::AddToHistory(MatrixPixelHistory &m)
-{
-}
-
-
-void FreeformHandler::AddToHistory(MatrixPixelHistory *m)
-{
-}
-
-
-void FreeformHandler::Undo()
-{
-}
-
-
-void FreeformHandler::Redo()
-{
-}
-
-
-void FreeformHandler::SetFromUndo(int undo)
-{
-}
-
-
 void FreeformHandler::Sort()
 {
 	std::sort(Pixels.begin(), Pixels.end(), sortByOrder);
+}
+
+
+void FreeformHandler::AutoOrderPixels(int mode)
+{
+	switch (mode)
+	{
+	case 0:
+		std::sort(Pixels.begin(), Pixels.end(), sortByXYDesc);
+		break;
+	case 1:
+		std::sort(Pixels.begin(), Pixels.end(), sortByXYAsc);
+		break;
+	}
+
+	for (int t = 0; t < Pixels.size(); t++)
+	{
+		Pixels[t]->Order = t;
+	}
 }
 
 
@@ -551,3 +564,35 @@ void FreeformHandler::CalculateContrastColour(int frame)
 		Pixels[pixel]->Contrast = ColourUtility::ContrastColour(Pixels[pixel]->Colours[frame]);
 	}
 }
+
+
+#pragma region UndoRedo
+void FreeformHandler::UpdateHistory()
+{
+
+}
+
+
+void FreeformHandler::Undo()
+{
+	if (HistoryOffset != 0)
+	{
+		HistoryOffset--;
+	}
+}
+
+
+void FreeformHandler::Redo()
+{
+	//if (HistoryOffset != History.size() - 1)
+//	{
+//		HistoryOffset++;
+//	}
+}
+
+
+void FreeformHandler::SetFromUndo(int undo)
+{
+
+}
+#pragma end_region

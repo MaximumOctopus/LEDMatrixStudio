@@ -6,36 +6,37 @@
 //---------------------------------------------------------------------------
 #include <Vcl.Styles.hpp>
 #include <Vcl.Themes.hpp>
-USEFORM("Frames\FrameUndoPanel.cpp", frameUndos); /* TFrame: File Type */
-USEFORM("Forms\FormPreferences.cpp", frmPreferences);
-USEFORM("Forms\FormPreviewPopout.cpp", frmPreviewPopout);
 USEFORM("Forms\FormSaveRange.cpp", frmSaveRange);
-USEFORM("Forms\FormPlaybackSpeed.cpp", frmPlaybackSpeed);
-USEFORM("Forms\FormNewBrush.cpp", frmNewBrush);
-USEFORM("Forms\FormNewProject.cpp", frmNewProject);
-USEFORM("Forms\FormOptimise.cpp", frmOptimise);
-USEFORM("Frames\FrameLayerPanel.cpp", frameLayers); /* TFrame: File Type */
-USEFORM("Frames\FramePalettePanel.cpp", framePalette); /* TFrame: File Type */
-USEFORM("Frames\FrameQuickData.cpp", Frame5); /* TFrame: File Type */
-USEFORM("Frames\FrameGradientPanel.cpp", frameGradient); /* TFrame: File Type */
 USEFORM("Forms\FormSetIgnoredPixels.cpp", frmSetIgnoredPixels);
 USEFORM("Forms\FormToggleLockStatus.cpp", frmToggleLockStatus);
+USEFORM("Forms\FormPreviewPopout.cpp", frmPreviewPopout);
+USEFORM("Forms\FormOptimise.cpp", frmOptimise);
+USEFORM("Forms\FormPlaybackSpeed.cpp", frmPlaybackSpeed);
+USEFORM("Forms\FormPreferences.cpp", frmPreferences);
+USEFORM("Frames\FrameQuickData.cpp", Frame5); /* TFrame: File Type */
+USEFORM("Frames\FrameUndoPanel.cpp", frameUndos); /* TFrame: File Type */
+USEFORM("Frames\FramePalettePanel.cpp", framePalette); /* TFrame: File Type */
 USEFORM("Frames\FrameFontPanel.cpp", frameFont); /* TFrame: File Type */
+USEFORM("Frames\FrameGradientPanel.cpp", frameGradient); /* TFrame: File Type */
+USEFORM("Frames\FrameLayerPanel.cpp", frameLayers); /* TFrame: File Type */
 USEFORM("main.cpp", frmMain);
-USEFORM("Forms\FormCheckVersion.cpp", frmCheckVersion);
+USEFORM("Forms\FormNewProject.cpp", frmNewProject);
 USEFORM("Forms\FormColourChange.cpp", frmColourChange);
 USEFORM("Forms\FormCopyMultiple.cpp", frmCopyMultiple);
-USEFORM("Forms\FormAutomate.cpp", frmAutomate);
-USEFORM("Forms\FormAbout.cpp", frmAbout);
+USEFORM("Forms\FormDeleteMultiple.cpp", frmDeleteMultiple);
+USEFORM("Forms\FormCheckVersion.cpp", frmCheckVersion);
 USEFORM("Forms\FormAddLayer.cpp", Form3);
 USEFORM("Forms\FormAddShape.cpp", frmAddShape);
-USEFORM("Forms\FormFontViewer.cpp", frmFontViewer);
+USEFORM("Forms\FormAutomate.cpp", frmAutomate);
 USEFORM("Forms\FormImportBitmap.cpp", frmImportBitmap);
 USEFORM("Forms\FormMerge.cpp", frmMerge);
-USEFORM("Forms\FormExportGIF.cpp", frmExportGIF);
-USEFORM("Forms\FormDeleteMultiple.cpp", frmDeleteMultiple);
+USEFORM("Forms\FormNewBrush.cpp", frmNewBrush);
+USEFORM("Forms\FormFontViewer.cpp", frmFontViewer);
 USEFORM("Forms\FormExport.cpp", frmExport);
 USEFORM("Forms\FormExportCode.cpp", frmExportCode);
+USEFORM("Forms\FormExportGIF.cpp", frmExportGIF);
+USEFORM("Forms\FormAbout.cpp", frmAbout);
+USEFORM("Frames\FramePixelPanel.cpp", framePixel); /* TFrame: File Type */
 //---------------------------------------------------------------------------
 #include "LanguageHandler.h"
 #include "SystemSettings.h"

@@ -1197,7 +1197,7 @@ object frmMain: TfrmMain
   object pCanvas: TPanel
     Left = 0
     Top = 170
-    Width = 737
+    Width = 628
     Height = 658
     Align = alClient
     BevelOuter = bvNone
@@ -2361,8 +2361,8 @@ object frmMain: TfrmMain
     end
   end
   object pUndoToolbar: TPanel
-    Left = 1125
-    Top = 168
+    Left = 999
+    Top = 176
     Width = 161
     Height = 619
     TabOrder = 11
@@ -2583,7 +2583,7 @@ object frmMain: TfrmMain
     end
     object cbApplyToGroup: TCheckBox
       Left = 527
-      Top = 2
+      Top = 6
       Width = 100
       Height = 17
       Caption = 'Apply to group'
@@ -2610,11 +2610,33 @@ object frmMain: TfrmMain
       OnClick = bFreeformSelectGroupClick
     end
   end
+  object pPixelPanel: TPanel
+    Left = 628
+    Top = 170
+    Width = 109
+    Height = 658
+    Align = alRight
+    Color = clWhite
+    ParentBackground = False
+    TabOrder = 14
+    Visible = False
+    object Panel2: TPanel
+      Left = 1
+      Top = 632
+      Width = 107
+      Height = 25
+      Align = alBottom
+      BevelOuter = bvNone
+      TabOrder = 0
+    end
+  end
   object miMain: TMainMenu
+    Tag = 1
     AutoHotkeys = maManual
     AutoLineReduction = maManual
     Images = ilMenu
-    Left = 728
+    Left = 744
+    Top = 16
     object File1: TMenuItem
       Caption = '.'
       object New1: TMenuItem
@@ -2943,6 +2965,11 @@ object frmMain: TfrmMain
         AutoCheck = True
         Caption = '.'
         OnClick = miQuickDataClick
+      end
+      object miPixelsToolbar: TMenuItem
+        AutoCheck = True
+        Caption = '.'
+        OnClick = miPixelsToolbarClick
       end
       object miUndoToolbar: TMenuItem
         AutoCheck = True
@@ -3384,7 +3411,7 @@ object frmMain: TfrmMain
         OnClick = miClearAllFramesClick
       end
       object miRemoveAllPixels: TMenuItem
-        Caption = 'Remove all pixels'
+        Caption = '.'
         Enabled = False
         OnClick = miRemoveAllPixelsClick
       end
@@ -3735,6 +3762,21 @@ object frmMain: TfrmMain
         Enabled = False
         ShortCut = 16460
         OnClick = miFlattenLayersClick
+      end
+      object N70: TMenuItem
+        Caption = '-'
+      end
+      object miAutoOrderPixels: TMenuItem
+        Caption = '.'
+        object miAGPTLBR: TMenuItem
+          Caption = '.'
+          OnClick = miAGPTLBRClick
+        end
+        object miAGPBRTL: TMenuItem
+          Tag = 1
+          Caption = '.'
+          OnClick = miAGPTLBRClick
+        end
       end
     end
     object Colours1: TMenuItem
@@ -5087,28 +5129,28 @@ object frmMain: TfrmMain
       Caption = '-'
     end
     object miPlaybackSpeed1: TMenuItem
-      Caption = '2 seconds'
+      Caption = '0.5 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed2: TMenuItem
       Tag = 1
-      Caption = '1.5 seconds'
+      Caption = '0.66 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed3: TMenuItem
       Tag = 2
-      Caption = '1 second'
+      Caption = '1 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed4: TMenuItem
       Tag = 3
-      Caption = '0.5 seconds'
+      Caption = '2 FPS'
       Checked = True
       GroupIndex = 1
       RadioItem = True
@@ -5116,49 +5158,49 @@ object frmMain: TfrmMain
     end
     object miPlaybackSpeed5: TMenuItem
       Tag = 4
-      Caption = '0.25 seconds'
+      Caption = '4 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed6: TMenuItem
       Tag = 5
-      Caption = '0.2 seconds'
+      Caption = '5 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed7: TMenuItem
       Tag = 6
-      Caption = '0.1 seconds'
+      Caption = '10 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed8: TMenuItem
       Tag = 7
-      Caption = '0.05 seconds'
+      Caption = '20 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed9: TMenuItem
       Tag = 8
-      Caption = '0.025 seconds'
+      Caption = '40 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed10: TMenuItem
       Tag = 9
-      Caption = '0.020 seconds'
+      Caption = '50 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
     end
     object miPlaybackSpeed11: TMenuItem
       Tag = 10
-      Caption = '0.01 seconds'
+      Caption = '100 FPS'
       GroupIndex = 1
       RadioItem = True
       OnClick = miPlaybackSpeed3Click
@@ -5172,6 +5214,7 @@ object frmMain: TfrmMain
       Caption = '.'
       GroupIndex = 1
       RadioItem = True
+      OnClick = miPlaybackSpeed3Click
     end
     object N40: TMenuItem
       Caption = '-'
@@ -5193,7 +5236,6 @@ object frmMain: TfrmMain
   object puGradient: TPopupMenu
     AutoHotkeys = maManual
     Left = 792
-    Top = 65528
     object miGradientColour0: TMenuItem
       Caption = '.'
       OnClick = miGradientColour0Click

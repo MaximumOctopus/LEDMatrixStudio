@@ -50,7 +50,7 @@ class PresetHandler
 private:
 
 	enum class MatrixPresetParameter { kUnknown = 0, kStructBegin, kStructEnd, kProjectWidth, kProjectHeight,
-		kSource, kSourceLSB, kSourceDirection, kUnused, kPixelSize, kMatrixType };
+		                               kSource, kSourceLSB, kSourceDirection, kUnused, kPixelSize, kMatrixType };
 
 	MatrixPresetParameter GetMatrixPresetParameterType(const std::wstring);
 

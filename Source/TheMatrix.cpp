@@ -54,10 +54,7 @@ TheMatrix::TheMatrix(TComponent *owner, TWinControl *Zig)
 
 	// ===========================================================================
 
-	//LayerHandler *Layers;
-
-	Layer *layer = new Layer(GLanguageHandler->Text[kBottomLayer]);
-	MatrixLayers.push_back(layer);
+	Data = new LayerHandler(GLanguageHandler->Text[kBottomLayer]);
 
 	// ===========================================================================
 
@@ -124,6 +121,8 @@ TheMatrix::~TheMatrix()
 
 	delete ScrollHorizontal;
 	delete ScrollVertical;
+
+    delete Data;
 }
 
 
@@ -158,21 +157,6 @@ void TheMatrix::NewMatrix(MatrixDrawMode drawmode, MatrixColourMode colourmode,
 
 	AnimPlaying = false;
 
-	Render.TopLeft.X = 0;
-	Render.TopLeft.Y = 0;
-	Render.BottomRight.X = width - 1;
-	Render.BottomRight.Y = height - 1;
-	Render.ViewWindow.X = width - 1;
-	Render.ViewWindow.Y = height - 1;
-
-	Render.Action.Mode = ActionMode::kNone;
-	Render.Action.Point = CDrawPointNone;
-	Render.Action.Colour = 0;
-	Render.Action.Coords[0].X = -1;
-	Render.Action.Coords[0].Y = -1;
-	Render.Action.CopyPos.X = 0;
-	Render.Action.CopyPos.Y = 0;
-
 	LastX = -1;
 	LastY = -1;
 
@@ -192,15 +176,15 @@ void TheMatrix::NewMatrix(MatrixDrawMode drawmode, MatrixColourMode colourmode,
 
 	PreviewBox->Top = top;
 
-	Details.Width = width;
-	Details.Height = height;
-	Details.DrawMode = drawmode;
-	Details.ColourMode = colourmode;
-	Render.Gradient.Option = GradientOption::kOff;
-	Render.Shape = pixelshape;
+	Details.SetNew(width, height, drawmode, colourmode);
+	Render.SetNew(pixelshape, width, height);
+
 	BrushSize Brush = BrushSize::kSmall;
+
 	MatrixReadOnly = readonly;
 	RGBBackground = backgroundcolour;
+
+	Data->SetSystem(width, height, backgroundcolour, Software, Details.DrawMode, Details.ColourMode);
 
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
@@ -256,14 +240,14 @@ void TheMatrix::NewMatrix(MatrixDrawMode drawmode, MatrixColourMode colourmode,
 
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		while (MatrixLayers[kPermanentLayer]->Cells.size() < framecount)
+		while (Data->Layers[kPermanentLayer]->Cells.size() < framecount)
 		{
 			InsertBlankFrameAt(0);
 		}
 	}
 	else
 	{
-		while (MatrixLayers[kPermanentLayer]->Freeform->Frames.size() < framecount)
+		while (Data->Layers[kPermanentLayer]->Freeform->Frames.size() < framecount)
 		{
 			InsertBlankFrameAt(0);
 		}
@@ -290,9 +274,9 @@ void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 {
 	MatrixMerge->Clear(Details.ColourMode, RGBBackground);
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
+	for (int layer = 0; layer < Data->Layers.size(); layer++)
 	{
-		if (MatrixLayers[layer]->Visible)
+		if (Data->Layers[layer]->Visible)
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
@@ -302,7 +286,7 @@ void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 				case MatrixColourMode::kBiSequential:
 				case MatrixColourMode::kBiBitplanes:
 				{
-					switch (MatrixLayers[layer]->Cells[frame]->Grid[z])
+					switch (Data->Layers[layer]->Cells[frame]->Grid[z])
 					{
 					case 0:
 						break;
@@ -312,13 +296,13 @@ void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 						switch (merge)
 						{
 						case MergeFrameMode::kRetainGridValue:
-							MatrixMerge->Grid[z] = MatrixLayers[layer]->Cells[frame]->Grid[z];
+							MatrixMerge->Grid[z] = Data->Layers[layer]->Cells[frame]->Grid[z];
 							break;
 						case MergeFrameMode::kConvertForRender:
-							MatrixMerge->Grid[z] = LEDColours[MatrixLayers[layer]->Cells[frame]->Grid[z]];
+							MatrixMerge->Grid[z] = LEDColours[Data->Layers[layer]->Cells[frame]->Grid[z]];
 							break;
 						case MergeFrameMode::kConvertForFileOutput:
-							switch (MatrixLayers[layer]->Cells[frame]->Grid[z])
+							switch (Data->Layers[layer]->Cells[frame]->Grid[z])
 							{
 							case 0:
 								MatrixMerge->Grid[z] = 0x00000000;
@@ -339,23 +323,23 @@ void TheMatrix::BuildMergedFrame(int frame, MergeFrameMode merge)
 					break;
 				}
 				case MatrixColourMode::kRGB:
-					if (MatrixLayers[layer]->Cells[frame]->Grid[z] != RGBBackground)
+					if (Data->Layers[layer]->Cells[frame]->Grid[z] != RGBBackground)
 					{
-						MatrixMerge->Grid[z] = MatrixLayers[layer]->Cells[frame]->Grid[z];
+						MatrixMerge->Grid[z] = Data->Layers[layer]->Cells[frame]->Grid[z];
 					}
 					break;
 				case MatrixColourMode::kRGB3BPP:
 				{
-					if (MatrixLayers[layer]->Cells[frame]->Grid[z] != RGBBackground)
+					if (Data->Layers[layer]->Cells[frame]->Grid[z] != RGBBackground)
 					{
 						switch (merge)
 						{
 						case MergeFrameMode::kRetainGridValue:
-							MatrixMerge->Grid[z] = MatrixLayers[layer]->Cells[frame]->Grid[z];
+							MatrixMerge->Grid[z] = Data->Layers[layer]->Cells[frame]->Grid[z];
 							break;
 						case MergeFrameMode::kConvertForRender:
 						case MergeFrameMode::kConvertForFileOutput:
-							MatrixMerge->Grid[z] = LEDRGB3BPPColours[MatrixLayers[layer]->Cells[frame]->Grid[z]];
+							MatrixMerge->Grid[z] = LEDRGB3BPPColours[Data->Layers[layer]->Cells[frame]->Grid[z]];
 							break;
 						}
 					}
@@ -375,7 +359,7 @@ void TheMatrix::CopyCurrentFrameToDrawBuffer()
 {
 	if (Busy) return;
 
-	std::memcpy(DisplayBuffer->Grid, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
+	std::memcpy(DisplayBuffer->Grid, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
 }
 
 
@@ -383,9 +367,9 @@ void TheMatrix::CopyDrawBufferToCurrentFrame()
 {
 	if (Busy) return;
 
-	if (!MatrixLayers[CurrentLayer]->Visible) return;
+	if (!Data->Layers[CurrentLayer]->Visible) return;
 
-	std::memcpy(MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid,
+	std::memcpy(Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid,
 				DisplayBuffer->Grid,
 				Details.Width * Details.Height * sizeof(int));
 
@@ -402,9 +386,9 @@ void TheMatrix::CopyDrawBufferToCurrentFrame()
 #pragma region Clear
 void TheMatrix::ClearCurrentFrame()
 {
-	for (int l = 0; l < MatrixLayers.size(); l++)
+	for (int l = 0; l < Data->Layers.size(); l++)
 	{
-		if (!IsThisFrameLocked(l, CurrentFrame))
+		if (!Data->IsThisFrameLocked(l, CurrentFrame))
 		{
 			if (l == CurrentLayer)
 			{
@@ -414,12 +398,12 @@ void TheMatrix::ClearCurrentFrame()
 
 		if (Details.DrawMode == MatrixDrawMode::kGrid)
 		{
-			MatrixLayers[l]->Cells[CurrentFrame]->Clear(Details.ColourMode, RGBBackground);
-			MatrixLayers[l]->Cells[CurrentFrame]->AddToHistory();
+			Data->Layers[l]->Cells[CurrentFrame]->Clear(Details.ColourMode, RGBBackground);
+			Data->Layers[l]->Cells[CurrentFrame]->AddToHistory();
 		}
 		else
 		{
-			MatrixLayers[l]->Freeform->Clear(CurrentFrame, Details.ColourMode, RGBBackground);
+			Data->Layers[l]->Freeform->Clear(CurrentFrame, Details.ColourMode, RGBBackground);
 			// to do add to history
 		}
 	}
@@ -432,19 +416,19 @@ void TheMatrix::ClearCurrentFrame()
 
 void TheMatrix::ClearCurrentLayer()
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame)) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame)) return;
 
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
 		DisplayBuffer->Clear(Details.ColourMode, RGBBackground);
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Clear(Details.ColourMode, RGBBackground);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Clear(Details.ColourMode, RGBBackground);
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
 	}
 	else
 	{
-		MatrixLayers[CurrentLayer]->Freeform->Clear(CurrentFrame, Details.ColourMode, RGBBackground);
+		Data->Layers[CurrentLayer]->Freeform->Clear(CurrentFrame, Details.ColourMode, RGBBackground);
 		// add to do history
 	}
 
@@ -456,9 +440,9 @@ void TheMatrix::ClearCurrentLayer()
 
 void TheMatrix::ClearFrame(int frame)
 {
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
+	for (int layer = 0; layer < Data->Layers.size(); layer++)
 	{
-		if (!IsThisFrameLocked(layer, frame))
+		if (!Data->IsThisFrameLocked(layer, frame))
 		{
 			if (layer == CurrentLayer && frame == CurrentFrame)
 			{
@@ -467,15 +451,15 @@ void TheMatrix::ClearFrame(int frame)
 
 			if (Details.DrawMode == MatrixDrawMode::kGrid)
 			{
-				MatrixLayers[layer]->Cells[frame]->Clear(Details.ColourMode, RGBBackground);
+				Data->Layers[layer]->Cells[frame]->Clear(Details.ColourMode, RGBBackground);
 
-				MatrixLayers[layer]->Cells[frame]->AddToHistory();
+				Data->Layers[layer]->Cells[frame]->AddToHistory();
 			}
 			else
 			{
-				MatrixLayers[layer]->Freeform->Clear(frame, Details.ColourMode, RGBBackground);
+				Data->Layers[layer]->Freeform->Clear(frame, Details.ColourMode, RGBBackground);
 
-				// to do MatrixLayers[layer]->Cells[frame]->AddToHistory();
+				// to do Data->Layers[layer]->Cells[frame]->AddToHistory();
 			}
 		}
 	}
@@ -490,21 +474,21 @@ void TheMatrix::ClearAllMatrixData(bool addfirstframe, int width, int height)
 {
 	DisplayBuffer->Clear(Details.ColourMode, RGBBackground);
 
-	while (MatrixLayers.size() > 1)
+	while (Data->Layers.size() > 1)
 	{
-		MatrixLayers.pop_back();
+		Data->Layers.pop_back();
 	}
 
-	MatrixLayers[kPermanentLayer]->Cells.clear();
-	if (MatrixLayers[kPermanentLayer]->Freeform != nullptr)
+	Data->Layers[kPermanentLayer]->Cells.clear();
+	if (Data->Layers[kPermanentLayer]->Freeform != nullptr)
 	{
-		MatrixLayers[kPermanentLayer]->Freeform->ClearAll();
+		Data->Layers[kPermanentLayer]->Freeform->ClearAll();
     }
-	MatrixLayers[kPermanentLayer]->Name = GLanguageHandler->Text[kBottomLayer];
+	Data->Layers[kPermanentLayer]->Name = GLanguageHandler->Text[kBottomLayer];
 
-	if (MatrixLayers[kPermanentLayer]->Freeform == nullptr)
+	if (Data->Layers[kPermanentLayer]->Freeform == nullptr)
 	{
-		MatrixLayers[kPermanentLayer]->Freeform = new FreeformHandler();
+		Data->Layers[kPermanentLayer]->Freeform = new FreeformHandler();
 	}
 
 	if (addfirstframe)
@@ -512,22 +496,22 @@ void TheMatrix::ClearAllMatrixData(bool addfirstframe, int width, int height)
 		if (Details.DrawMode == MatrixDrawMode::kGrid)
 		{
 			MatrixGrid *m1 = new MatrixGrid(width, height, Details.ColourMode, RGBBackground);
-			MatrixLayers[kPermanentLayer]->Cells.push_back(m1);
+			Data->Layers[kPermanentLayer]->Cells.push_back(m1);
 		}
 		else
 		{
 			FreeformFrame *mf = new FreeformFrame();
-            MatrixLayers[kPermanentLayer]->Freeform->Frames.push_back(mf);
+            Data->Layers[kPermanentLayer]->Freeform->Frames.push_back(mf);
 		}
 	}
 
 	CurrentFrame = 0;
 	CurrentLayer = 0;
 
-   //	MatrixLayers[kPermanentLayer]->Cells[1]->History.clear();
-	//MatrixLayers[kPermanentLayer]->Cells[1]->AddToHistory();
+   //	Data->Layers[kPermanentLayer]->Cells[1]->History.clear();
+	//Data->Layers[kPermanentLayer]->Cells[1]->AddToHistory();
 
-   //	MatrixLayers[kPermanentLayer]->Cells[1]->Locked = false;
+   //	Data->Layers[kPermanentLayer]->Cells[1]->Locked = false;
 
 	if (OnChange) OnChange(this);
 
@@ -541,9 +525,9 @@ void TheMatrix::RemoveAllPixels()
 {
 	Busy = true;
 
-	for (int t = 0; t < MatrixLayers.size(); t++)
+	for (int t = 0; t < Data->Layers.size(); t++)
 	{
-		MatrixLayers[t]->Freeform->Pixels.clear();
+		Data->Layers[t]->Freeform->Pixels.clear();
 	}
 
 	Busy = false;
@@ -554,26 +538,7 @@ void TheMatrix::RemoveAllPixels()
 
 void TheMatrix::WipeAllFramesCurrentLayer()
 {
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
-		{
-			if (!IsThisFrameLocked(CurrentLayer, frame))
-			{
-				MatrixLayers[CurrentLayer]->Cells[frame]->Clear(Details.ColourMode, RGBBackground);
-			}
-		}
-	}
-	else
-	{
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Freeform->Frames.size(); frame++)
-		{
-			if (!IsThisFrameLocked(CurrentLayer, frame))
-			{
-				MatrixLayers[CurrentLayer]->Freeform->Clear(frame, Details.ColourMode, RGBBackground);
-            }
-		}
-	}
+	Data->WipeAllFrames(CurrentLayer);
 
 	if (OnChange) OnChange(this);
 
@@ -588,29 +553,7 @@ void TheMatrix::WipeAllFramesCurrentLayer()
 
 void TheMatrix::WipeAllFramesAllLayers()
 {
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
-			{
-				if (!IsThisFrameLocked(layer, frame))
-				{
-					MatrixLayers[layer]->Cells[frame]->Clear(Details.ColourMode, RGBBackground);
-				}
-			}
-		}
-		else
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Freeform->Frames.size(); frame++)
-			{
-				if (!IsThisFrameLocked(layer, frame))
-				{
-					MatrixLayers[layer]->Freeform->Clear(frame, Details.ColourMode, RGBBackground);
-				}
-			}
-		}
-	}
+    Data->WipeAllFramesAllLayers();
 
 	if (OnChange) OnChange(this);
 
@@ -629,40 +572,7 @@ void TheMatrix::ClearAllFramesGradient(int mode)
 
 	if (Details.DrawMode == MatrixDrawMode::kFreeform) return;
 
-	for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
-	{
-		if (!IsThisFrameLocked(CurrentLayer, frame))
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				for (int y = 0; y < Details.Height; y++)
-				{
-					if (mode == 1)
-					{
-						if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = Render.Gradient.IY[y];
-						}
-						else
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = LEDColours[Render.Gradient.IY[y]];
-						}
-					}
-					else
-					{
-						if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = Render.Gradient.IX[x];
-						}
-						else
-						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = LEDColours[Render.Gradient.IX[x]];
-						}
-					}
-				}
-			}
-		}
-	}
+	Data->ClearAllFramesGradient(mode, CurrentLayer, Render.Gradient, LEDColours);
 
 	if (OnChange) OnChange(this);
 
@@ -702,7 +612,7 @@ int TheMatrix::GetPreviewPixelSize(int ROffset)
 		break;
 	}
 
-	if (pixel_size <= 0)
+	if (pixel_size <= 1)
 	{
 		pixel_size = 1;
     }
@@ -1207,8 +1117,8 @@ void __fastcall TheMatrix::OnPreviewBoxMouseDown(TObject *Sender, TMouseButton B
 #pragma region Mode_Mono_Grid
 void __fastcall TheMatrix::ClickPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	int x1 = std::floor((double)X / (double)Render.PixelSize);
 	int y1 = std::floor((double)Y / (double)Render.PixelSize);
@@ -1524,7 +1434,7 @@ void TheMatrix::BuildMonoBiRenderFrame()
 {
 	MatrixRender->ClearColour(LEDColours[kDisplayClear]);
 
-	if (MatrixLayers.size() == 1)
+	if (Data->Layers.size() == 1)
 	{
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
@@ -1552,9 +1462,9 @@ void TheMatrix::BuildMonoBiRenderFrame()
 		return;
 	}
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
+	for (int layer = 0; layer < Data->Layers.size(); layer++)
 	{
-		if (MatrixLayers[layer]->Visible)
+		if (Data->Layers[layer]->Visible)
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
@@ -1573,7 +1483,7 @@ void TheMatrix::BuildMonoBiRenderFrame()
 							{
 								if (LightBox == 1 && CurrentFrame != 0)
 								{
-									if (MatrixLayers[layer]->Cells[CurrentFrame - 1]->Grid[z] == 1)
+									if (Data->Layers[layer]->Cells[CurrentFrame - 1]->Grid[z] == 1)
 									{
 										MatrixRender->Grid[z] = LEDColours[kLightBoxShade];
 									}
@@ -1593,14 +1503,14 @@ void TheMatrix::BuildMonoBiRenderFrame()
 					}
 					else
 					{
-						switch (MatrixLayers[layer]->Cells[CurrentFrame]->Grid[z])
+						switch (Data->Layers[layer]->Cells[CurrentFrame]->Grid[z])
 						{
 						case 0:
 							if (MatrixRender->Grid[z] == LEDColours[kDisplayClear])
 							{
 								if (LightBox == 1 && CurrentFrame != 0)
 								{
-									if (MatrixLayers[layer]->Cells[CurrentFrame - 1]->Grid[z] == 1)
+									if (Data->Layers[layer]->Cells[CurrentFrame - 1]->Grid[z] == 1)
 									{
 										MatrixRender->Grid[z] = LEDColours[kLightBoxShade];
 									}
@@ -1646,8 +1556,8 @@ void __fastcall TheMatrix::Shape1MouseUpBiColour(TObject *Sender, TMouseButton B
 
 void __fastcall TheMatrix::ClickPixelBiColour(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
@@ -1855,7 +1765,7 @@ void TheMatrix::BuildRGBRenderFrame()
 {
 	MatrixRender->ClearColour(RGBBackground);
 
-	if (MatrixLayers.size() == 1)
+	if (Data->Layers.size() == 1)
 	{
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
@@ -1872,9 +1782,9 @@ void TheMatrix::BuildRGBRenderFrame()
 		return;
 	}
 
-	for (int l = 0; l < MatrixLayers.size(); l++)
+	for (int l = 0; l < Data->Layers.size(); l++)
 	{
-		if (MatrixLayers[l]->Visible)
+		if (Data->Layers[l]->Visible)
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
@@ -1890,7 +1800,7 @@ void TheMatrix::BuildRGBRenderFrame()
 						{
 							if (DisplayBuffer->Grid[z] == RGBBackground)
 							{
-								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(MatrixLayers[l]->Cells[CurrentFrame - 1]->Grid[z]);
+								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(Data->Layers[l]->Cells[CurrentFrame - 1]->Grid[z]);
 							}
 							else
 							{
@@ -1908,16 +1818,16 @@ void TheMatrix::BuildRGBRenderFrame()
 						{
 							if (DisplayBuffer->Grid[z] == RGBBackground)
 							{
-								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(MatrixLayers[l]->Cells[CurrentFrame - 1]->Grid[z]);
+								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(Data->Layers[l]->Cells[CurrentFrame - 1]->Grid[z]);
 							}
 							else
 							{
 								MatrixRender->Grid[z] = DisplayBuffer->Grid[z];
 							}
 						}
-						else if (MatrixLayers[l]->Cells[CurrentFrame]->Grid[z] != RGBBackground)
+						else if (Data->Layers[l]->Cells[CurrentFrame]->Grid[z] != RGBBackground)
 						{
-							MatrixRender->Grid[z] = MatrixLayers[l]->Cells[CurrentFrame]->Grid[z];
+							MatrixRender->Grid[z] = Data->Layers[l]->Cells[CurrentFrame]->Grid[z];
 						}
 					}
 				}
@@ -2100,8 +2010,8 @@ void __fastcall TheMatrix::Shape1MouseUpRGB(TObject *Sender, TMouseButton Button
 
 void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
@@ -2136,7 +2046,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1], SelectionMMB, SelectionRMB);
+			ChangeSelectionColour(Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1], SelectionMMB, SelectionRMB);
 			break;
 		case ActionMode::kPaste:
 			DrawWithBrushPaste(x1, y1, !Shift.Contains(ssShift));
@@ -2180,7 +2090,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(SelectionLMB, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1], SelectionRMB);
+			ChangeSelectionColour(SelectionLMB, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1], SelectionRMB);
 			break;
 		case ActionMode::kGradientBrush:
 			if (!(LastX == x1 && LastY == y1))
@@ -2218,7 +2128,7 @@ void __fastcall TheMatrix::ClickPixelRGB(TObject *Sender, TMouseButton Button, T
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(SelectionLMB, SelectionMMB, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1]);
+			ChangeSelectionColour(SelectionLMB, SelectionMMB, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[y1 * Details.Width + x1]);
 			break;
 
 		default:
@@ -2400,9 +2310,9 @@ void __fastcall TheMatrix::PaintBoxUpdateRGBFF(TObject *Sender)
 	std::chrono::system_clock::time_point StartTime = std::chrono::system_clock::now();
 	#endif
 
-	for (int p = 0; p < MatrixLayers[0]->Freeform->Pixels.size(); p++)
+	for (int p = 0; p < Data->Layers[0]->Freeform->Pixels.size(); p++)
 	{
-		MatrixPixel *px = MatrixLayers[0]->Freeform->Pixels[p];
+		MatrixPixel *px = Data->Layers[0]->Freeform->Pixels[p];
 
 		PaintBox->Canvas->Brush->Color = TColor(px->Colours[CurrentFrame]);
 
@@ -2477,7 +2387,7 @@ void __fastcall TheMatrix::PaintBoxUpdateRGBFF(TObject *Sender)
 
 void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	CurrentPixel = MatrixLayers[CurrentLayer]->FindPixel(X, Y, Render.PixelSizeZ);
+	CurrentPixel = Data->Layers[CurrentLayer]->FindPixel(X, Y, Render.PixelSizeZ);
 
 	if (CurrentPixel == -1)
 	{
@@ -2486,20 +2396,23 @@ void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button,
 
 		if (Render.Action.Mode == ActionMode::kMovePixel && !Shift.Contains(ssShift))
 		{
-			if (MatrixLayers[CurrentLayer]->Freeform->Selection.size() != 0)
+			if (Data->Layers[CurrentLayer]->Freeform->Selection.size() != 0)
 			{
-				MatrixLayers[CurrentLayer]->Freeform->Selection.clear();
+				Data->Layers[CurrentLayer]->Freeform->Selection.clear();
 			}
 		}
+
+        if (OnMouseOverPixel) OnMouseOverPixel(X, Y, CurrentPixel);
+
 		return;
 	}
 
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	// ===========================================================================
 
-	if (OnMouseOver) OnMouseOver(X, Y);
+	if (OnMouseOverPixel) OnMouseOverPixel(X, Y, CurrentPixel);
 
 	// ===========================================================================
 
@@ -2526,24 +2439,24 @@ void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button,
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame], SelectionMMB, SelectionRMB);
+			ChangeSelectionColour(Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame], SelectionMMB, SelectionRMB);
 			break;
 		case ActionMode::kMovePixel:
 			if (Shift.Contains(ssShift))
 			{
-				if (MatrixLayers[CurrentLayer]->Freeform->Selection.size() == 0)
+				if (Data->Layers[CurrentLayer]->Freeform->Selection.size() == 0)
 				{
 					LastX = X;
 					LastY = Y;
 				}
 
-				MatrixLayers[CurrentLayer]->Freeform->AddToSelection(CurrentPixel);
+				Data->Layers[CurrentLayer]->Freeform->AddToSelection(CurrentPixel);
 			}
 			break;
 		case ActionMode::kDrawOrder:
-			MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Order = NewOrder++;
+			Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Order = NewOrder++;
 
-			if (NewOrder >= MatrixLayers[CurrentLayer]->Freeform->Pixels.size())
+			if (NewOrder >= Data->Layers[CurrentLayer]->Freeform->Pixels.size())
 			{
 				Render.Action.Mode = ActionMode::kNone;
 			}
@@ -2573,7 +2486,7 @@ void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button,
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(SelectionLMB, MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame], SelectionRMB);
+			ChangeSelectionColour(SelectionLMB, Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame], SelectionRMB);
 			break;
 
 		default:
@@ -2601,7 +2514,7 @@ void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button,
 			if (OnChange) OnChange(this);
 			break;
 		case ActionMode::kPicker:
-			ChangeSelectionColour(SelectionLMB, SelectionMMB, MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame]);
+			ChangeSelectionColour(SelectionLMB, SelectionMMB, Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame]);
 			break;
 
 		default:
@@ -2616,24 +2529,24 @@ void __fastcall TheMatrix::ClickPixelRGBFF(TObject *Sender, TMouseButton Button,
 void __fastcall TheMatrix::Shape1MouseMoveRGBFF(TObject *Sender, TShiftState Shift, int X, int Y)
 {
 	// ===========================================================================
-	if (OnMouseOver) OnMouseOver(X, Y);
+	if (OnMouseOverPixel) OnMouseOverPixel(X, Y, CurrentPixel);
 	// ===========================================================================
 
 	if (CurrentPixel == -1) return;
 
 	if (Render.Action.Mode == ActionMode::kMovePixel && !Shift.Contains(ssShift))
 	{
-		if (MatrixLayers[CurrentLayer]->Freeform->Selection.size() != 0)
+		if (Data->Layers[CurrentLayer]->Freeform->Selection.size() != 0)
 		{
-			for (int t = 0; t < MatrixLayers[CurrentLayer]->Freeform->Selection.size(); t++)
+			for (int t = 0; t < Data->Layers[CurrentLayer]->Freeform->Selection.size(); t++)
 			{
-				MatrixLayers[CurrentLayer]->Freeform->Move(MatrixLayers[CurrentLayer]->Freeform->Selection[t], X - LastX, Y - LastY);
+				Data->Layers[CurrentLayer]->Freeform->Move(Data->Layers[CurrentLayer]->Freeform->Selection[t], X - LastX, Y - LastY);
 			}
 		}
 		else
 		{
-			MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->X = X;
-			MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Y = Y;
+			Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->X = X;
+			Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Y = Y;
 		}
 	}
 
@@ -2652,25 +2565,25 @@ void TheMatrix::AddPixelShape(int shape, int direction, int sizex, int sizey, in
 	switch (shape)
 	{
 	case 0: // circle
-		MatrixLayers[CurrentLayer]->Freeform->AddShapeCircle(sizex, pixels, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeCircle(sizex, pixels, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 1: // line (horizontal)
-		MatrixLayers[CurrentLayer]->Freeform->AddLineH(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddLineH(sizex, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 2: // line (vertical)
-		MatrixLayers[CurrentLayer]->Freeform->AddLineV(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddLineV(sizex, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 3: // square
-		MatrixLayers[CurrentLayer]->Freeform->AddShapeSquare(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeSquare(sizex, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 4: // square filled
-		MatrixLayers[CurrentLayer]->Freeform->AddShapeSquareFilled(sizex, direction, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeSquareFilled(sizex, direction, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 5: // rectangle
-		MatrixLayers[CurrentLayer]->Freeform->AddShapeRectangle(sizex, sizey, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangle(sizex, sizey, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	case 6: // rectangle filled
-		MatrixLayers[CurrentLayer]->Freeform->AddShapeRectangleFilled(sizex, sizey, direction, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangleFilled(sizex, sizey, direction, Render.PixelSizeZ, start_x, start_y, colour);
 		break;
 	}
 
@@ -2684,7 +2597,7 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 {
 	MatrixRender->ClearColour(RGBBackground);
 
-	if (MatrixLayers.size() == 1)
+	if (Data->Layers.size() == 1)
 	{
 		for (int z = 0; z < Details.Width * Details.Height; z++)
 		{
@@ -2704,9 +2617,9 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 		return;
 	}
 
-	for (int l = 0; l < MatrixLayers.size(); l++)
+	for (int l = 0; l < Data->Layers.size(); l++)
 	{
-		if (MatrixLayers[l]->Visible)
+		if (Data->Layers[l]->Visible)
 		{
 			for (int z = 0; z < Details.Width * Details.Height; z++)
 			{
@@ -2722,7 +2635,7 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 						{
 							if (DisplayBuffer->Grid[z] == RGBBackground)
 							{
-								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(LEDRGB3BPPColours[MatrixLayers[l]->Cells[CurrentFrame - 1]->Grid[z]]);
+								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(LEDRGB3BPPColours[Data->Layers[l]->Cells[CurrentFrame - 1]->Grid[z]]);
 							}
 							else
 							{
@@ -2740,16 +2653,16 @@ void TheMatrix::BuildRGB3BPPRenderFrame()
 						{
 							if (DisplayBuffer->Grid[z] == RGBBackground)
 							{
-								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(MatrixLayers[l]->Cells[CurrentFrame - 1]->Grid[z]);
+								MatrixRender->Grid[z] = ColourUtility::DarkenRGB(Data->Layers[l]->Cells[CurrentFrame - 1]->Grid[z]);
 							}
 							else
 							{
-								MatrixRender->Grid[z] = LEDRGB3BPPColours[MatrixLayers[l]->Cells[CurrentFrame]->Grid[z]];
+								MatrixRender->Grid[z] = LEDRGB3BPPColours[Data->Layers[l]->Cells[CurrentFrame]->Grid[z]];
 							}
 						}
-						else if (MatrixLayers[l]->Cells[CurrentFrame]->Grid[z] != RGBBackground)
+						else if (Data->Layers[l]->Cells[CurrentFrame]->Grid[z] != RGBBackground)
 						{
-							MatrixRender->Grid[z] = LEDRGB3BPPColours[MatrixLayers[l]->Cells[CurrentFrame]->Grid[z]];
+							MatrixRender->Grid[z] = LEDRGB3BPPColours[Data->Layers[l]->Cells[CurrentFrame]->Grid[z]];
 						}
 					}
 				}
@@ -2984,7 +2897,7 @@ void TheMatrix::SaveIgnoredPixels(const std::wstring file_name)
 
 void __fastcall TheMatrix::ClickPixelIgnoredPixel(TObject *Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
-	if (IsThisFrameLocked(0, CurrentFrame)) return;
+	if (Data->IsThisFrameLocked(0, CurrentFrame)) return;
 
 	int x1 = std::floor(X / Render.PixelSize);
 	int y1 = std::floor(Y / Render.PixelSize);
@@ -3325,30 +3238,30 @@ void TheMatrix::ColourPixel(int colour)
 {
 	if (Render.ApplyToGroup)
 	{
-		MatrixLayers[CurrentLayer]->Freeform->SetAllGroupTo(MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Group,
+		Data->Layers[CurrentLayer]->Freeform->SetAllGroupTo(Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Group,
 															CurrentFrame,
                                                             colour);
 	}
 	else
 	{
-		MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame] = colour;
+		Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[CurrentFrame] = colour;
 	}
 }
 
 
 void TheMatrix::ColourPixelMulti(int colour)
 {
-	for (int f = 0; f < MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours.size(); f++)
+	for (int f = 0; f < Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours.size(); f++)
 	{
-		MatrixLayers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[f] = colour;
+		Data->Layers[CurrentLayer]->Freeform->Pixels[CurrentPixel]->Colours[f] = colour;
 	}
 }
 
 
 void TheMatrix::DrawWithBrush(int index, int x, int y)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	if (x >= Details.Width || y >= Details.Height) return;
 
@@ -3357,7 +3270,7 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 	case BrushSize::kSmall:
 		PlotPixelMatrix(x, y, index);
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 		break;
 	case BrushSize::kMedium:
 		PlotPixelMatrix(x,     y,     index);
@@ -3365,7 +3278,7 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 		PlotPixelMatrix(x,     y + 1, index);
 		PlotPixelMatrix(x + 1, y + 1, index);
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 		break;
 	case BrushSize::kLarge:
 	case BrushSize::kBigLarge:
@@ -3381,7 +3294,7 @@ void TheMatrix::DrawWithBrush(int index, int x, int y)
 			}
 		}
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 		break;
 	}
 
@@ -3398,15 +3311,15 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 
 	for (int frame = 0; frame < Render.Action.Special; frame++)
 	{
-		if (!IsThisFrameLocked(CurrentLayer, frame) &&
-			MatrixLayers[CurrentLayer]->Visible)
+		if (!Data->IsThisFrameLocked(CurrentLayer, frame) &&
+			Data->Layers[CurrentLayer]->Visible)
 		{
 			switch (Render.Brush)
 			{
 			case BrushSize::kSmall:
 				PlotPixelMatrixFrame(frame, x, y, index);
 
-				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
+				Data->Layers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
 				break;
 			case BrushSize::kMedium:
 				PlotPixelMatrixFrame(frame, x, y,         index);
@@ -3414,7 +3327,7 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 				PlotPixelMatrixFrame(frame, x, y + 1,     index);
 				PlotPixelMatrixFrame(frame, x + 1, y + 1, index);
 
-				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
+				Data->Layers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
 				break;
 			case BrushSize::kLarge:
 				for (int a = 0; a < 3; a++)
@@ -3425,7 +3338,7 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 					}
 				}
 
-				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
+				Data->Layers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
 				break;
             case BrushSize::kBigLarge:
 			case BrushSize::kSuperLarge:
@@ -3440,7 +3353,7 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 					}
 				}
 
-				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
+				Data->Layers[CurrentLayer]->Cells[frame]->AddToHistory(DisplayBuffer);
 				break;
 			}
 			}
@@ -3451,8 +3364,8 @@ void TheMatrix::DrawWithBrushMulti(int index, int x, int y)
 
 void TheMatrix::DrawWithGradientBrush(int x, int y)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible ||
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible ||
 		Gradient.size() == 0) return;
 
 	if (x >= Details.Width || y >= Details.Height) return;
@@ -3468,14 +3381,14 @@ void TheMatrix::DrawWithGradientBrush(int x, int y)
 		Render.Action.Parameter++;
 	}
 
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+	Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 }
 
 
 void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	if (x1 >= Details.Width || y1 >= Details.Height) return;
 
@@ -3530,7 +3443,7 @@ void TheMatrix::DrawWithBrushPaste(int x1, int y1, bool transparent)
 		}
 	}
 
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+	Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 }
 
 
@@ -3549,9 +3462,9 @@ void TheMatrix::DrawWithBrushPasteEveryFrame(int x1, int y1, bool transparent)
 				if (x2 + x1 >= 0 && x2 + x1 < Details.Width &&
 					y2 + y1 >= 0 && y2 + y1 < Details.Height)
 				{
-					for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
+					for (int frame = 0; frame < Data->Layers[CurrentLayer]->Cells.size(); frame++)
 					{
-						if (!IsThisFrameLocked(CurrentLayer, frame))
+						if (!Data->IsThisFrameLocked(CurrentLayer, frame))
 						{
 							if (MatrixCopy->Grid[y2 * Details.Width + x2] != RGBBackground)
 							{
@@ -3579,9 +3492,9 @@ void TheMatrix::DrawWithBrushPasteEveryFrame(int x1, int y1, bool transparent)
 				if (x2 + x1 >= 0 && x2 + x1 < Details.Width &&
 					y2 + y1 >= 0 && y2 + y1 < Details.Height)
 				{
-					for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
+					for (int frame = 0; frame < Data->Layers[CurrentLayer]->Cells.size(); frame++)
 					{
-						if (!IsThisFrameLocked(CurrentLayer, frame))
+						if (!Data->IsThisFrameLocked(CurrentLayer, frame))
 						{
 							if (MatrixCopy->Grid[y2 * Details.Width + x2] == 1)
 							{
@@ -3601,7 +3514,7 @@ void TheMatrix::DrawWithBrushPasteEveryFrame(int x1, int y1, bool transparent)
 		}
     }
 
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+	Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 }
 
 
@@ -3724,15 +3637,15 @@ void TheMatrix::PlotPixelMatrixFrame(int frame, int x, int y, int defaultcolour)
 	}
 	else
 	{
-		MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = colour;
+		Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + x] = colour;
 
 		switch (Mirror)
 		{
 		case MirrorMode::kHorizontal:
-			MatrixLayers[CurrentLayer]->Cells[frame]->Grid[newcoord * Details.Width + x] = colour;
+			Data->Layers[CurrentLayer]->Cells[frame]->Grid[newcoord * Details.Width + x] = colour;
 			break;
 		case MirrorMode::kVertical:
-			MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + newcoord] = colour;
+			Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + newcoord] = colour;
 			break;
 
 		default:
@@ -4385,7 +4298,7 @@ void TheMatrix::DrawShape(bool realtime, int colour, bool isgradient)
 
 	if (!realtime)
 	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory(DisplayBuffer);
 
 		if (OnChange) OnChange(this);
 
@@ -4412,7 +4325,7 @@ void TheMatrix::FloodFill(int x, int y, int fillcolour)
 
 		CopyDrawBufferToCurrentFrame();
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
 
 		PaintBox->Invalidate();
 	}
@@ -4496,7 +4409,7 @@ void TheMatrix::CopyShape()
 	{
 		for (int y = Render.Action.Coords[0].Y; y <= Render.Action.Coords[1].Y; y++)
 		{
-			MatrixCopy->Grid[(y - Render.Action.Coords[0].Y) * Details.Width + (x - Render.Action.Coords[0].X)] = MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x];
+			MatrixCopy->Grid[(y - Render.Action.Coords[0].Y) * Details.Width + (x - Render.Action.Coords[0].X)] = Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x];
 		}
 	}
 
@@ -4637,8 +4550,8 @@ void TheMatrix::AddFontCharacter(int ascii, int frame)
 	int current_x = Render.Action.Coords[0].X;
 	bool canwrite = true;
 
-	int group_id = MatrixLayers[CurrentLayer]->Freeform->NextGroupId;
-	MatrixLayers[CurrentLayer]->Freeform->NextGroupId++;
+	int group_id = Data->Layers[CurrentLayer]->Freeform->NextGroupId;
+	Data->Layers[CurrentLayer]->Freeform->NextGroupId++;
 
 	for (int x = TextFont->Start[ascii]; x <= TextFont->End[ascii]; x++)
 	{
@@ -4665,17 +4578,25 @@ void TheMatrix::AddFontCharacter(int ascii, int frame)
 					case MatrixColourMode::kMono:
 						if (TextFont->Data[data_index] == 1)
 						{
-							MatrixPixel *mp = new MatrixPixel(current_x, outputy, MatrixLayers[CurrentLayer]->Freeform->Pixels.size(), group_id, Render.Action.Colour);
+							MatrixPixel *mp = new MatrixPixel(current_x, outputy,
+															  Data->Layers[CurrentLayer]->Freeform->Frames.size(),
+															  Data->Layers[CurrentLayer]->Freeform->Pixels.size(),
+															  group_id,
+															  Render.Action.Colour);
 
-							MatrixLayers[CurrentLayer]->Freeform->Pixels.push_back(mp);
+							Data->Layers[CurrentLayer]->Freeform->Pixels.push_back(mp);
 						}
 						break;
 					case MatrixColourMode::kRGB:
 						if (TextFont->Data[data_index] != -1)
 						{
-							MatrixPixel *mp = new MatrixPixel(current_x, outputy, MatrixLayers[CurrentLayer]->Freeform->Pixels.size(), group_id, TextFont->Data[data_index]);
+							MatrixPixel *mp = new MatrixPixel(current_x, outputy,
+															  Data->Layers[CurrentLayer]->Freeform->Frames.size(),
+															  Data->Layers[CurrentLayer]->Freeform->Pixels.size(),
+															  group_id,
+															  TextFont->Data[data_index]);
 
-							MatrixLayers[CurrentLayer]->Freeform->Pixels.push_back(mp);
+							Data->Layers[CurrentLayer]->Freeform->Pixels.push_back(mp);
 						}
 						break;
 
@@ -4691,7 +4612,7 @@ void TheMatrix::AddFontCharacter(int ascii, int frame)
 
 	Render.Action.Coords[0].X = current_x + 3;
 
-    MatrixLayers[CurrentLayer]->Freeform->EnsurePixelCoherence();
+    Data->Layers[CurrentLayer]->Freeform->EnsurePixelCoherence();
 
 	if (OnChange) OnChange(this);
 
@@ -4750,13 +4671,13 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 					case MatrixColourMode::kMono:
 						if (TextFont->Data[data_index] == 1)
 						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
+							Data->Layers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
 						}
 						break;
 					case MatrixColourMode::kRGB:
 						if (TextFont->Data[data_index] != -1)
 						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = TextFont->Data[data_index];
+							Data->Layers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = TextFont->Data[data_index];
 						}
 						break;
 
@@ -4775,13 +4696,13 @@ void TheMatrix::DrawFontCharacter(int ascii, int frame)
 					case MatrixColourMode::kMono:
 						if (TextFont->Data[data_index] == 1)
 						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
+							Data->Layers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
 						}
 						break;
 					case MatrixColourMode::kRGB:
 						if (TextFont->Data[data_index] != -1)
 						{
-							MatrixLayers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
+							Data->Layers[CurrentLayer]->Cells[frame]->Grid[outputy * Details.Width + outputx] = Render.Action.Colour;
 						}
 						break;
 
@@ -4815,7 +4736,7 @@ void TheMatrix::DeleteFontCharacter(int frame)
 			Render.Action.Coords[0].X < Details.Width &&
 			y >= 0 && y < Details.Height)
 		{
-			MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + Render.Action.Coords[0].X] = 0;
+			Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * Details.Width + Render.Action.Coords[0].X] = 0;
 		}
 	}
 
@@ -4837,26 +4758,7 @@ void TheMatrix::InsertBlankFrameAt(int insertat)
 {
 	if (!AutomateMode) Busy = true;
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-			if (insertat >= MatrixLayers[layer]->Cells.size())
-			{
-				MatrixLayers[layer]->Cells.push_back(m);
-			}
-			else
-			{
-				MatrixLayers[layer]->Cells.insert(MatrixLayers[layer]->Cells.begin() + insertat, m);
-			}
-		}
-		else
-		{
-			MatrixLayers[layer]->Freeform->InsertBlankFrameAt(insertat, RGBBackground);
-		}
-	}
+	Data->InsertBlankFrameAt(insertat);
 
 	if (!AutomateMode)
 	{
@@ -4874,28 +4776,7 @@ void TheMatrix::InsertCopyFrameAt(int insertat)
 		Busy = true;
     }
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-			std::memcpy(m->Grid, MatrixLayers[layer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
-
-			if (insertat >= MatrixLayers[layer]->Cells.size())
-			{
-				MatrixLayers[layer]->Cells.push_back(m);
-			}
-			else
-			{
-				MatrixLayers[layer]->Cells.insert(MatrixLayers[layer]->Cells.begin() + insertat, m);
-			}
-		}
-		else
-		{
-   			MatrixLayers[layer]->Freeform->InsertCopyFrameAt(CurrentFrame, insertat);
-		}
-	}
+	Data->InsertCopyFrameAt(CurrentFrame, insertat);
 
 	if (!AutomateMode)
 	{
@@ -4921,32 +4802,9 @@ void TheMatrix::AddFrameMultiple(int count, int current)
 
 void TheMatrix::DeleteFrame(int frame)
 {
-    if (frame == 0 && GetFrameCount() == 1) return;
+	if (frame == 0 && Data->GetFrameCount() == 1) return;
 
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			MatrixLayers[layer]->Cells.erase(MatrixLayers[layer]->Cells.begin() + frame);
-		}
-
-		if (frame >= MatrixLayers[kPermanentLayer]->Cells.size())
-		{
-			CurrentFrame = MatrixLayers[kPermanentLayer]->Cells.size() - 1;
-		}
-	}
-	else
-	{
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			MatrixLayers[layer]->Freeform->DeleteFrame(frame);
-		}
-
-		if (frame >= MatrixLayers[kPermanentLayer]->Freeform->Frames.size())
-		{
-			CurrentFrame = MatrixLayers[kPermanentLayer]->Freeform->Frames.size() - 1;
-		}
-	}
+	CurrentFrame = Data->DeleteFrame(frame, CurrentFrame);
 
 	if (OnNewFrameDisplayed) OnNewFrameDisplayed(this);
 
@@ -4961,88 +4819,24 @@ void TheMatrix::DeleteFrame(int frame)
 }
 
 
-bool TheMatrix::IsThisFrameLocked(int layer, int frame)
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		return (IsLayerLocked(layer) || MatrixLayers[layer]->Cells[frame]->Locked);
-	}
-
-	return (IsLayerLocked(layer) || MatrixLayers[layer]->Freeform->Frames[frame]->Locked);
-}
-
-
-bool TheMatrix::IsLocked()
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		return MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Locked;
-	}
-
-	return MatrixLayers[CurrentLayer]->Freeform->Frames[CurrentFrame]->Locked;
-}
-
-
-void TheMatrix::UnLockCurrentFrame()
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Locked = false;
-	}
-	else
-	{
-		MatrixLayers[CurrentLayer]->Freeform->Frames[CurrentFrame]->Locked = false;
-	}
-}
-
-
-void TheMatrix::LockCurrentFrame()
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Locked = true;
-	}
-	else
-	{
-		MatrixLayers[CurrentLayer]->Freeform->Frames[CurrentFrame]->Locked = true;
-	}
-}
-
-
-void TheMatrix::LockUnLockRange(int start, int end, bool status)
-{
-	for (int f = start; f <= end; f++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			MatrixLayers[CurrentLayer]->Cells[f]->Locked = status;
-		}
-		else
-		{
-			MatrixLayers[CurrentLayer]->Freeform->Frames[f]->Locked = status;
-		}
-	}
-}
-
-
 void TheMatrix::CopyFromPrevious(int frame_to)
 {
 	if (frame_to > 0)
 	{
 		if (Details.DrawMode == MatrixDrawMode::kGrid)
 		{
-			for (int layer = 0; layer < MatrixLayers.size(); layer++)
+			for (int layer = 0; layer < Data->Layers.size(); layer++)
 			{
-				std::memcpy(MatrixLayers[layer]->Cells[frame_to]->Grid, MatrixLayers[layer]->Cells[frame_to - 1]->Grid, Details.Width * Details.Height * sizeof(int));
+				std::memcpy(Data->Layers[layer]->Cells[frame_to]->Grid, Data->Layers[layer]->Cells[frame_to - 1]->Grid, Details.Width * Details.Height * sizeof(int));
 			}
 
 			CopyCurrentFrameToDrawBuffer();
 		}
 		else
 		{
-			for (int layer = 0; layer < MatrixLayers.size(); layer++)
+			for (int layer = 0; layer < Data->Layers.size(); layer++)
 			{
-				MatrixLayers[layer]->Freeform->CopyFromPrevious(frame_to);
+				Data->Layers[layer]->Freeform->CopyFromPrevious(frame_to);
 			}
         }
 
@@ -5065,9 +4859,9 @@ void TheMatrix::CopyAllLayersFromTo(int frame_from, int frame_to)
 		Busy = true;
 	}
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
+	for (int layer = 0; layer < Data->Layers.size(); layer++)
 	{
-		std::memcpy(MatrixLayers[layer]->Cells[frame_to]->Grid, MatrixLayers[layer]->Cells[frame_from]->Grid, Details.Width * Details.Height * sizeof(int));
+		std::memcpy(Data->Layers[layer]->Cells[frame_to]->Grid, Data->Layers[layer]->Cells[frame_from]->Grid, Details.Width * Details.Height * sizeof(int));
 	}
 
 	if (!AutomateMode)
@@ -5088,67 +4882,17 @@ void TheMatrix::CopyAllLayersFromTo(int frame_from, int frame_to)
 
 
 #pragma region Layers
-// used by file io to create a layer without triggering rerendering etc.
-// this may fail as the layer/frame structure likely not fully configured
-bool TheMatrix::AddLayerSilent(const std::wstring name)
-{
-	Layer *layer = new Layer(name);
-
-	MatrixLayers.push_back(layer);
-
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int t = 0; t < MatrixLayers[kPermanentLayer]->Cells.size(); t++)
-		{
-			MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-			MatrixLayers.back()->Cells.push_back(m);
-		}
-	}
-	else
-	{
-		for (int t = 0; t < MatrixLayers[kPermanentLayer]->Freeform->Frames.size(); t++)
-		{
-			FreeformFrame *fff = new FreeformFrame();
-			MatrixLayers.back()->Freeform->Frames.push_back(fff);
-		}
-	}
-
-	return true;
-}
-
-
 bool TheMatrix::AddLayer(const std::wstring name)
 {
 	if (Software == SoftwareMode::kAnimation && Details.Width > 0 && Details.Height > 0)
 	{
 		Busy = true;
 
-		Layer *layer = new Layer(name);
-
-		MatrixLayers.push_back(layer);
-
-        if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int t = 0; t < MatrixLayers[kPermanentLayer]->Cells.size(); t++)
-			{
-				MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-				MatrixLayers.back()->Cells.push_back(m);
-			}
-		}
-		else
-		{
-			for (int t = 0; t < MatrixLayers[kPermanentLayer]->Freeform->Frames.size(); t++)
-			{
-				FreeformFrame *fff = new FreeformFrame();
-				MatrixLayers.back()->Freeform->Frames.push_back(fff);
-			}
-		}
+		Data->AddLayer(name);
 
 		Busy = false;
 
-		SetCurrentLayer(MatrixLayers.size() - 1);
+		SetCurrentLayer(Data->Layers.size() - 1);
 
 		if (OnLayerChange) OnLayerChange(this);
 
@@ -5165,29 +4909,11 @@ bool TheMatrix::AddLayerAsCopy(const std::wstring name, int copylayer)
 	{
 		Busy = true;
 
-		Layer *layer = new Layer(name);
-
-		MatrixLayers.push_back(layer);
-
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int t = 0; t < MatrixLayers[kPermanentLayer]->Cells.size(); t++)
-			{
-				MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-				std::memcpy(m->Grid, MatrixLayers[copylayer]->Cells[t]->Grid, Details.Width * Details.Height * sizeof(int));
-
-				MatrixLayers.back()->Cells.push_back(m);
-			}
-		}
-		else
-		{
-			// MatrixLayers to do
-		}
+        Data->AddLayerAsCopy(name, copylayer);
 
 		Busy = false;
 
-		SetCurrentLayer(MatrixLayers.size() - 1);
+		SetCurrentLayer(Data->Layers.size() - 1);
 
 		if (OnLayerChange) OnLayerChange(this);
 
@@ -5200,16 +4926,14 @@ bool TheMatrix::AddLayerAsCopy(const std::wstring name, int copylayer)
 
 bool TheMatrix::DeleteLayer(int index)
 {
-	if (MatrixLayers.size() > 1)
+	if (Data->Layers.size() > 1)
 	{
 		if (Details.DrawMode == MatrixDrawMode::kGrid)
 		{
 			CopyDrawBufferToCurrentFrame();
-        }
+		}
 
-		MatrixLayers.erase(MatrixLayers.begin() + index);
-
-		CurrentLayer = 0;
+		Data->DeleteLayer(index);
 
 		if (OnLayerChange) OnLayerChange(this);
 
@@ -5225,24 +4949,9 @@ void TheMatrix::ClearCurrentLayerAllFrames()
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
 		DisplayBuffer->Clear(Details.ColourMode, RGBBackground);
-
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
-		{
-			if (!IsThisFrameLocked(CurrentLayer, frame))
-			{
-				MatrixLayers[CurrentLayer]->Cells[frame]->Clear(Details.ColourMode, RGBBackground);
-
-				MatrixLayers[CurrentLayer]->Cells[frame]->AddToHistory();
-			}
-		}
 	}
-	else
-	{
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Freeform->Frames.size(); frame++)
-		{
-			MatrixLayers[CurrentLayer]->Freeform->Clear(frame, Details.ColourMode, RGBBackground);
-		}
-	}
+
+	Data->ClearLayerAllFrames(CurrentLayer);
 
 	PaintBox->Invalidate();
 
@@ -5260,21 +4969,21 @@ void TheMatrix::FlattenAllLayers()
 
 		MatrixMerge = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
 
-		for (int l = 0; l < MatrixLayers.size(); l++)
+		for (int l = 0; l < Data->Layers.size(); l++)
 		{
-			MatrixLayers[l]->Visible = true;
+			Data->Layers[l]->Visible = true;
 		}
 
-		for (int f = 0; f < MatrixLayers[kPermanentLayer]->Cells.size(); f++)
+		for (int f = 0; f < Data->Layers[kPermanentLayer]->Cells.size(); f++)
 		{
 			BuildMergedFrame(f, MergeFrameMode::kRetainGridValue);
 
-			std::memcpy(MatrixLayers[kPermanentLayer]->Cells[f]->Grid, MatrixMerge->Grid, Details.Width * Details.Height * sizeof(int));
+			std::memcpy(Data->Layers[kPermanentLayer]->Cells[f]->Grid, MatrixMerge->Grid, Details.Width * Details.Height * sizeof(int));
 		}
 
-		while (MatrixLayers.size() > 1)
+		while (Data->Layers.size() > 1)
 		{
-			MatrixLayers.pop_back();
+			Data->Layers.pop_back();
 		}
 
 		delete MatrixMerge;
@@ -5295,42 +5004,24 @@ void TheMatrix::FlattenAllLayers()
 }
 
 
-int TheMatrix::GetLayerCount()
-{
-	return MatrixLayers.size();
-}
-
-
-std::wstring TheMatrix::GetLayerName(int layerindex)
-{
-	return MatrixLayers[layerindex]->Name;
-}
-
-
-void TheMatrix::SetLayerName(const std::wstring name, int layerindex)
-{
-	MatrixLayers[layerindex]->Name = name;
-}
-
-
 bool TheMatrix::IsVisible(int index)
 {
-	return MatrixLayers[index]->Visible;
+	return Data->Layers[index]->Visible;
 }
 
 
 void TheMatrix::SetVisibility(int LayerIndex, bool Visibility)
 {
 	#if _DEBUG
-	if (LayerIndex >= MatrixLayers.size())
+	if (LayerIndex >= Data->Layers.size())
 	{
-		std::wstring debug = L"Layer " + std::to_wstring(LayerIndex) + L" outside the valid layer limit of 0 to " + std::to_wstring(MatrixLayers.size() - 1);
+		std::wstring debug = L"Layer " + std::to_wstring(LayerIndex) + L" outside the valid layer limit of 0 to " + std::to_wstring(Data->Layers.size() - 1);
 
 		ShowMessage(debug.c_str());
 	}
 	#endif
 
-	MatrixLayers[LayerIndex]->Visible = Visibility;
+	Data->Layers[LayerIndex]->Visible = Visibility;
 
     PaintBox->Invalidate();
 }
@@ -5348,7 +5039,7 @@ void TheMatrix::MoveUp(int LayerIndex)
 
 	Busy = true;
 
-	std::swap(MatrixLayers[LayerIndex], MatrixLayers[LayerIndex + 1]);
+	std::swap(Data->Layers[LayerIndex], Data->Layers[LayerIndex + 1]);
 
 	CurrentLayer = LayerIndex + 1;
 
@@ -5372,7 +5063,7 @@ void TheMatrix::MoveDown(int LayerIndex)
 
 	Busy = true;
 
-	std::swap(MatrixLayers[LayerIndex], MatrixLayers[LayerIndex - 1]);
+	std::swap(Data->Layers[LayerIndex], Data->Layers[LayerIndex - 1]);
 
 	CurrentLayer = LayerIndex - 1;
 
@@ -5381,110 +5072,6 @@ void TheMatrix::MoveDown(int LayerIndex)
 	PaintBox->Invalidate();
 
 	if (OnLayerChange) OnLayerChange(this);
-}
-
-
-void TheMatrix::UnlockLayer(int layer)
-{
-	MatrixLayers[layer]->Locked = false;
-}
-
-
-void TheMatrix::LockLayer(int layer)
-{
-	MatrixLayers[layer]->Locked = true;
-}
-
-
-bool TheMatrix::IsLayerLocked(int layer)
-{
-	return MatrixLayers[layer]->Locked;
-}
-
-
-// ensures that all layers have the same number of frames, crashes will occur
-// if this is not the case!
-void TheMatrix::EnsureLayerCoherence()
-{
-	int max = 0;
-
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int t = 0; t < MatrixLayers.size(); t++)
-		{
-			if (MatrixLayers[t]->Cells.size() > max)
-			{
-				max = MatrixLayers[t]->Cells.size();
-			}
-		}
-
-		for (int t = 0; t < MatrixLayers.size(); t++)
-		{
-			if (MatrixLayers[t]->Cells.size() != max)
-			{
-				for (int frame = MatrixLayers[t]->Cells.size() + 1; frame <= max; frame++)
-				{
-					MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
-
-					MatrixLayers[t]->Cells.push_back(m);
-				}
-			}
-		}
-	}
-	else
-	{
-        for (int t = 0; t < MatrixLayers.size(); t++)
-		{
-			if (MatrixLayers[t]->Freeform->Frames.size() > max)
-			{
-				max = MatrixLayers[t]->Freeform->Frames.size();
-			}
-		}
-
-		for (int t = 0; t < MatrixLayers.size(); t++)
-		{
-			while (MatrixLayers[t]->Freeform->Frames.size() < max)
-			{
-				FreeformFrame *fff = new FreeformFrame();
-				MatrixLayers[t]->Freeform->Frames.push_back(fff);
-			}
-
-			for (int p = 0; p < MatrixLayers[t]->Freeform->Pixels.size(); p++)
-			{
-				if (MatrixLayers[t]->Freeform->Pixels[p]->Colours.size() < max)
-				{
-					for (int x = 0; x < max - MatrixLayers[t]->Freeform->Pixels[p]->Colours.size(); x++)
-					{
-                        MatrixLayers[t]->Freeform->Pixels[p]->Colours.push_back(RGBBackground);
-					}
-				}
-			}
-		}
-	}
-}
-
-
-bool TheMatrix::AreLayersIdentical(int layer1, int layer2, int frame)
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int z = 0; z < Details.Width * Details.Height; z++)
-		{
-			if (MatrixLayers[layer1]->Cells[frame]->Grid[z] != MatrixLayers[layer2]->Cells[frame]->Grid[z])
-			{
-				return false;
-			}
-		}
-	}
-	else
-	{
-		for (int z = 0; z < MatrixLayers[layer1]->Freeform->Frames.size(); z++)
-		{
-            // to do
-		}
-	}
-
-	return true;
 }
 
 
@@ -5500,7 +5087,13 @@ void TheMatrix::CopyLayerFromTo(int source, int destination, int frame_from, int
 		Busy = true;
 	}
 
-	std::memcpy(MatrixLayers[destination]->Cells[frame_to]->Grid, MatrixLayers[source]->Cells[frame_from]->Grid, Details.Width * Details.Height * sizeof(int));
+	if (Details.DrawMode == MatrixDrawMode::kGrid)
+	{
+		std::memcpy(Data->Layers[destination]->Cells[frame_to]->Grid, Data->Layers[source]->Cells[frame_from]->Grid, Details.Width * Details.Height * sizeof(int));
+	}
+	else
+	{
+    }
 
 	if (!AutomateMode)
 	{
@@ -5560,36 +5153,7 @@ void TheMatrix::GradientFillFrame()
 {
 	if (!Details.Available) return;
 
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame)) return;
-
-	for (int x = 0; x < Details.Width; x++)
-	{
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (Render.Gradient.Option == GradientOption::kVertical)
-			{
-				if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = Render.Gradient.IY[y];
-				}
-				else
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = LEDColours[Render.Gradient.IY[y]];
-				}
-			}
-			else
-			{
-				if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = Render.Gradient.IX[x];
-				}
-				else
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = LEDColours[Render.Gradient.IX[x]];
-				}
-			}
-		}
-	}
+	Data->GradientFillFrame(CurrentLayer, CurrentFrame, Render.Gradient, LEDColours);
 
 	if (OnChange) OnChange(this);
 
@@ -5601,15 +5165,15 @@ void TheMatrix::GradientFillFrame()
 
 void TheMatrix::ChangePixels(int colour_from, int colour_to)
 {
-	for (int frame = 0; frame < GetFrameCount(); frame++)
+	for (int frame = 0; frame < Data->GetFrameCount(); frame++)
 	{
 		if (Details.DrawMode == MatrixDrawMode::kGrid)
 		{
-			MatrixLayers[CurrentLayer]->Cells[frame]->ChangePixels(colour_from, colour_to);
+			Data->Layers[CurrentLayer]->Cells[frame]->ChangePixels(colour_from, colour_to);
 		}
 		else
 		{
-            MatrixLayers[CurrentLayer]->Freeform->ChangePixels(frame, colour_from, colour_to);
+            Data->Layers[CurrentLayer]->Freeform->ChangePixels(frame, colour_from, colour_to);
 		}
 	}
 
@@ -5626,40 +5190,9 @@ void TheMatrix::ChangePixels(int colour_from, int colour_to)
 
 void TheMatrix::FadeFirstToLast()
 {
-	if (GetFrameCount() == 1) return;
+	if (Data->GetFrameCount() == 1) return;
 
-	for (int z = 0; z < Details.Height * Details.Width; z++)
-	{
-		int colstart   = MatrixLayers[CurrentLayer]->Cells[0]->Grid[z];
-		int colend     = MatrixLayers[CurrentLayer]->Cells[GetFrameCount() - 1]->Grid[z];
-
-		int gradheight = GetFrameCount();
-
-		int rdy  = (colend & 0x0000FF) - (colstart & 0x0000FF);
-		int gdy  = ((colend & 0x00FF00) >> 8) - ((colstart & 0x00FF00) >> 8);
-		int bdy  = ((colend & 0xFF0000) >> 16) - ((colstart & 0xFF0000) >> 16);
-
-		double newr = (colstart & 0x0000FF);
-		double newg = (colstart & 0x00FF00) >> 8;
-		double newb = (colstart & 0xFF0000) >> 16;
-
-		double rdx  = (double)rdy / ((double)gradheight - 1);
-		double gdx  = (double)gdy / ((double)gradheight - 1);
-		double bdx  = (double)bdy / ((double)gradheight - 1);
-
-		for (int frame = 1; frame < GetFrameCount() - 1; frame++)
-		{
-			newr  = newr + rdx;
-			newg  = newg + gdx;
-			newb  = newb + bdx;
-
-			int newri = std::floor(newr);
-			int newgi = std::floor(newg);
-			int newbi = std::floor(newb);
-
-			MatrixLayers[CurrentLayer]->Cells[frame]->Grid[z] = (newbi << 16) + (newgi << 8) + newri;
-		}
-	}
+    Data->FadeFirstToLast(CurrentLayer);
 
 	PaintBox->Invalidate();
 }
@@ -5672,13 +5205,13 @@ void TheMatrix::ChangeColourCurrent(int colour_from, int colour_to)
 	{
 		CopyDrawBufferToCurrentFrame();
 
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->ChangePixels(colour_from, colour_to);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->ChangePixels(colour_from, colour_to);
 
 		CopyCurrentFrameToDrawBuffer();
 	}
 	else
 	{
-		MatrixLayers[CurrentLayer]->Freeform->ChangePixels(CurrentFrame, colour_from, colour_to);
+		Data->Layers[CurrentLayer]->Freeform->ChangePixels(CurrentFrame, colour_from, colour_to);
 	}
 
 	PaintBox->Invalidate();
@@ -5688,24 +5221,30 @@ void TheMatrix::ChangeColourCurrent(int colour_from, int colour_to)
 // change colours in all frames of the current layer
 void TheMatrix::ChangeColourCurrentLayer(int colour_from, int colour_to)
 {
-	CopyDrawBufferToCurrentFrame();
+	if (Details.DrawMode == MatrixDrawMode::kGrid)
+	{
+		CopyDrawBufferToCurrentFrame();
+	}
 
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
+		for (int frame = 0; frame < Data->Layers[CurrentLayer]->Cells.size(); frame++)
 		{
-			MatrixLayers[CurrentLayer]->Cells[frame]->ChangePixels(colour_from, colour_to);
+			Data->Layers[CurrentLayer]->Cells[frame]->ChangePixels(colour_from, colour_to);
 		}
 	}
 	else
 	{
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Freeform->Frames.size(); frame++)
+		for (int frame = 0; frame < Data->Layers[CurrentLayer]->Freeform->Frames.size(); frame++)
 		{
-			MatrixLayers[CurrentLayer]->Freeform->ChangePixels(frame, colour_from, colour_to);
+			Data->Layers[CurrentLayer]->Freeform->ChangePixels(frame, colour_from, colour_to);
 		}
 	}
 
-	CopyCurrentFrameToDrawBuffer();
+    if (Details.DrawMode == MatrixDrawMode::kGrid)
+	{
+		CopyCurrentFrameToDrawBuffer();
+	}
 
 	PaintBox->Invalidate();
 }
@@ -5719,23 +5258,7 @@ void TheMatrix::ChangeColourAll(int colour_from, int colour_to)
 		CopyDrawBufferToCurrentFrame();
 	}
 
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
-			{
-				MatrixLayers[layer]->Cells[frame]->ChangePixels(colour_from, colour_to);
-			}
-		}
-		else
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Freeform->Frames.size(); frame++)
-			{
-                MatrixLayers[layer]->Freeform->ChangePixels(frame, colour_from, colour_to);
-			}
-		}
-	}
+    Data->ChangeColourAll(colour_from, colour_to);
 
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
@@ -5748,184 +5271,13 @@ void TheMatrix::ChangeColourAll(int colour_from, int colour_to)
 
 
 #pragma region MatrixIO
-void TheMatrix::ImportRowData(bool hex, int sourcedirection, int sourcelsb, const std::wstring s)
-//var
-//  t, x, rowindex : integer;
-//  zig, rowvalue : int64;
-//  temp : string;
-//
-{ /*
-  if aSourceDirection = 0 then
-    rowindex = 0
-  else
-    rowindex = Details.Height - 1;
-
-  temp     = '';
-
-  s = UpperCase(s);
-  s = StringReplace(s, '0X', '$', [rfReplaceAll]);                       					m = Utility::ReplaceString(m, unique_items[t], std::to_wstring(t));
-  s = StringReplace(s, ',',  ' ', [rfReplaceAll]);
-  s = StringReplace(s, '[',  '',  [rfReplaceAll]);
-  s = StringReplace(s, ']',  '',  [rfReplaceAll]);
-  s = StringReplace(s, '{',  '',  [rfReplaceAll]);
-  s = StringReplace(s, '}',  '',  [rfReplaceAll]);
-  s = StringReplace(s, '(',  '',  [rfReplaceAll]);
-  s = StringReplace(s, ')',  '',  [rfReplaceAll]);
-  s = s + ' ';
-
-  for t = 1 to length(s) do {
-    if s[t] = ' ' then {
-      if temp <> '' then {
-
-        if aHex then
-          rowvalue = StrToInt64('$' + temp)
-        else
-          rowvalue = StrToInt64(temp);
-
-        if (rowindex >= 0) and (rowindex <= Details.Height - 1) then {
-          for x = 0 to Details.Width - 1 do {
-            case aSourceLSB of
-              lsbLeft  : {
-                           zig = (rowvalue and Powers[x]);
-
-                           if zig = Powers[x] then {
-                             MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[x, rowindex] = 1;
-                           end
-                           else {
-                             MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[x, rowindex] = 0;
-                           }
-                         }
-              lsbRight : {
-                           zig=(rowvalue and Powers[x]);
-
-                           if zig = Powers[x] then {
-                             MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[Details.Width - x - 1, rowindex] = 1;
-                           end
-                           else {
-                             MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[Details.Width - x - 1, rowindex] = 0;
-                           }
-                         }
-            }
-          }
-        }
-
-		temp = '';
-
-		if aSourceDirection = 0 then
-		  inc(rowindex)
-		else
-		  dec(rowindex);
-	  }
-	end
-	else if (ord(s[t]) >= 48) and (ord(s[t]) <= 57) then {
-	  temp = temp + s[t];
-	end
-	else if (ord(s[t]) >= 65) and (ord(s[t]) <= 90) then {
-	  temp = temp + s[t];
-	end
-	else if (s[t] = '$') then {
-	  aHex = true;
-	}
-
-	if (OnChange) OnChange();
-  }
-
-  PaintBox->Invalidate(); */
-}
-
-
-void TheMatrix::ImportColumnData(bool hex, int sourcedirection, int sourcelsb, const std::wstring s)
-//var
-//  t, y, colindex  : integer;
-//  zig, colvalue : int64;
-//  temp : string;
-{ /*
-  if aSourceDirection = 0 then
-	colindex = 0
-  else
-	colindex = Details.Width - 1;
-
-  temp = '';
-
-  s = UpperCase(s);
-  s = StringReplace(s, '0X', '$', [rfReplaceAll]);
-  s = StringReplace(s, ',',  ' ', [rfReplaceAll]);
-  s = StringReplace(s, '[',  '', [rfReplaceAll]);
-  s = StringReplace(s, ']',  '', [rfReplaceAll]);
-  s = StringReplace(s, '{',  '', [rfReplaceAll]);
-  s = StringReplace(s, '}',  '', [rfReplaceAll]);
-  s = StringReplace(s, '(',  '', [rfReplaceAll]);
-  s = StringReplace(s, ')',  '', [rfReplaceAll]);
-  s = s + ' ';
-
-  for t = 1 to length(s) do {
-	if s[t] = ' ' then {
-	  if temp <> '' then {
-
-		if aHex then
-		  colvalue = StrToInt64('$' + temp)
-		else
-		  colvalue = StrToInt64(temp);
-
-		if (colindex >= 0) and (colindex <= Details.Width - 1) then {
-		  for y = 0 to Details.Height - 1 do {
-			case aSourceLSB of
-			  lsbLeft  : {
-						   zig = (colvalue and Powers[y]);
-
-						  if zig = Powers[y] then {
-							 MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[colindex, y] = 1;
-						   end
-						   else {
-							 MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[colindex, y] = 0;
-						   }
-						 }
-			  lsbRight : {
-						   zig = (colvalue and Powers[y]);
-
-						   if zig = Powers[y] then {
-							 MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[colindex, Details.Height - y] = 1;
-						   end
-						   else {
-							 MatrixLayers[CurrentLayer]->Frames[CurrentFrame]->Grid[colindex, Details.Height - y] = 0;
-						   }
-						 }
-			}
-		  }
-		}
-
-		temp = '';
-
-		if aSourceDirection = 0 then
-		  inc(colindex)
-		else
-		  dec(colindex);
-	  }
-	end
-	else if (ord(s[t]) >= 48) and (ord(s[t]) <= 57) then {
-	  temp = temp + s[t];
-	end
-	else if (ord(s[t]) >= 65) and (ord(s[t]) <= 90) then {
-	  temp = temp + s[t];
-	end
-	else if (s[t] = '$') then {
-	  aHex = true;
-	}
-
-	if (OnChange) OnChange();
-  }
-
-  PaintBox->Invalidate(); */
-}
-
-
 std::wstring TheMatrix::RowToString(int frame, int row)
 {
 	std::wstring s = L"";
 
 	for (int x = 0; x < Details.Width; x++)
 	{
-		s += IntToHex(MatrixLayers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x], 6).c_str();
+		s += IntToHex(Data->Layers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x], 6).c_str();
 
 		s += L" ";
 	}
@@ -5956,12 +5308,12 @@ void TheMatrix::StringToRow(bool copybrush, const std::wstring s, int frame, int
 				{
 					if (colour != transparentcolour)
 					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x] = colour;
+						Data->Layers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x] = colour;
 					}
 				}
 				else
 				{
-					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x] = colour;
+					Data->Layers[CurrentLayer]->Cells[frame]->Grid[row * Details.Width + x] = colour;
 				}
 			}
 
@@ -5974,64 +5326,6 @@ void TheMatrix::StringToRow(bool copybrush, const std::wstring s, int frame, int
 			input += s[i];
 		}
 	}
-}
-
-
-int TheMatrix::RightBounds()
-{
-	int bound = 0;
-
-	for (int x = 0; x < Details.Width; x++)
-	{
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-			{
-				if (MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] != RGBBackground)
-				{
-					if (x > bound) bound = x;
-				}
-			}
-			else
-			{
-				if (MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] == 1)
-				{
-					if (x > bound) bound = x;
-				}
-			}
-		}
-	}
-
-	return bound;
-}
-
-
-int TheMatrix::BottomBounds()
-{
-	int bound = 0;
-
-	for (int x = 0; x < Details.Width; x++)
-	{
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (Details.ColourMode == MatrixColourMode::kRGB || Details.ColourMode == MatrixColourMode::kRGB3BPP)
-			{
-				if (MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] != RGBBackground)
-				{
-					if (y > bound) bound = y;
-				}
-			}
-			else
-			{
-				if (MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] == 1)
-				{
-					if (y > bound) bound = y;
-				}
-			}
-		}
-	}
-
-	return bound;
 }
 #pragma end_region
 
@@ -6074,6 +5368,7 @@ bool TheMatrix::ProcessRGB3bppColours(TCanvas* canvas, std::vector<int> &rgb3ppc
 	return true;
 }
 
+
 void TheMatrix::ImportFromFrame(TCanvas* canvas, ImportColourMode icm, int width, int height, int frame, int offset, std::vector<int> &rgb3ppcolours)
 {
 	for (int x = 0; x < width; x++)
@@ -6085,20 +5380,20 @@ void TheMatrix::ImportFromFrame(TCanvas* canvas, ImportColourMode icm, int width
 				case ImportColourMode::kMono:
 					if (canvas->Pixels[offset + x][y] == clBlack)
 					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 0;
+						Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 0;
 					}
 					else
 					{
-						MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 1;
+						Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = 1;
 					}
 					break;
 				case ImportColourMode::kRGB:
-					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = canvas->Pixels[offset + x][y];
+					Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = canvas->Pixels[offset + x][y];
 					break;
 				case ImportColourMode::kRGB3bpp:
 					auto it = std::find(rgb3ppcolours.begin(), rgb3ppcolours.end(), canvas->Pixels[offset + x][y]);
 
-					MatrixLayers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = it - rgb3ppcolours.begin();
+					Data->Layers[CurrentLayer]->Cells[frame]->Grid[y * width + x] = it - rgb3ppcolours.begin();
 					break;
 			}
 		}
@@ -6145,10 +5440,10 @@ ImportData TheMatrix::ImportFromBMPSingleImage(const std::wstring file_name, int
 		{
 			int wo = (frame - FrameStart) * width;
 
-			if (MatrixLayers[CurrentLayer]->Cells.size() < frame + 1)
+			if (Data->Layers[CurrentLayer]->Cells.size() < frame + 1)
 			{
 				MatrixGrid *matrix = new MatrixGrid(width,height, Details.ColourMode, RGBBackground);
-				MatrixLayers[CurrentLayer]->Cells.push_back(matrix);
+				Data->Layers[CurrentLayer]->Cells.push_back(matrix);
 			}
 
 			ImportFromFrame(bmp->Canvas, icm, width, height, frame, wo, rgb3ppcolours);
@@ -6223,11 +5518,11 @@ ImportData TheMatrix::ImportFromBMPMultipleImage(std::wstring pattern, int start
 
 		// ===================================================================
 
-		if (frame > MatrixLayers[CurrentLayer]->Cells.size() - 1)
+		if (frame > Data->Layers[CurrentLayer]->Cells.size() - 1)
 		{
 			MatrixGrid *matrix = new MatrixGrid(fwidth, fheight, Details.ColourMode, RGBBackground);
 
-			MatrixLayers[CurrentLayer]->Cells.push_back(matrix);
+			Data->Layers[CurrentLayer]->Cells.push_back(matrix);
 		}
 
 		ImportFromFrame(bmp->Canvas, icm, fwidth, fheight, frame, 0, rgb3ppcolours);
@@ -6257,14 +5552,14 @@ bool TheMatrix::ExportToBitmap(const std::wstring file_name)
 {
 	TBitmap *bitmap = new TBitmap();
 	bitmap->PixelFormat = pf24bit;
-	bitmap->Width = GetFrameCount() * Details.Width;
+	bitmap->Width = Data->GetFrameCount() * Details.Width;
 	bitmap->Height = Details.Height;
 
 	try
 	{
 		TRGBTriple *ptr;
 
-		for (int frame = 0; frame < GetFrameCount(); frame++)
+		for (int frame = 0; frame < Data->GetFrameCount(); frame++)
 		{
 			BuildMergedFrame(frame, MergeFrameMode::kConvertForFileOutput);
 
@@ -6293,6 +5588,10 @@ bool TheMatrix::ExportToBitmap(const std::wstring file_name)
 	{
 		delete bitmap;
 	}
+	else
+	{
+        return false;
+	}
 
 	return true;
 }
@@ -6313,7 +5612,7 @@ bool TheMatrix::ExportAnimationToBitmap(const std::wstring file_name)
 	{
 		TRGBTriple *ptr;
 
-		for (int frame = 0; frame < GetFrameCount(); frame++)
+		for (int frame = 0; frame < Data->GetFrameCount(); frame++)
 		{
 			BuildMergedFrame(frame, MergeFrameMode::kConvertForFileOutput);
 
@@ -6431,11 +5730,11 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 					continue;	// ignore bad frames
 				}
 
-				for (int layer = 0; layer < MatrixLayers.size(); layer++)
+				for (int layer = 0; layer < Data->Layers.size(); layer++)
 				{
 					MatrixGrid *m = new MatrixGrid(lGIF->Width, lGIF->Height, MatrixColourMode::kRGB, RGBBackground);
 
-					MatrixLayers[layer]->Cells.push_back(m);
+					Data->Layers[layer]->Cells.push_back(m);
 				}
 
 				try
@@ -6448,7 +5747,7 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 
 						for (int x = 0; x < lGIF->Width; x++)
 						{
-							MatrixLayers[CurrentLayer]->Cells.back()->Grid[y * Details.Width + x] = (ptr[x].rgbtBlue << 16) + (ptr[x].rgbtGreen << 8) + (ptr[x].rgbtRed);
+							Data->Layers[CurrentLayer]->Cells.back()->Grid[y * Details.Width + x] = (ptr[x].rgbtBlue << 16) + (ptr[x].rgbtGreen << 8) + (ptr[x].rgbtRed);
 						}
 					}
 				}
@@ -6484,7 +5783,7 @@ ImportData TheMatrix::ImportFromGIF(const std::wstring file_name)
 	import.NewHeight = Details.Height;
 	import.BackgroundColour = RGBBackground;
 
-	import.MaxFrames = MatrixLayers[kPermanentLayer]->Cells.size();
+	import.MaxFrames = Data->Layers[kPermanentLayer]->Cells.size();
 	import.FontMode = false;
 
 	Details.Available = true;
@@ -6508,7 +5807,7 @@ void TheMatrix::ExportToGIF(const std::wstring file_name, int background, int pi
 
 	try
 	{
-		for (int frame = 0; frame < MatrixLayers[kPermanentLayer]->Cells.size(); frame++)
+		for (int frame = 0; frame < Data->Layers[kPermanentLayer]->Cells.size(); frame++)
 		{
 			TBitmap *lTempFrame = new TBitmap();
 
@@ -6652,7 +5951,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 		importFrame = startframe;
 		break;
 	case LoadMode::kAppend:
-		importFrame = MatrixLayers[kPermanentLayer]->Cells.size();
+		importFrame = Data->Layers[kPermanentLayer]->Cells.size();
 		break;
 	case LoadMode::kMergeNewLayer:
 	{
@@ -6660,9 +5959,9 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 
 		std::wstring name = ExtractFileName(file_name.c_str()).c_str();
 
-		AddLayerSilent(L"Merge from " + name);
+		Data->AddLayerSilent(L"Merge from " + name);
 
-		importLayer = MatrixLayers.size() - 1;
+		importLayer = Data->Layers.size() - 1;
 		break;
 	}
 	case LoadMode::kMergeCurrentLayer:
@@ -6719,11 +6018,11 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 
 		if (loadmode == LoadMode::kAppend)
 		{
-			for (int i = 0; i < MatrixLayers.size(); i++)
+			for (int i = 0; i < Data->Layers.size(); i++)
 			{
 				MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
 
-				MatrixLayers[i]->Cells.push_back(m);
+				Data->Layers[i]->Cells.push_back(m);
 			}
 		}
 
@@ -6808,9 +6107,9 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 							break;
 						}
 
-						if (importLayer + 1 > MatrixLayers.size())
+						if (importLayer + 1 > Data->Layers.size())
 						{
-							AddLayerSilent(LayerName);
+							Data->AddLayerSilent(LayerName);
 						}
 
 						layercount = -1;
@@ -6954,7 +6253,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 							importLayer = 0;
                         }
 
-						if (row == 0 && MatrixLayers[importLayer]->Cells.size() < importFrame + 1)
+						if (row == 0 && Data->Layers[importLayer]->Cells.size() < importFrame + 1)
 						{
 							switch (loadmode)
 							{
@@ -6977,7 +6276,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 							tempMaxHeight = newheight;
 
 							MatrixGrid *m = new MatrixGrid(newwidth, newheight, Details.ColourMode, RGBBackground);
-							MatrixLayers[importLayer]->Cells.push_back(m);
+							Data->Layers[importLayer]->Cells.push_back(m);
 						}
 
 						int x = 0;
@@ -6997,16 +6296,16 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 								case LoadMode::kMergeBottomPriority:
 									if (mode == MatrixColourMode::kRGB)
 									{
-										if (MatrixLayers[importLayer]->Cells[importFrame]->Grid[row * tempMaxWidth + x] == importRGBbackground)
+										if (Data->Layers[importLayer]->Cells[importFrame]->Grid[row * tempMaxWidth + x] == importRGBbackground)
 										{
-											MatrixLayers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
+											Data->Layers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
 										}
 									}
 									else
 									{
-										if (MatrixLayers[importLayer]->Cells[importFrame]->Grid[row * tempMaxWidth + x] == 0)
+										if (Data->Layers[importLayer]->Cells[importFrame]->Grid[row * tempMaxWidth + x] == 0)
 										{
-											MatrixLayers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
+											Data->Layers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
 										}
 									}
 									break;
@@ -7015,20 +6314,20 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 									{
 										if (Convert::HexToInt(pixel) != importRGBbackground)
 										{
-											MatrixLayers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
+											Data->Layers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
 										}
 									}
 									else
 									{
 										if (Convert::HexToInt(pixel) != 0)
 										{
-											MatrixLayers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
+											Data->Layers[importLayer]->Cells[importFrame]->SafePlot(x, row, Convert::HexToInt(pixel));
 										}
 									}
 									break;
 
 								default:
-									MatrixLayers[importLayer]->Cells[importFrame]->SafePlot(x, row, GetPixelFrom(Details.ColourMode, mode, Convert::HexToInt(pixel), importRGBbackground));
+									Data->Layers[importLayer]->Cells[importFrame]->SafePlot(x, row, GetPixelFrom(Details.ColourMode, mode, Convert::HexToInt(pixel), importRGBbackground));
 								}
 
 								x++;
@@ -7046,7 +6345,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 						break;
 					}
 					case LoadData::kLoadMatrixLocked:
-						MatrixLayers[importLayer]->Cells[importFrame]->Locked = stoi(v);
+						Data->Layers[importLayer]->Cells[importFrame]->Locked = stoi(v);
 						break;
 
 					 // ======================================================================
@@ -7095,7 +6394,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 						tempMaxHeight = stoi(v);
 						break;
 					case LoadData::kLoadLayoutLocked:
-						MatrixLayers[importLayer]->Locked = stoi(v);
+						Data->Layers[importLayer]->Locked = stoi(v);
 						break;
 
 					 // ====================================================================
@@ -7128,7 +6427,7 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 
 		file.close();
 
-		EnsureLayerCoherence();
+		Data->EnsureLayerCoherence();
 
 		if (loadmode == LoadMode::kNew)
 		{
@@ -7143,13 +6442,15 @@ ImportData TheMatrix::LoadProjectGrid(const std::wstring file_name, ExportOption
 
 		Details.Available   = true;
 
+       	Data->SetSystem(Details.Width, Details.Height, RGBBackground, Software, Details.DrawMode, Details.ColourMode);
+
 		CurrentFrame = 0;
 
 		Busy = false;
 
 		CopyCurrentFrameToDrawBuffer();
 
-		import.MaxFrames        = MatrixLayers[0]->Cells.size() - 1;
+		import.MaxFrames        = Data->Layers[0]->Cells.size() - 1;
 		import.FontMode         = fontmode;
 
 		eeo.ExportMode = ExportSource::kAnimationGrid;
@@ -7239,7 +6540,7 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 
 		if (loadmode == LoadMode::kAppend)
 		{
-			for (int i = 0; i < MatrixLayers.size(); i++)
+			for (int i = 0; i < Data->Layers.size(); i++)
 			{
 				// to do
 			}
@@ -7292,7 +6593,7 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 						}
 
 						MatrixPixel *mp = new MatrixPixel();
-						MatrixLayers[importLayer]->Freeform->Pixels.push_back(mp);
+						Data->Layers[importLayer]->Freeform->Pixels.push_back(mp);
 
 						block = FileUtility::FileBlock::kMatrixData;
 						break;
@@ -7324,9 +6625,9 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 							break;
 						}
 
-						if (importLayer + 1 > MatrixLayers.size())
+						if (importLayer + 1 > Data->Layers.size())
 						{
-							AddLayerSilent(LayerName);
+							Data->AddLayerSilent(LayerName);
 						}
 
 						layercount = -1;
@@ -7461,7 +6762,7 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 						LayerName = v;
 						break;
 					case LoadData::kLoadLayoutLocked:
-						MatrixLayers[importLayer]->Locked = stoi(v);
+						Data->Layers[importLayer]->Locked = stoi(v);
 						break;
 
 					 // ====================================================================
@@ -7488,19 +6789,19 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 					 // ====================================================================
 
 					case LoadData::kLoadPixelX:
-						MatrixLayers[importLayer]->Freeform->Pixels.back()->X = stoi(v);
+						Data->Layers[importLayer]->Freeform->Pixels.back()->X = stoi(v);
 						break;
 					case LoadData::kLoadPixelY:
-						MatrixLayers[importLayer]->Freeform->Pixels.back()->Y = stoi(v);
+						Data->Layers[importLayer]->Freeform->Pixels.back()->Y = stoi(v);
 						break;
 					case LoadData::kLoadPixelOrder:
-						MatrixLayers[importLayer]->Freeform->Pixels.back()->Order = stoi(v);
+						Data->Layers[importLayer]->Freeform->Pixels.back()->Order = stoi(v);
 						break;
 					case LoadData::kLoadPixelColour:
-						MatrixLayers[importLayer]->Freeform->Pixels.back()->Colours.push_back(stoi(v));
+						Data->Layers[importLayer]->Freeform->Pixels.back()->Colours.push_back(stoi(v));
 						break;
 					case LoadData::kLoadPixelGroup:
-						MatrixLayers[importLayer]->Freeform->Pixels.back()->Group = stoi(v);
+						Data->Layers[importLayer]->Freeform->Pixels.back()->Group = stoi(v);
 						break;
 
 					case LoadData::kLoadBlockStartFrames:
@@ -7509,11 +6810,11 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 
 						FreeformFrame *fff = new FreeformFrame();
 
-						MatrixLayers[importLayer]->Freeform->Frames.push_back(fff);
+						Data->Layers[importLayer]->Freeform->Frames.push_back(fff);
 						break;
 					}
 					case LoadData::kLoadFrameLocked:
-                        MatrixLayers[importLayer]->Freeform->Frames.back()->Locked = stoi(v);
+                        Data->Layers[importLayer]->Freeform->Frames.back()->Locked = stoi(v);
 
 					default:
 						break;
@@ -7524,7 +6825,7 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 
 		file.close();
 
-		EnsureLayerCoherence();
+		Data->EnsureLayerCoherence();
 
 		if (loadmode == LoadMode::kNew)
 		{
@@ -7539,14 +6840,18 @@ ImportData TheMatrix::LoadProjectFreeform(const std::wstring file_name, ExportOp
 
 		Details.Available   = true;
 
+		auto bounds = Data->GetPixelBounds();
+
+		Data->SetSystem(std::get<0>(bounds), std::get<1>(bounds), RGBBackground, Software, Details.DrawMode, Details.ColourMode);
+
 		CurrentFrame = 0;
 
-		Busy = false;
-
-		import.MaxFrames        = MatrixLayers[0]->Freeform->Frames.size() - 1; // 0 to n-1
+		import.MaxFrames        = Data->Layers[0]->Freeform->Frames.size() - 1; // 0 to n-1
 		import.FontMode         = fontmode;
 
 		eeo.ExportMode = ExportSource::kAnimationFreeform;
+
+		Busy = false;
 	}
 
 	if (OnLayerChange) OnLayerChange(this);
@@ -7683,14 +6988,14 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 								switch (lMatrixMode)
 								{
 								case MatrixColourMode::kMono:
-									MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = Convert::HexToInt(pixel);
+									Data->Layers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = Convert::HexToInt(pixel);
 									break;
 								case MatrixColourMode::kRGB:
 									if (lRGBBackground != -1)
 									{
 										if (Convert::HexToInt(pixel) == lRGBBackground)
 										{
-											MatrixLayers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = RGBBackground;
+											Data->Layers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = RGBBackground;
 										}
 									}
 									break;
@@ -7752,7 +7057,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 					   // ======================================================================
 
 					case LoadData::kLoadLayoutName:
-						MatrixLayers[lCurrentLayer]->Name = v;
+						Data->Layers[lCurrentLayer]->Name = v;
 						break;
 
 					default:
@@ -7780,539 +7085,12 @@ bool TheMatrix::SaveAnimation(const std::wstring file_name, ImportData &tid, Exp
 	switch (Details.DrawMode)
 	{
 	case MatrixDrawMode::kGrid:
-		return SaveAnimationGrid(file_name, tid, eeo, colours);
+		return Data->SaveAnimationGrid(file_name, tid, eeo, colours, Details.Comment, MatrixIgnoredLayout);
 	case MatrixDrawMode::kFreeform:
-		return SaveAnimationFreeform(file_name, tid, eeo, colours);
+		return Data->SaveAnimationFreeform(file_name, tid, eeo, colours, Details.Comment);
 	}
 
 	return false;
-}
-
-
-bool TheMatrix::SaveAnimationGrid(const std::wstring file_name, ImportData &tid, ExportOptions &eeo, ProjectColours &colours)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		file << Formatting::to_utf8(L"{" + kFileHeaderHeader + L"\n");
-
-		file << Formatting::to_utf8(kAnimPadModeF +            std::to_wstring(tid.PadModeToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimHexFormatF +          std::to_wstring(tid.HexFormatToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimHexOutputF +          std::to_wstring(tid.HexOutputToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimBracketsF +           std::to_wstring(tid.BracketsToInt()) + L"\n");
-
-		file << Formatting::to_utf8(kAnimPreviewEnabledF +     std::to_wstring(tid.Preview.Enabled) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewSizeF +        std::to_wstring(tid.Preview.Size) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewViewF +        std::to_wstring(tid.Preview.ViewToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewVoidF +        std::to_wstring(tid.Preview.Void) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewOffsetF +      std::to_wstring(tid.Preview.Offset) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewDirectionF +   std::to_wstring(tid.Preview.OffsetDirection) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewIncRadiallyF + std::to_wstring(tid.Preview.IncrementRadially) + L"\n");
-
-		eeo.SaveToFile(file);
-
-		file << Formatting::to_utf8(kAnimAutomationFileNameF + tid.AutomationFileName + L"\n");
-		file << Formatting::to_utf8(kAnimCommentF +            Details.Comment + L"\n");
-		file << Formatting::to_utf8(kAnimRGBBackgroundF +      std::to_wstring(RGBBackground) + L"\n");
-		file << Formatting::to_utf8(kAnimFrameRangeF +         std::to_wstring(tid.StartFrame) + L"," + std::to_wstring(tid.EndFrame) + L"\n");
-		file << Formatting::to_utf8(kAnimLayerCountF +         std::to_wstring(MatrixLayers.size()) + L"\n");
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		if (tid.ColourMode == MatrixColourMode::kRGB)
-		{
-			file << Formatting::to_utf8(L'{' + kFileHeaderColours + L"\n");
-
-			for (int i = 0; i < 16; i++)
-			{
-				file << Formatting::to_utf8(kAnimColoursCustomF + std::to_wstring(colours.CustomColours[i]) + L"\n");
-			}
-
-			for (int i = 0; i < 28; i++)
-			{
-				file << Formatting::to_utf8(kAnimColoursPaletteHistoryF + std::to_wstring(colours.PaletteHistory[i]) + L"\n");
-			}
-
-			file << Formatting::to_utf8(kAnimColoursLeftF +   std::to_wstring(colours.DrawColours[kMouseLeft]) + L"\n");
-			file << Formatting::to_utf8(kAnimColoursMiddleF + std::to_wstring(colours.DrawColours[kMouseMiddle]) + L"\n");
-			file << Formatting::to_utf8(kAnimColoursRightF +  std::to_wstring(colours.DrawColours[kMouseRight]) + L"\n");
-
-			file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-		}
-
-		// ===================================================================
-
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderLayer + L"\n");
-			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
-			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
-			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
-			file << Formatting::to_utf8(kAnimLayerLockedF + std::to_wstring(MatrixLayers[layer]->Locked) + L"\n");
-			file << Formatting::to_utf8(L"]\n");
-
-			// ===============================================================
-
-			for (int frame = tid.StartFrame; frame <= tid.EndFrame; frame++)
-			{
-				switch (tid.ColourMode)
-				{
-				case MatrixColourMode::kMono:
-					file << Formatting::to_utf8(L"{" + kFilePrefixMono + L"\n");
-					break;
-				case MatrixColourMode::kBiSequential:
-					file << Formatting::to_utf8(L"{" + kFilePrefixBiSequential + L"\n");
-					break;
-				case MatrixColourMode::kBiBitplanes:
-					file << Formatting::to_utf8(L"{" + kFilePrefixBiBitPlanes + L"\n");
-					break;
-				case MatrixColourMode::kRGB:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB + L"\n");
-					break;
-				case MatrixColourMode::kRGB3BPP:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB3BPP + L"\n");
-					break;
-
-				default:
-					break;
-				}
-
-				file << Formatting::to_utf8(kAnimWidthF  + std::to_wstring(Details.Width) + L"\n");
-				file << Formatting::to_utf8(kAnimHeightF + std::to_wstring(Details.Height) + L"\n");
-
-				for (int y = 0; y < Details.Height; y++)
-				{
-					std::wstring s = L"";
-
-					for (int x = 0; x < Details.Width; x++)
-					{
-						s += IntToHex(MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x], 6) + L" ";
-					}
-
-					file << Formatting::to_utf8(kAnimRowDataF + s + L"\n");
-				}
-
-				file << Formatting::to_utf8(kAnimFrameLockedF + std::to_wstring(MatrixLayers[layer]->Cells[frame]->Locked) + L"\n");
-
-				file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-			}
-		}
-
-
-		// ===========================================================================
-
-		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			std::wstring s = L"";
-
-			for (int x = 0; x < Details.Width; x++)
-			{
-				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
-			}
-
-			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
-		}
-
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		file.close();
-
-		return true;
-	}
-
-	return false;
-}
-
-
-bool TheMatrix::SaveAnimationFreeform(const std::wstring file_name, ImportData &tid, ExportOptions &eeo, ProjectColours &colours)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		file << Formatting::to_utf8(L"{" + kFileHeaderHeader + L"\n");
-
-		file << Formatting::to_utf8(kAnimPadModeF +            std::to_wstring(tid.PadModeToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimHexFormatF +          std::to_wstring(tid.HexFormatToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimHexOutputF +          std::to_wstring(tid.HexOutputToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimBracketsF +           std::to_wstring(tid.BracketsToInt()) + L"\n");
-
-		file << Formatting::to_utf8(kAnimPreviewEnabledF +     std::to_wstring(tid.Preview.Enabled) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewSizeF +        std::to_wstring(tid.Preview.Size) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewViewF +        std::to_wstring(tid.Preview.ViewToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewVoidF +        std::to_wstring(tid.Preview.Void) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewOffsetF +      std::to_wstring(tid.Preview.Offset) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewDirectionF +   std::to_wstring(tid.Preview.OffsetDirection) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewIncRadiallyF + std::to_wstring(tid.Preview.IncrementRadially) + L"\n");
-
-		eeo.SaveToFile(file);
-
-		file << Formatting::to_utf8(kAnimAutomationFileNameF + tid.AutomationFileName + L"\n");
-		file << Formatting::to_utf8(kAnimCommentF +            Details.Comment + L"\n");
-		file << Formatting::to_utf8(kAnimRGBBackgroundF +      std::to_wstring(RGBBackground) + L"\n");
-		file << Formatting::to_utf8(kAnimFrameRangeF +         std::to_wstring(tid.StartFrame) + L"," + std::to_wstring(tid.EndFrame) + L"\n");
-		file << Formatting::to_utf8(kAnimLayerCountF +         std::to_wstring(MatrixLayers.size()) + L"\n");
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		if (tid.ColourMode == MatrixColourMode::kRGB)
-		{
-			file << Formatting::to_utf8(L'{' + kFileHeaderColours + L"\n");
-
-			for (int i = 0; i < 16; i++)
-			{
-				file << Formatting::to_utf8(kAnimColoursCustomF + std::to_wstring(colours.CustomColours[i]) + L"\n");
-			}
-
-			for (int i = 0; i < 28; i++)
-			{
-				file << Formatting::to_utf8(kAnimColoursPaletteHistoryF + std::to_wstring(colours.PaletteHistory[i]) + L"\n");
-			}
-
-			file << Formatting::to_utf8(kAnimColoursLeftF +   std::to_wstring(colours.DrawColours[kMouseLeft]) + L"\n");
-			file << Formatting::to_utf8(kAnimColoursMiddleF + std::to_wstring(colours.DrawColours[kMouseMiddle]) + L"\n");
-			file << Formatting::to_utf8(kAnimColoursRightF +  std::to_wstring(colours.DrawColours[kMouseRight]) + L"\n");
-
-			file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-		}
-
-		// ===================================================================
-
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderFreeformLayer + L"\n");
-			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
-			file << Formatting::to_utf8(kAnimLayerLockedF + std::to_wstring(MatrixLayers[layer]->Locked) + L"\n");
-			file << Formatting::to_utf8(L"]\n");
-
-			// ===============================================================
-
-			for (int pixel = 0; pixel < MatrixLayers[layer]->Freeform->Pixels.size(); pixel++)
-			{
-				switch (tid.ColourMode)
-				{
-				case MatrixColourMode::kRGB:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB + L"\n");
-					break;
-				case MatrixColourMode::kRGB3BPP:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB3BPP + L"\n");
-					break;
-
-				default:
-					break;
-				}
-
-				file << Formatting::to_utf8(kAnimPixelXF + std::to_wstring(MatrixLayers[layer]->Freeform->Pixels[pixel]->X) + L"\n");
-				file << Formatting::to_utf8(kAnimPixelYF + std::to_wstring(MatrixLayers[layer]->Freeform->Pixels[pixel]->Y) + L"\n");
-				file << Formatting::to_utf8(kAnimPixelOrderF + std::to_wstring(MatrixLayers[layer]->Freeform->Pixels[pixel]->Order) + L"\n");
-				file << Formatting::to_utf8(kAnimPixelGroupF + std::to_wstring(MatrixLayers[layer]->Freeform->Pixels[pixel]->Group) + L"\n");
-
-				for (int colour = 0; colour < MatrixLayers[layer]->Freeform->Pixels[pixel]->Colours.size(); colour++)
-				{
-       				file << Formatting::to_utf8(kAnimPixelColourF + std::to_wstring(MatrixLayers[layer]->Freeform->Pixels[pixel]->Colours[colour]) + L"\n");
-				}
-
-				file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-			}
-
-			for (int frame = tid.StartFrame; frame <= tid.EndFrame; frame++)
-			{
-				file << Formatting::to_utf8(L"{" + kFileHeaderFreeformFrame + L"\n");
-				file << Formatting::to_utf8(kAnimFrameLockedF + std::to_wstring(MatrixLayers[layer]->Freeform->Frames[frame]->Locked) + L"\n");
-				file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-			}
-		}
-
-		// ===========================================================================
-
-		file.close();
-
-		return true;
-	}
-
-	return false;
-}
-
-
-void TheMatrix::SaveFont(const std::wstring file_name, ImportData &tid, ExportOptions &eeo)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		file << Formatting::to_utf8(L"{" + kFileHeaderFontHeader + L"\n");
-
-		file << Formatting::to_utf8(kAnimPreviewEnabledF +     std::to_wstring(tid.Preview.Enabled) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewSizeF +        std::to_wstring(tid.Preview.Size) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewViewF +        std::to_wstring(tid.Preview.ViewToInt()) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewVoidF +        std::to_wstring(tid.Preview.Void) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewOffsetF +      std::to_wstring(tid.Preview.Offset) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewDirectionF +   std::to_wstring(tid.Preview.OffsetDirection) + L"\n");
-		file << Formatting::to_utf8(kAnimPreviewIncRadiallyF + std::to_wstring(tid.Preview.IncrementRadially) + L"\n");
-
-		eeo.SaveToFile(file);
-
-		file << Formatting::to_utf8(kAnimAutomationFileNameF + tid.AutomationFileName + L"\n");
-		file << Formatting::to_utf8(kAnimCommentF +            Details.Comment + L"\n");
-		file << Formatting::to_utf8(kAnimRGBBackgroundF +      std::to_wstring(RGBBackground) + L"\n");
-		file << Formatting::to_utf8(kAnimFrameRangeF +         std::to_wstring(tid.StartFrame) + L"," + std::to_wstring(tid.EndFrame) + L"\n");
-		file << Formatting::to_utf8(kAnimLayerCountF +         std::to_wstring(MatrixLayers.size()) + L"\n");
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderLayer + L"\n");
-			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
-			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
-			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
-			file << Formatting::to_utf8(kAnimLayerLockedF + std::to_wstring(MatrixLayers[layer]->Locked) + L"\n");
-			file << Formatting::to_utf8(L"]\n");
-
-			for (int i = 1; i <= kFontCharacterCount; i++)
-			{
-				switch (tid.ColourMode)
-				{
-				case MatrixColourMode::kMono:
-					file << Formatting::to_utf8(L"{" + kFilePrefixMono + L"\n");
-					break;
-				case MatrixColourMode::kBiSequential:
-					file << Formatting::to_utf8(L"{" + kFilePrefixBiSequential + L"\n");
-					break;
-				case MatrixColourMode::kBiBitplanes:
-					file << Formatting::to_utf8(L"{" + kFilePrefixBiBitPlanes + L"\n");
-					break;
-				case MatrixColourMode::kRGB:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB + L"\n");
-					break;
-				case MatrixColourMode::kRGB3BPP:
-					file << Formatting::to_utf8(L"{" + kFilePrefixRGB3BPP + L"\n");
-					break;
-
-				default:
-					break;
-				}
-
-				file << Formatting::to_utf8(kAnimWidthF +  std::to_wstring(Details.Width) + L"\n");
-				file << Formatting::to_utf8(kAnimHeightF + std::to_wstring(Details.Height) + L"\n");
-
-				for (int y = 0; y < Details.Height; y++)
-				{
-					std::wstring s = L"";
-
-					for (int x = 0; x < Details.Width; x++)
-					{
-						s += IntToHex(MatrixLayers[layer]->Cells[i]->Grid[y * Details.Width + x], 6) + L" ";
-					}
-
-					file << Formatting::to_utf8(kAnimRowDataF + s + L"\n");
-				}
-
-				file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-			}
-		}
-
-		// ===========================================================================
-
-		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			std::wstring s = L"";
-
-			for (int x = 0; x < Details.Width; x++)
-			{
-				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
-			}
-
-			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
-		}
-
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		file.close();
-	}
-}
-
-
-void TheMatrix::SaveSingleFrame(const std::wstring file_name, ImportData tid, int frame)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		switch (tid.ColourMode)
-		{
-		case MatrixColourMode::kMono:
-			file << Formatting::to_utf8(L"{" + kFramePrefixMono + L"\n");
-			break;
-		case MatrixColourMode::kBiSequential:
-			file << Formatting::to_utf8(L"{" + kFramePrefixBiSequential + L"\n");
-			break;
-		case MatrixColourMode::kBiBitplanes:
-			file << Formatting::to_utf8(L"{" + kFramePrefixBiBitPlanes + L"\n");
-			break;
-		case MatrixColourMode::kRGB:
-			file << Formatting::to_utf8(L"{" + kFramePrefixRGB + L"\n");
-			break;
-		case MatrixColourMode::kRGB3BPP:
-			file << Formatting::to_utf8(L"{" + kFramePrefixRGB3BPP + L"\n");
-			break;
-
-		default:
-			break;
-		}
-
-		file << Formatting::to_utf8(kAnimWidthF + std::to_wstring(Details.Width) + L"\n");
-		file << Formatting::to_utf8(kAnimHeightF + std::to_wstring(Details.Height) + L"\n");
-		file << Formatting::to_utf8(kAnimCommentF + Details.Comment + L"\n");
-		file << Formatting::to_utf8(kAnimRGBBackgroundF + std::to_wstring(RGBBackground) + L"\n");
-
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===========================================================================
-
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			file << Formatting::to_utf8(L"[" + kFileHeaderLayer + L"\n");
-			file << Formatting::to_utf8(kAnimLayerNameF +   MatrixLayers[layer]->Name + L"\n");
-			file << Formatting::to_utf8(kAnimLayerWidthF +  std::to_wstring(Details.Width) + L"\n");
-			file << Formatting::to_utf8(kAnimLayerHeightF + std::to_wstring(Details.Height) + L"\n");
-			file << Formatting::to_utf8(L"]\n");
-
-			file << Formatting::to_utf8(kDataBlockStartS + L"\n");
-
-			for (int y = 0; y < Details.Height; y++)
-			{
-				std::wstring s = L"";
-
-				for (int x = 0; x < Details.Width; x++)
-				{
-					s += IntToHex(MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x], 6) + L" ";
-				}
-
-				file << Formatting::to_utf8(kAnimRowDataF + s + L"\n");
-			}
-
-			file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-		}
-
-		// ===========================================================================
-
-		file << Formatting::to_utf8(L"{" + kFileHeaderIgnoredPixel + L"\n");
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			std::wstring s = L"";
-
-			for (int x = 0; x < Details.Width; x++)
-			{
-				s += std::to_wstring(MatrixIgnoredLayout->Grid[y * Details.Width + x]) + L" ";
-			}
-
-			file << Formatting::to_utf8(kAnimIgnoredPixelDataF + s + L"\n");
-		}
-
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		// ===================================================================
-
-		file.close();
-	}
-}
-
-
-void TheMatrix::SaveAsTextToolFont(const std::wstring file_name)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		for (int t = 1; t < kFontCharacterCount; t++)
-		{
-			std::wstring s = L"";
-
-			for (int x = 0; x < Details.Width; x++)
-			{
-				int mydata = 0;
-
-				for (int y = 0; y < Details.Height; y++)
-				{
-					if (MatrixLayers[kPermanentLayer]->Cells[t]->Grid[y * Details.Width + x] == 1)
-					{
-						mydata = mydata + (kPowers[Details.Height - y - 1]);
-					}
-				}
-
-				if (x != Details.Width - 1)
-				{
-					s += std::to_wstring(mydata) + L", ";
-				}
-				else
-				{
-					s += std::to_wstring(mydata);
-				}
-			}
-
-			file << Formatting::to_utf8(s + L" // " + Char(32 + t) + L"\n");
-		}
-
-		file.close();
-	}
-}
-
-
-void TheMatrix::SaveAsRGBFont(const std::wstring file_name)
-{
-	std::ofstream file(file_name);
-
-	if (file)
-	{
-		file << Formatting::to_utf8(L"{" + kFileHeaderFontRGB + L"\n");
-		file << Formatting::to_utf8(kRGBFontWidthF  + std::to_wstring(Details.Width) + L"\n");
-		file << Formatting::to_utf8(kRGBFontHeightF + std::to_wstring(Details.Height) + L"\n");
-		file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-
-		for (int t = 0; t < kFontCharacterCount; t++)
-		{
-			file << Formatting::to_utf8(L"{" + kFontPrefixChar + L"\n");
-
-			for (int x = 0; x < Details.Width; x++)
-			{
-				std::wstring mydata = L"";
-
-				for (int y = 0; y < Details.Height; y++)
-				{
-					if (MatrixLayers[kPermanentLayer]->Cells[t]->Grid[y * Details.Width + x] != RGBBackground)
-					{
-						mydata += IntToHex(MatrixLayers[kPermanentLayer]->Cells[t]->Grid[y * Details.Width + x], 6).c_str();
-
-						mydata += L" ";
-					}
-					else
-					{
-						mydata += + L"-1 ";
-					}
-				}
-
-				file << Formatting::to_utf8(kRGBFontDataF + L":" + mydata + L"\n");
-			}
-
-			file << Formatting::to_utf8(kDataBlockEndS + L"\n");
-		}
-
-		file.close();
-	}
 }
 #pragma end_region
 
@@ -8323,26 +7101,26 @@ void TheMatrix::PerformEffectController(int mode, int multipleoptionmode)
 	switch (multipleoptionmode)
 	{
 	case kMOMCurrentOnly:
-		PerformEffect(mode, CurrentLayer, CurrentFrame);
+		Data->PerformEffect(mode, CurrentLayer, CurrentFrame, Render.Gradient);
 		break;
 	case kMOMCurrentFrameLayers:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
+		for (int layer = 0; layer < Data->Layers.size(); layer++)
 		{
-			PerformEffect(mode, layer, CurrentFrame);
+			Data->PerformEffect(mode, layer, CurrentFrame, Render.Gradient);
 		}
 		break;
 	case kMOMCurrentLayerFrames:
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
+		for (int frame = 0; frame < Data->Layers[CurrentLayer]->Cells.size(); frame++)
 		{
-			PerformEffect(mode, CurrentLayer, frame);
+			Data->PerformEffect(mode, CurrentLayer, frame, Render.Gradient);
 		}
 		break;
 	case kMOMAll:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
+		for (int layer = 0; layer < Data->Layers.size(); layer++)
 		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
+			for (int frame = 0; frame < Data->Layers[layer]->Cells.size(); frame++)
 			{
-				PerformEffect(mode, layer, frame);
+				Data->PerformEffect(mode, layer, frame, Render.Gradient);
 			}
 		}
 		break;
@@ -8356,77 +7134,6 @@ void TheMatrix::PerformEffectController(int mode, int multipleoptionmode)
 
 		PaintBox->Invalidate();
 	}
-}
-
-
-void TheMatrix::PerformEffect(int mode, int layer, int frame)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	BackupMatrix(layer, frame);
-
-	switch (mode)
-	{
-	case kEffectFlip:
-		for (int y = 0; y < Details.Height; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(Details.Height - y - 1) * Details.Width + x];
-			}
-		}
-		break;
-	case kEffectMirror:
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (Details.Width - x - 1)];
-			}
-		}
-		break;
-	case kEffectInvert:
-		for (int z = 0; z < Details.Width * Details.Height; z++)
-		{
-			switch (Details.ColourMode)
-			{
-			case MatrixColourMode::kMono:
-				MatrixLayers[layer]->Cells[frame]->Grid[z] = 1 - MatrixLayers[layer]->Cells[frame]->Grid[z];
-				break;
-			case MatrixColourMode::kBiSequential:
-			case MatrixColourMode::kBiBitplanes:
-				MatrixLayers[layer]->Cells[frame]->Grid[z] = 3 - MatrixLayers[layer]->Cells[frame]->Grid[z];
-				break;
-			case MatrixColourMode::kRGB:
-				MatrixLayers[layer]->Cells[frame]->Grid[z] = 0xFFFFFF - MatrixLayers[layer]->Cells[frame]->Grid[z];
-				break;
-			case MatrixColourMode::kRGB3BPP:
-				MatrixLayers[layer]->Cells[frame]->Grid[z] = 0x4 - MatrixLayers[layer]->Cells[frame]->Grid[z];
-				break;
-
-			default:
-				break;
-			}
-		}
-		break;
-	case kEffectGradientAll:
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				if (Render.Gradient.Option == GradientOption::kVertical && Render.Gradient.IY[y] != 0)
-				{
-					if (MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] != 0)
-					{
-						MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = Render.Gradient.IY[y];
-					}
-				}
-			}
-		}
-		break;
-	}
-
-	MatrixLayers[layer]->Cells[frame]->AddToHistory();
 }
 
 
@@ -8435,26 +7142,26 @@ void TheMatrix::PerformScrollController(int mode, int multipleoptionmode)
 	switch (multipleoptionmode)
 	{
 	case kMOMCurrentOnly:
-		PerformScroll(mode, CurrentLayer, CurrentFrame);
+		Data->PerformScroll(mode, CurrentLayer, CurrentFrame);
 		break;
 	case kMOMCurrentFrameLayers:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
+		for (int layer = 0; layer < Data->Layers.size(); layer++)
 		{
-			PerformScroll(mode, layer, CurrentFrame);
+			Data->PerformScroll(mode, layer, CurrentFrame);
 		}
 		break;
 	case kMOMCurrentLayerFrames:
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
+		for (int frame = 0; frame < Data->Layers[CurrentLayer]->Cells.size(); frame++)
 		{
-			PerformScroll(mode, CurrentLayer, frame);
+			Data->PerformScroll(mode, CurrentLayer, frame);
 		}
 		break;
 	case kMOMAll:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
+		for (int layer = 0; layer < Data->Layers.size(); layer++)
 		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
+			for (int frame = 0; frame < Data->Layers[layer]->Cells.size(); frame++)
 			{
-				PerformScroll(mode, layer, frame);
+				Data->PerformScroll(mode, layer, frame);
 			}
 		}
 		break;
@@ -8471,430 +7178,11 @@ void TheMatrix::PerformScrollController(int mode, int multipleoptionmode)
 }
 
 
-void TheMatrix::PerformScroll(int mode, int layer, int frame)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	BackupMatrix(layer, frame);
-
-	switch (mode)
-	{
-	case kEffectScrollLeft:
-		for (int x = 0; x <= Details.Width - 2; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x + 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width];
-		}
-		break;
-	case kEffectScrollRight:
-		for (int x = 1; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				 MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x - 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
-		}
-		break;
-	case kEffectScrollUp:
-		for (int y = 0; y < Details.Height - 1; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				 MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y + 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[x];
-		}
-		break;
-	case kEffectScrollDown:
-		for (int y = 1; y < Details.Height; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-			 MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y - 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[x] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
-		}
-		break;
-	}
-
-	MatrixLayers[layer]->Cells[frame]->AddToHistory();
-}
-
-
-void TheMatrix::PerformSplitScroll(int mode, int layer, int frame)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	switch (mode)
-	{
-	case kEffectSplitScrollLeftRight:
-	case kEffectSplitScrollRightLeft:
-	{
-		int mid = std::round(Details.Height / 2) - 1;
-
-		int	a = kEffectScrollRowLeft;
-		int b = kEffectScrollRowRight;
-
-		switch (mode)
-		{
-		case kEffectSplitScrollLeftRight:
-			a = kEffectScrollRowLeft;
-			b = kEffectScrollRowRight;
-			break;
-		case kEffectSplitScrollRightLeft:
-			a = kEffectScrollRowRight;
-			b = kEffectScrollRowLeft;
-			break;
-		}
-
-		for (int row = 0; row <= mid; row++)
-		{
-			ScrollRow(layer, frame, a, row);
-		}
-
-		for (int row = mid + 1; row < Details.Height; row++)
-		{
-			ScrollRow(layer, frame, b, row);
-		}
-		break;
-	}
-	case kEffectSplitScrollUpDown:
-	case kEffectSplitScrollDownUp:
-	{
-		int mid = std::round(Details.Width / 2) - 1;
-		int a = kEffectScrollColumnUp;
-		int b = kEffectScrollColumnDown;
-
-		switch (mode)
-		{
-		case kEffectSplitScrollUpDown:
-			a = kEffectScrollColumnUp;
-			b = kEffectScrollColumnDown;
-			break;
-		case kEffectSplitScrollDownUp:
-			a = kEffectScrollColumnDown;
-			b = kEffectScrollColumnUp;
-			break;
-		}
-
-		for (int column = 0; column <= mid; column++)
-		{
-			ScrollColumn(layer, frame, a, column);
-		}
-
-		for (int column = mid + 1; column < Details.Width; column++)
-		{
-			ScrollColumn(layer, frame, b, column);
-		}
-		break;
-	}
-	}
-}
-
-
-void TheMatrix::PerformAlternateScroll(int mode, int layer, int frame)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	switch (mode)
-	{
-	case kEffectAlternateScrollUpDown:
-	case kEffectAlternateScrollDownUp:
-	{
-		int coeff = std::round((double)Details.Width / 4);
-
-		int count = 0;
-		int mode  = kEffectScrollColumnUp;
-
-		for (int t = 0; t < Details.Width; t++)
-		{
-			ScrollColumn(layer, frame, mode, t);
-
-			count++;
-
-			if (count == coeff)
-			{
-				count = 0;
-
-				if (mode == kEffectScrollColumnUp)
-				{
-					mode = kEffectScrollColumnDown;
-				}
-				else
-				{
-					mode = kEffectScrollColumnUp;
-				}
-			}
-		}
-		break;
-	}
-	}
-}
-
-
 void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
+	Data->PerformWipeOnFrame(mode, CurrentLayer, CurrentLayer, clear);
 
-	BackupMatrix(CurrentLayer, CurrentFrame);
-
-	switch (mode)
-    {
-	case kEffectWipeVerticalOut:
-	{
-		int z = std::round((double)Details.Width / 2);
-
-		for  (int x = 0; x <= z - 2; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x + 1)];
-			}
-		}
-
-		for (int x = Details.Width - 1; x >= z + 1; x--)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x - 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (z - 1)] = RGBBackground;
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + z]     = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (z - 1)] = MatrixBackup->Grid[y * Details.Width];
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + z]     = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
-			}
-		}
-		break;
-	}
-	case kEffectWipeVerticalIn:
-	{
-		int z = std::round((double)Details.Width / 2);
-
-		for (int x = 1; x <= z - 1; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x - 1)];
-			}
-		}
-
-		for (int x = Details.Width - 1; x >= z; x--)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x + 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width] = RGBBackground;
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (Details.Width - 1)] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (z - 1)];
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width + z];
-			}
-		}
-		break;
-	}
-	case kEffectWipeHorizontalOut:
-	{
-		int z = std::round((double)Details.Height / 2);
-
-		for (int y = 0; y <= z - 2; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y + 1) * Details.Width + x];
-			}
-		}
-
-		for (int y = Details.Height - 1; y >= z + 1; y--)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y - 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(z - 1) * Details.Width + x] = RGBBackground;
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z * Details.Width + x] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(z - 1) * Details.Width + x] = MatrixBackup->Grid[x];
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z * Details.Width + x] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
-			}
-		}
-		break;
-	}
-	case kEffectWipeHorizontalIn:
-	{
-		int z = std::round((double)Details.Height / 2);
-
-		for (int y = 1; y < z; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y - 1) * Details.Width + x];
-			}
-		}
-
-		for (int y = Details.Height - 1; y >= z; y--)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y + 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[x] = RGBBackground;
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + x] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[x]                = MatrixBackup->Grid[(z - 1) * Details.Width + x];
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[z * Details.Width + x];
-			}
-		}
-		break;
-	}
-	case kEffectWipeLeftToRight:
-	{
-		for (int x = 0; x <= Details.Width - 2; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x + 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (Details.Width - 1)] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width];
-			}
-		}
-		break;
-	}
-	case kEffectWipeRightToLeft:
-	{
-		for (int x = 1; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x - 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
-			}
-		}
-		break;
-	}
-	case kEffectWipeUpToDown:
-	{
-		for (int y = 0; y <= Details.Height - 2; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y + 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + x] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[x];
-			}
-		}
-		break;
-	}
-	case kEffectWipeDownToUp:
-	{
-		for (int y = 1; y < Details.Height; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y - 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			if (clear)
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[x] = RGBBackground;
-			}
-			else
-			{
-				MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[x] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
-			}
-		}
-		break;
-	}
-	}
-
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+	Data->Layers[CurrentLayer]->Cells[CurrentLayer]->AddToHistory();
 
 	if (!AutomateMode)
 	{
@@ -8909,74 +7197,7 @@ void TheMatrix::PerformWipeOnCurrentFrame(int mode, bool clear)
 
 void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	BackupMatrix(CurrentLayer, CurrentFrame);
-
-	switch (mode)
-	{
-	case kEffectRevealLeftRight:
-		if (parameter < Details.Width)
-		{
-			for (int x = parameter; x < Details.Width; x++)
-			{
-				for (int y = 0; y < Details.Height; y++)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = colour;
-				}
-			}
-
-			parameter++;
-		}
-		break;
-	case kEffectRevealRightLeft:
-		if (parameter >= 0)
-		{
-			for (int x = parameter; x >= 0; x--)
-			{
-				for (int y = 0; y < Details.Height; y++)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = colour;
-				}
-			}
-
-			parameter--;
-		}
-		break;
-	case kEffectRevealTopBottom:
-		if (parameter < Details.Height)
-		{
-			for (int y = parameter; y < Details.Height; y++)
-			{
-				for (int x = 0; x < Details.Width; x++)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = colour;
-				}
-			}
-
-			parameter++;
-		}
-		break;
-	case kEffectRevealBottomTop:
-		if (parameter >= 0)
-		{
-			for (int y = parameter; y >= 0; y--)
-			{
-				for (int x = 0; x < Details.Width; x++)
-				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + x] = colour;
-				}
-			}
-
-			parameter--;
-		}
-		break;
-	case kEffectRevealCentreIn:
-	case kEffectRevealCentreOut:
-		break;
-	}
-
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+	Data->PerformRevealOnFrame(mode, CurrentLayer, CurrentFrame, colour, parameter);
 
 	if (!AutomateMode)
 	{
@@ -8989,115 +7210,9 @@ void TheMatrix::PerformRevealOnCurrentFrame(int mode, int colour, int &parameter
 }
 
 
-void TheMatrix::PerformScrollOnCopyFrame(int mode)
-{
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	BackupMatrix();
-
-	switch (mode)
-	{
-	case kEffectScrollLeft:
-		for (int x = 0; x <= Details.Width - 2; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixCopy->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x + 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			MatrixCopy->Grid[y * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[y * Details.Width];
-		}
-		break;
-	case kEffectScrollRight:
-		for (int x = 1; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixCopy->Grid[y * Details.Width + x] = MatrixBackup->Grid[y * Details.Width + (x - 1)];
-			}
-		}
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			MatrixCopy->Grid[y * Details.Width] = MatrixBackup->Grid[y * Details.Width + (Details.Width - 1)];
-		}
-		break;
-	case kEffectScrollUp:
-		for (int y = 0; y <= Details.Height - 2; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixCopy->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y + 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			MatrixCopy->Grid[(Details.Height - 1) * Details.Width + x] = MatrixBackup->Grid[x];
-		}
-		break;
-	case kEffectScrollDown:
-		for (int y = 1; y < Details.Height; y++)
-		{
-			for (int x = 0; x < Details.Width; x++)
-			{
-				MatrixCopy->Grid[y * Details.Width + x] = MatrixBackup->Grid[(y - 1) * Details.Width + x];
-			}
-		}
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			MatrixCopy->Grid[x] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + x];
-		}
-		break;
-	}
-}
-
-
 void TheMatrix::PerformColumnScrollOnCurrentFrame(int mode, int column, bool clear)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	BackupMatrix(CurrentLayer, CurrentFrame);
-
-	switch (mode)
-	{
-	case kEffectScrollUp:
-		for (int y = 0; y <= Details.Height - 2; y++)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + column] = MatrixBackup->Grid[(y + 1) * Details.Width + column];
-		}
-
-		if (clear)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + column] = 0;
-		}
-		else
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[(Details.Height - 1) * Details.Width + column] = MatrixBackup->Grid[column];
-		}
-		break;
-	case kEffectScrollDown:
-		for (int y = 1; y < Details.Height; y++)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[y * Details.Width + column] = MatrixBackup->Grid[(y - 1) * Details.Width + column];
-		}
-
-		if (clear)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[column] = 0;
-		}
-		else
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[column] = MatrixBackup->Grid[(Details.Height - 1) * Details.Width + column];
-		}
-		break;
-	}
-
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+    Data->PerformColumnScrollOnCurrentFrame(mode, CurrentLayer, CurrentFrame, column, clear);
 
 	if (!AutomateMode)
 	{
@@ -9112,45 +7227,7 @@ void TheMatrix::PerformColumnScrollOnCurrentFrame(int mode, int column, bool cle
 
 void TheMatrix::PerformRowScrollOnCurrentFrame(int mode, int row, bool clear)
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	BackupMatrix(CurrentLayer, CurrentFrame);
-
-	switch (mode)
-	{
-	case kEffectScrollLeft:
-		for (int x = 0; x < Details.Width - 1; x++)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + x] = MatrixBackup->Grid[row * Details.Width + (x + 1)];
-		}
-
-		if (clear)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + (Details.Width - 1)] = 0;
-		}
-		else
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + (Details.Width - 1)] = MatrixBackup->Grid[row];
-		}
-		break;
-	case kEffectScrollRight:
-		for (int x = 1; x < Details.Width; x++)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row * Details.Width + x] = MatrixBackup->Grid[row * Details.Width + (x - 1)];
-		}
-
-		if (clear)
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row] = 0;
-		}
-		else
-		{
-			MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[row] = MatrixBackup->Grid[row * Details.Width + (Details.Width - 1)];
-		}
-		break;
-	}
-
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+    Data->PerformRowScrollOnFrame(mode, CurrentLayer, CurrentFrame, row, clear);
 
 	if (!AutomateMode)
 	{
@@ -9169,33 +7246,7 @@ void TheMatrix::RotateFrameController(int mode, int multipleoptionmode)
 
 	Busy = true;
 
-	switch (multipleoptionmode)
-	{
-	case kMOMCurrentOnly:
-		RotateFrame(mode, CurrentLayer, CurrentFrame);
-		break;
-	case kMOMCurrentFrameLayers:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			RotateFrame(mode, layer, CurrentFrame);
-		}
-		break;
-	case kMOMCurrentLayerFrames:
-		for (int frame = 0; frame < MatrixLayers[CurrentLayer]->Cells.size(); frame++)
-		{
-			RotateFrame(mode, CurrentLayer, frame);
-		}
-		break;
-	case kMOMAll:
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
-			{
-				RotateFrame(mode, layer, frame);
-			}
-		}
-		break;
-	}
+	Data->RotateMultiOption(mode, multipleoptionmode, CurrentLayer, CurrentFrame);
 
 	Busy = false;
 
@@ -9205,229 +7256,10 @@ void TheMatrix::RotateFrameController(int mode, int multipleoptionmode)
 
 	PaintBox->Invalidate();
 }
-
-
-void TheMatrix::RotateFrame(int mode, int layer, int frame)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	BackupMatrix(layer, frame);
-
-	switch (mode)
-	{
-	case kEffectRotateCW:
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[(Details.Width - x - 1) * Details.Width + y];
-			}
-		}
-		break;
-	case kEffectRotateACW:
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + x] = MatrixBackup->Grid[x * Details.Width + (Details.Height - y - 1)];
-			}
-		}
-		break;
-	}
-
-	MatrixLayers[layer]->Cells[frame]->AddToHistory();
-}
-
-
-void TheMatrix::RotateFrameAllLayersAnyAngle(double angle, int toframe)
-{
-	if (IsThisFrameLocked(CurrentLayer, toframe) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	double aradians = (3.1415926535 * angle) / 180;
-	int hx = std::round(((double)Details.Width - 1) / 2);
-	int hy = std::round(((double)Details.Height - 1) / 2);
-
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		MatrixLayers[layer]->Cells[toframe]->Clear(Details.ColourMode, RGBBackground);
-
-		for (int x = 0; x < Details.Width; x++)
-		{
-			for (int y = 0; y < Details.Height; y++)
-			{
-				int ox = x - hx;
-				int oy = y - hy;
-
-				int newx = hx + std::round((ox * std::cos(aradians)) - (oy * std::sin(aradians)));
-				int newy = hy + std::round((ox * std::sin(aradians)) + (oy * std::cos(aradians)));
-
-				switch (Details.ColourMode)
-				{
-				case MatrixColourMode::kRGB:
-				case MatrixColourMode::kRGB3BPP:
-					if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
-					{
-						MatrixLayers[layer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
-					}
-                    break;
-
-				default:
-					if (MatrixBackup->Grid[y * Details.Width + x] > 0)
-					{
-						if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
-						{
-							MatrixLayers[layer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-
-void TheMatrix::RotateFrameAnyAngle(double angle, int toframe)
-{
-	if (IsThisFrameLocked(CurrentLayer, toframe) || !MatrixLayers[CurrentLayer]->Visible) return;
-
-	MatrixLayers[CurrentLayer]->Cells[toframe]->Clear(Details.ColourMode, RGBBackground);
-
-	double aradians = (3.1415926535 * angle) / 180;
-	int hx = std::round(((double)Details.Width - 1) / 2);
-	int hy = std::round(((double)Details.Height - 1) / 2);
-
-	for (int x = 0; x < Details.Width; x++)
-	{
-		for (int y = 0; y < Details.Height; y++)
-		{
-			int ox = x - hx;
-			int oy = y - hy;
-
-			int newx = hx + std::round((ox * std::cos(aradians)) - (oy * std::sin(aradians)));
-			int newy = hy + std::round((ox * std::sin(aradians)) + (oy * std::cos(aradians)));
-
-			switch (Details.ColourMode)
-			{
-			case MatrixColourMode::kRGB:
-			case MatrixColourMode::kRGB3BPP:
-				if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
-				{
-					MatrixLayers[CurrentLayer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
-				}
-                break;
-
-			default:
-				if (MatrixBackup->Grid[y * Details.Width + x] > 0)
-				{
-					if (newx >= 0 && newx < Details.Width && newy >= 0 && newy < Details.Height)
-					{
-						MatrixLayers[CurrentLayer]->Cells[toframe]->Grid[newy * Details.Width + newx] = MatrixBackup->Grid[y * Details.Width + x];
-					}
-				}
-			}
-		}
-	}
-}
-
-
-void TheMatrix::ScrollRow(int layer, int frame, int mode, int row)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	switch (mode)
-	{
-	case kEffectScrollRowLeft:
-	{
-		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width];
-
-		for (int x = 0; x <= Details.Width - 2; x++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + x] = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (x + 1)];
-		}
-
-		MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (Details.Width - 1)] = pixel;
-		break;
-	}
-	case kEffectScrollRowRight:
-	{
-		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (Details.Width - 1)];
-
-		for (int x = Details.Width - 1; x >= 1; x--)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + x] = MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width + (x - 1)];
-		}
-
-		MatrixLayers[layer]->Cells[frame]->Grid[row * Details.Width] = pixel;
-		break;
-	}
-	}
-}
-
-
-void TheMatrix::ScrollColumn(int layer, int frame, int mode, int column)
-{
-	if (IsThisFrameLocked(layer, frame) || !MatrixLayers[layer]->Visible) return;
-
-	switch (mode)
-	{
-	case kEffectScrollColumnUp:
-	{
-		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[column];
-
-		for (int y = 0; y < Details.Height; y++)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + column] = MatrixLayers[layer]->Cells[frame]->Grid[(y + 1) * Details.Width + column];
-		}
-
-		MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) * Details.Width + column] = pixel;
-		break;
-	}
-	case kEffectScrollColumnDown:
-	{
-		int pixel = MatrixLayers[layer]->Cells[frame]->Grid[(Details.Height - 1) * Details.Width + column];
-
-		for (int y = Details.Height - 1; y >= 1; y--)
-		{
-			MatrixLayers[layer]->Cells[frame]->Grid[y * Details.Width + column] = MatrixLayers[layer]->Cells[frame]->Grid[(y - 1) * Details.Width + column];
-		}
-
-		MatrixLayers[layer]->Cells[frame]->Grid[column] = pixel;
-		break;
-	}
-	}
-}
 #pragma end_region
 
 
 #pragma region ReadOnlyProperties
-// value *should* be the same for all layers, so just return those of layer 0
-int TheMatrix::GetFrameCount()
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		return MatrixLayers[kPermanentLayer]->Cells.size();
-	}
-
-	return MatrixLayers[kPermanentLayer]->Freeform->Frames.size();
-}
-
-
-int TheMatrix::GetPixelCount()
-{
-	int total = 0;
-
-	for (int t = 0; t < MatrixLayers.size(); t++)
-	{
-		if (MatrixLayers[t]->Freeform != nullptr)
-		{
-			total += MatrixLayers[t]->Freeform->Pixels.size();
-		}
-	}
-
-	return total;
-}
-
-
 bool TheMatrix::GetIgnoredPixelsMode()
 {
 	return IgnoredPixelsMode;
@@ -9628,9 +7460,9 @@ void TheMatrix::ChangePixelSize(int newpixelsize)
 		PaintBox->Width = Canvas->Width;
 		PaintBox->Height = Canvas->Height;
 
-		for (int t = 0; t < MatrixLayers.size(); t++)
+		for (int t = 0; t < Data->Layers.size(); t++)
 		{
-            MatrixLayers[t]->Freeform->Relocate(Render.PixelSizeZ, newpixelsize);
+            Data->Layers[t]->Freeform->Relocate(Render.PixelSizeZ, newpixelsize);
 		}
 	}
 
@@ -9688,7 +7520,7 @@ void TheMatrix::ChangePixelShape(PixelShape newpixelshape)
 
 void TheMatrix::ChangeMatrixMode(MatrixDrawMode drawmode, MatrixColourMode newmatrixnode)
 {
-    Details.DrawMode = drawmode;
+	Details.DrawMode = drawmode;
 
 	if (Details.Width != -1 || drawmode == MatrixDrawMode::kFreeform)
 	{
@@ -9697,20 +7529,22 @@ void TheMatrix::ChangeMatrixMode(MatrixDrawMode drawmode, MatrixColourMode newma
 		ConfigurePaintboxDrawing();
 	}
 
+	Data->SetSystem(Details.Width, Details.Height, RGBBackground, Software, Details.DrawMode, Details.ColourMode);
+
 	// if we're moving to single colour matrix
 	// make sure the matrix data fits!
 
 	if (newmatrixnode == MatrixColourMode::kMono)
 	{
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
+		for (int layer = 0; layer < Data->Layers.size(); layer++)
 		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
+			for (int frame = 0; frame < Data->Layers[layer]->Cells.size(); frame++)
 			{
 				for (int z = 0; z < Details.Width * Details.Height; z++)
 				{
-					if (MatrixLayers[layer]->Cells[frame]->Grid[z] > 0)
+					if (Data->Layers[layer]->Cells[frame]->Grid[z] > 0)
 					{
-						MatrixLayers[layer]->Cells[frame]->Grid[z] = 1;
+						Data->Layers[layer]->Cells[frame]->Grid[z] = 1;
 					}
 				}
 			}
@@ -9749,7 +7583,7 @@ void TheMatrix::SetSoftwareMode(SoftwareMode softwaremode)
 		{
 			MatrixGrid *m = new MatrixGrid(Details.Width, Details.Height, Details.ColourMode, RGBBackground);
 
-			MatrixLayers[kPermanentLayer]->Cells.push_back(m);
+			Data->Layers[kPermanentLayer]->Cells.push_back(m);
 		}
 
 		break;
@@ -9817,9 +7651,9 @@ void TheMatrix::SetAndShowCurrentFrame(int frame)
 	#if _DEBUG
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		if (frame >= MatrixLayers[CurrentLayer]->Cells.size())
+		if (frame >= Data->Layers[CurrentLayer]->Cells.size())
 		{
-			std::wstring debug = L"Frame " + std::to_wstring(frame) + L" outside the valid frame limit of 0 to " + std::to_wstring(MatrixLayers[CurrentLayer]->Cells.size() - 1);
+			std::wstring debug = L"Frame " + std::to_wstring(frame) + L" outside the valid frame limit of 0 to " + std::to_wstring(Data->Layers[CurrentLayer]->Cells.size() - 1);
 
 			ShowMessage(debug.c_str());
 		}
@@ -9857,9 +7691,9 @@ void TheMatrix::RefreshCurrentFrame()
 void TheMatrix::SetCurrentLayer(int layer)
 {
 	#if _DEBUG
-	if (layer >= MatrixLayers.size())
+	if (layer >= Data->Layers.size())
 	{
-		std::wstring debug = L"Layer " + std::to_wstring(layer) + L" outside the valid layer limit of 0 to " + std::to_wstring(MatrixLayers.size() - 1);
+		std::wstring debug = L"Layer " + std::to_wstring(layer) + L" outside the valid layer limit of 0 to " + std::to_wstring(Data->Layers.size() - 1);
 
 		ShowMessage(debug.c_str());
 	}
@@ -9914,11 +7748,11 @@ void TheMatrix::ChangeGrid(bool grid)
 void TheMatrix::SetGroupOrderDisplay(bool group, bool order)
 {
 	Render.ShowPixelGroup = group;
-    Render.ShowPixelOrder = order;
+	Render.ShowPixelOrder = order;
 
-	if (order)
+	if (order || group)
 	{
-        MatrixLayers[CurrentLayer]->Freeform->CalculateContrastColour(CurrentFrame);
+        Data->Layers[CurrentLayer]->Freeform->CalculateContrastColour(CurrentFrame);
 	}
 
 	#if _DEBUG
@@ -9949,19 +7783,18 @@ void TheMatrix::SetMatrixReadOnly(bool mode)
 #pragma region Automation
 void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 {
-	if (ao.Layer < 0 || ao.Layer > MatrixLayers.size() - 1) return;
+	if (ao.Layer < 0 || ao.Layer > Data->Layers.size() - 1) return;
 
 	switch (actionId)
 	{
-		  // == colour cycling =================================================
-
+	// == colour cycling =================================================
 	case kAutomationColourCyclingLinear:	// linear
 	{
 		int index = ao.CCTargetIndex;
 
 		for (int x = 0; x < ao.SourceColours.size(); x++)
 		{
-			MatrixLayers[ao.Layer]->Cells[CurrentFrame]->ChangePixels(ao.SourceColours[x],
+			Data->Layers[ao.Layer]->Cells[CurrentFrame]->ChangePixels(ao.SourceColours[x],
 																	   ao.TargetColours[index]);
 
 			if (index == ao.TargetColours.size() - 1)
@@ -9995,7 +7828,7 @@ void TheMatrix::AutomationPostProcessExecute(ActionObject &ao, int actionId)
 
 		for (int x = 0; x < ao.SourceColours.size(); x++)
 		{
-			MatrixLayers[ao.Layer]->Cells[CurrentFrame]->ChangePixels(ao.SourceColours[x],
+			Data->Layers[ao.Layer]->Cells[CurrentFrame]->ChangePixels(ao.SourceColours[x],
 																	  ao.TargetColours[index]);
 			if (direction == CyclingDirection::kForwards)
 			{
@@ -10068,33 +7901,33 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	switch (actionId)
 	{
 	case kAutomationMirror:
-		PerformEffect(kEffectMirror, ao.Layer, CurrentFrame);
+		Data->PerformEffect(kEffectMirror, ao.Layer, CurrentFrame, Render.Gradient);
 		break;
 	case kAutomationFlip:
-		PerformEffect(kEffectFlip,   ao.Layer, CurrentFrame);
+		Data->PerformEffect(kEffectFlip,   ao.Layer, CurrentFrame, Render.Gradient);
 		break;
 	case kAutomationInvert:
-		PerformEffect(kEffectInvert, ao.Layer, CurrentFrame);
+		Data->PerformEffect(kEffectInvert, ao.Layer, CurrentFrame, Render.Gradient);
 		break;
 
 	case kAutomationScrollLeft:
-		PerformScroll(kEffectScrollLeft,  ao.Layer, CurrentFrame);
+		Data->PerformScroll(kEffectScrollLeft,  ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollRight:
-		PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
+		Data->PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollUp:
-		PerformScroll(kEffectScrollUp,    ao.Layer, CurrentFrame);
+		Data->PerformScroll(kEffectScrollUp,    ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollDown:
-		PerformScroll(kEffectScrollDown,  ao.Layer, CurrentFrame);
+		Data->PerformScroll(kEffectScrollDown,  ao.Layer, CurrentFrame);
 		break;
 
 	case kAutomationRotateLeft:
-		RotateFrame(kEffectRotateACW, ao.Layer, CurrentFrame);
+		Data->RotateFrame(kEffectRotateACW, ao.Layer, CurrentFrame);
 		break;
 	case kAutomationRotateRight:
-		RotateFrame(kEffectRotateCW,  ao.Layer, CurrentFrame);
+		Data->RotateFrame(kEffectRotateCW,  ao.Layer, CurrentFrame);
 		break;
 
 	case kAutomationWipeVertical:
@@ -10197,11 +8030,11 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	case kAutomationBounceLeftRight:
 		if (ao.Parameter2 == 0)
 		{
-			PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
+			Data->PerformScroll(kEffectScrollRight, ao.Layer, CurrentFrame);
 		}
 		else
 		{
-			PerformScroll(kEffectScrollLeft, ao.Layer, CurrentFrame);
+			Data->PerformScroll(kEffectScrollLeft, ao.Layer, CurrentFrame);
 		}
 
 		if (ao.Parameter1 == Details.Width - 1)
@@ -10229,11 +8062,11 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 	case kAutomationBounceUpDown:
 		if (ao.Parameter2 == 0)
 		{
-			PerformScroll(kEffectScrollUp, ao.Layer, CurrentFrame);
+			Data->PerformScroll(kEffectScrollUp, ao.Layer, CurrentFrame);
 		}
 		else
 		{
-			PerformScroll(kEffectScrollDown, ao.Layer, CurrentFrame);
+			Data->PerformScroll(kEffectScrollDown, ao.Layer, CurrentFrame);
 		}
 
 		if (ao.Parameter1 == Details.Width - 1)
@@ -10300,21 +8133,21 @@ void TheMatrix::AutomationActionExecute(ActionObject &ao, int actionId)
 
           // == split scroll
 	case kAutomationScrollLeftRightSplit:
-		PerformSplitScroll(kEffectSplitScrollLeftRight, ao.Layer, CurrentFrame);
+		Data->PerformSplitScroll(kEffectSplitScrollLeftRight, ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollRightLeftSplit:
-		PerformSplitScroll(kEffectSplitScrollRightLeft, ao.Layer, CurrentFrame);
+		Data->PerformSplitScroll(kEffectSplitScrollRightLeft, ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollUpDownSplit:
-		PerformSplitScroll(kEffectSplitScrollUpDown,    ao.Layer, CurrentFrame);
+		Data->PerformSplitScroll(kEffectSplitScrollUpDown,    ao.Layer, CurrentFrame);
 		break;
 	case kAutomationScrollDownUpSplit:
-		PerformSplitScroll(kEffectSplitScrollDownUp,    ao.Layer, CurrentFrame);
+		Data->PerformSplitScroll(kEffectSplitScrollDownUp,    ao.Layer, CurrentFrame);
 		break;
 
 		  // alternate scrolls
 	case kAutomationAlternateUpDownScroll:
-		PerformAlternateScroll(kEffectAlternateScrollUpDown, ao.Layer, CurrentFrame);
+		Data->PerformAlternateScroll(kEffectAlternateScrollUpDown, ao.Layer, CurrentFrame);
 		break;
 
 	case kAutomationRevealLeftRight:
@@ -10382,7 +8215,7 @@ void TheMatrix::Automate(ActionObject &ao)
 
 		for (int frame = ao.FrameStart + 1; frame <= ao.FrameEnd; frame++)
 		{
-			if (frame >= GetFrameCount())
+			if (frame >= Data->GetFrameCount())
 			{
 				InsertBlankFrameAt(frame);
 			}
@@ -10404,7 +8237,7 @@ void TheMatrix::Automate(ActionObject &ao)
 	case AutomateSource::kEachFrame:	// previous frame is source
 		for (int frame = ao.FrameStart; frame <= ao.FrameEnd; frame++)
 		{
-			if (frame > GetFrameCount())
+			if (frame > Data->GetFrameCount())
 			{
 				InsertBlankFrameAt(frame);
 			}
@@ -10424,7 +8257,7 @@ void TheMatrix::Automate(ActionObject &ao)
 	case AutomateSource::kEachFrameInc:
 		for (int frame = ao.FrameStart; frame <= ao.FrameEnd; frame++)
 		{
-			if (frame > GetFrameCount())
+			if (frame > Data->GetFrameCount())
 			{
 				InsertBlankFrameAt(frame);
 			}
@@ -10491,15 +8324,15 @@ void TheMatrix::CopyCurrentFrame()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		std::memcpy(MatrixCopy->Grid, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
+		std::memcpy(MatrixCopy->Grid, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
 	}
 	else
 	{
 		PixelFrameColours.clear();
 
-		for (int t = 0; t < MatrixLayers[CurrentLayer]->Freeform->Pixels.size(); t++)
+		for (int t = 0; t < Data->Layers[CurrentLayer]->Freeform->Pixels.size(); t++)
 		{
-			PixelFrameColours.push_back(MatrixLayers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame]);
+			PixelFrameColours.push_back(Data->Layers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame]);
 		}
     }
 }
@@ -10515,7 +8348,7 @@ void TheMatrix::CopyBackupToCurrentFrame()
 	{
 		for (int t = 0; t < PixelFrameColours.size(); t++)
 		{
-			MatrixLayers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame] = PixelFrameColours[t];
+			Data->Layers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame] = PixelFrameColours[t];
 		}
 	}
 }
@@ -10525,7 +8358,7 @@ void TheMatrix::PasteSpecial(int mode)
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		PerformScrollOnCopyFrame(mode);
+		Data->PerformScrollOnCopyFrame(CurrentLayer, CurrentFrame, mode, MatrixCopy);
 
 		PasteCurrentFrame();
 	}
@@ -10538,133 +8371,20 @@ void TheMatrix::PasteSpecial(int mode)
 
 void TheMatrix::PasteCurrentFrame()
 {
-	if (IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
-		!MatrixLayers[CurrentLayer]->Visible) return;
+	if (Data->IsThisFrameLocked(CurrentLayer, CurrentFrame) ||
+		!Data->Layers[CurrentLayer]->Visible) return;
 
 	BackupMatrix(CurrentLayer, CurrentFrame);
 
-	std::memcpy(MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, MatrixCopy->Grid, Details.Width * Details.Height * sizeof(int));
+	std::memcpy(Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, MatrixCopy->Grid, Details.Width * Details.Height * sizeof(int));
 
-	MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
+	Data->Layers[CurrentLayer]->Cells[CurrentFrame]->AddToHistory();
 
 	CopyCurrentFrameToDrawBuffer();
 
 	if (OnChange) OnChange(this);
 
 	PaintBox->Invalidate();
-}
-#pragma end_region
-
-
-#pragma region Statistics
-int TheMatrix::GetUndoCount()
-{
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		return MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->History.size();
-	}
-
-	return 0; // to do
-}
-
-
-int TheMatrix::GetTotalUndos()
-{
-	int total = 0;
-
-	if (Details.DrawMode == MatrixDrawMode::kGrid)
-	{
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
-			{
-				total += MatrixLayers[layer]->Cells[frame]->History.size();
-			}
-		}
-	}
-	else
-	{
-		// to do
-	}
-
-	return total;
-}
-
-
-int TheMatrix::CalculateMemoryUsage()
-{
-	switch (Details.ColourMode)
-	{
-	case MatrixColourMode::kRGB:
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			return Details.Width * Details.Height * 4 * GetFrameCount();        // 4 bytes per pixel
-		}
-		return MatrixLayers[0]->Freeform->Frames.size() * 4 * GetFrameCount();  // 4 bytes per pixel
-	case MatrixColourMode::kRGB3BPP:
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			return std::ceil((Details.Width * Details.Height * 3 * GetFrameCount()) / 8); // 3 bits per pixel
-		}
-		return MatrixLayers[0]->Freeform->Frames.size() * 3 * GetFrameCount();            // 3 bytes per pixel
-
-	default:
-		int a = 0;
-		int b = 0;
-		int total = 0;
-
-		if (Details.Height >= Details.Width)
-		{
-			a = std::div(Details.Height + 1, 8).quot;
-			b = (Details.Width);
-		}
-		else
-		{
-			a = std::div(Details.Width + 1, 8).quot;
-			b = (Details.Height);
-		}
-
-		if (Software == SoftwareMode::kFont)
-		{
-			total = (a * b) * (kFontCharacterCount);         // always 96 frames in font mode
-		}
-		else
-		{
-			total = (a * b) * (GetFrameCount());
-		}
-
-		// if using any of the bicolour modes then double requirements
-		if (Details.ColourMode > MatrixColourMode::kMono)
-		{
-			total *= 2;
-		}
-
-		return total;
-	}
-}
-
-
-int TheMatrix::DataSizeBytes()
-{
-	switch (Details.ColourMode)
-	{
-	case MatrixColourMode::kRGB:
-		return 4;
-	case MatrixColourMode::kRGB3BPP:
-		return std::ceil(Details.Height / 8) * 3;
-
-	default:
-		if (Details.Height >= 0 && Details.Height <= 8)
-			return 1;
-		else if (Details.Height >= 9 && Details.Height <= 16)
-			return 2;
-		else if (Details.Height >= 17 && Details.Height <= 32)
-			return 4;
-		else if (Details.Height >= 33 && Details.Height <= 64)
-			return 8;
-		else
-			return 0;
-	}
 }
 #pragma end_region
 
@@ -10748,113 +8468,6 @@ void __fastcall TheMatrix::ScrollBarVerticalChange(TObject *Sender)
 #pragma end_region
 
 
-#pragma region ColourCounting
-int TheMatrix::CountColoursFrame()
-{
-	std::vector<int> Colours;
-
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int z = 0; z < Details.Width * Details.Height; z++)
-			{
-				if (std::find(Colours.begin(), Colours.end(), MatrixLayers[layer]->Cells[CurrentFrame]->Grid[z]) == Colours.end())
-				{
-					Colours.push_back(MatrixLayers[layer]->Cells[CurrentFrame]->Grid[z]);
-				}
-			}
-		}
-		else
-		{
-			for (int p = 0; p < MatrixLayers[layer]->Freeform->Pixels.size(); p++)
-			{
-				if (std::find(Colours.begin(), Colours.end(), MatrixLayers[layer]->Freeform->Pixels[p]->Colours[CurrentFrame]) == Colours.end())
-				{
-					Colours.push_back(MatrixLayers[layer]->Freeform->Pixels[p]->Colours[CurrentFrame]);
-				}
-			}
-		}
-	}
-
-	return Colours.size();
-}
-
-
-int TheMatrix::CountColoursAnimation()
-{
-	std::vector<int> Colours;
-
-	for (int frame = 0; frame < GetFrameCount(); frame++)
-	{
-		for (int layer = 0; layer < MatrixLayers.size(); layer++)
-		{
-			if (Details.DrawMode == MatrixDrawMode::kGrid)
-			{
-				for (int z = 0; z < Details.Width * Details.Height; z++)
-				{
-					if (std::find(Colours.begin(), Colours.end(), MatrixLayers[layer]->Cells[frame]->Grid[z]) == Colours.end())
-					{
-						Colours.push_back(MatrixLayers[layer]->Cells[frame]->Grid[z]);
-					}
-				}
-			}
-			else
-			{
-				for (int p = 0; p < MatrixLayers[layer]->Freeform->Pixels.size(); p++)
-				{
-					if (std::find(Colours.begin(), Colours.end(), MatrixLayers[layer]->Freeform->Pixels[p]->Colours[frame]) == Colours.end())
-					{
-						Colours.push_back(MatrixLayers[layer]->Freeform->Pixels[p]->Colours[frame]);
-					}
-				}
-			}
-		}
-	}
-
-	return Colours.size();
-}
-
-
-void TheMatrix::GetFirst32Colours(std::vector<int> &colour_list)
-{
-	for (int layer = 0; layer < MatrixLayers.size(); layer++)
-	{
-		if (Details.DrawMode == MatrixDrawMode::kGrid)
-		{
-			for (int frame = 0; frame < MatrixLayers[layer]->Cells.size(); frame++)
-			{
-				for (int z = 0; z < Details.Width * Details.Height; z++)
-				{
-					if (std::find(colour_list.begin(), colour_list.end(), MatrixLayers[layer]->Cells[frame]->Grid[z]) == colour_list.end())
-					{
-						colour_list.push_back(MatrixLayers[layer]->Cells[frame]->Grid[z]);
-
-						if (colour_list.size() >= 32) return;
-					}
-				}
-			}
-		}
-		else
-		{
-			for (int p = 0; p < MatrixLayers[layer]->Freeform->Pixels.size(); p++)
-			{
-				for (int frame = 0; frame < MatrixLayers[layer]->Freeform->Frames.size(); frame++)
-				{
-					if (std::find(colour_list.begin(), colour_list.end(), MatrixLayers[layer]->Freeform->Pixels[p]->Colours[frame]) == colour_list.end())
-					{
-						colour_list.push_back(MatrixLayers[layer]->Freeform->Pixels[p]->Colours[frame]);
-
-						if (colour_list.size() >= 32) return;
-					}
-				}
-			}
-		}
-	}
-}
-#pragma end_region
-
-
 #pragma region UserBuffers
 void TheMatrix::ClearUserBuffers()
 {
@@ -10871,15 +8484,15 @@ void TheMatrix::CopyToUserBuffer(int frame)
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		std::memcpy(static_cast<MatrixGrid*>(MatrixUser[frame])->Grid, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
+		std::memcpy(static_cast<MatrixGrid*>(MatrixUser[frame])->Grid, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
 	}
 	else
 	{
 		MatrixUserFF[frame].clear();
 
-		for (int t = 0; t < MatrixLayers[CurrentLayer]->Freeform->Pixels.size(); t++)
+		for (int t = 0; t < Data->Layers[CurrentLayer]->Freeform->Pixels.size(); t++)
 		{
-			MatrixUserFF[frame].push_back(MatrixLayers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame]);
+			MatrixUserFF[frame].push_back(Data->Layers[CurrentLayer]->Freeform->Pixels[t]->Colours[CurrentFrame]);
 		}
 	}
 }
@@ -10891,7 +8504,7 @@ void TheMatrix::RestoreFromUserBuffer(int frame)
 	{
 		if (Details.ColourMode == MatrixColourMode::kRGB)
 		{
-			std::memcpy(MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, static_cast<MatrixGrid*>(MatrixUser[frame])->Grid, Details.Width * Details.Height * sizeof(int));
+			std::memcpy(Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, static_cast<MatrixGrid*>(MatrixUser[frame])->Grid, Details.Width * Details.Height * sizeof(int));
 		}
 		else
 		{
@@ -10899,11 +8512,11 @@ void TheMatrix::RestoreFromUserBuffer(int frame)
 			{
 				if (static_cast<MatrixGrid*>(MatrixUser[frame])->Grid[z] == 1)
 				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z] = 1;
+					Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[z] = 1;
 				}
 				else
 				{
-					MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid[z] = 0;
+					Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid[z] = 0;
 				}
 			}
 		}
@@ -10914,7 +8527,7 @@ void TheMatrix::RestoreFromUserBuffer(int frame)
 	{
 		for (int t = 0; t < MatrixUserFF[frame].size(); t++)
 		{
-			MatrixLayers[CurrentLayer]->Freeform->Pixels[t]->Colours[frame] = MatrixUserFF[frame][t];
+			Data->Layers[CurrentLayer]->Freeform->Pixels[t]->Colours[frame] = MatrixUserFF[frame][t];
 		}
 	}
 
@@ -10930,7 +8543,7 @@ void TheMatrix::Undo()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Undo();
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Undo();
 
 		CopyCurrentFrameToDrawBuffer();
 	}
@@ -10949,7 +8562,7 @@ void TheMatrix::Redo()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Redo();
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Redo();
 
 		CopyCurrentFrameToDrawBuffer();
 	}
@@ -10968,7 +8581,7 @@ void TheMatrix::SetFromUndo(int undo)
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->SetFromUndo(undo);
+		Data->Layers[CurrentLayer]->Cells[CurrentFrame]->SetFromUndo(undo);
 
 		CopyCurrentFrameToDrawBuffer();
 	}
@@ -10987,7 +8600,7 @@ bool TheMatrix::CanUndo()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		return MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != 0;
+		return Data->Layers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != 0;
 	}
 
 	return false; // to do
@@ -10998,7 +8611,7 @@ bool TheMatrix::CanRedo()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		return MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->History.size() - 1;
+		return Data->Layers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != Data->Layers[CurrentLayer]->Cells[CurrentFrame]->History.size() - 1;
 	}
 
 	return false; // to do
@@ -11009,11 +8622,11 @@ bool TheMatrix::CanRedo()
 #pragma region Freeform
 void TheMatrix::AddPixel(int x, int y)
 {
-	MatrixPixel *mp = new MatrixPixel(x, y, MatrixLayers[CurrentLayer]->Freeform->Frames.size(),
-									  MatrixLayers[CurrentLayer]->Freeform->Pixels.size(),
+	MatrixPixel *mp = new MatrixPixel(x, y, Data->Layers[CurrentLayer]->Freeform->Frames.size(),
+									  Data->Layers[CurrentLayer]->Freeform->Pixels.size(),
 									  0x00ff00ff);
 
-	MatrixLayers[CurrentLayer]->Freeform->Pixels.push_back(mp);
+	Data->Layers[CurrentLayer]->Freeform->Pixels.push_back(mp);
 
 	PaintBox->Invalidate();
 }
@@ -11023,7 +8636,7 @@ void TheMatrix::DeletePixel()
 {
 	if (CurrentPixel != -1)
 	{
-		MatrixLayers[CurrentLayer]->Freeform->Pixels.erase(MatrixLayers[CurrentLayer]->Freeform->Pixels.begin() + CurrentPixel);
+		Data->Layers[CurrentLayer]->Freeform->Pixels.erase(Data->Layers[CurrentLayer]->Freeform->Pixels.begin() + CurrentPixel);
 
         CurrentPixel = -1;
 	}
@@ -11034,7 +8647,7 @@ void TheMatrix::SelectInGroup(int group)
 {
 	if (Render.Action.Mode == ActionMode::kMovePixel)
 	{
-        MatrixLayers[CurrentLayer]->Freeform->AddGroupToSelection(group);
+        Data->Layers[CurrentLayer]->Freeform->AddGroupToSelection(group);
 	}
 }
 
@@ -11044,12 +8657,20 @@ void TheMatrix::PerformFreeformEffect(int direction)
 	switch (direction)
 	{
 	case kEffectScrollLeft:
-		MatrixLayers[CurrentLayer]->Freeform->ShiftColoursLeft(CurrentFrame);
+		Data->Layers[CurrentLayer]->Freeform->ShiftColoursLeft(CurrentFrame);
 		break;
 	case kEffectScrollRight:
-		MatrixLayers[CurrentLayer]->Freeform->ShiftColoursRight(CurrentFrame);
+		Data->Layers[CurrentLayer]->Freeform->ShiftColoursRight(CurrentFrame);
 		break;
 	}
+
+	PaintBox->Invalidate();
+}
+
+
+void TheMatrix::AutoOrderPixels(int mode)
+{
+	Data->Layers[CurrentLayer]->Freeform->AutoOrderPixels(mode);
 
 	PaintBox->Invalidate();
 }
@@ -11062,7 +8683,7 @@ void TheMatrix::BackupMatrix(int layer, int frame)
 	{
 		if (frame >= 0)
 		{
-			std::memcpy(MatrixBackup->Grid, MatrixLayers[layer]->Cells[frame]->Grid, Details.Width * Details.Height * sizeof(int));
+			std::memcpy(MatrixBackup->Grid, Data->Layers[layer]->Cells[frame]->Grid, Details.Width * Details.Height * sizeof(int));
 		}
 		else
 		{
@@ -11080,7 +8701,7 @@ void TheMatrix::BackupMatrix()
 {
 	if (Details.DrawMode == MatrixDrawMode::kGrid)
 	{
-		std::memcpy(MatrixBackup->Grid, MatrixLayers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
+		std::memcpy(MatrixBackup->Grid, Data->Layers[CurrentLayer]->Cells[CurrentFrame]->Grid, Details.Width * Details.Height * sizeof(int));
 	}
 	else
 	{
@@ -11116,52 +8737,10 @@ void TheMatrix::TestSignal()
 {
 	if (Details.DrawMode == MatrixDrawMode::kFreeform) return;
 
-	int y = 0;
-
-	for (int x = 0; x < Details.Width; x++)
-	{
-		switch (Details.ColourMode)
-		{
-		case MatrixColourMode::kMono:
-		case MatrixColourMode::kBiSequential:
-		case MatrixColourMode::kBiBitplanes:
-			MatrixLayers[CurrentLayer]->Cells[0]->Grid[y * Details.Width + x] = 1;
-			break;
-		case MatrixColourMode::kRGB:
-			MatrixLayers[CurrentLayer]->Cells[0]->Grid[y * Details.Width + x] = 0x0044ff;
-			break;
-		}
-
-		if (y < Details.Height - 1)
-		{
-			y++;
-		}
-		else
-		{
-			y = 0;
-		}
-	}
-
-	switch (Details.ColourMode)
-	{
-	case MatrixColourMode::kMono:
-	case MatrixColourMode::kBiSequential:
-	case MatrixColourMode::kBiBitplanes:
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[0] = 1;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[Details.Width - 1] = 1;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width] = 1;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width + (Details.Width - 1)] = 1;
-		break;
-	case MatrixColourMode::kRGB:
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[0] = 0x00ff44;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[Details.Width - 1] = 0x00ff44;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width] = 0x00ff44;
-		MatrixLayers[CurrentLayer]->Cells[0]->Grid[(Details.Height - 1) * Details.Width + (Details.Width - 1)] = 0x00ff44;
-		break;
-	}
+    Data->TestSignal(CurrentLayer);
 
 	CopyCurrentFrameToDrawBuffer();
 
 	PaintBox->Invalidate();
 }
-#endif // 11165
+#endif

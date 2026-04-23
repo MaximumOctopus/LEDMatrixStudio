@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.21.01                                                 =
+ =  LED Matrix Studio v0.21.03                                                 =
  =                                                                             =
- =  April 10th 2026                                                            =
+ =  April 24th 2026                                                            =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -142,6 +142,20 @@
  Please consider sending it to me so that I may include it with
  future updates.
 
+== Updates for 0.21.03 beta ============================================
+
+- Replaced "playback speed in milliseconds" with Frames Per Second (FPS).
+- Fixed "Check for new version" on the Help menu
+- Added two automatic Pixel ordering options under the Layer menu.
+  (Freeform mode only)
+- Added a Pixel panel (from View menu) for easily editing a Pixel's properties
+- Major code refactoring (ongoing project!)
+- A few other minor tweaks and fixes
+
+== Updates for 0.21.02 beta ============================================
+
+- Fixed language loading bug (now correctly loads Chinese).
+
 == Updates for 0.21.01 beta ============================================
 
 - Added a new mode, Freeform, which removes the need for LED grids. You can now
@@ -151,7 +165,7 @@
   
   This is currently in beta so please let me know if you see any bugs or have any
   suggestions! Undo/redo, and some draw and file IO operations are curerntly unavailable.
-  
+ 
 - A few minor tweaks and fixes.
 
 == Updates for 0.20.28 beta ============================================

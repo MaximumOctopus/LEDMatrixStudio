@@ -575,6 +575,10 @@
 	static const int kRemoveAllPixels = 559;
 	static const int kShowPixelGroup = 560;
 	static const int kShowPixelOrder = 561;
+	static const int kAutoOrderPixels = 562;
+	static const int kAutoOrderPixelsTLBR = 563;
+	static const int kAutoOrderPixelsBRTL = 564;
+	static const int kPixelsToolbar = 565;
 
-	static const int kLanguageConstantCount = 561;
+	static const int kLanguageConstantCount = 565;
 
