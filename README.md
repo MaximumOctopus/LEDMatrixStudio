@@ -1,4 +1,4 @@
-Version 0.21.02 (April 10th 2026) is the latest official stable releasee of the new C++ rewrite, and is available in the \portable folder. If you find a bug or any odd behaviour then please send me an email.
+Version 0.21.03 (April 24th 2026) is the latest official stable releasee of the new C++ rewrite, and is available in the \portable folder. If you find a bug or any odd behaviour then please send me an email.
 
 https://maximumoctopus.hashnode.dev/
 
