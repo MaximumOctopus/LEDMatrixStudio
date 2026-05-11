@@ -15,14 +15,45 @@
 #pragma hdrstop
 
 #include "FormAddShape.h"
+#include "LanguageConstants.h"
+#include "LanguageHandler.h"
+
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TfrmAddShape *frmAddShape;
+
+extern LanguageHandler *GLanguageHandler;
+
 //---------------------------------------------------------------------------
 __fastcall TfrmAddShape::TfrmAddShape(TComponent* Owner)
 	: TForm(Owner)
 {
+	SetGuiLanguageText();
+}
+
+
+void TfrmAddShape::SetGuiLanguageText()
+{
+	Caption = GLanguageHandler->Text[kAddShape].c_str();
+
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeCircle].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeLineHorizontal].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeLineVertical].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeSquare].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeSquareFilled].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeRectangle].c_str());
+	cbShape->Items->Add(GLanguageHandler->Text[kShapeRectangleFilled].c_str());
+	cbShape->ItemIndex = 0;
+
+	lSizeX->Caption = GLanguageHandler->Text[kRadius].c_str();
+	lPixels->Caption = GLanguageHandler->Text[kASPixels].c_str();
+
+	cbInitialDirection->Items->Add(GLanguageHandler->Text[kBottomLeft].c_str());
+	cbInitialDirection->Items->Add(GLanguageHandler->Text[kBottomRight].c_str());
+	cbInitialDirection->ItemIndex = 0;
+
+	lColour->Caption = GLanguageHandler->Text[kColour].c_str();
 }
 
 
@@ -32,50 +63,50 @@ void __fastcall TfrmAddShape::cbShapeChange(TObject *Sender)
 	{
 	case 0:
 		ePixels->Enabled = true;
-		lSizeX->Caption = L"Radius";
+		lSizeX->Caption = GLanguageHandler->Text[kRadius].c_str();
 		lSizeY->Caption = L"";
 		eSizeY->Enabled = false;
 		cbInitialDirection->Enabled = false;
 		break;
 	case 1:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Length";
+		lSizeX->Caption = GLanguageHandler->Text[kLength].c_str();;
 		lSizeY->Caption = L"";
 		eSizeY->Enabled = false;
 		cbInitialDirection->Enabled = false;
 		break;
 	case 2:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Height";
+		lSizeX->Caption = GLanguageHandler->Text[kHeight].c_str();
 		lSizeY->Caption = L"";
 		eSizeY->Enabled = false;
 		cbInitialDirection->Enabled = false;
 		break;
 	case 3:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Width";
+		lSizeX->Caption = GLanguageHandler->Text[kWidth].c_str();
 		lSizeY->Caption = L"";
 		eSizeY->Enabled = false;
 		cbInitialDirection->Enabled = false;
 		break;
 	case 4:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Width";
+		lSizeX->Caption = GLanguageHandler->Text[kWidth].c_str();
 		lSizeY->Caption = L"";
 		eSizeY->Enabled = false;
 		cbInitialDirection->Enabled = true;
 		break;
 	case 5:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Width";
-		lSizeY->Caption = L"Height";
+		lSizeX->Caption = GLanguageHandler->Text[kWidth].c_str();
+		lSizeY->Caption = GLanguageHandler->Text[kHeight].c_str();
 		eSizeY->Enabled = true;
 		cbInitialDirection->Enabled = false;
 		break;
 	case 6:
 		ePixels->Enabled = false;
-		lSizeX->Caption = L"Width";
-		lSizeY->Caption = L"Height";
+		lSizeX->Caption = GLanguageHandler->Text[kWidth].c_str();
+		lSizeY->Caption = GLanguageHandler->Text[kHeight].c_str();
 		eSizeY->Enabled = true;
 		cbInitialDirection->Enabled = true;
 		break;

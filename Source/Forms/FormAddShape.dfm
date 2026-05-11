@@ -2,9 +2,8 @@ object frmAddShape: TfrmAddShape
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  Caption = 'Add Shape'
   ClientHeight = 209
-  ClientWidth = 469
+  ClientWidth = 481
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -76,8 +75,156 @@ object frmAddShape: TfrmAddShape
       49454E44AE426082}
     Transparent = True
   end
+  object gbLimiter: TGroupBox
+    Left = 91
+    Top = 8
+    Width = 382
+    Height = 169
+    TabOrder = 2
+    object lPixels: TLabel
+      Left = 271
+      Top = 26
+      Width = 50
+      Height = 15
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '.'
+    end
+    object lSizeX: TLabel
+      Left = 164
+      Top = 26
+      Width = 56
+      Height = 15
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '.'
+    end
+    object Label1: TLabel
+      Left = 213
+      Top = 95
+      Width = 7
+      Height = 15
+      Caption = 'X'
+    end
+    object Label2: TLabel
+      Left = 277
+      Top = 95
+      Width = 7
+      Height = 15
+      Caption = 'Y'
+    end
+    object shapeColour: TShape
+      Left = 226
+      Top = 128
+      Width = 20
+      Height = 20
+      OnMouseDown = shapeColourMouseDown
+    end
+    object lColour: TLabel
+      Left = 148
+      Top = 133
+      Width = 72
+      Height = 15
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '.'
+    end
+    object lSizeY: TLabel
+      Left = 164
+      Top = 55
+      Width = 56
+      Height = 15
+      Alignment = taRightJustify
+      AutoSize = False
+    end
+    object ePixels: TEdit
+      Left = 327
+      Top = 23
+      Width = 39
+      Height = 23
+      Hint = 
+        'Export will auto-generate on open if there are this many or few ' +
+        'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
+      TabOrder = 0
+      Text = '16'
+    end
+    object ePositionX: TEdit
+      Left = 226
+      Top = 92
+      Width = 39
+      Height = 23
+      Hint = 
+        'Export will auto-generate on open if there are this many or few ' +
+        'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
+      TabOrder = 1
+      Text = '20'
+    end
+    object ePositionY: TEdit
+      Left = 290
+      Top = 92
+      Width = 39
+      Height = 23
+      Hint = 
+        'Export will auto-generate on open if there are this many or few ' +
+        'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
+      TabOrder = 2
+      Text = '20'
+    end
+    object eSizeX: TEdit
+      Left = 226
+      Top = 23
+      Width = 39
+      Height = 23
+      Hint = 
+        'Export will auto-generate on open if there are this many or few ' +
+        'pixels in the animation!'
+      Alignment = taRightJustify
+      NumbersOnly = True
+      TabOrder = 3
+      Text = '5'
+    end
+    object eSizeY: TEdit
+      Left = 226
+      Top = 52
+      Width = 39
+      Height = 23
+      Hint = 
+        'Export will auto-generate on open if there are this many or few ' +
+        'pixels in the animation!'
+      Alignment = taRightJustify
+      Enabled = False
+      NumbersOnly = True
+      TabOrder = 4
+      Text = '5'
+    end
+    object cbShape: TComboBox
+      Left = 12
+      Top = 23
+      Width = 146
+      Height = 23
+      Style = csDropDownList
+      TabOrder = 5
+      OnChange = cbShapeChange
+    end
+    object cbInitialDirection: TComboBox
+      Left = 12
+      Top = 52
+      Width = 146
+      Height = 23
+      Style = csDropDownList
+      Enabled = False
+      TabOrder = 6
+      OnChange = cbShapeChange
+    end
+  end
   object bOK: TBitBtn
-    Left = 305
+    Left = 317
     Top = 183
     Width = 75
     Height = 25
@@ -126,7 +273,7 @@ object frmAddShape: TfrmAddShape
     OnClick = bOKClick
   end
   object bCancel: TBitBtn
-    Left = 386
+    Left = 398
     Top = 183
     Width = 75
     Height = 25
@@ -178,166 +325,6 @@ object frmAddShape: TfrmAddShape
       FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00}
     ModalResult = 2
     TabOrder = 1
-  end
-  object gbLimiter: TGroupBox
-    Left = 115
-    Top = 8
-    Width = 346
-    Height = 169
-    Caption = '.'
-    TabOrder = 2
-    object lPixels: TLabel
-      Left = 255
-      Top = 26
-      Width = 30
-      Height = 15
-      Caption = 'Pixels'
-    end
-    object lSizeX: TLabel
-      Left = 128
-      Top = 26
-      Width = 56
-      Height = 15
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Radius'
-    end
-    object Label1: TLabel
-      Left = 177
-      Top = 95
-      Width = 7
-      Height = 15
-      Caption = 'X'
-    end
-    object Label2: TLabel
-      Left = 241
-      Top = 95
-      Width = 7
-      Height = 15
-      Caption = 'Y'
-    end
-    object shapeColour: TShape
-      Left = 190
-      Top = 128
-      Width = 20
-      Height = 20
-      OnMouseDown = shapeColourMouseDown
-    end
-    object Label3: TLabel
-      Left = 148
-      Top = 133
-      Width = 36
-      Height = 15
-      Caption = 'Colour'
-    end
-    object lSizeY: TLabel
-      Left = 128
-      Top = 55
-      Width = 56
-      Height = 15
-      Alignment = taRightJustify
-      AutoSize = False
-    end
-    object ePixels: TEdit
-      Left = 291
-      Top = 23
-      Width = 39
-      Height = 23
-      Hint = 
-        'Export will auto-generate on open if there are this many or few ' +
-        'pixels in the animation!'
-      Alignment = taRightJustify
-      NumbersOnly = True
-      TabOrder = 0
-      Text = '16'
-    end
-    object ePositionX: TEdit
-      Left = 190
-      Top = 92
-      Width = 39
-      Height = 23
-      Hint = 
-        'Export will auto-generate on open if there are this many or few ' +
-        'pixels in the animation!'
-      Alignment = taRightJustify
-      NumbersOnly = True
-      TabOrder = 1
-      Text = '20'
-    end
-    object ePositionY: TEdit
-      Left = 254
-      Top = 92
-      Width = 39
-      Height = 23
-      Hint = 
-        'Export will auto-generate on open if there are this many or few ' +
-        'pixels in the animation!'
-      Alignment = taRightJustify
-      NumbersOnly = True
-      TabOrder = 2
-      Text = '20'
-    end
-    object eSizeX: TEdit
-      Left = 190
-      Top = 23
-      Width = 39
-      Height = 23
-      Hint = 
-        'Export will auto-generate on open if there are this many or few ' +
-        'pixels in the animation!'
-      Alignment = taRightJustify
-      NumbersOnly = True
-      TabOrder = 3
-      Text = '5'
-    end
-    object eSizeY: TEdit
-      Left = 190
-      Top = 52
-      Width = 39
-      Height = 23
-      Hint = 
-        'Export will auto-generate on open if there are this many or few ' +
-        'pixels in the animation!'
-      Alignment = taRightJustify
-      Enabled = False
-      NumbersOnly = True
-      TabOrder = 4
-      Text = '5'
-    end
-  end
-  object cbShape: TComboBox
-    Left = 140
-    Top = 31
-    Width = 97
-    Height = 23
-    Style = csDropDownList
-    ItemIndex = 0
-    TabOrder = 3
-    Text = 'Circle'
-    OnChange = cbShapeChange
-    Items.Strings = (
-      'Circle'
-      'Line (horizontal)'
-      'Line (vertical)'
-      'Square'
-      'Square (filled)'
-      'Rectangle'
-      'Rectangle (filled)')
-  end
-  object cbInitialDirection: TComboBox
-    Left = 140
-    Top = 60
-    Width = 97
-    Height = 23
-    Style = csDropDownList
-    Enabled = False
-    ItemIndex = 0
-    TabOrder = 4
-    Text = 'Bottom Left'
-    OnChange = cbShapeChange
-    Items.Strings = (
-      'Bottom Left'
-      'Bottom Right')
   end
   object cdAddShape: TColorDialog
     Options = [cdFullOpen]

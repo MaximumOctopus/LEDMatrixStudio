@@ -25,22 +25,25 @@ __published:	// IDE-managed Components
 	TEdit *ePixels;
 	TEdit *ePositionX;
 	TEdit *ePositionY;
-	TComboBox *cbShape;
 	TEdit *eSizeX;
 	TLabel *Label1;
 	TLabel *Label2;
 	TShape *shapeColour;
-	TLabel *Label3;
+	TLabel *lColour;
 	TColorDialog *cdAddShape;
 	TLabel *lSizeY;
 	TEdit *eSizeY;
+	TComboBox *cbShape;
 	TComboBox *cbInitialDirection;
 	void __fastcall cbShapeChange(TObject *Sender);
 	void __fastcall bOKClick(TObject *Sender);
 	void __fastcall shapeColourMouseDown(TObject *Sender, TMouseButton Button, TShiftState Shift,
           int X, int Y);
-private:	// User declarations
-public:		// User declarations
+private:
+
+	void SetGuiLanguageText();
+
+public:
 	__fastcall TfrmAddShape(TComponent* Owner);
 
 	int SelectedShape = 0;
