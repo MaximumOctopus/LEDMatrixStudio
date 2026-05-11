@@ -96,7 +96,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Play animation (right mouse button for speed options)'
       DisabledImageIndex = 56
       Enabled = False
       ImageIndex = 0
@@ -111,7 +110,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Stop animation'
       DisabledImageIndex = 66
       Enabled = False
       ImageIndex = 1
@@ -126,7 +124,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show previous frame'
       DisabledImageIndex = 45
       Enabled = False
       ImageIndex = 4
@@ -141,7 +138,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show next frame'
       DisabledImageIndex = 46
       Enabled = False
       ImageIndex = 5
@@ -151,11 +147,10 @@ object frmMain: TfrmMain
       OnClick = bPlayAnimationClick
     end
     object bAddFrame: TBitBtn
-      Left = 380
+      Left = 382
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Insert a new empty frame'
       DisabledImageIndex = 93
       Enabled = False
       ImageIndex = 6
@@ -165,11 +160,10 @@ object frmMain: TfrmMain
       OnClick = bAddFrameClick
     end
     object bLightbox: TBitBtn
-      Left = 576
+      Left = 572
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Toggle lightbox'
       DisabledImageIndex = 75
       Enabled = False
       ImageIndex = 76
@@ -182,7 +176,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Delete current frame'
       DisabledImageIndex = 39
       Enabled = False
       ImageIndex = 7
@@ -196,7 +189,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Add new frame as a copy of the current frame'
       DisabledImageIndex = 69
       Enabled = False
       ImageIndex = 31
@@ -228,7 +220,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show the first frame'
       DisabledImageIndex = 62
       Enabled = False
       ImageIndex = 2
@@ -243,7 +234,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show the last frame'
       DisabledImageIndex = 63
       Enabled = False
       ImageIndex = 3
@@ -257,7 +247,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Add a number of new frames'
       DisabledImageIndex = 70
       Enabled = False
       ImageIndex = 36
@@ -271,7 +260,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Delete multiple frames'
       DisabledImageIndex = 71
       Enabled = False
       ImageIndex = 37
@@ -367,7 +355,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 58
       Height = 24
-      Hint = 'Create new project'
       DisabledImageIndex = 40
       ImageIndex = 16
       Images = ilActive
@@ -381,11 +368,10 @@ object frmMain: TfrmMain
       Shape = bsLeftLine
     end
     object sbPreset: TSpeedButton
-      Left = 568
+      Left = 570
       Top = 2
       Width = 60
       Height = 24
-      Hint = 'Select a pre-saved preset'
       Caption = 'Preset'
       Glyph.Data = {
         F6000000424DF600000000000000360000002800000008000000080000000100
@@ -404,7 +390,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 60
       Height = 24
-      Hint = 'Select pixel size'
       Glyph.Data = {
         F6000000424DF600000000000000360000002800000008000000080000000100
         180000000000C0000000232E0000232E00000000000000000000FF00FFFF00FF
@@ -432,11 +417,10 @@ object frmMain: TfrmMain
     end
     object sbPixelShape: TSpeedButton
       Tag = 2
-      Left = 478
+      Left = 480
       Top = 2
       Width = 73
       Height = 24
-      Hint = 'Select pixel shape'
       Glyph.Data = {
         F6000000424DF600000000000000360000002800000008000000080000000100
         180000000000C0000000232E0000232E00000000000000000000FF00FFFF00FF
@@ -460,7 +444,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 62
       Height = 24
-      Hint = 'Save the current projeect'
       DisabledImageIndex = 61
       ImageIndex = 15
       Images = ilActive
@@ -482,7 +465,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 69
       Height = 24
-      Hint = 'Export data to file'
       DisabledImageIndex = 55
       ImageIndex = 32
       Images = ilActive
@@ -510,7 +492,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 88
       Height = 24
-      Hint = 'Generate code from matrix data'
       Enabled = False
       OnClick = sbGenerateCodeClick
     end
@@ -519,7 +500,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 62
       Height = 24
-      Hint = 'Open a new project'
       DisabledImageIndex = 47
       ImageIndex = 14
       Images = ilActive
@@ -545,7 +525,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 50
       Height = 24
-      Hint = 'Clear this frame across all layers (can be undone)'
       Enabled = False
       OnClick = sbClearClick
     end
@@ -561,7 +540,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 50
       Height = 24
-      Hint = 'Mirror pixels in the y-axis'
       Enabled = False
       OnClick = sbMirrorClick
     end
@@ -571,7 +549,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 50
       Height = 24
-      Hint = 'Flip pixels in the x-axis'
       Enabled = False
       OnClick = sbMirrorClick
     end
@@ -587,7 +564,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels left'
       DisabledImageIndex = 49
       ImageIndex = 8
       Images = ilActive
@@ -601,7 +577,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels right'
       DisabledImageIndex = 60
       ImageIndex = 9
       Images = ilActive
@@ -615,7 +590,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels up'
       DisabledImageIndex = 68
       ImageIndex = 10
       Images = ilActive
@@ -629,7 +603,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels down'
       DisabledImageIndex = 41
       ImageIndex = 11
       Images = ilActive
@@ -639,11 +612,10 @@ object frmMain: TfrmMain
     end
     object sbInvert: TSpeedButton
       Tag = 2
-      Left = 168
+      Left = 169
       Top = 2
       Width = 50
       Height = 24
-      Hint = 'Invert pixels'
       Enabled = False
       OnClick = sbMirrorClick
     end
@@ -659,7 +631,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Rotate pixels anti-clockwise 90 degrees'
       DisabledImageIndex = 64
       ImageIndex = 12
       Images = ilActive
@@ -669,11 +640,10 @@ object frmMain: TfrmMain
     end
     object sbRotateR: TSpeedButton
       Tag = 1
-      Left = 445
-      Top = 2
+      Left = 446
+      Top = 3
       Width = 40
       Height = 24
-      Hint = 'Rotate pixels clockwise 90 degrees'
       DisabledImageIndex = 65
       ImageIndex = 13
       Images = ilActive
@@ -686,9 +656,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 50
       Height = 24
-      Hint = 
-        'Rotate current frame by specified amount for specified number of' +
-        ' frames'
       Enabled = False
       OnClick = sbRotateAnyClick
     end
@@ -711,7 +678,6 @@ object frmMain: TfrmMain
       Top = 4
       Width = 52
       Height = 21
-      Hint = 'Rotation angle'
       Style = csDropDownList
       Enabled = False
       TabOrder = 0
@@ -721,17 +687,15 @@ object frmMain: TfrmMain
       Top = 4
       Width = 42
       Height = 21
-      Hint = 'Number of frames'
       Style = csDropDownList
       Enabled = False
       TabOrder = 1
     end
     object bLockFrame: TBitBtn
-      Left = 682
-      Top = 4
+      Left = 674
+      Top = 2
       Width = 33
       Height = 24
-      Hint = 'Toggle frame lock/unlock'
       Enabled = False
       Images = ilActive
       TabOrder = 2
@@ -756,7 +720,6 @@ object frmMain: TfrmMain
       Top = 3
       Width = 30
       Height = 24
-      Hint = 'Select normal drawing mode (RMB for sizes)'
       GroupIndex = 1
       Down = True
       DisabledImageIndex = 73
@@ -773,7 +736,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw a filled rectangle'
       GroupIndex = 1
       DisabledImageIndex = 59
       ImageIndex = 19
@@ -788,7 +750,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw a line between two points'
       GroupIndex = 1
       DisabledImageIndex = 50
       ImageIndex = 28
@@ -803,7 +764,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw an empty rectangle'
       GroupIndex = 1
       DisabledImageIndex = 58
       ImageIndex = 20
@@ -818,7 +778,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Select and paste part of your matrix'
       GroupIndex = 1
       DisabledImageIndex = 72
       ImageIndex = 23
@@ -839,7 +798,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Add a gradient to your matrix'
       Enabled = False
       Glyph.Data = {
         36060000424D3606000000000000360000002800000020000000100000000100
@@ -902,7 +860,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Paint with random shades of the selected colours'
       GroupIndex = 1
       DisabledImageIndex = 57
       ImageIndex = 30
@@ -918,7 +875,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw an empty circle'
       GroupIndex = 1
       DisabledImageIndex = 42
       ImageIndex = 22
@@ -933,7 +889,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw on all frames simultaneously'
       GroupIndex = 1
       DisabledImageIndex = 52
       ImageIndex = 34
@@ -948,7 +903,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Use mouse buttons to select colour'
       GroupIndex = 1
       DisabledImageIndex = 44
       ImageIndex = 18
@@ -960,11 +914,10 @@ object frmMain: TfrmMain
     end
     object sbFont: TSpeedButton
       Tag = 4
-      Left = 324
+      Left = 320
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw text on the matrix (RMB for font selection)'
       GroupIndex = 1
       DisabledImageIndex = 48
       ImageIndex = 29
@@ -980,7 +933,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw an filled circle'
       GroupIndex = 1
       DisabledImageIndex = 43
       ImageIndex = 21
@@ -995,7 +947,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Create a custom brush'
       GroupIndex = 1
       DisabledImageIndex = 74
       ImageIndex = 27
@@ -1030,7 +981,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Fill a section of pixels with a new colour'
       GroupIndex = 1
       DisabledImageIndex = 54
       ImageIndex = 33
@@ -1045,7 +995,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Spiral pattern'
       GroupIndex = 1
       DisabledImageIndex = 85
       ImageIndex = 77
@@ -1060,7 +1009,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Circle (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 86
       ImageIndex = 78
@@ -1075,7 +1023,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Split ring (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 87
       ImageIndex = 79
@@ -1090,7 +1037,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Petals (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 88
       ImageIndex = 80
@@ -1101,11 +1047,10 @@ object frmMain: TfrmMain
     end
     object sbPatternGrid: TSpeedButton
       Tag = 18
-      Left = 630
-      Top = 2
+      Left = 626
+      Top = 1
       Width = 30
       Height = 24
-      Hint = 'Petals (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 89
       ImageIndex = 81
@@ -1116,11 +1061,10 @@ object frmMain: TfrmMain
     end
     object sbPatternPyramid: TSpeedButton
       Tag = 19
-      Left = 662
-      Top = 2
+      Left = 658
+      Top = 1
       Width = 30
       Height = 24
-      Hint = 'Petals (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 90
       ImageIndex = 82
@@ -1135,7 +1079,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Petals (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 92
       ImageIndex = 84
@@ -1150,7 +1093,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Petals (when viewed radially)'
       GroupIndex = 1
       DisabledImageIndex = 91
       ImageIndex = 83
@@ -1237,20 +1179,18 @@ object frmMain: TfrmMain
     object sSelectionMMB: TShape
       Tag = 2
       Left = 213
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the middle mouse button'
       Visible = False
       OnMouseDown = sColour3MouseDown
     end
     object iMMBGradient: TImage
       Left = 213
-      Top = 6
+      Top = 4
       Width = 18
       Height = 18
-      Hint = 'gradient mode active, use middle mouse button to draw gradients'
       AutoSize = True
       Picture.Data = {
         07544269746D617026040000424D260400000000000036000000280000001200
@@ -1299,11 +1239,10 @@ object frmMain: TfrmMain
     object sSelectionRMB: TShape
       Tag = 1
       Left = 268
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the right mouse button'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
@@ -1311,22 +1250,20 @@ object frmMain: TfrmMain
     object sSelectionLMB: TShape
       Tag = 3
       Left = 158
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the left mouse button'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
     end
     object sColour0: TShape
       Left = 93
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
@@ -1334,11 +1271,10 @@ object frmMain: TfrmMain
     object sColour1: TShape
       Tag = 1
       Left = 69
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 1, click with either mouse button to select'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
@@ -1354,11 +1290,10 @@ object frmMain: TfrmMain
     object sColour3: TShape
       Tag = 3
       Left = 21
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 3, click with either mouse button to select'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
@@ -1366,11 +1301,10 @@ object frmMain: TfrmMain
     object sColour2: TShape
       Tag = 2
       Left = 45
-      Top = 6
+      Top = 5
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 2, click with either mouse button to select'
       Brush.Color = clBlack
       Visible = False
       OnMouseDown = sColour3MouseDown
@@ -1515,15 +1449,13 @@ object frmMain: TfrmMain
     ShowCaption = False
     ShowHint = True
     TabOrder = 10
+    ExplicitTop = 112
     object sRGBPalette1: TShape
       Left = 4
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1535,9 +1467,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1549,9 +1478,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1563,9 +1489,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1577,9 +1500,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1591,9 +1511,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1605,9 +1522,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1619,9 +1533,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1633,9 +1544,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1647,9 +1555,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1661,9 +1566,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1675,9 +1577,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1689,9 +1588,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1703,9 +1599,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1717,9 +1610,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1731,128 +1621,115 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 
-        'click with either mouse button to select (colour picker to chang' +
-        'e colour)'
       Brush.Color = clGray
       OnMouseDown = sRGBPalette1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape37: TShape
+    object sRGBColour1: TShape
       Tag = 8
       Left = 641
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (red)'
       Brush.Color = clRed
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape38: TShape
+    object sRGBColour9: TShape
       Tag = 7
       Left = 801
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (lilac)'
       Brush.Color = 16744703
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape39: TShape
+    object sRGBColour8: TShape
       Tag = 6
       Left = 781
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (purple)'
       Brush.Color = 16711808
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape40: TShape
+    object sRGBColour7: TShape
       Tag = 5
       Left = 761
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (light blue)'
       Brush.Color = 16744448
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape41: TShape
+    object sRGBColour6: TShape
       Tag = 4
       Left = 741
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (blue)'
       Brush.Color = clBlue
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape42: TShape
+    object sRGBColour5: TShape
       Tag = 3
       Left = 721
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (green)'
       Brush.Color = 4259584
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape43: TShape
+    object sRGBColour4: TShape
       Tag = 2
       Left = 701
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (yellow)'
       Brush.Color = clYellow
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape44: TShape
+    object sRGBColour3: TShape
       Tag = 1
       Left = 681
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (orange)'
       Brush.Color = 4227327
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape45: TShape
+    object sRGBColour2: TShape
       Left = 661
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (pink)'
       Brush.Color = 8421631
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
-    object Shape46: TShape
+    object sRGBColour10: TShape
       Tag = 9
       Left = 821
       Top = 14
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'click with either mouse button to select (white)'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1863,7 +1740,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1875,7 +1751,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1886,7 +1761,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1898,7 +1772,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 3'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1909,7 +1782,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 4'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1921,7 +1793,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 5'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1932,7 +1803,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 6'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1944,7 +1814,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 7'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1955,7 +1824,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 8'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -1967,7 +1835,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 9'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1978,7 +1845,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 15'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -1989,7 +1855,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 14'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -2001,7 +1866,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 13'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -2012,7 +1876,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Palette/gradient colour 12'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -2024,7 +1887,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
     end
@@ -2035,7 +1897,6 @@ object frmMain: TfrmMain
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sShade1MouseDown
       OnMouseMove = sRGBPalette1MouseMove
@@ -2262,9 +2123,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clBlack
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2275,9 +2133,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clBlue
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2288,9 +2143,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clLime
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2301,9 +2153,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clAqua
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2314,9 +2163,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clRed
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2327,9 +2173,6 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clFuchsia
         OnMouseDown = sRGB3pp1MouseDown
       end
@@ -2340,22 +2183,16 @@ object frmMain: TfrmMain
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         Brush.Color = clYellow
         OnMouseDown = sRGB3pp1MouseDown
       end
       object sRGB3pp8: TShape
         Tag = 7
-        Left = 159
-        Top = 2
+        Left = 156
+        Top = 3
         Width = 18
         Height = 18
         Cursor = crHandPoint
-        Hint = 
-          'click with either mouse button to select (colour picker to chang' +
-          'e colour)'
         OnMouseDown = sRGB3pp1MouseDown
       end
     end
@@ -2404,7 +2241,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 69
       Height = 24
-      Hint = 'Add a new pixel (press = to add at the current mouse position)'
       DisabledImageIndex = 93
       ImageIndex = 6
       Images = ilActive
@@ -2417,7 +2253,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 38
       Height = 24
-      Hint = 'Remove selected pixel'
       DisabledImageIndex = 39
       ImageIndex = 7
       Images = ilActive
@@ -2429,7 +2264,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Select normal drawing mode'
       GroupIndex = 1
       DisabledImageIndex = 73
       ImageIndex = 17
@@ -2442,7 +2276,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Select pixel movement mode'
       GroupIndex = 1
       DisabledImageIndex = 95
       ImageIndex = 94
@@ -2455,7 +2288,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 23
       Height = 24
-      Hint = 'Insert pixel to order value (to the left)'
       Caption = 'I'
       Transparent = False
       OnClick = sbFreeformSetOrderClick
@@ -2466,7 +2298,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw text on the matrix (RMB for font selection)'
       GroupIndex = 1
       DisabledImageIndex = 48
       ImageIndex = 29
@@ -2480,7 +2311,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 23
       Height = 24
-      Hint = 'Swap pixel with order value (to the left)'
       Caption = 'S'
       Transparent = False
       OnClick = sbFreeformSetOrderSwapClick
@@ -2491,7 +2321,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 30
       Height = 24
-      Hint = 'Draw text on the matrix (RMB for font selection)'
       GroupIndex = 1
       DisabledImageIndex = 42
       ImageIndex = 22
@@ -2519,7 +2348,6 @@ object frmMain: TfrmMain
       Top = 3
       Width = 30
       Height = 24
-      Hint = 'Use mouse buttons to select colour'
       GroupIndex = 1
       DisabledImageIndex = 44
       ImageIndex = 18
@@ -2538,10 +2366,9 @@ object frmMain: TfrmMain
     object sbFreeformDrawOrder: TSpeedButton
       Tag = 4
       Left = 774
-      Top = 2
+      Top = 3
       Width = 30
       Height = 24
-      Hint = 'Set the order for each pixel in turn'
       DisabledImageIndex = 42
       ImageIndex = 96
       Images = ilActive
@@ -2553,7 +2380,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels left'
       DisabledImageIndex = 49
       ImageIndex = 8
       Images = ilActive
@@ -2566,7 +2392,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 40
       Height = 24
-      Hint = 'Shift the pixels right'
       DisabledImageIndex = 60
       ImageIndex = 9
       Images = ilActive
@@ -2595,7 +2420,6 @@ object frmMain: TfrmMain
       Top = 3
       Width = 52
       Height = 21
-      Hint = 'Rotation angle'
       Style = csDropDownList
       TabOrder = 2
     end
@@ -2604,7 +2428,6 @@ object frmMain: TfrmMain
       Top = 2
       Width = 75
       Height = 25
-      Hint = 'Select all pixels in the specified group'
       Enabled = False
       TabOrder = 3
       OnClick = bFreeformSelectGroupClick
@@ -2635,8 +2458,8 @@ object frmMain: TfrmMain
     AutoHotkeys = maManual
     AutoLineReduction = maManual
     Images = ilMenu
-    Left = 744
-    Top = 16
+    Left = 840
+    Top = 72
     object File1: TMenuItem
       Caption = '.'
       object New1: TMenuItem
@@ -5235,7 +5058,7 @@ object frmMain: TfrmMain
   end
   object puGradient: TPopupMenu
     AutoHotkeys = maManual
-    Left = 792
+    Left = 824
     object miGradientColour0: TMenuItem
       Caption = '.'
       OnClick = miGradientColour0Click
@@ -5668,8 +5491,8 @@ object frmMain: TfrmMain
     end
   end
   object puMainCanvas: TPopupMenu
-    Left = 32
-    Top = 162
+    Left = 24
+    Top = 186
     object Workingareabackgroundcolour1: TMenuItem
       Caption = 'Working area background colour'
       object Custom1: TMenuItem

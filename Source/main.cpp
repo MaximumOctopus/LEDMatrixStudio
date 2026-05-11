@@ -1462,8 +1462,7 @@ void TfrmMain::SetGuiLanguageText()
 
 	lSelectedTool->Caption = GetDrawModeText(0).c_str();
 
-	//
-
+	// == top toolbar
 	sbBuild->Caption = GLanguageHandler->Text[kNew].c_str();
 	sbOpen->Caption = GLanguageHandler->Text[kOpen].c_str();
 	sbSave->Caption = GLanguageHandler->Text[kSave].c_str();
@@ -1471,16 +1470,135 @@ void TfrmMain::SetGuiLanguageText()
 	sbGenerateCode->Caption = GLanguageHandler->Text[kGenerateCode].c_str();
 	sbPreset->Caption = GLanguageHandler->Text[kPreset].c_str();
 
+	sbBuild->Hint = GLanguageHandler->Text[kTopToolbarHint1].c_str();
+	sbOpen->Hint = GLanguageHandler->Text[kTopToolbarHint2].c_str();
+	sbSave->Hint = GLanguageHandler->Text[kTopToolbarHint3].c_str();
+	sbExport->Hint = GLanguageHandler->Text[kTopToolbarHint4].c_str();
+	sbGenerateCode->Hint = GLanguageHandler->Text[kTopToolbarHint5].c_str();
+	sbPixelSize->Hint = GLanguageHandler->Text[kTopToolbarHint6].c_str();
+	sbPixelShape->Hint = GLanguageHandler->Text[kTopToolbarHint7].c_str();
+	sbPreset->Hint = GLanguageHandler->Text[kTopToolbarHint8].c_str();
+
+	// == tools toolbar
+	tsPalette->Caption = GLanguageHandler->Text[kPalette].c_str();
+	tsGradients->Caption = GLanguageHandler->Text[kGradients].c_str();
+
+	lMirror->Caption = GLanguageHandler->Text[kMirrorDraw].c_str();
+
+	sbMouseMode->Hint = GLanguageHandler->Text[kToolsToolbarHint1].c_str();
+	sbNewBrush->Hint = GLanguageHandler->Text[kToolsToolbarHint2].c_str();
+	sbCopy->Hint = GLanguageHandler->Text[kToolsToolbarHint3].c_str();
+	sbFilledRectangle->Hint = GLanguageHandler->Text[kToolsToolbarHint4].c_str();
+	sbFrame->Hint = GLanguageHandler->Text[kToolsToolbarHint5].c_str();
+	sbFilledCircle->Hint = GLanguageHandler->Text[kToolsToolbarHint6].c_str();
+	sbEmptyCircle->Hint = GLanguageHandler->Text[kToolsToolbarHint7].c_str();
+	sbLine->Hint = GLanguageHandler->Text[kToolsToolbarHint8].c_str();
+	sbMultiDraw->Hint = GLanguageHandler->Text[kToolsToolbarHint9].c_str();
+	sbFloodFill->Hint = GLanguageHandler->Text[kToolsToolbarHint10].c_str();
+	sbFont->Hint = GLanguageHandler->Text[kToolsToolbarHint11].c_str();
+	sbGradientBrush->Hint = GLanguageHandler->Text[kToolsToolbarHint12].c_str();
+	sbGradient->Hint = GLanguageHandler->Text[kToolsToolbarHint13].c_str();
+	sbRandomDraw->Hint = GLanguageHandler->Text[kToolsToolbarHint14].c_str();
+	sbPicker->Hint = GLanguageHandler->Text[kToolsToolbarHint15].c_str();
+	sbPatternSpiral->Hint = GLanguageHandler->Text[kToolsToolbarHint16].c_str();
+	sbPatternCircle->Hint = GLanguageHandler->Text[kToolsToolbarHint17].c_str();
+	sbPatternSplitRing->Hint = GLanguageHandler->Text[kToolsToolbarHint18].c_str();
+	sbPatternPetals->Hint = GLanguageHandler->Text[kToolsToolbarHint19].c_str();
+	sbPatternGrid->Hint = GLanguageHandler->Text[kToolsToolbarHint20].c_str();
+	sbPatternPyramid->Hint = GLanguageHandler->Text[kToolsToolbarHint21].c_str();
+	sbPatternLeftTriangle->Hint = GLanguageHandler->Text[kToolsToolbarHint22].c_str();
+	sbPatternRightTriangle->Hint = GLanguageHandler->Text[kToolsToolbarHint23].c_str();
+
+	// == pixel toolbar
+	sbMouseModeFreeform->Hint = GLanguageHandler->Text[kToolsToolbarHint1].c_str();
+	sbMovePixel->Hint = GLanguageHandler->Text[kPixelToolbarHint1].c_str();
+	sbFontFreeform->Hint = GLanguageHandler->Text[kPixelToolbarHint2].c_str();
+	sbPickerFreeform->Hint = GLanguageHandler->Text[kPixelToolbarHint3].c_str();
+	sbFreeformAddShape->Hint = GLanguageHandler->Text[kPixelToolbarHint4].c_str();
+	sbFreeformColoursLeft->Hint = GLanguageHandler->Text[kPixelToolbarHint5].c_str();
+	sbFreeformColoursRight->Hint = GLanguageHandler->Text[kPixelToolbarHint6].c_str();
+	sbFreeformAdd->Hint = GLanguageHandler->Text[kPixelToolbarHint7].c_str();
+	sbFreeformDelete->Hint = GLanguageHandler->Text[kPixelToolbarHint8].c_str();
+	sbFreeformSetOrder->Hint = GLanguageHandler->Text[kPixelToolbarHint9].c_str();
+	sbFreeformSetOrderSwap->Hint = GLanguageHandler->Text[kPixelToolbarHint10].c_str();
+	cbApplyToGroup->Hint = GLanguageHandler->Text[kPixelToolbarHint11].c_str();
+	bFreeformSelectGroup->Hint = GLanguageHandler->Text[kPixelToolbarHint12].c_str();
+	sbFreeformDrawOrder->Hint = GLanguageHandler->Text[kPixelToolbarHint13].c_str();
+
+	// == middle toolbar
 	sbClear->Caption = GLanguageHandler->Text[kClear].c_str();
 	sbMirror->Caption = GLanguageHandler->Text[kMirror].c_str();
 	sbFlip->Caption = GLanguageHandler->Text[kFlip].c_str();
 	sbInvert->Caption = GLanguageHandler->Text[kInvert].c_str();
 	sbRotateAny->Caption = GLanguageHandler->Text[kRotate].c_str();
 
+	sbClear->Hint = GLanguageHandler->Text[kMiddleToolbarHint1].c_str();
+	sbMirror->Hint = GLanguageHandler->Text[kMiddleToolbarHint2].c_str();
+	sbFlip->Hint = GLanguageHandler->Text[kMiddleToolbarHint3].c_str();
+	sbInvert->Hint = GLanguageHandler->Text[kMiddleToolbarHint4].c_str();
+	sbScrollLeft->Hint = GLanguageHandler->Text[kMiddleToolbarHint5].c_str();
+	sbScrollRight->Hint = GLanguageHandler->Text[kMiddleToolbarHint6].c_str();
+	sbScrollUp->Hint = GLanguageHandler->Text[kMiddleToolbarHint7].c_str();
+	sbScrollDown->Hint = GLanguageHandler->Text[kMiddleToolbarHint8].c_str();
+	sbRotateL->Hint = GLanguageHandler->Text[kMiddleToolbarHint9].c_str();
+	sbRotateR->Hint = GLanguageHandler->Text[kMiddleToolbarHint10].c_str();
+	sbRotateAny->Hint = GLanguageHandler->Text[kMiddleToolbarHint11].c_str();
+	cbRotateAngle->Hint = GLanguageHandler->Text[kMiddleToolbarHint12].c_str();
+	cbRotateCount->Hint = GLanguageHandler->Text[kMiddleToolbarHint13].c_str();
+	bLockFrame->Hint = GLanguageHandler->Text[kMiddleToolbarHint14].c_str();
+
 	cbMirrorMode->Items->Add(GLanguageHandler->Text[kNone].c_str());
 	cbMirrorMode->Items->Add(GLanguageHandler->Text[kHorizontal].c_str());
 	cbMirrorMode->Items->Add(GLanguageHandler->Text[kVertical].c_str());
 	cbMirrorMode->ItemIndex = 0;
+
+	// == rgb palette toolbar
+	for (int t = 0; t < 16; t++)
+	{
+		_RGBPalette[t]->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint1].c_str();
+		_RGBShade[t]->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint2].c_str();
+	}
+
+	sRGBColour1->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint3].c_str();
+	sRGBColour2->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint4].c_str();
+	sRGBColour3->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint5].c_str();
+	sRGBColour4->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint6].c_str();
+	sRGBColour5->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint7].c_str();
+	sRGBColour6->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint8].c_str();
+	sRGBColour7->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint9].c_str();
+	sRGBColour8->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint10].c_str();
+	sRGBColour9->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint11].c_str();
+	sRGBColour10->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint12].c_str();
+
+	for (int t = 0; t < 8; t++)
+	{
+		_RGB3ppPalette[t]->Hint = GLanguageHandler->Text[kRGBPaletteToolbarHint13].c_str();
+	}
+
+	// == current colours toolbar
+	sColour3->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint1].c_str();
+	sColour2->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint2].c_str();
+	sColour1->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint3].c_str();
+	sColour0->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint4].c_str();
+	sSelectionLMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint5].c_str();
+	iMMBGradient->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint6].c_str();
+	sSelectionMMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint7].c_str();
+	sSelectionRMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint8].c_str();
+
+	// == frames toolbar
+	bTimer->Hint = GLanguageHandler->Text[kFramesToolbarHint1].c_str();
+	bPlayAnimation->Hint = GLanguageHandler->Text[kFramesToolbarHint2].c_str();
+	bStopAnimation->Hint = GLanguageHandler->Text[kFramesToolbarHint3].c_str();
+	bStartFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint4].c_str();
+	bPreviousFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint5].c_str();
+	bNextFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint6].c_str();
+	bEndFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint7].c_str();
+	bAddFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint8].c_str();
+	bAddFrameCopy->Hint = GLanguageHandler->Text[kFramesToolbarHint9].c_str();
+	bAddFrameMultiple->Hint = GLanguageHandler->Text[kFramesToolbarHint10].c_str();
+	bDeleteFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint11].c_str();
+	bDeleteMultipleFrames->Hint = GLanguageHandler->Text[kFramesToolbarHint12].c_str();
+	bLightbox->Hint = GLanguageHandler->Text[kFramesToolbarHint13].c_str();
 
 	// popup menus
 
@@ -1546,13 +1664,6 @@ void TfrmMain::SetGuiLanguageText()
 	Playbackspeed1->Caption = GLanguageHandler->Text[kPlaybackSpeed].c_str();
 	miPlaybackSpeedCustom->Caption = GLanguageHandler->Text[kCustom].c_str();
 	Setcustomspeed1->Caption = GLanguageHandler->Text[kSetCustomSpeed].c_str();
-
-	//
-
-	tsPalette->Caption = GLanguageHandler->Text[kPalette].c_str();
-	tsGradients->Caption = GLanguageHandler->Text[kGradients].c_str();
-
-	lMirror->Caption = GLanguageHandler->Text[kMirrorDraw].c_str();
 
 	// main menu
 	File1->Caption = GLanguageHandler->Text[kFile].c_str();

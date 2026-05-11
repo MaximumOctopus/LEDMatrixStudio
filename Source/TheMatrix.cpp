@@ -2840,23 +2840,23 @@ void __fastcall TheMatrix::PaintBoxUpdateIgnoredPixel(TObject *Sender)
 			{
 			case PixelShape::kSquare:
 				PaintBox->Canvas->FillRect(Rect(x * Render.PixelSize,
-													 y * Render.PixelSize,
-													(x * Render.PixelSize) + Render.PixelSizeZ,
-													(y * Render.PixelSize) + Render.PixelSizeZ));
+												y * Render.PixelSize,
+											   (x * Render.PixelSize) + Render.PixelSizeZ,
+											   (y * Render.PixelSize) + Render.PixelSizeZ));
 				break;
 			case PixelShape::kCircle:
 				PaintBox->Canvas->Ellipse(x * Render.PixelSize,
-											   y * Render.PixelSize,
-											  (x * Render.PixelSize) + Render.PixelSizeZ,
-											  (y * Render.PixelSize) + Render.PixelSizeZ);
+										  y * Render.PixelSize,
+										 (x * Render.PixelSize) + Render.PixelSizeZ,
+										 (y * Render.PixelSize) + Render.PixelSizeZ);
 				break;
 			case PixelShape::kRoundRect:
 				PaintBox->Canvas->RoundRect(x * Render.PixelSize,
-												 y * Render.PixelSize,
-												(x * Render.PixelSize) + Render.PixelSizeZ,
-												(y * Render.PixelSize) + Render.PixelSizeZ,
-												 Render.PixelSize - (std::round(Render.PixelSize / kRoundRectCoeff)),
-												 Render.PixelSize - (std::round(Render.PixelSize / kRoundRectCoeff)));
+											y * Render.PixelSize,
+										   (x * Render.PixelSize) + Render.PixelSizeZ,
+										   (y * Render.PixelSize) + Render.PixelSizeZ,
+											Render.PixelSize - (std::round(Render.PixelSize / kRoundRectCoeff)),
+											Render.PixelSize - (std::round(Render.PixelSize / kRoundRectCoeff)));
 				break;
 			}
 		}
