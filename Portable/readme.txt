@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.21.03                                                 =
+ =  LED Matrix Studio v0.21.04                                                 =
  =                                                                             =
- =  April 24th 2026                                                            =
+ =  May 11th 2026                                                              =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -141,6 +141,11 @@
 
  Please consider sending it to me so that I may include it with
  future updates.
+
+== Updates for 0.21.04 beta ============================================ 
+ 
+- Added main window control hints and the new Add Shape gui text to the language files
+- A few minor tweaks
 
 == Updates for 0.21.03 beta ============================================
 
