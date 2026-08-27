@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -46,9 +46,10 @@ __published:	// IDE-managed Components
 	void __fastcall sbLayerDownClick(TObject *Sender);
 	void __fastcall sbDeleteLayerClick(TObject *Sender);
 	void __fastcall sbAddNewLayerClick(TObject *Sender);
-	void __fastcall sgLayersSelectCell(TObject *Sender, int ACol, int ARow, bool &CanSelect);
 	void __fastcall sgLayersClick(TObject *Sender);
 	void __fastcall Clearselectedlayer1Click(TObject *Sender);
+	void __fastcall sgLayersSelectCell(TObject *Sender, System::LongInt ACol, System::LongInt ARow,
+          bool &CanSelect);
 
 private:
 
