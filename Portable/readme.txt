@@ -1,8 +1,8 @@
  ===============================================================================
  =                                                                             =
- =  LED Matrix Studio v0.21.04                                                 =
+ =  LED Matrix Studio v0.21.05                                                 =
  =                                                                             =
- =  May 11th 2026                                                              =
+ =  August 27th 2026                                                           =
  =                                                                             =
  =  www.freshney.org // paul@freshney.org                                      =
  =                                                                             = 
@@ -118,7 +118,7 @@
  The source code can be found at the link at the top of this document.
 
  If you wish to compile the product, or make your own changes, then download
- C++ Builder from here:
+ C++ Builder (for free) from here:
    
     https://www.embarcadero.com/products/cbuilder/starter
 
@@ -141,6 +141,14 @@
 
  Please consider sending it to me so that I may include it with
  future updates.
+ 
+== Updates for 0.21.05 beta ============================================ 
+
+- Moved all user interface tooltips/hints to the language files
+
+- A few tweaks to the code
+
+- Fixed a couple of minor bugs 
 
 == Updates for 0.21.04 beta ============================================ 
  
