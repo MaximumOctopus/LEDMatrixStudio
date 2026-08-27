@@ -9,3 +9,7 @@ https://maximumoctopus.hashnode.dev/
 \Source\ contains the C++ rewrite (C++ Builder 12.1) and the current version being developed
 
 \SourceDelphiLegacy\ contains the full Delphi 10.3 (Community Edition) source code
+
+Alternative download links for the application and source code can be found here:
+
+https://sourceforge.net/projects/led-matrix-studio/
