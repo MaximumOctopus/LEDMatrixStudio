@@ -14,12 +14,12 @@
 #pragma once
 
 
-static const std::wstring __LEDStudioDate = L"May 11th 2026";
+static const std::wstring __LEDStudioDate = L"August 27th 2026";
 
 #if _WIN64
-static const std::wstring __LEDStudioVersion = L"0.21.04 (x64)";
+static const std::wstring __LEDStudioVersion = L"0.21.05 (x64)";
 #else
-static const std::wstring __LEDStudioVersion = L"0.21.04 (x32)";
+static const std::wstring __LEDStudioVersion = L"0.21.05 (x32)";
 #endif
 
 static const std::wstring __SimpleTextFull = L"(c) Paul Alan Freshney :: " + __LEDStudioDate + L" :: www.MaximumOctopus.com";

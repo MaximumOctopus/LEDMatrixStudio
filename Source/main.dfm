@@ -1106,7 +1106,6 @@ object frmMain: TfrmMain
       Top = 8
       Width = 4
       Height = 13
-      Hint = 'Current draw mode'
       Caption = '.'
     end
     object lMirror: TLabel
@@ -1114,7 +1113,6 @@ object frmMain: TfrmMain
       Top = 8
       Width = 4
       Height = 13
-      Hint = 'Current draw mode'
       Caption = '.'
     end
     object Bevel21: TBevel
@@ -1129,7 +1127,6 @@ object frmMain: TfrmMain
       Top = 4
       Width = 84
       Height = 21
-      Hint = 'Mirror draw mode'
       Style = csDropDownList
       Enabled = False
       TabOrder = 0
@@ -1449,7 +1446,6 @@ object frmMain: TfrmMain
     ShowCaption = False
     ShowHint = True
     TabOrder = 10
-    ExplicitTop = 112
     object sRGBPalette1: TShape
       Left = 4
       Top = 14
@@ -2421,6 +2417,7 @@ object frmMain: TfrmMain
       Width = 52
       Height = 21
       Style = csDropDownList
+      Enabled = False
       TabOrder = 2
     end
     object bFreeformSelectGroup: TBitBtn
@@ -3970,6 +3967,101 @@ object frmMain: TfrmMain
         Caption = 'Show pixel frame count'
         OnClick = N69Click
       end
+      object N71: TMenuItem
+        Caption = '-'
+      end
+      object N72: TMenuItem
+        Caption = 'Form test'
+        object Animation2: TMenuItem
+          Caption = 'Animation'
+          object Optimise2: TMenuItem
+            Caption = 'Playback Speed'
+            OnClick = miTestFormClick
+          end
+          object SetIgnoredPixels1: TMenuItem
+            Tag = 1
+            Caption = 'Set Ignored Pixels'
+            OnClick = miTestFormClick
+          end
+        end
+        object Export1: TMenuItem
+          Caption = 'Export'
+          object ExportGIF1: TMenuItem
+            Tag = 2
+            Caption = 'Export GIF'
+            OnClick = miTestFormClick
+          end
+        end
+        object Layer1: TMenuItem
+          Caption = 'Layers'
+          object AddLayer1: TMenuItem
+            Tag = 3
+            Caption = 'Add Layer'
+            OnClick = miTestFormClick
+          end
+          object AddLayer2: TMenuItem
+            Tag = 4
+            Caption = 'Merge'
+            OnClick = miTestFormClick
+          end
+          object oggleLockStatuc1: TMenuItem
+            Tag = 5
+            Caption = 'Toggle Lock Status'
+            OnClick = miTestFormClick
+          end
+        end
+        object Frames2: TMenuItem
+          Caption = 'Frames'
+          object Automate1: TMenuItem
+            Tag = 6
+            Caption = 'Automate'
+            OnClick = miTestFormClick
+          end
+          object ExportGIF2: TMenuItem
+            Tag = 7
+            Caption = 'Colour Change'
+            OnClick = miTestFormClick
+          end
+          object CopyMultiple1: TMenuItem
+            Tag = 8
+            Caption = 'Copy Multiple'
+            OnClick = miTestFormClick
+          end
+          object CopyMultiple2: TMenuItem
+            Tag = 9
+            Caption = 'Delete Multiple'
+            OnClick = miTestFormClick
+          end
+          object SaveRange1: TMenuItem
+            Tag = 10
+            Caption = 'Save Range'
+            OnClick = miTestFormClick
+          end
+        end
+        object Import1: TMenuItem
+          Caption = 'Import'
+          object SaveRange2: TMenuItem
+            Tag = 11
+            Caption = 'Import Bitmap'
+            OnClick = miTestFormClick
+          end
+        end
+        object AddShape1: TMenuItem
+          Tag = 12
+          Caption = 'Add Shape'
+          OnClick = miTestFormClick
+        end
+        object AddShape2: TMenuItem
+          Tag = 13
+          Caption = 'New Brush'
+          OnClick = miTestFormClick
+        end
+        object Optimise1: TMenuItem
+          Tag = 14
+          Caption = 'Optimise'
+          OnClick = miTestFormClick
+        end
+      end
     end
   end
   object colorDialog: TColorDialog
@@ -4815,7 +4907,7 @@ object frmMain: TfrmMain
   object puPresets: TPopupMenu
     AutoHotkeys = maManual
     Images = ilMain
-    Left = 928
+    Left = 1000
     object Presets1: TMenuItem
       Caption = 'Presets'
       Enabled = False
@@ -4913,7 +5005,8 @@ object frmMain: TfrmMain
   end
   object puFonts: TPopupMenu
     AutoHotkeys = maManual
-    Left = 880
+    Left = 1216
+    Top = 48
     object MenuItem1: TMenuItem
       Caption = '.'
       Enabled = False

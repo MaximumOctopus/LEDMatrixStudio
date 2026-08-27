@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -689,6 +689,28 @@ __published:	// IDE-managed Components
 	TPanel *pPixelPanel;
 	TPanel *Panel2;
 	TMenuItem *miPixelsToolbar;
+	TMenuItem *N71;
+	TMenuItem *N72;
+	TMenuItem *ExportGIF1;
+	TMenuItem *ExportGIF2;
+	TMenuItem *CopyMultiple1;
+	TMenuItem *CopyMultiple2;
+	TMenuItem *SaveRange1;
+	TMenuItem *SaveRange2;
+	TMenuItem *Export1;
+	TMenuItem *Layer1;
+	TMenuItem *Frames2;
+	TMenuItem *Import1;
+	TMenuItem *AddLayer1;
+	TMenuItem *AddLayer2;
+	TMenuItem *oggleLockStatuc1;
+	TMenuItem *Automate1;
+	TMenuItem *AddShape1;
+	TMenuItem *AddShape2;
+	TMenuItem *Optimise1;
+	TMenuItem *Optimise2;
+	TMenuItem *SetIgnoredPixels1;
+	TMenuItem *Animation2;
 	void __fastcall sbBuildClick(TObject *Sender);
 	void __fastcall FormConstrainedResize(TObject *Sender, int &MinWidth, int &MinHeight,
           int &MaxWidth, int &MaxHeight);
@@ -875,6 +897,7 @@ __published:	// IDE-managed Components
 	void __fastcall N69Click(TObject *Sender);
 	void __fastcall miAGPTLBRClick(TObject *Sender);
 	void __fastcall miPixelsToolbarClick(TObject *Sender);
+	void __fastcall miTestFormClick(TObject *Sender);
 
 private:
 

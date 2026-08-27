@@ -21,12 +21,15 @@
 #include "ImportData.h"
 #include "Layer.h"
 #include "MatrixIgnored.h"
+#include "MatrixPixel.h"
 
 
 class LayerHandler
 {
 
 	MatrixGrid *MatrixBackup;
+
+    std::vector<MatrixPixel*> PixelBackup;
 
 	void BackupMatrix(int, int);
 

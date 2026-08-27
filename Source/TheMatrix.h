@@ -34,6 +34,7 @@
 #include "MatrixConstants.h"
 #include "MatrixIgnored.h"
 #include "PreviewSettings.h"
+#include "ShapeObject.h"
 
 #define _FrameTimer 0
 
@@ -292,6 +293,7 @@ public:
 
 	void AddPixel(int, int);
 	void DeletePixel();
+    void ClearSelection();
 	void SelectInGroup(int);
 	void PerformFreeformEffect(int);
 	void AutoOrderPixels(int);
@@ -309,7 +311,7 @@ public:
 
 	// =========================================================================
 
-	void AddPixelShape(int, int, int, int, int, int, int, int);
+	void AddPixelShape(ShapeObject);
 
 	// =========================================================================
 

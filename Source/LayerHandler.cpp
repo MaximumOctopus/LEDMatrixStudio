@@ -58,7 +58,12 @@ void LayerHandler::BackupMatrix(int layer, int frame)
 	}
 	else
 	{
-		//to do
+//		PixelBackup.clear();
+
+//		for (int t = 0; t < Layers[layer]->Freeform->Pixels.size(); t++)
+//		{
+//			PixelBackup.push_back(Layers[layer]->Freeform->Pixels[t];
+//		}
 	}
 }
 

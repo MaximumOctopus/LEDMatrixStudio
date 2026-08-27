@@ -662,9 +662,7 @@ namespace ExportRGB3BPP
 			}
 			else
 			{
-				//matrix->BuildMergedFrame(frame, MergeFrameMode::kRetainGridValue);
-
-				//selectedmatrix = matrix->MatrixMerge; to do
+                 // multiple layers not handled in freeform mode, yet
 			}
 			break;
 		case ExportSource::kUserMemoriesFreeform:

@@ -169,7 +169,7 @@ void __fastcall TfrmMain::FormClose(TObject *Sender, TCloseAction &Action)
 
 	if (miPixelAuto->Checked)
 	{
-		GSystemSettings->Project.PixelSize = CPixelSizeAuto;
+		GSystemSettings->Project.PixelSize = kPixelSizeAuto;
 	}
 
 	// =======================================================================
@@ -280,6 +280,8 @@ void __fastcall TfrmMain::FormMouseMove(TObject *Sender, TShiftState Shift, int 
 void __fastcall TfrmMain::FormMouseWheelDown(TObject *Sender, TShiftState Shift, TPoint &MousePos,
 		  bool &Handled)
 {
+	if (!thematrix->Details.Available) return;
+
 	if (Shift.Contains(ssCtrl))
 	{
 		int sp = thematrix->Render.Action.Parameter;
@@ -315,6 +317,8 @@ void __fastcall TfrmMain::FormMouseWheelDown(TObject *Sender, TShiftState Shift,
 void __fastcall TfrmMain::FormMouseWheelUp(TObject *Sender, TShiftState Shift, TPoint &MousePos,
           bool &Handled)
 {
+	if (!thematrix->Details.Available) return;
+
 	if (Shift.Contains(ssCtrl))
 	{
 		int sp = thematrix->Render.Action.Parameter;
@@ -1484,6 +1488,8 @@ void TfrmMain::SetGuiLanguageText()
 	tsGradients->Caption = GLanguageHandler->Text[kGradients].c_str();
 
 	lMirror->Caption = GLanguageHandler->Text[kMirrorDraw].c_str();
+	cbMirrorMode->Hint = GLanguageHandler->Text[kMirrorDrawMode].c_str();
+	lSelectedTool->Hint = GLanguageHandler->Text[kCurrentDrawMode].c_str();
 
 	sbMouseMode->Hint = GLanguageHandler->Text[kToolsToolbarHint1].c_str();
 	sbNewBrush->Hint = GLanguageHandler->Text[kToolsToolbarHint2].c_str();
@@ -3569,6 +3575,86 @@ void __fastcall TfrmMain::N69Click(TObject *Sender)
 	thematrix->Render.ShowFrameCount = true;
 	#endif
 }
+
+
+void __fastcall TfrmMain::miTestFormClick(TObject *Sender)
+{
+	#if _DEBUG
+	TMenuItem *mi = (TMenuItem*)Sender;
+	switch (mi-Tag)
+	{
+	case 0:
+		OpenCustomPlaybackSpeed(10);
+		break;
+	case 1:
+		SetIgnoredPixels sip = OpenIgnoredPixels(16, 16);
+		break;
+	case 2:
+		ExportGIFSettings ego = OpenExportGIF(GSystemSettings->ExportGIF);
+		break;
+	case 3:
+	{
+        // add layer to do
+		break;
+	}
+	case 4:
+		MergeObject merge = OpenMerge();
+		break;
+	case 5:
+		ToggleLockFrameRange tlfro = OpenToggleLockStatus();
+		break;
+	case 6:
+		std::vector<std::wstring> layers;
+		std::vector<int> colours;
+
+		thematrix->Data->GetFirst32Colours(colours);
+
+		AutomationInput ai;
+		RGBPaletteColours rgbpc;
+
+		rgbpc.Left   = sSelectionLMB->Brush->Color;
+		rgbpc.Middle = sSelectionMMB->Brush->Color;
+		rgbpc.Right  = sSelectionRMB->Brush->Color;
+
+		for (int t = 0; t < 28; t++)
+		{
+			rgbpc.History[t] = FramePalettePanel->RGBPaletteHistory[t]->Brush->Color;
+		}
+
+		for (int t = 0; t < thematrix->Data->GetLayerCount(); t++)
+		{
+			layers.push_back(thematrix->Data->GetLayerName(t));
+		}
+
+		OpenAutomate(ai, rgbpc, layers, colours, Automation);
+		break;
+	case 7:
+		ColourChange cco = OpenColourChange(Colours);
+		break;
+	case 8:
+		CopyMultipleObject cpm = OpenCopyMultiple(thematrix->Data->GetFrameCount(), Layers);
+		break;
+	case 9:
+		DeleteMultipleObject dmo = OpenDeleteMultiple(thematrix->Data->GetFrameCount());
+		break;
+	case 10:
+		SaveFrameRangeObject sfro = OpenFrameRange(thematrix->Data->GetFrameCount());
+		break;
+	case 11:
+		frmImportBitmap->ShowModal();
+		break;
+	case 12:
+		ShapeObject so = OpenAddShape();
+		break;
+	case 13:
+		NewBrush newbrush = OpenNewBrush(Brush, lMatrixSettings, lRGBPaletteColours);
+		break;
+	case 14:
+		OpenOptimise(thematrix);
+		break;
+	}
+	#endif
+}
 #pragma end_region
 
 
@@ -4150,6 +4236,15 @@ void TfrmMain::SetDrawingMode(int drawingmode)
 		ToggleGradient(GradientOption::kOff, false);
 	}
 
+	if (drawingmode == 24) // move pixel(s)
+	{
+        // clear the selection before we enter pixel move mode
+		thematrix->ClearSelection();
+	}
+
+	cbFreeformGroup->Enabled = (thematrix->Render.Action.Mode == ActionMode::kMovePixel);
+	bFreeformSelectGroup->Enabled = (thematrix->Render.Action.Mode == ActionMode::kMovePixel);
+
 	bFreeformSelectGroup->Enabled = (thematrix->Render.Action.Mode == ActionMode::kMovePixel);
 
 	thematrix->Render.Action.CopyPos.X = 0;
@@ -4503,16 +4598,12 @@ void __fastcall TfrmMain::tbFramesTracking(TObject *Sender)
 #pragma region Toolbar_Freeform
 void __fastcall TfrmMain::sbFreeformAddShapeClick(TObject *Sender)
 {
-	TfrmAddShape *frmAddShape = new TfrmAddShape(Application);
+	ShapeObject so = OpenAddShape();
 
-	if (frmAddShape->ShowModal() == mrOk)
+	if (so.Shape != -1)
 	{
-		thematrix->AddPixelShape(frmAddShape->SelectedShape, frmAddShape->SelectedDirection,
-								 frmAddShape->SelectedSizeX, frmAddShape->SelectedSizeY, frmAddShape->SelectedPixels,
-								 frmAddShape->SelectedX, frmAddShape->SelectedY, frmAddShape->SelectedColour);
+		thematrix->AddPixelShape(so);
 	}
-
-	frmAddShape->Free();
 }
 void __fastcall TfrmMain::sbFreeformAddClick(TObject *Sender)
 {
@@ -4576,9 +4667,9 @@ void TfrmMain::UpdatePixelGroupList()
 
 void __fastcall TfrmMain::bFreeformSelectGroupClick(TObject *Sender)
 {
-	int group = cbFreeformGroup->Text.ToInt();
+	int group = cbFreeformGroup->Text.ToIntDef(-1);
 
-    thematrix->SelectInGroup(group);
+	thematrix->SelectInGroup(group);
 }
 
 
@@ -5736,9 +5827,7 @@ void __fastcall TfrmMain::Setcustomspeed1Click(TObject *Sender)
 	{
 		GSystemSettings->App.CustomSpeed = speed;
 
-		std::wstring newcaption = GLanguageHandler->Text[kCustom] + L" (" + std::to_wstring(speed) + L" ms)";
-
-		miPlaybackSpeedCustom->Caption = newcaption.c_str();
+		miPlaybackSpeedCustom->Caption = (GLanguageHandler->Text[kCustom] + L" (" + std::to_wstring(speed) + L" ms)").c_str();
 	}
 }
 #pragma end_region
@@ -5919,25 +6008,25 @@ void __fastcall TfrmMain::miPixelTinyClick(TObject *Sender)
 	switch (mi->Tag)
 	{
 	case  0:
-		GSystemSettings->Project.PixelSize = CPixelSize10;
-        break;
+		GSystemSettings->Project.PixelSize = kPixelSize10;
+		break;
 	case  1:
-		GSystemSettings->Project.PixelSize = CPixelSize15;
+		GSystemSettings->Project.PixelSize = kPixelSize15;
 		break;
 	case  2:
-		GSystemSettings->Project.PixelSize = CPixelSize20;
+		GSystemSettings->Project.PixelSize = kPixelSize20;
 		break;
 	case  3:
-		GSystemSettings->Project.PixelSize = CPixelSize25;
+		GSystemSettings->Project.PixelSize = kPixelSize25;
 		break;
 	case  4:
-		GSystemSettings->Project.PixelSize = CPixelSize30;
+		GSystemSettings->Project.PixelSize = kPixelSize30;
 		break;
 	case  5:
-		GSystemSettings->Project.PixelSize = CPixelSize40;
+		GSystemSettings->Project.PixelSize = kPixelSize40;
 		break;
 	case  6:
-		GSystemSettings->Project.PixelSize = CPixelSize50;
+		GSystemSettings->Project.PixelSize = kPixelSize50;
 		break;
 	case 99:
 		GSystemSettings->Project.PixelSize = thematrix->GetAutoPixelSize(pCanvas->Width, pCanvas->Height, sbGradient->Tag);
@@ -6212,28 +6301,28 @@ void TfrmMain::SetFromSettings()
 
 	switch (GSystemSettings->Project.PixelSize)
 	{
-	case CPixelSizeAuto:
+	case kPixelSizeAuto:
 		miPixelTinyClick(miPixelAuto);
 		break;
-	case CPixelSize10:
+	case kPixelSize10:
 		miPixelTinyClick(miPixelTiny);
 		break;
-	case CPixelSize15:
+	case kPixelSize15:
 		miPixelTinyClick(miPixelSmall);
 		break;
-	case CPixelSize20:
+	case kPixelSize20:
 		miPixelTinyClick(miPixelMedium);
 		break;
-	case CPixelSize25:
+	case kPixelSize25:
 		miPixelTinyClick(miPixelLarge);
 		break;
-	case CPixelSize30:
+	case kPixelSize30:
 		miPixelTinyClick(miPixelVeryLarge);
 		break;
-	case CPixelSize40:
+	case kPixelSize40:
 		miPixelTinyClick(miPixelUltra);
 		break;
-	case CPixelSize50:
+	case kPixelSize50:
 		miPixelTinyClick(miPixelMegaUltra);
 		break;
 

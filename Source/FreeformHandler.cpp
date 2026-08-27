@@ -400,6 +400,12 @@ void FreeformHandler::AutoOrderPixels(int mode)
 }
 
 
+void FreeformHandler::ClearSelection()
+{
+	Selection.clear();
+}
+
+
 void FreeformHandler::AddToSelection(int pixel)
 {
 	for (int t = 0; t < Selection.size(); t++)
@@ -422,6 +428,9 @@ void FreeformHandler::AddGroupToSelection(int group)
 	{
 		if (Pixels[p]->Group == group)
 		{
+			Pixels[p]->OldX = Pixels[p]->X;
+			Pixels[p]->OldY = Pixels[p]->Y;
+
 			Selection.push_back(p);
 		}
 	}
@@ -487,7 +496,13 @@ void FreeformHandler::InsertCopyFrameAt(int source, int insertat)
 
 void FreeformHandler::CopyFromPrevious(int frame_to)
 {
-//to do
+	if (frame_to != 0)
+	{
+		for (int p = 0; p < Pixels.size(); p++)
+		{
+            Pixels[p]->Colours[frame_to] = Pixels[p]->Colours[frame_to - 1];
+		}
+	}
 }
 
 
@@ -588,6 +603,18 @@ void FreeformHandler::Redo()
 //	{
 //		HistoryOffset++;
 //	}
+}
+
+
+bool FreeformHandler::CanUndo()
+{
+	return false;
+}
+
+
+bool FreeformHandler::CanRedo()
+{
+	return false;
 }
 
 

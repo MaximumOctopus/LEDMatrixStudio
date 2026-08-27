@@ -25,15 +25,14 @@
 enum class RowColumnData { kOff = 0, kData, kIndex };
 enum class PixelSize { kSizeAuto = 0, kSize10, kSize15, kSize20, kSize25, kSize30, kSize40, kSize50 };
 
-
-static const int CPixelSizeAuto = 0;
-static const int CPixelSize10   = 10;
-static const int CPixelSize15   = 15;
-static const int CPixelSize20   = 20;
-static const int CPixelSize25   = 25;
-static const int CPixelSize30   = 30;
-static const int CPixelSize40   = 40;
-static const int CPixelSize50   = 50;
+static const int kPixelSizeAuto = 0;
+static const int kPixelSize10   = 10;
+static const int kPixelSize15   = 15;
+static const int kPixelSize20   = 20;
+static const int kPixelSize25   = 25;
+static const int kPixelSize30   = 30;
+static const int kPixelSize40   = 40;
+static const int kPixelSize50   = 50;
 
 
 class SystemSettings
@@ -43,8 +42,6 @@ private:
 
 	static constexpr int defaultRGBPalatte[] = { 0x000000, 0xFFFFFF, 0x0000FF, 0x0088FF, 0x0044FF, 0x00FFFF, 0x88FFFF, 0x44FFFF,
 										         0x00FF00, 0x88FF88, 0x44FF44, 0xFF0000, 0xFF8800, 0xFF00FF, 0xFF44FF, 0xFF88FF };
-
-	HKEY hKey;
 
 public:
 

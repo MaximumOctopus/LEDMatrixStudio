@@ -20,7 +20,6 @@
 SystemSettings *GSystemSettings;
 
 
-
 SystemSettings::SystemSettings()
 {
 	App.LMSFilePath = ExtractFilePath(Application->ExeName).c_str();
@@ -37,6 +36,8 @@ SystemSettings::SystemSettings()
 
 bool SystemSettings::LoadSettings()
 {
+	HKEY hKey;
+
 	LONG dwRet;
 
 	dwRet = RegOpenKeyEx(HKEY_CURRENT_USER,
@@ -67,7 +68,7 @@ bool SystemSettings::LoadSettings()
 	Project.MatrixModeFromInt(Registry::ReadInteger(hKey, L"matrixtype", 0));
 	Project.Width       = Registry::ReadInteger(hKey, L"gridwidth", 7);
 	Project.Height      = Registry::ReadInteger(hKey, L"gridheight", 7);
-	Project.PixelSize   = Registry::ReadInteger(hKey, L"pixelsize", CPixelSize20);
+	Project.PixelSize   = Registry::ReadInteger(hKey, L"pixelsize", kPixelSize20);
 	Project.PixelShapeFromInt(Registry::ReadInteger(hKey, L"pixelshape", 0));
 
 	// ===========================================================================
@@ -99,7 +100,7 @@ bool SystemSettings::LoadSettings()
 
 	// ===========================================================================
 
-	App.Language             = Registry::ReadString(hKey, L"language", L"English");
+	App.Language = Registry::ReadString(hKey, L"language", L"English");
 
 	if (App.Language[0] == L'&')
 	{
@@ -243,6 +244,8 @@ bool SystemSettings::LoadSettings()
 
 bool SystemSettings::SaveSettings()
 {
+	HKEY hKey;
+
 	LONG dwRet;
 
 	dwRet = RegOpenKeyEx(HKEY_CURRENT_USER,

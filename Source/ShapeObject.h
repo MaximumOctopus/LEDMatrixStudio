@@ -14,10 +14,16 @@
 #pragma once
 
 
-struct Toolbars
+class ShapeObject
 {
-	bool ColumnRow = true;
-	bool RGBPalette = true;
-	bool Pattern = true;
-	bool Animation = true;
+public:
+
+	int Shape = -1;
+	int Direction = 0;
+	int SizeX = 0;
+	int SizeY = 0;
+	int Pixels = 0;
+	int X = 0;
+	int Y = 0;
+	int Colour = 0;
 };

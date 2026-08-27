@@ -2560,30 +2560,30 @@ void __fastcall TheMatrix::Shape1MouseUpRGBFF(TObject *Sender, TMouseButton Butt
 }
 
 
-void TheMatrix::AddPixelShape(int shape, int direction, int sizex, int sizey, int pixels, int start_x, int start_y, int colour)
+void TheMatrix::AddPixelShape(ShapeObject so)
 {
-	switch (shape)
+	switch (so.Shape)
 	{
 	case 0: // circle
-		Data->Layers[CurrentLayer]->Freeform->AddShapeCircle(sizex, pixels, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeCircle(so.SizeX, so.Pixels, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 1: // line (horizontal)
-		Data->Layers[CurrentLayer]->Freeform->AddLineH(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddLineH(so.SizeX, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 2: // line (vertical)
-		Data->Layers[CurrentLayer]->Freeform->AddLineV(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddLineV(so.SizeX, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 3: // square
-		Data->Layers[CurrentLayer]->Freeform->AddShapeSquare(sizex, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeSquare(so.SizeX, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 4: // square filled
-		Data->Layers[CurrentLayer]->Freeform->AddShapeSquareFilled(sizex, direction, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeSquareFilled(so.SizeX, so.Direction, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 5: // rectangle
-		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangle(sizex, sizey, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangle(so.SizeX, so.SizeY, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	case 6: // rectangle filled
-		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangleFilled(sizex, sizey, direction, Render.PixelSizeZ, start_x, start_y, colour);
+		Data->Layers[CurrentLayer]->Freeform->AddShapeRectangleFilled(so.SizeX, so.SizeY, so.Direction, Render.PixelSizeZ, so.X, so.Y, so.Colour);
 		break;
 	}
 
@@ -4542,7 +4542,6 @@ int TheMatrix::GradientBrushCount()
 #pragma region Font
 void TheMatrix::AddFontCharacter(int ascii, int frame)
 {
-	// to do
 	const int __FontWidth = 8;
 	const int __FontHeight = 8;
 
@@ -4997,7 +4996,17 @@ void TheMatrix::FlattenAllLayers()
 	}
 	else
 	{
-		// to do
+        if (Data->Layers.size() <= 1) return;
+
+		while (Data->Layers.size() > 1)
+		{
+			for (int t = 0; t < Data->Layers.back()->Freeform->Pixels.size(); t++)
+			{
+				Data->Layers[0]->Freeform->Pixels.push_back(Data->Layers.back()->Freeform->Pixels[t]);
+			}
+
+			Data->Layers.pop_back();
+		}
 	}
 
 	if (OnLayerChange) OnLayerChange(this);
@@ -7000,7 +7009,7 @@ ImportData TheMatrix::ImportLEDMatrixDataSingleFrame(const std::wstring file_nam
 									}
 									break;
 								case MatrixColourMode::kRGB3BPP:
-									   // to do
+									Data->Layers[lCurrentLayer]->Cells[MemSlot]->Grid[Row * Details.Width + x] = Convert::HexToInt(pixel);
 									break;
 
 								default:
@@ -8549,7 +8558,7 @@ void TheMatrix::Undo()
 	}
 	else
 	{
-		// to do
+		Data->Layers[CurrentLayer]->Freeform->Undo();
 	}
 
 	if (OnChange) OnChange(this);
@@ -8568,7 +8577,7 @@ void TheMatrix::Redo()
 	}
 	else
 	{
-		// to do
+		Data->Layers[CurrentLayer]->Freeform->Redo();
 	}
 
 	if (OnChange) OnChange(this);
@@ -8587,7 +8596,7 @@ void TheMatrix::SetFromUndo(int undo)
 	}
 	else
 	{
-		// to do
+		Data->Layers[CurrentLayer]->Freeform->SetFromUndo(undo);
 	}
 
 	if (OnChange) OnChange(this);
@@ -8603,7 +8612,7 @@ bool TheMatrix::CanUndo()
 		return Data->Layers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != 0;
 	}
 
-	return false; // to do
+	return Data->Layers[CurrentLayer]->Freeform->CanUndo();
 }
 
 
@@ -8614,7 +8623,7 @@ bool TheMatrix::CanRedo()
 		return Data->Layers[CurrentLayer]->Cells[CurrentFrame]->HistoryOffset != Data->Layers[CurrentLayer]->Cells[CurrentFrame]->History.size() - 1;
 	}
 
-	return false; // to do
+	return Data->Layers[CurrentLayer]->Freeform->CanRedo();
 }
 #pragma end_region
 
@@ -8643,11 +8652,20 @@ void TheMatrix::DeletePixel()
 }
 
 
+void TheMatrix::ClearSelection()
+{
+	Data->Layers[CurrentLayer]->Freeform->ClearSelection();
+}
+
+
 void TheMatrix::SelectInGroup(int group)
 {
 	if (Render.Action.Mode == ActionMode::kMovePixel)
 	{
-        Data->Layers[CurrentLayer]->Freeform->AddGroupToSelection(group);
+		if (group != -1)
+		{
+			Data->Layers[CurrentLayer]->Freeform->AddGroupToSelection(group);
+        }
 	}
 }
 
