@@ -2,8 +2,8 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 221
-  ClientWidth = 418
+  ClientHeight = 223
+  ClientWidth = 421
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -439,7 +439,6 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
       Top = 22
       Width = 152
       Height = 23
-      Hint = 'Matrix shape'
       Style = csDropDownList
       TabOrder = 0
       OnChange = cbCustomShapeChange
@@ -449,7 +448,6 @@ object frmSetIgnoredPixels: TfrmSetIgnoredPixels
       Top = 62
       Width = 65
       Height = 21
-      Hint = 'Number of frames'
       Style = csDropDownList
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

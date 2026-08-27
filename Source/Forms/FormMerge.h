@@ -40,6 +40,7 @@ __published:	// IDE-managed Components
 	TEdit *eFileName;
 	TEdit *eStartFrame;
 	TOpenDialog *odMain;
+	TBevel *Bevel1;
 	void __fastcall eFileNameChange(TObject *Sender);
 	void __fastcall eStartFrameChange(TObject *Sender);
 	void __fastcall miMergeClick(TObject *Sender);

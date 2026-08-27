@@ -2,8 +2,8 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 195
-  ClientWidth = 323
+  ClientHeight = 188
+  ClientWidth = 319
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +11,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poMainFormCenter
+  OnShow = FormShow
   TextHeight = 15
   object Image1: TImage
     Left = 8
@@ -458,7 +459,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   end
   object bOK: TBitBtn
     Left = 159
-    Top = 163
+    Top = 159
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -507,7 +508,7 @@ object frmPlaybackSpeed: TfrmPlaybackSpeed
   end
   object bCancel: TBitBtn
     Left = 240
-    Top = 163
+    Top = 159
     Width = 75
     Height = 25
     Cancel = True

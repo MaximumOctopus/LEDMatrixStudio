@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -83,3 +83,4 @@ bool TfrmSaveRange::ValidateInputs()
 
 	return (sf >= 1 && ef >= 1 && sf <= ef && sf <= MatrixFrameCount && ef <= MatrixFrameCount);
 }
+

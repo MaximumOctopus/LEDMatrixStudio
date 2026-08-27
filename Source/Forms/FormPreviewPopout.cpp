@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -36,6 +36,13 @@ __fastcall TfrmPreviewPopout::TfrmPreviewPopout(TComponent* Owner)
 void TfrmPreviewPopout::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kPreview].c_str();
+
+	bPlayAnimation->Hint = GLanguageHandler->Text[kFramesToolbarHint2].c_str();
+	bStopAnimation->Hint = GLanguageHandler->Text[kFramesToolbarHint3].c_str();
+	bStartFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint4].c_str();
+	bPreviousFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint5].c_str();
+	bNextFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint6].c_str();
+	bEndFrame->Hint = GLanguageHandler->Text[kFramesToolbarHint7].c_str();
 }
 
 

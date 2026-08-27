@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -230,7 +230,7 @@ void TfrmImportBitmap::SetMultipleImageDetails()
 
 		eMIPattern->Text    = ExtractFilePath(eMIFirstImage->Text) + Utility::WS2US(FileName.substr(0, PatternStart) + L"$$" + FileName.substr(0, PatternEnd + 1));
 
-		eMIPadLength->Text  =(PatternEnd - PatternStart);
+		eMIPadLength->Text  = (PatternEnd - PatternStart);
 	}
 }
 

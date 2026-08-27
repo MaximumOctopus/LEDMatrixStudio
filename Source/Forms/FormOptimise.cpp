@@ -187,7 +187,7 @@ void TfrmOptimise::PopulateMatrixData()
 		}
 	}
 
-	lStats->Caption = MatrixData.size() + L" items";
+	lStats->Caption = (std::to_wstring(MatrixData.size()) + L" items").c_str();
 }
 
 

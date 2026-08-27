@@ -14,13 +14,6 @@ object frmNewProject: TfrmNewProject
   Position = poMainFormCenter
   OnCreate = FormCreate
   TextHeight = 15
-  object Bevel19: TBevel
-    Left = 7
-    Top = 343
-    Width = 714
-    Height = 4
-    Shape = bsTopLine
-  end
   object bOK: TBitBtn
     Left = 565
     Top = 350
@@ -145,60 +138,12 @@ object frmNewProject: TfrmNewProject
       Height = 15
       Caption = '.'
     end
-    object GroupBox4: TGroupBox
-      Left = 24
-      Top = -63
-      Width = 273
-      Height = 57
-      Caption = 'Matrtix Options'
-      TabOrder = 0
-      object Label4: TLabel
-        Left = 203
-        Top = 23
-        Width = 9
-        Height = 18
-        Caption = 'X'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object ComboBox7: TComboBox
-        Left = 219
-        Top = 20
-        Width = 41
-        Height = 23
-        Hint = 'Select matrix height'
-        Style = csDropDownList
-        TabOrder = 0
-      end
-      object ComboBox8: TComboBox
-        Left = 155
-        Top = 20
-        Width = 42
-        Height = 23
-        Hint = 'Select matrix width'
-        Style = csDropDownList
-        TabOrder = 1
-      end
-      object ComboBox9: TComboBox
-        Left = 15
-        Top = 20
-        Width = 132
-        Height = 23
-        Hint = 'Number of frames'
-        Style = csDropDownList
-        TabOrder = 2
-      end
-    end
     object cbFrames: TComboBox
       Left = 80
       Top = 25
       Width = 74
       Height = 23
-      TabOrder = 1
+      TabOrder = 0
       Text = '1'
     end
   end
@@ -257,7 +202,6 @@ object frmNewProject: TfrmNewProject
           Top = 20
           Width = 52
           Height = 23
-          Hint = 'Select matrix height'
           TabOrder = 0
           Text = '1024'
           OnChange = cbWidthChange
@@ -267,7 +211,6 @@ object frmNewProject: TfrmNewProject
           Top = 20
           Width = 52
           Height = 23
-          Hint = 'Select matrix width'
           TabOrder = 1
           Text = '1024'
           OnChange = cbWidthChange
@@ -277,58 +220,9 @@ object frmNewProject: TfrmNewProject
           Top = 20
           Width = 144
           Height = 23
-          Hint = 'Number of frames'
           Style = csDropDownList
           TabOrder = 2
           OnChange = cbMatrixTypeChange
-        end
-        object GroupBox2: TGroupBox
-          Left = 24
-          Top = -63
-          Width = 273
-          Height = 57
-          Caption = 'Matrtix Options'
-          TabOrder = 3
-          object Label2: TLabel
-            Left = 203
-            Top = 23
-            Width = 9
-            Height = 18
-            Caption = 'X'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -15
-            Font.Name = 'Tahoma'
-            Font.Style = []
-            ParentFont = False
-          end
-          object ComboBox1: TComboBox
-            Left = 219
-            Top = 20
-            Width = 41
-            Height = 23
-            Hint = 'Select matrix height'
-            Style = csDropDownList
-            TabOrder = 0
-          end
-          object ComboBox2: TComboBox
-            Left = 155
-            Top = 20
-            Width = 42
-            Height = 23
-            Hint = 'Select matrix width'
-            Style = csDropDownList
-            TabOrder = 1
-          end
-          object ComboBox3: TComboBox
-            Left = 15
-            Top = 20
-            Width = 132
-            Height = 23
-            Hint = 'Number of frames'
-            Style = csDropDownList
-            TabOrder = 2
-          end
         end
         object rbCommon: TRadioButton
           Left = 163
@@ -337,7 +231,7 @@ object frmNewProject: TfrmNewProject
           Height = 17
           Caption = '.'
           Checked = True
-          TabOrder = 4
+          TabOrder = 3
           TabStop = True
           OnClick = rbCommonClick
         end
@@ -347,7 +241,7 @@ object frmNewProject: TfrmNewProject
           Width = 43
           Height = 17
           Caption = '.'
-          TabOrder = 5
+          TabOrder = 4
           OnClick = rbCommonClick
         end
         object cbCustomShape: TComboBox
@@ -355,9 +249,8 @@ object frmNewProject: TfrmNewProject
           Top = 20
           Width = 167
           Height = 23
-          Hint = 'Matrix shape'
           Style = csDropDownList
-          TabOrder = 6
+          TabOrder = 5
           OnChange = cbCustomShapeChange
         end
         object cbCustomShapeParam: TComboBox
@@ -365,7 +258,6 @@ object frmNewProject: TfrmNewProject
           Top = 53
           Width = 65
           Height = 21
-          Hint = 'Number of frames'
           Style = csDropDownList
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -373,7 +265,7 @@ object frmNewProject: TfrmNewProject
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 7
+          TabOrder = 6
         end
       end
     end
@@ -406,58 +298,9 @@ object frmNewProject: TfrmNewProject
           Top = 20
           Width = 144
           Height = 23
-          Hint = 'Number of frames'
           Style = csDropDownList
           TabOrder = 0
           OnChange = cbMatrixTypeChange
-        end
-        object GroupBox3: TGroupBox
-          Left = 24
-          Top = -63
-          Width = 273
-          Height = 57
-          Caption = 'Matrtix Options'
-          TabOrder = 1
-          object Label15: TLabel
-            Left = 203
-            Top = 23
-            Width = 9
-            Height = 18
-            Caption = 'X'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -15
-            Font.Name = 'Tahoma'
-            Font.Style = []
-            ParentFont = False
-          end
-          object ComboBox16: TComboBox
-            Left = 219
-            Top = 20
-            Width = 41
-            Height = 23
-            Hint = 'Select matrix height'
-            Style = csDropDownList
-            TabOrder = 0
-          end
-          object ComboBox17: TComboBox
-            Left = 155
-            Top = 20
-            Width = 42
-            Height = 23
-            Hint = 'Select matrix width'
-            Style = csDropDownList
-            TabOrder = 1
-          end
-          object ComboBox18: TComboBox
-            Left = 15
-            Top = 20
-            Width = 132
-            Height = 23
-            Hint = 'Number of frames'
-            Style = csDropDownList
-            TabOrder = 2
-          end
         end
       end
     end
@@ -535,54 +378,6 @@ object frmNewProject: TfrmNewProject
     Width = 498
     Height = 43
     TabOrder = 4
-    object GroupBox6: TGroupBox
-      Left = 24
-      Top = -63
-      Width = 273
-      Height = 57
-      Caption = 'Matrtix Options'
-      TabOrder = 0
-      object Label8: TLabel
-        Left = 203
-        Top = 23
-        Width = 9
-        Height = 18
-        Caption = 'X'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object ComboBox5: TComboBox
-        Left = 219
-        Top = 20
-        Width = 41
-        Height = 23
-        Hint = 'Select matrix height'
-        Style = csDropDownList
-        TabOrder = 0
-      end
-      object ComboBox6: TComboBox
-        Left = 155
-        Top = 20
-        Width = 42
-        Height = 23
-        Hint = 'Select matrix width'
-        Style = csDropDownList
-        TabOrder = 1
-      end
-      object ComboBox10: TComboBox
-        Left = 15
-        Top = 20
-        Width = 132
-        Height = 23
-        Hint = 'Number of frames'
-        Style = csDropDownList
-        TabOrder = 2
-      end
-    end
     object cbClearAll: TCheckBox
       Left = 24
       Top = 23
@@ -591,7 +386,7 @@ object frmNewProject: TfrmNewProject
       Caption = '.'
       Checked = True
       State = cbChecked
-      TabOrder = 1
+      TabOrder = 0
     end
   end
   object gbPixelShape: TGroupBox
@@ -606,7 +401,6 @@ object frmNewProject: TfrmNewProject
       Top = 20
       Width = 36
       Height = 36
-      Hint = 'square'
       Brush.Color = clLime
       OnMouseDown = shapeSquareMouseDown
     end
@@ -616,7 +410,6 @@ object frmNewProject: TfrmNewProject
       Top = 20
       Width = 36
       Height = 36
-      Hint = 'circle'
       Shape = stCircle
       OnMouseDown = shapeSquareMouseDown
     end
@@ -626,57 +419,8 @@ object frmNewProject: TfrmNewProject
       Top = 20
       Width = 36
       Height = 36
-      Hint = 'rounded square'
       Shape = stRoundSquare
       OnMouseDown = shapeSquareMouseDown
-    end
-    object GroupBox8: TGroupBox
-      Left = 24
-      Top = -63
-      Width = 273
-      Height = 57
-      Caption = 'Matrtix Options'
-      TabOrder = 0
-      object Label10: TLabel
-        Left = 203
-        Top = 23
-        Width = 9
-        Height = 18
-        Caption = 'X'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-      end
-      object ComboBox4: TComboBox
-        Left = 219
-        Top = 20
-        Width = 41
-        Height = 23
-        Hint = 'Select matrix height'
-        Style = csDropDownList
-        TabOrder = 0
-      end
-      object ComboBox11: TComboBox
-        Left = 155
-        Top = 20
-        Width = 42
-        Height = 23
-        Hint = 'Select matrix width'
-        Style = csDropDownList
-        TabOrder = 1
-      end
-      object ComboBox12: TComboBox
-        Left = 15
-        Top = 20
-        Width = 132
-        Height = 23
-        Hint = 'Number of frames'
-        Style = csDropDownList
-        TabOrder = 2
-      end
     end
   end
   object mHelp: TMemo

@@ -151,7 +151,6 @@ object frmExport: TfrmExport
         Top = 21
         Width = 31
         Height = 25
-        Hint = 'delete'
         Glyph.Data = {
           E6040000424DE604000000000000360000002800000014000000140000000100
           180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -313,7 +312,6 @@ object frmExport: TfrmExport
         Top = 21
         Width = 31
         Height = 25
-        Hint = 'copy to clipboard'
         Glyph.Data = {
           E6040000424DE604000000000000360000002800000014000000140000000100
           180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -381,6 +379,7 @@ object frmExport: TfrmExport
       Top = 21
       Width = 103
       Height = 25
+      Hint = 'Build code using current settings'
       Glyph.Data = {
         E6040000424DE604000000000000360000002800000014000000140000000100
         180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF

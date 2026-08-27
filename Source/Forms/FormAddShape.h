@@ -12,6 +12,9 @@
 #include <Vcl.Graphics.hpp>
 #include <Vcl.Imaging.pngimage.hpp>
 #include <Vcl.Dialogs.hpp>
+
+#include "ShapeObject.h"
+
 //---------------------------------------------------------------------------
 class TfrmAddShape : public TForm
 {
@@ -46,15 +49,11 @@ private:
 public:
 	__fastcall TfrmAddShape(TComponent* Owner);
 
-	int SelectedShape = 0;
-    int SelectedDirection = 0;
-	int SelectedSizeX = 0;
-	int SelectedSizeY = 0;
-	int SelectedPixels = 0;
-	int SelectedX = 0;
-	int SelectedY = 0;
-    int SelectedColour = 0;
+	ShapeObject soInternal;
 };
+
+ShapeObject OpenAddShape();
+
 //---------------------------------------------------------------------------
 extern PACKAGE TfrmAddShape *frmAddShape;
 //---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -31,17 +31,11 @@
 class TfrmNewProject : public TForm
 {
 __published:	// IDE-managed Components
-	TBevel *Bevel19;
 	TBitBtn *bOK;
 	TBitBtn *bCancel;
 	TGroupBox *gbAnimation;
 	TLabel *Label3;
 	TLabel *Label5;
-	TGroupBox *GroupBox4;
-	TLabel *Label4;
-	TComboBox *ComboBox7;
-	TComboBox *ComboBox8;
-	TComboBox *ComboBox9;
 	TComboBox *cbFrames;
 	TPageControl *pcNew;
 	TTabSheet *tsCustom;
@@ -53,11 +47,6 @@ __published:	// IDE-managed Components
 	TComboBox *cbHeight;
 	TComboBox *cbWidth;
 	TComboBox *cbMatrixType;
-	TGroupBox *GroupBox2;
-	TLabel *Label2;
-	TComboBox *ComboBox1;
-	TComboBox *ComboBox2;
-	TComboBox *ComboBox3;
 	TRadioButton *rbCommon;
 	TRadioButton *rbAll;
 	TComboBox *cbCustomShape;
@@ -71,21 +60,11 @@ __published:	// IDE-managed Components
 	TLabel *lPresetHeight;
 	TComboBox *cbPresets;
 	TGroupBox *GroupBox5;
-	TGroupBox *GroupBox6;
-	TLabel *Label8;
-	TComboBox *ComboBox5;
-	TComboBox *ComboBox6;
-	TComboBox *ComboBox10;
 	TCheckBox *cbClearAll;
 	TGroupBox *gbPixelShape;
 	TShape *shapeSquare;
 	TShape *shapeCircle;
 	TShape *shapeRoundRect;
-	TGroupBox *GroupBox8;
-	TLabel *Label10;
-	TComboBox *ComboBox4;
-	TComboBox *ComboBox11;
-	TComboBox *ComboBox12;
 	TMemo *mHelp;
 	TColorDialog *cdNewProject;
 	TTabSheet *tsFreeform;
@@ -93,11 +72,6 @@ __published:	// IDE-managed Components
 	TShape *sBackgroundFreeform;
 	TLabel *lBackgroundFreeform;
 	TComboBox *cbMatrixTypeFreeform;
-	TGroupBox *GroupBox3;
-	TLabel *Label15;
-	TComboBox *ComboBox16;
-	TComboBox *ComboBox17;
-	TComboBox *ComboBox18;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall bOKClick(TObject *Sender);
 	void __fastcall cbCustomShapeChange(TObject *Sender);

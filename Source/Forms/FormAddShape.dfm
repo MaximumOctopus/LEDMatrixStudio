@@ -2,7 +2,7 @@ object frmAddShape: TfrmAddShape
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 209
+  ClientHeight = 223
   ClientWidth = 481
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -225,7 +225,7 @@ object frmAddShape: TfrmAddShape
   end
   object bOK: TBitBtn
     Left = 317
-    Top = 183
+    Top = 191
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -274,7 +274,7 @@ object frmAddShape: TfrmAddShape
   end
   object bCancel: TBitBtn
     Left = 398
-    Top = 183
+    Top = 191
     Width = 75
     Height = 25
     Cancel = True

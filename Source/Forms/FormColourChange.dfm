@@ -2,8 +2,8 @@ object frmColourChange: TfrmColourChange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 347
-  ClientWidth = 543
+  ClientHeight = 377
+  ClientWidth = 548
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -416,8 +416,8 @@ object frmColourChange: TfrmColourChange
     Transparent = True
   end
   object bOK: TBitBtn
-    Left = 385
-    Top = 319
+    Left = 387
+    Top = 345
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -465,8 +465,8 @@ object frmColourChange: TfrmColourChange
     TabOrder = 0
   end
   object bCancel: TBitBtn
-    Left = 466
-    Top = 319
+    Left = 468
+    Top = 345
     Width = 75
     Height = 25
     Cancel = True

@@ -631,7 +631,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -643,7 +642,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -655,7 +653,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -667,7 +664,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -679,7 +675,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -691,7 +686,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -703,7 +697,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -714,7 +707,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -726,7 +718,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -738,7 +729,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -750,7 +740,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -762,7 +751,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -774,7 +762,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -786,7 +773,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -797,7 +783,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -809,7 +794,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -821,7 +805,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -833,7 +816,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -845,7 +827,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -857,7 +838,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -869,7 +849,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour 0 (off), click with either mouse button to select'
       Brush.Color = clBlack
       OnMouseDown = sRGBPaletteColourMouseDown
       OnMouseMove = sRGBPaletteColourMouseMove
@@ -895,7 +874,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the left mouse button'
       Brush.Color = clBlack
       OnMouseDown = sSelectionLMBMouseDown
     end
@@ -906,7 +884,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the right mouse button'
       Brush.Color = clBlack
       OnMouseDown = sSelectionLMBMouseDown
     end
@@ -917,7 +894,6 @@ object frmNewBrush: TfrmNewBrush
       Width = 18
       Height = 18
       Cursor = crHandPoint
-      Hint = 'Colour drawn with the middle mouse button'
       Brush.Color = clBlack
       OnMouseDown = sSelectionLMBMouseDown
     end

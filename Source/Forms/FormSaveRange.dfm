@@ -2,8 +2,8 @@ object frmSaveRange: TfrmSaveRange
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 164
-  ClientWidth = 364
+  ClientHeight = 168
+  ClientWidth = 372
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -409,8 +409,8 @@ object frmSaveRange: TfrmSaveRange
     Transparent = True
   end
   object bOK: TBitBtn
-    Left = 205
-    Top = 135
+    Left = 208
+    Top = 136
     Width = 75
     Height = 25
     Enabled = False
@@ -497,8 +497,8 @@ object frmSaveRange: TfrmSaveRange
     TabOrder = 0
   end
   object bCancel: TBitBtn
-    Left = 286
-    Top = 135
+    Left = 289
+    Top = 136
     Width = 75
     Height = 25
     Cancel = True

@@ -33,6 +33,23 @@ __fastcall TfrmAddShape::TfrmAddShape(TComponent* Owner)
 }
 
 
+ShapeObject OpenAddShape()
+{
+	frmAddShape = new TfrmAddShape(Application);
+
+	ShapeObject so;
+
+	if (frmAddShape->ShowModal() == mrOk)
+	{
+		so = frmAddShape->soInternal;
+	}
+
+	delete frmAddShape;
+
+    return so;
+}
+
+
 void TfrmAddShape::SetGuiLanguageText()
 {
 	Caption = GLanguageHandler->Text[kAddShape].c_str();
@@ -116,9 +133,9 @@ void __fastcall TfrmAddShape::cbShapeChange(TObject *Sender)
 
 void __fastcall TfrmAddShape::bOKClick(TObject *Sender)
 {
-	SelectedShape = cbShape->ItemIndex;
-	SelectedColour = shapeColour->Brush->Color;
-	SelectedDirection = cbInitialDirection->ItemIndex;
+	soInternal.Shape = cbShape->ItemIndex;
+	soInternal.Colour = shapeColour->Brush->Color;
+	soInternal.Direction = cbInitialDirection->ItemIndex;
 
 	int SizeX = eSizeX->Text.ToIntDef(-1);
 	int SizeY = eSizeY->Text.ToIntDef(-1);
@@ -126,15 +143,15 @@ void __fastcall TfrmAddShape::bOKClick(TObject *Sender)
 	int X = ePositionX->Text.ToIntDef(-1);
 	int Y = ePositionY->Text.ToIntDef(-1);
 
-	switch (SelectedShape)
+	switch (soInternal.Shape)
 	{
 	case 0:
 		if (SizeX != -1 && Pixels != -1 && X != -1 && Y != -1)
 		{
-			SelectedSizeX = SizeX;
-			SelectedPixels = Pixels;
-			SelectedX = X;
-			SelectedY = Y;
+			soInternal.SizeX = SizeX;
+			soInternal.Pixels = Pixels;
+			soInternal.X = X;
+			soInternal.Y = Y;
 
 			ModalResult = mrOk;
 		}
@@ -143,9 +160,9 @@ void __fastcall TfrmAddShape::bOKClick(TObject *Sender)
 	case 2:
 		if (SizeX != -1 && X != -1 && Y != -1)
 		{
-			SelectedSizeX = SizeX;
-			SelectedX = X;
-			SelectedY = Y;
+			soInternal.SizeX = SizeX;
+			soInternal.X = X;
+			soInternal.Y = Y;
 
 			ModalResult = mrOk;
 		}
@@ -154,9 +171,9 @@ void __fastcall TfrmAddShape::bOKClick(TObject *Sender)
 	case 4:
 		if (SizeX != -1 && X != -1 && Y != -1)
 		{
-			SelectedSizeX = SizeX;
-			SelectedX = X;
-			SelectedY = Y;
+			soInternal.SizeX = SizeX;
+			soInternal.X = X;
+			soInternal.Y = Y;
 
 			ModalResult = mrOk;
 		}
@@ -165,10 +182,10 @@ void __fastcall TfrmAddShape::bOKClick(TObject *Sender)
 	case 6:
 		if (SizeX != -1 && SizeY != -1 && X != -1 && Y != -1)
 		{
-			SelectedSizeX = SizeX;
-			SelectedSizeY = SizeY;
-			SelectedX = X;
-			SelectedY = Y;
+			soInternal.SizeX = SizeX;
+			soInternal.SizeY = SizeY;
+			soInternal.X = X;
+			soInternal.Y = Y;
 
 			ModalResult = mrOk;
 		}

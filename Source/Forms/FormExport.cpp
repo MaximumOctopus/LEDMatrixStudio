@@ -2222,13 +2222,17 @@ void TfrmExport::SetGuiLanguageText()
 	gbProfiles->Caption = GLanguageHandler->Text[kProfiles].c_str();
 
 	sbOpen->Caption = GLanguageHandler->Text[kLoad].c_str();
+	sbDelete->Hint = GLanguageHandler->Text[kDeleteSelectedProfile].c_str();
 	sbSave->Caption = GLanguageHandler->Text[kSave].c_str();
 	bBuildCode->Caption = GLanguageHandler->Text[kBuildCode].c_str();
+	bBuildCode->Hint = GLanguageHandler->Text[kBuildCodeHint].c_str();
 	cbAutoPreview->Caption = GLanguageHandler->Text[kAutoBuild].c_str();
 
 	GroupBox6->Caption = GLanguageHandler->Text[kOutput].c_str();
 
 	bExport->Caption = GLanguageHandler->Text[kExport].c_str();
+
+	bCopyToClipboard->Hint = GLanguageHandler->Text[kCopyToClipboard].c_str();
 
 	bClose->Caption = GLanguageHandler->Text[kOK].c_str();
 	bCancel->Caption = GLanguageHandler->Text[kCancel].c_str();

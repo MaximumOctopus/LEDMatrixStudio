@@ -24,8 +24,6 @@ object frmPreviewPopout: TfrmPreviewPopout
     ParentDoubleBuffered = False
     TabOrder = 0
     StyleElements = [seFont, seBorder]
-    ExplicitWidth = 1149
-    ExplicitHeight = 700
   end
   object pAnimationToolbar: TPanel
     Left = 0
@@ -38,8 +36,6 @@ object frmPreviewPopout: TfrmPreviewPopout
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1
-    ExplicitTop = 700
-    ExplicitWidth = 1149
     DesignSize = (
       1155
       30)
@@ -71,7 +67,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Play animation (right mouse button for speed options)'
       DisabledImageIndex = 6
       ImageIndex = 0
       Images = ImageList1
@@ -85,7 +80,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Stop animation'
       DisabledImageIndex = 7
       Enabled = False
       ImageIndex = 1
@@ -100,7 +94,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show previous frame'
       DisabledImageIndex = 9
       Enabled = False
       ImageIndex = 3
@@ -115,7 +108,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show next frame'
       DisabledImageIndex = 10
       Enabled = False
       ImageIndex = 4
@@ -138,7 +130,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       TabOrder = 4
       TickStyle = tsNone
       OnTracking = tbFramesTracking
-      ExplicitWidth = 829
     end
     object bStartFrame: TBitBtn
       Tag = 2
@@ -146,7 +137,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show the first frame'
       DisabledImageIndex = 8
       Enabled = False
       ImageIndex = 2
@@ -161,7 +151,6 @@ object frmPreviewPopout: TfrmPreviewPopout
       Top = 2
       Width = 33
       Height = 26
-      Hint = 'Show the last frame'
       DisabledImageIndex = 11
       Enabled = False
       ImageIndex = 5

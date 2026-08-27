@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -37,6 +37,7 @@ __published:	// IDE-managed Components
 	void __fastcall bOKClick(TObject *Sender);
 	void __fastcall eSpeedExit(TObject *Sender);
 	void __fastcall eFPSExit(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 private:
 
 	void SetGuiLanguageText();

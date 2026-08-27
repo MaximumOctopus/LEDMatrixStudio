@@ -477,6 +477,10 @@ void TfrmNewBrush::SetGuiLanguageText()
 	cbAvailableTypes->Items->Add(GLanguageHandler->Text[kCheckerboard4x4].c_str());
 	cbAvailableTypes->ItemIndex = 0;
 
+	sSelectionLMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint5].c_str();
+	sSelectionMMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint7].c_str();
+	sSelectionRMB->Hint = GLanguageHandler->Text[kCurrentColourToolbarHint8].c_str();
+
 	bCreate->Caption = GLanguageHandler->Text[kCreate].c_str();
 
 	lBrush->Caption = GLanguageHandler->Text[kCustomBrush].c_str();

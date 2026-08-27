@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -179,4 +179,13 @@ void TfrmPreferences::SetGUILanguageText()
 
 	bOK->Caption = GLanguageHandler->Text[kOK].c_str();
 	bCancel->Caption = GLanguageHandler->Text[kCancel].c_str();
+
+	sMono2->Hint = GLanguageHandler->Text[kPrefsHint1].c_str();
+	sMono1->Hint = GLanguageHandler->Text[kPrefsHint2].c_str();
+	sBi2->Hint = GLanguageHandler->Text[kPrefsHint3].c_str();
+	sBi1->Hint = GLanguageHandler->Text[kPrefsHint4].c_str();
+	sBi4->Hint = GLanguageHandler->Text[kPrefsHint5].c_str();
+	sBi3->Hint = GLanguageHandler->Text[kPrefsHint6].c_str();
+	ShapeSelection->Hint = GLanguageHandler->Text[kPrefsHint7].c_str();
+	ShapeLightBox->Hint = GLanguageHandler->Text[kPrefsHint8].c_str();
 }

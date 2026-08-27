@@ -3,7 +3,7 @@ object frmExportGIF: TfrmExportGIF
   Top = 0
   BorderStyle = bsDialog
   ClientHeight = 341
-  ClientWidth = 640
+  ClientWidth = 642
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -409,16 +409,9 @@ object frmExportGIF: TfrmExportGIF
       00FF}
     Transparent = True
   end
-  object Bevel1: TBevel
-    Left = 8
-    Top = 304
-    Width = 631
-    Height = 4
-    Shape = bsTopLine
-  end
   object bOk: TBitBtn
-    Left = 483
-    Top = 313
+    Left = 491
+    Top = 311
     Width = 75
     Height = 25
     Enabled = False
@@ -506,7 +499,7 @@ object frmExportGIF: TfrmExportGIF
   end
   object bCancel: TBitBtn
     Left = 564
-    Top = 314
+    Top = 311
     Width = 75
     Height = 25
     Cancel = True

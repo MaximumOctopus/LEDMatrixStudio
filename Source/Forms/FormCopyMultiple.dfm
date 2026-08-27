@@ -2,8 +2,8 @@ object frmCopyMultiple: TfrmCopyMultiple
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 287
-  ClientWidth = 415
+  ClientHeight = 310
+  ClientWidth = 421
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -418,7 +418,7 @@ object frmCopyMultiple: TfrmCopyMultiple
   end
   object bOK: TBitBtn
     Left = 257
-    Top = 258
+    Top = 279
     Width = 75
     Height = 25
     Enabled = False
@@ -506,7 +506,7 @@ object frmCopyMultiple: TfrmCopyMultiple
   end
   object bCancel: TBitBtn
     Left = 338
-    Top = 258
+    Top = 279
     Width = 75
     Height = 25
     Cancel = True

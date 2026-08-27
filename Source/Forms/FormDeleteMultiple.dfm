@@ -2,7 +2,7 @@ object frmDeleteMultiple: TfrmDeleteMultiple
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 198
+  ClientHeight = 183
   ClientWidth = 374
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -417,7 +417,7 @@ object frmDeleteMultiple: TfrmDeleteMultiple
   end
   object bOk: TBitBtn
     Left = 214
-    Top = 168
+    Top = 153
     Width = 75
     Height = 25
     Enabled = False
@@ -505,7 +505,7 @@ object frmDeleteMultiple: TfrmDeleteMultiple
   end
   object bCancel: TBitBtn
     Left = 295
-    Top = 168
+    Top = 153
     Width = 75
     Height = 25
     Cancel = True

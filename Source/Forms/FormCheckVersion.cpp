@@ -43,8 +43,6 @@ void OpenCheckForNewVersion(std::wstring cv, std::wstring cd, bool autoclosemode
 	delete frmCheckVersion;
 }
 
-//---------------------------------------------------------------------------
-
 
 __fastcall TfrmCheckVersion::TfrmCheckVersion(TComponent* Owner)
 	: TForm(Owner)
@@ -62,8 +60,6 @@ void __fastcall TfrmCheckVersion::FormShow(TObject *Sender)
 		UnicodeString s = httpMain->Get(__ApplicationVersionFileUrl);
 
 		std::wstring cat = s.c_str(); // means we can avoid all of the horrible unicodestring stuff ;)
-
-		Caption = s;
 
         auto pos = cat.find(L';');
 

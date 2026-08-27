@@ -193,7 +193,7 @@ object frmImportBitmap: TfrmImportBitmap
     end
     object Label4: TLabel
       Left = 14
-      Top = 153
+      Top = 149
       Width = 3
       Height = 15
       Caption = '.'
@@ -236,17 +236,15 @@ object frmImportBitmap: TfrmImportBitmap
     object cbWidth: TComboBox
       Left = 116
       Top = 115
-      Width = 60
+      Width = 77
       Height = 23
-      Hint = 'Select matrix width'
       TabOrder = 0
     end
     object cbHeight: TComboBox
-      Left = 117
-      Top = 148
-      Width = 59
+      Left = 116
+      Top = 144
+      Width = 76
       Height = 23
-      Hint = 'Select matrix height'
       TabOrder = 1
     end
     object eFrames: TEdit
@@ -254,6 +252,7 @@ object frmImportBitmap: TfrmImportBitmap
       Top = 80
       Width = 60
       Height = 23
+      Alignment = taRightJustify
       TabOrder = 2
       Text = '1'
     end

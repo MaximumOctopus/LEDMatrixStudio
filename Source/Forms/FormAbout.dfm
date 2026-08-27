@@ -969,7 +969,7 @@ object frmAbout: TfrmAbout
   object lWebsite: TLabel
     Left = 454
     Top = 553
-    Width = 104
+    Width = 127
     Height = 13
     Cursor = crHandPoint
     Caption = 'LED Matrix Studio site'
@@ -977,7 +977,7 @@ object frmAbout: TfrmAbout
     Font.Color = clBlack
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
-    Font.Style = []
+    Font.Style = [fsBold]
     ParentFont = False
     StyleElements = [seClient, seBorder]
     OnClick = lWebsiteClick
@@ -986,7 +986,7 @@ object frmAbout: TfrmAbout
     Tag = 2
     Left = 454
     Top = 534
-    Width = 89
+    Width = 107
     Height = 13
     Cursor = crHandPoint
     Caption = 'paul@freshney.org'
@@ -994,22 +994,22 @@ object frmAbout: TfrmAbout
     Font.Color = clMaroon
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
-    Font.Style = []
+    Font.Style = [fsBold]
     ParentFont = False
     StyleElements = [seClient, seBorder]
     OnClick = lEmailClick
   end
   object Label3: TLabel
-    Left = 445
+    Left = 420
     Top = 515
-    Width = 160
+    Width = 194
     Height = 13
-    Caption = '(c) Paul Alan Freshney 2012-2026'
+    Caption = '(C) Paul Alan Freshney 2012-2026'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlack
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
-    Font.Style = []
+    Font.Style = [fsBold]
     ParentFont = False
     StyleElements = [seClient, seBorder]
   end

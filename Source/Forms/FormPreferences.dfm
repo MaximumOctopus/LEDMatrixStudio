@@ -2,8 +2,8 @@ object frmPreferences: TfrmPreferences
   Left = 0
   Top = 0
   BorderStyle = bsDialog
-  ClientHeight = 586
-  ClientWidth = 520
+  ClientHeight = 589
+  ClientWidth = 519
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -416,15 +416,15 @@ object frmPreferences: TfrmPreferences
     Transparent = True
   end
   object bResetToDefaults: TSpeedButton
-    Left = 9
-    Top = 556
+    Left = 7
+    Top = 554
     Width = 121
     Height = 25
     OnClick = bResetToDefaultsClick
   end
   object bOK: TBitBtn
-    Left = 362
-    Top = 556
+    Left = 361
+    Top = 554
     Width = 75
     Height = 25
     Glyph.Data = {
@@ -472,8 +472,8 @@ object frmPreferences: TfrmPreferences
     TabOrder = 0
   end
   object bCancel: TBitBtn
-    Left = 443
-    Top = 556
+    Left = 442
+    Top = 554
     Width = 75
     Height = 25
     Cancel = True
@@ -546,7 +546,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of active (on) pixels'
       Brush.Color = clBlack
       OnMouseDown = sMono1MouseDown
     end
@@ -563,7 +562,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of inactive (off) pixels'
       OnMouseDown = sMono1MouseDown
     end
     object Label2: TLabel
@@ -587,7 +585,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of active (on) pixels'
       Brush.Color = clBlack
       OnMouseDown = sMono1MouseDown
     end
@@ -604,7 +601,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of inactive (off) pixels'
       OnMouseDown = sMono1MouseDown
     end
     object Label8: TLabel
@@ -615,7 +611,7 @@ object frmPreferences: TfrmPreferences
       Caption = '.'
     end
     object Label9: TLabel
-      Left = 277
+      Left = 272
       Top = 133
       Width = 27
       Height = 15
@@ -628,12 +624,11 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of active (on) pixels (bi-colour 3)'
       Brush.Color = clBlack
       OnMouseDown = sMono1MouseDown
     end
     object Label10: TLabel
-      Left = 209
+      Left = 204
       Top = 133
       Width = 27
       Height = 15
@@ -641,12 +636,11 @@ object frmPreferences: TfrmPreferences
     end
     object sBi3: TShape
       Tag = 2
-      Left = 237
+      Left = 236
       Top = 128
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of active (on) pixels (bi-colour 2)'
       Brush.Color = clBlack
       OnMouseDown = sMono1MouseDown
     end
@@ -692,7 +686,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of selected pixles (drawing modes)'
       OnMouseDown = sMono1MouseDown
     end
     object lLightBox: TLabel
@@ -709,7 +702,6 @@ object frmPreferences: TfrmPreferences
       Width = 25
       Height = 20
       Cursor = crHandPoint
-      Hint = 'Click to change the colour of light box pixels (light box mode)'
       OnMouseDown = sMono1MouseDown
     end
     object Label3: TLabel

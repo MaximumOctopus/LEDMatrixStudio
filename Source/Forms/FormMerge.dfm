@@ -1,8 +1,8 @@
 object frmMerge: TfrmMerge
   Left = 0
   Top = 0
-  ClientHeight = 280
-  ClientWidth = 643
+  ClientHeight = 289
+  ClientWidth = 648
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -407,9 +407,16 @@ object frmMerge: TfrmMerge
       00FF}
     Transparent = True
   end
+  object Bevel1: TBevel
+    Left = 0
+    Top = 248
+    Width = 641
+    Height = 4
+    Shape = bsTopLine
+  end
   object bOk: TBitBtn
     Left = 485
-    Top = 248
+    Top = 258
     Width = 75
     Height = 25
     Enabled = False
@@ -497,7 +504,7 @@ object frmMerge: TfrmMerge
   end
   object bCancel: TBitBtn
     Left = 566
-    Top = 248
+    Top = 258
     Width = 75
     Height = 25
     Cancel = True

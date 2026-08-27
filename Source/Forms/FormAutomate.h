@@ -78,7 +78,7 @@ __published:	// IDE-managed Components
 	TSpeedButton *SpeedButton8;
 	TLabel *Label12;
 	TSpeedButton *sbCyclingLinear;
-	TSpeedButton *SpeedButton10;
+	TSpeedButton *sbCycleUpDown;
 	TSpeedButton *sbLeftRight;
 	TSpeedButton *sbRightLeft;
 	TSpeedButton *sbUpDown;

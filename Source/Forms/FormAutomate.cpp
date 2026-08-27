@@ -1,6 +1,6 @@
 // ===================================================================
 //
-//   (c) Paul Alan Freshney 2012-2025
+//   (c) Paul Alan Freshney 2012-2026
 //   www.freshney.org :: paul@freshney.org :: maximumoctopus.com
 //
 //   https://github.com/MaximumOctopus/LEDMatrixStudio
@@ -1292,7 +1292,7 @@ void TfrmAutomate::SetGuiLanguageText()
 	SpeedButton13->Caption = GLanguageHandler->Text[kFirstFrame].c_str();
 	Label12->Caption = GLanguageHandler->Text[kColourCycle].c_str();
 	sbCyclingLinear->Caption = GLanguageHandler->Text[kCyclingLinear].c_str();
-	SpeedButton10->Caption = GLanguageHandler->Text[kCyclingBounce].c_str();
+	sbCycleUpDown->Caption = GLanguageHandler->Text[kCyclingBounce].c_str();
 
 	gbProcessingOptions->Caption = GLanguageHandler->Text[kProcessingOptions].c_str();
 	rbProcessMode1->Caption = GLanguageHandler->Text[kUseFirstFrameAsSource].c_str();
@@ -1347,6 +1347,40 @@ void TfrmAutomate::SetGuiLanguageText()
 
 	bOK->Caption = GLanguageHandler->Text[kOK].c_str();
 	bCancel->Caption = GLanguageHandler->Text[kCancel].c_str();
+
+	sbMirror->Hint = GLanguageHandler->Text[kMiddleToolbarHint2].c_str();
+	sbFlip->Hint = GLanguageHandler->Text[kMiddleToolbarHint3].c_str();
+	sbScrollLeft->Hint = GLanguageHandler->Text[kMiddleToolbarHint5].c_str();
+	sbScrollRight->Hint = GLanguageHandler->Text[kMiddleToolbarHint6].c_str();
+	sbScrollUp->Hint = GLanguageHandler->Text[kMiddleToolbarHint7].c_str();
+	sbScrollDown->Hint = GLanguageHandler->Text[kMiddleToolbarHint8].c_str();
+	sbRotateL->Hint = GLanguageHandler->Text[kMiddleToolbarHint9].c_str();
+	sbRotateR->Hint = GLanguageHandler->Text[kMiddleToolbarHint10].c_str();
+	SpeedButton1->Hint = GLanguageHandler->Text[kJiggleLeft].c_str();
+	SpeedButton2->Hint = GLanguageHandler->Text[kJiggleRight].c_str();
+	SpeedButton3->Hint = GLanguageHandler->Text[kJiggleUp].c_str();
+	SpeedButton4->Hint = GLanguageHandler->Text[kJiggleDown].c_str();
+	SpeedButton5->Hint = GLanguageHandler->Text[kBounceLeftRight].c_str();
+	SpeedButton6->Hint = GLanguageHandler->Text[kBounceUpDown].c_str();
+	SpeedButton7->Hint = GLanguageHandler->Text[kPasteBrush1Each].c_str();
+	SpeedButton8->Hint = GLanguageHandler->Text[kPasteBrush1First].c_str();
+	sbCyclingLinear->Hint = GLanguageHandler->Text[kCyclesColoursTargetList].c_str();
+	sbCycleUpDown->Hint = GLanguageHandler->Text[kCyclesTargetListUpDown].c_str();
+	sbLeftRight->Hint = GLanguageHandler->Text[kTopLeftBottomRight].c_str();
+	sbRightLeft->Hint = GLanguageHandler->Text[kTopRightBottomLeft].c_str();
+	sbUpDown->Hint = GLanguageHandler->Text[kLeftUpRightDown].c_str();
+	sbDownUp->Hint = GLanguageHandler->Text[kLeftDownRightUp].c_str();
+	SpeedButton9->Hint = GLanguageHandler->Text[kPasteBrush2Each].c_str();
+	SpeedButton13->Hint = GLanguageHandler->Text[kPasteBrush2First].c_str();
+	SpeedButton14->Hint = GLanguageHandler->Text[kAlternateUpDownScroll].c_str();
+
+	sbClear->Hint = GLanguageHandler->Text[kClearList].c_str();
+	sbRemoveSelected->Hint = GLanguageHandler->Text[kRemoveSelectedItem].c_str();
+	SpeedButton11->Hint = GLanguageHandler->Text[kClearList].c_str();
+	SpeedButton12->Hint = GLanguageHandler->Text[kRemoveSelectedItem].c_str();
+
+	sCB1TransparentColour->Hint = GLanguageHandler->Text[kColourDrawnWithLeftMouse].c_str();
+	sCB2TransparentColour->Hint = GLanguageHandler->Text[kColourDrawnWithLeftMouse].c_str();
 }
 
 

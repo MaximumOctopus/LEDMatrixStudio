@@ -104,6 +104,9 @@ void TfrmNewProject::SetGUILanguageText()
 		cbMatrixType->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(t).c_str());
 	}
 
+	cbWidth->Hint = GLanguageHandler->Text[kWidth].c_str();
+	cbHeight->Hint = GLanguageHandler->Text[kHeight].c_str();
+
 	cbMatrixTypeFreeform->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(3).c_str());
 	cbMatrixTypeFreeform->Items->Add(ConstantsHelper::MatrixModeAsStringFromInt(4).c_str());
 
@@ -115,6 +118,8 @@ void TfrmNewProject::SetGUILanguageText()
 	cbCustomShape->Items->Add(GLanguageHandler->Text[kFrameBorderNoCentre].c_str());
 	cbCustomShape->Items->Add(GLanguageHandler->Text[kTriangle].c_str());
 	cbCustomShape->ItemIndex = 0;
+
+	cbCustomShape->Hint = GLanguageHandler->Text[kMatrixShapeCustom].c_str();
 
 	lBackground->Caption = GLanguageHandler->Text[kBackground].c_str();
 	rbCommon->Caption = GLanguageHandler->Text[kCommon].c_str();
@@ -230,8 +235,8 @@ void TfrmNewProject::SetTo(ProjectSettings &ps)
 		{
 			ps.ColourMode = MatrixColourMode::kRGB3BPP;
 		}
-		ps.Width = 100; // to do
-		ps.Height = 100;    // to do
+		ps.Width = 100; 	// for freeform mode these aren't used, though if we zoom we might in future, to do?
+		ps.Height = 100;    // ...
        	ps.Background = sBackgroundFreeform->Brush->Color;
 		break;
 	case 2:

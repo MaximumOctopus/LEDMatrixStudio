@@ -14,7 +14,7 @@ object frmAutomate: TfrmAutomate
   Position = poMainFormCenter
   TextHeight = 15
   object bOK: TBitBtn
-    Left = 743
+    Left = 741
     Top = 639
     Width = 75
     Height = 25
@@ -102,7 +102,7 @@ object frmAutomate: TfrmAutomate
     OnClick = bOKClick
   end
   object bCancel: TBitBtn
-    Left = 824
+    Left = 822
     Top = 639
     Width = 75
     Height = 25
@@ -186,7 +186,6 @@ object frmAutomate: TfrmAutomate
           Top = 102
           Width = 97
           Height = 22
-          Hint = 'Mirror pixels in the y-axis'
           OnClick = sbMirrorClick
         end
         object sbFlip: TSpeedButton
@@ -195,7 +194,6 @@ object frmAutomate: TfrmAutomate
           Top = 102
           Width = 97
           Height = 22
-          Hint = 'Flip pixels in the x-axis'
           OnClick = sbMirrorClick
         end
         object sbInvert: TSpeedButton
@@ -212,7 +210,6 @@ object frmAutomate: TfrmAutomate
           Top = 130
           Width = 48
           Height = 22
-          Hint = 'Shift the pixels left'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -262,7 +259,6 @@ object frmAutomate: TfrmAutomate
           Top = 130
           Width = 48
           Height = 22
-          Hint = 'Shift the pixels right'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -312,7 +308,6 @@ object frmAutomate: TfrmAutomate
           Top = 130
           Width = 48
           Height = 22
-          Hint = 'Shift the pixels up'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -362,7 +357,6 @@ object frmAutomate: TfrmAutomate
           Top = 130
           Width = 48
           Height = 22
-          Hint = 'Shift the pixels down'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -412,7 +406,6 @@ object frmAutomate: TfrmAutomate
           Top = 186
           Width = 97
           Height = 22
-          Hint = 'Rotate pixels anti-clockwise 90 degrees'
           Caption = '90'#176' anti-clockwise'
           OnClick = sbMirrorClick
         end
@@ -422,7 +415,6 @@ object frmAutomate: TfrmAutomate
           Top = 186
           Width = 97
           Height = 22
-          Hint = 'Rotate pixels clockwise 90 degrees'
           Caption = '90'#176' clockwise'
           OnClick = sbMirrorClick
         end
@@ -484,7 +476,6 @@ object frmAutomate: TfrmAutomate
           Top = 219
           Width = 48
           Height = 22
-          Hint = 'Jiggle matrix left'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -534,7 +525,6 @@ object frmAutomate: TfrmAutomate
           Top = 219
           Width = 48
           Height = 22
-          Hint = 'Jiggle matrix right'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -584,7 +574,6 @@ object frmAutomate: TfrmAutomate
           Top = 219
           Width = 48
           Height = 22
-          Hint = 'Jiggle matrix up'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -634,7 +623,6 @@ object frmAutomate: TfrmAutomate
           Top = 219
           Width = 48
           Height = 22
-          Hint = 'Jiggle matrix down'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -710,7 +698,6 @@ object frmAutomate: TfrmAutomate
           Top = 247
           Width = 48
           Height = 22
-          Hint = 'Bounces the pixels left to right'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -797,7 +784,6 @@ object frmAutomate: TfrmAutomate
           Top = 247
           Width = 48
           Height = 22
-          Hint = 'Bounces the pixels up / down'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -897,7 +883,6 @@ object frmAutomate: TfrmAutomate
           Top = 309
           Width = 97
           Height = 22
-          Hint = 'Pastes brush #1 in to each frame.'
           OnClick = sbMirrorClick
         end
         object SpeedButton8: TSpeedButton
@@ -906,7 +891,6 @@ object frmAutomate: TfrmAutomate
           Top = 309
           Width = 97
           Height = 22
-          Hint = 'Pastes brush #1 only in to the first frame.'
           OnClick = sbMirrorClick
         end
         object Label12: TLabel
@@ -928,16 +912,14 @@ object frmAutomate: TfrmAutomate
           Top = 380
           Width = 97
           Height = 22
-          Hint = 'Cycles the colours in Target List order'
           OnClick = sbCyclingLinearClick
         end
-        object SpeedButton10: TSpeedButton
+        object sbCycleUpDown: TSpeedButton
           Tag = 28
           Left = 220
           Top = 380
           Width = 97
           Height = 22
-          Hint = 'Cycles the Target List colours up/down/up/down...'
           OnClick = sbCyclingLinearClick
         end
         object sbLeftRight: TSpeedButton
@@ -946,7 +928,6 @@ object frmAutomate: TfrmAutomate
           Top = 158
           Width = 48
           Height = 22
-          Hint = 'Top half scrolls left, bottom half scrolls right'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1033,7 +1014,6 @@ object frmAutomate: TfrmAutomate
           Top = 158
           Width = 48
           Height = 22
-          Hint = 'Top half scrolls right, bottom half scrolls left'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1120,7 +1100,6 @@ object frmAutomate: TfrmAutomate
           Top = 158
           Width = 48
           Height = 22
-          Hint = 'Left half scrolls up, right half scrolls down'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1207,7 +1186,6 @@ object frmAutomate: TfrmAutomate
           Top = 158
           Width = 48
           Height = 22
-          Hint = 'Left half scrolls down, right half scrolls up'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1307,7 +1285,6 @@ object frmAutomate: TfrmAutomate
           Top = 337
           Width = 97
           Height = 22
-          Hint = 'Pastes brush #2 in to each frame.'
           OnClick = sbMirrorClick
         end
         object SpeedButton13: TSpeedButton
@@ -1316,7 +1293,6 @@ object frmAutomate: TfrmAutomate
           Top = 337
           Width = 97
           Height = 22
-          Hint = 'Pastes brush #2 only in to the first frame.'
           OnClick = sbMirrorClick
         end
         object Label19: TLabel
@@ -1338,7 +1314,6 @@ object frmAutomate: TfrmAutomate
           Top = 275
           Width = 48
           Height = 22
-          Hint = 'Bounces the pixels left to right'
           Glyph.Data = {
             96090000424D9609000000000000360000002800000028000000140000000100
             18000000000060090000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1683,7 +1658,6 @@ object frmAutomate: TfrmAutomate
           Top = 50
           Width = 65
           Height = 22
-          Hint = 'Clear list'
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000C21E0000C21E00000000000000000000FF00FFFF00FF
@@ -1718,7 +1692,6 @@ object frmAutomate: TfrmAutomate
           Top = 50
           Width = 74
           Height = 22
-          Hint = 'Remove selected item'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1792,7 +1765,6 @@ object frmAutomate: TfrmAutomate
           Top = 62
           Width = 65
           Height = 22
-          Hint = 'Clear list'
           Glyph.Data = {
             36030000424D3603000000000000360000002800000010000000100000000100
             18000000000000030000C21E0000C21E00000000000000000000FF00FFFF00FF
@@ -1828,7 +1800,6 @@ object frmAutomate: TfrmAutomate
           Top = 62
           Width = 74
           Height = 22
-          Hint = 'Remove selected item'
           Glyph.Data = {
             E6040000424DE604000000000000360000002800000014000000140000000100
             180000000000B0040000232E0000232E00000000000000000000FF00FFFF00FF
@@ -1908,7 +1879,6 @@ object frmAutomate: TfrmAutomate
           Width = 18
           Height = 18
           Cursor = crHandPoint
-          Hint = 'Colour drawn with the left mouse button'
           Brush.Color = clBlack
           OnMouseDown = sCB1TransparentColourMouseDown
         end
@@ -1919,7 +1889,6 @@ object frmAutomate: TfrmAutomate
           Width = 18
           Height = 18
           Cursor = crHandPoint
-          Hint = 'Colour drawn with the left mouse button'
           Brush.Color = clBlack
           OnMouseDown = sCB1TransparentColourMouseDown
         end
